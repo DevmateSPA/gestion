@@ -10,3 +10,8 @@ obj/
 # IDEs
 .vscode/
 .vs/
+
+# Visual Studio
+*.csproj.user
+*.suo
+*.user
