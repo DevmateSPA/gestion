@@ -1,4 +1,11 @@
-# Archivos NuGet autogenerados
+# Build
+bin/
+obj/
+
+# NuGet auto files
 *.nuget.dgspec.json
 *.nuget.g.props
 *.nuget.g.targets
+
+# IDEs
+.vscode/
