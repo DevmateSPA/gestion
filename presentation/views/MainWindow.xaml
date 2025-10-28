@@ -5,9 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Gestion.presentation.views"
         mc:Ignorable="d"
+        d:DesignHeight="1080" d:DesignWidth="1920"
         Title="* Cambiame *"
         WindowState="Maximized">
-    <Grid>
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Background="LightBlue" Height="50">
+            <TextBlock Text="Mi Encabezado" FontSize="18" VerticalAlignment="Center"/>
+        </StackPanel>
+        
+        
+        <StackPanel DockPanel.Dock="Bottom" Background="LightGray" Height="30">
+            <TextBlock Text="Pie de página"/>
+        </StackPanel>
+        
         <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
-    </Grid>
+    </DockPanel>
 </Window>
