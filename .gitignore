@@ -1,0 +1,4 @@
+# Archivos NuGet autogenerados
+*.nuget.dgspec.json
+*.nuget.g.props
+*.nuget.g.targets
