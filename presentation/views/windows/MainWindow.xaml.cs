@@ -20,6 +20,16 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        MainFrame.Navigate(new LoginPage());
+        MainFrame.Navigate(new MainPage());
+    }
+
+    private void BtnInicio_Click(object sender, RoutedEventArgs e)
+    {
+        MainFrame.Navigate(new MainPage());
+    }
+
+    private void BtnAgregar_Click(object sender, RoutedEventArgs e)
+    {
+        MainFrame.Navigate(new AgregarPage());
     }
 }

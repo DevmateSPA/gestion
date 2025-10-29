@@ -13,4 +13,74 @@
     <SolidColorBrush x:Key="bg-card-light" Color="#949494" />
     <SolidColorBrush x:Key="bg-card-dark" Color="#31709C" />
     <!--#endregion-->
+
+    <!--#region GridPage -->
+    <Style x:Key="GridStyle" TargetType="Grid">
+        <Setter Property="Background" Value="{StaticResource bg-dark}" />
+    </Style>
+    <!--#endregion-->
+
+    <!-- #region Estilos Login -->
+    <Style x:Key="LoginBorderStyle" TargetType="Border">
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Background" Value="{StaticResource bg-card-dark}"/>
+        <Setter Property="Padding" Value="20"/>
+        <Setter Property="Margin" Value="50"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="LoginTitleStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="0,0,0,15"/>
+    </Style>
+
+    <Style x:Key="LoginButtonStyle" TargetType="Button">
+        <Setter Property="Width" Value="250"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Background" Value="#0078D7"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+    <!-- #endregion -->
+    
+    <!--#region Window Header-->
+    <Style x:Key="MainWindowHeaderStyle" TargetType="StackPanel">
+        <Setter Property="DockPanel.Dock" Value="Top" />
+        <Setter Property="Background" Value="{StaticResource bg-card-light}" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Orientation" Value="Horizontal" />
+    </Style>
+
+    <Style x:Key="MainWindowButtonHeaderStyle" TargetType="Button">
+        <Setter Property="Width" Value="250"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="{StaticResource bg-card-dark}" />
+        <Setter Property="Margin" Value="0, 0, 10, 0" />
+    </Style>
+    <!--#endregion-->
+
+    <!--#region  Window Footer-->
+    <Style x:Key="MainWindowFooterStyle" TargetType="StackPanel">
+        <Setter Property="DockPanel.Dock" Value="Bottom" />
+        <Setter Property="Background" Value="{StaticResource bg-card-dark}" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+    </Style>
+    <!--#endregion-->
+    
+    <!--#region  Main Page Styles-->
+    <Style x:Key="MainBorderStyle" TargetType="Border">
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Padding" Value="20" />
+        <Setter Property="Margin" Value="50" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+    </Style>
+    <!--#endregion-->
 </ResourceDictionary>

@@ -14,7 +14,7 @@ public class LoginViewModel
 
     public async Task<string> IniciarSesion(string nombreUsuario, string contraseña)
     {
-        var usuario = await _authService.LoginAsync(nombreUsuario, contraseña);
+        var usuario = await _authService.Login(nombreUsuario, contraseña);
 
         if (usuario == null)
             return "Usuario o contraseña incorrecta";

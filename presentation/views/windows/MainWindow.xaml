@@ -9,15 +9,24 @@
         Title="* Cambiame *"
         WindowState="Maximized">
     <DockPanel>
-        <StackPanel DockPanel.Dock="Top">
-            <TextBlock Text="Mi Encabezado" VerticalAlignment="Center"/>
+        <StackPanel 
+            Style="{StaticResource MainWindowHeaderStyle}">
+            <Button
+                Style="{StaticResource MainWindowButtonHeaderStyle}"
+                Content="Inicio"
+                Click="BtnInicio_Click" />
+            <Button
+                Style="{StaticResource MainWindowButtonHeaderStyle}"
+                Content="Agregar"
+                Click="BtnAgregar_Click" />
         </StackPanel>
-        
-        
-        <StackPanel DockPanel.Dock="Bottom">
+          
+        <StackPanel Style="{StaticResource MainWindowFooterStyle}">
             <TextBlock Text="Pie de página"/>
         </StackPanel>
-        
-        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
+
+        <Frame
+            x:Name="MainFrame" 
+            NavigationUIVisibility="Hidden" />
     </DockPanel>
 </Window>

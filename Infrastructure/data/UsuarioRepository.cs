@@ -16,7 +16,7 @@ public class UsuarioRepository : IUsuarioRepository
 
     public async Task<Usuario?> GetByNombre(string nombreUsuario)
     {
-        using var conn = await _connectionFactory.CreateConnectionAsync();
+        using var conn = await _connectionFactory.CreateConnection();
         const string sql = "SELECT id, nombre, contraseña FROM usuario_pruebas WHERE nombre = @nombre";
 
         using var cmd = new MySqlCommand(sql, (MySqlConnection)conn);
@@ -24,14 +24,7 @@ public class UsuarioRepository : IUsuarioRepository
 
         using var reader = await cmd.ExecuteReaderAsync();
         if (await reader.ReadAsync())
-        {
-            return new Usuario
-            {
-                Id = reader.GetInt32(0),
-                NombreUsuario = reader.GetString(1),
-                Contraseña = reader.GetString(2)
-            };
-        }
+            return new Usuario(reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
 
         return null;
     }

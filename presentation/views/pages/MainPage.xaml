@@ -8,38 +8,15 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="MainPage">
 
-    <Grid Background="{StaticResource bg-dark}">
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0" Height="50">
-            <Button Content="Ingresar"
-                Width="120"
-                Height="40"
-                Background="#0078D7"
-                Foreground="White"
-                FontWeight="Bold"
-                BorderThickness="0"
-                Padding="10,5"
+    <Grid Style="{StaticResource GridStyle}">
+        <Border Style="{StaticResource MainBorderStyle}">
+            <TextBlock
+                Text="Aqui iran cosas relacionadas a la sesión¿? o reportes talvez?"
+                Background="#fff"
+                Height="20"
+                Width="350"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-                <Button.Effect>
-                    <DropShadowEffect Color="#888" BlurRadius="8" ShadowDepth="2"/>
-                </Button.Effect>
-            </Button>
-
-            <Button Content="Ver"
-                Width="120"
-                Height="40"
-                Background="#E1E1E1"
-                Foreground="#333"
-                FontWeight="SemiBold"
-                BorderThickness="0"
-                Padding="10,5"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-                <Button.Effect>
-                    <DropShadowEffect Color="#888" BlurRadius="8" ShadowDepth="2"/>
-                </Button.Effect>
-            </Button>
-        </StackPanel>
+                VerticalAlignment="Center" />
+        </Border>
     </Grid>
-
 </Page>

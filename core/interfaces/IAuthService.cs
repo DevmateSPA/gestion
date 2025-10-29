@@ -4,5 +4,5 @@ namespace Gestion.core.interfaces;
 
 public interface IAuthService
 {
-    Task<Usuario?> LoginAsync(string nombreUsuario, string contraseña);
+    Task<Usuario?> Login(string nombreUsuario, string contraseña);
 }

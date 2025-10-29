@@ -15,3 +15,5 @@ obj/
 *.csproj.user
 *.suo
 *.user
+
+.env
