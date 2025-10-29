@@ -1,20 +1,20 @@
-﻿<Window x:Class="Gestion.presentation.views.MainWindow"
+﻿<Window x:Class="Gestion.presentation.views.windows.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Gestion.presentation.views"
+        xmlns:local="clr-namespace:Gestion.presentation.views.windows"
         mc:Ignorable="d"
         d:DesignHeight="1080" d:DesignWidth="1920"
         Title="* Cambiame *"
         WindowState="Maximized">
     <DockPanel>
-        <StackPanel DockPanel.Dock="Top" Background="LightBlue" Height="50">
-            <TextBlock Text="Mi Encabezado" FontSize="18" VerticalAlignment="Center"/>
+        <StackPanel DockPanel.Dock="Top">
+            <TextBlock Text="Mi Encabezado" VerticalAlignment="Center"/>
         </StackPanel>
         
         
-        <StackPanel DockPanel.Dock="Bottom" Background="LightGray" Height="30">
+        <StackPanel DockPanel.Dock="Bottom">
             <TextBlock Text="Pie de página"/>
         </StackPanel>
         

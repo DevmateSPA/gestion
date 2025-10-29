@@ -13,21 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Gestion.presentation.views
+namespace Gestion.presentation.views.pages
 {
     /// <summary>
-    /// Lógica de interacción para LoginPage.xaml
+    /// Lógica de interacción para MainPage.xaml
     /// </summary>
-    public partial class LoginPage : Page
+    public partial class MainPage : Page
     {
-        public LoginPage()
+        public MainPage()
         {
             InitializeComponent();
-        }
-
-        private void BtnInicioSesion_Click(object sender, RoutedEventArgs e)
-        {
-            this.NavigationService.Navigate(new MainPage());
         }
     }
 }

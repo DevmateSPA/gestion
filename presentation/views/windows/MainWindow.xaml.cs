@@ -8,8 +8,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Gestion.presentation.views.pages;
 
-namespace Gestion.presentation.views;
+namespace Gestion.presentation.views.windows;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
