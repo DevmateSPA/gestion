@@ -1,0 +1,16 @@
+﻿<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- #region Fuente-->
+    <FontFamily x:Key="font-primary">Times New Roman</FontFamily>
+    <!--#endregion-->
+
+    <!--#region background-->
+    <SolidColorBrush x:Key="bg-light" Color="#f8f9fa" />
+    <SolidColorBrush x:Key="bg-dark" Color="#212529" />
+
+    <SolidColorBrush x:Key="bg-card-light" Color="#949494" />
+    <SolidColorBrush x:Key="bg-card-dark" Color="#31709C" />
+    <!--#endregion-->
+</ResourceDictionary>
