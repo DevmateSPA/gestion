@@ -25,7 +25,7 @@ namespace Gestion.presentation.views.pages
             InitializeComponent();
         }
 
-        private void BtnInicioSesion_Click(object sender, RoutedEventArgs e)
+        private void BtnIniciarSesion_Click(object sender, RoutedEventArgs e)
         {
             this.NavigationService.Navigate(new MainPage());
         }

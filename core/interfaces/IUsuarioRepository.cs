@@ -1,6 +1,8 @@
+using Gestion.core.model;
+
 namespace Gestion.core.interfaces;
 
 public interface IUsuarioRepository
 {
-    // cosas
+    Task<Usuario?> GetByNombre(string nombre);
 }
