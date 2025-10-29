@@ -1,31 +1,24 @@
 using System.Windows;
 using Gestion.core.interfaces;
 
+namespace Gestion.presentation.viewmodel;
+
 public class LoginViewModel
 {
-    private readonly IUsuarioRepository _usuarioRepository;
+    private readonly IAuthService _authService;
 
-    public LoginViewModel(IUsuarioRepository usuarioRepository)
+    public LoginViewModel(IAuthService authService)
     {
-        this._usuarioRepository = usuarioRepository;
+        _authService = authService;
     }
 
-    public async Task IniciarSesion(string nombreUsuario, string contraseña)
+    public async Task<string> IniciarSesion(string nombreUsuario, string contraseña)
     {
-        var usuario = await this._usuarioRepository.GetByNombre(nombreUsuario);
+        var usuario = await _authService.LoginAsync(nombreUsuario, contraseña);
 
-        if (usuario is null)
-        {
-            MessageBox.Show("Usuario no encontrado");
-            return;
-        }
+        if (usuario == null)
+            return "Usuario o contraseña incorrecta";
 
-        if (usuario.Contraseña != contraseña)
-        {
-            MessageBox.Show("Contraseña Incorrecta");
-            return;
-        }
-
-        MessageBox.Show("BIenvenido, {usuario.NombreUsuario}!");
+        return $"Bienvenido, {usuario.NombreUsuario}!";
     }
 }
