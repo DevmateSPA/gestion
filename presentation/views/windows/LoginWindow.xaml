@@ -1,0 +1,26 @@
+﻿<Window x:Class="Gestion.presentation.views.windows.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Gestion.presentation.views.windows"
+        mc:Ignorable="d"
+        Title="LoginWindow" Height="450" Width="800" Loaded="LoginWindow_Loaded">
+    <Grid Style="{StaticResource GridStyle}">
+        <!-- Tarjeta central -->
+        <Border Style="{StaticResource LoginBorderStyle}">
+            <StackPanel>
+                <TextBlock Text="Iniciar Sesión" Style="{StaticResource LoginTitleStyle}"/>
+                <StackPanel Margin="0,0,0,10">
+                    <TextBlock Text="Usuario:"/>
+                    <TextBox x:Name="txtUsuario" Width="250" Height="25" Margin="0,5,0,0" HorizontalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Margin="0,0,0,20">
+                    <TextBlock Text="Contraseña:"/>
+                    <PasswordBox x:Name="txtContraseña" Width="250" Height="25" Margin="0,5,0,0" HorizontalAlignment="Center"/>
+                </StackPanel>
+                <Button Content="Iniciar Sesión" Style="{StaticResource LoginButtonStyle}" Click="BtnIniciarSesion_Click" IsDefault="True"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
