@@ -18,3 +18,4 @@ C:\Users\Jose\Desktop\DevMate\Proyectos\imprenta\Gestion\obj\Debug\net9.0-window
 C:\Users\Jose\Desktop\DevMate\Proyectos\imprenta\Gestion\obj\Debug\net9.0-windows\Gestion.pdb
 C:\Users\Jose\Desktop\DevMate\Proyectos\imprenta\Gestion\obj\Debug\net9.0-windows\Gestion.genruntimeconfig.cache
 C:\Users\Jose\Desktop\DevMate\Proyectos\imprenta\Gestion\obj\Debug\net9.0-windows\ref\Gestion.dll
+C:\Users\Jose\Desktop\DevMate\Proyectos\imprenta\Gestion\obj\Debug\net9.0-windows\Gestion.sourcelink.json

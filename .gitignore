@@ -1,0 +1,19 @@
+# Build
+bin/
+obj/
+
+# NuGet auto files
+*.nuget.dgspec.json
+*.nuget.g.props
+*.nuget.g.targets
+
+# IDEs
+.vscode/
+.vs/
+
+# Visual Studio
+*.csproj.user
+*.suo
+*.user
+
+.env
