@@ -6,23 +6,12 @@ public static class DatabaseConfig
 {
     static DatabaseConfig()
     {
-        // Intenta primero con el directorio base (bin/Debug o bin/Release)
-        var basePath = AppDomain.CurrentDomain.BaseDirectory;
-        var envPath = Path.Combine(basePath, ".env");
-
-        // Si no existe ahí, intenta subir hasta encontrarlo
-        if (!File.Exists(envPath))
-        {
-            var dir = new DirectoryInfo(basePath);
-            while (dir != null && !File.Exists(Path.Combine(dir.FullName, ".env")))
-                dir = dir.Parent;
-
-            if (dir != null)
-                envPath = Path.Combine(dir.FullName, ".env");
-        }
+        // Ruta explícita al archivo .env en la raíz del proyecto
+        string projectRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..");
+        string envPath = Path.GetFullPath(Path.Combine(projectRoot, ".env"));
 
         if (!File.Exists(envPath))
-            throw new FileNotFoundException($".env no encontrado en {basePath} ni en carpetas superiores.");
+            throw new FileNotFoundException($".env no encontrado en {envPath}");
 
         DotEnv.Load(new DotEnvOptions(envFilePaths: new[] { envPath }));
     }
