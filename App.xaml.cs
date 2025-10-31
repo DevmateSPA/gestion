@@ -1,7 +1,5 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
-using Gestion.core.interfaces;
+﻿using System.Windows;
+using Gestion.core.interfaces.service;
 using Gestion.core.services;
 using Gestion.Infrastructure.data;
 using Gestion.Infrastructure.Services;

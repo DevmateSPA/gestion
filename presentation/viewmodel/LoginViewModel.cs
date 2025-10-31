@@ -1,5 +1,4 @@
-using System.Windows;
-using Gestion.core.interfaces;
+using Gestion.core.interfaces.service;
 
 namespace Gestion.presentation.viewmodel;
 

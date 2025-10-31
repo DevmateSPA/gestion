@@ -1,19 +1,11 @@
-using Gestion.core.interfaces;
+using Gestion.core.interfaces.repository;
+using Gestion.core.interfaces.service;
 using Gestion.core.model;
 
 namespace Gestion.core.services;
 
-public class ClienteService : IClienteService
+public class ClienteService : BaseService<Cliente>, IClienteService
 {
-    private readonly IClienteRepository _clientRepository;
-
     public ClienteService(IClienteRepository clienteRepository)
-    {
-        _clientRepository = clienteRepository;
-    }
-
-    public async Task<List<Cliente>> GetClientes()
-    {
-        return await _clientRepository.GetClientes();
-    }
+        :base(clienteRepository) { }
 }

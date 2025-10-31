@@ -1,6 +1,6 @@
 using Gestion.core.model;
 
-namespace Gestion.core.interfaces;
+namespace Gestion.core.interfaces.repository;
 
 public interface IUsuarioRepository
 {

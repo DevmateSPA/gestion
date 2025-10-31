@@ -1,4 +1,4 @@
-namespace Gestion.core.interfaces;
+namespace Gestion.core.interfaces.model;
 
 public interface IModel
 {

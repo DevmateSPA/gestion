@@ -1,4 +1,4 @@
-using Gestion.core.interfaces;
+using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
@@ -6,7 +6,7 @@ public class Cliente : IModel
 {
     public int Id { get; set; }
     public string Rut { get; private set; } = string.Empty;
-    public string RazonSocial { get; private set; } = string.Empty;
+    public string Razon_Social { get; private set; } = string.Empty;
     public string Giro { get; private set; } = string.Empty;
     public string Direccion { get; private set; } = string.Empty;
     public string Ciudad { get; private set; } = string.Empty;
@@ -37,7 +37,7 @@ public class Cliente : IModel
         long saldo)
     {
         this.Rut = rut;
-        this.RazonSocial = razonSocial;
+        this.Razon_Social = razonSocial;
         this.Giro = giro;
         this.Direccion = direccion;
         this.Ciudad = ciudad;

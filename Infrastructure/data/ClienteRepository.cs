@@ -1,4 +1,4 @@
-using Gestion.core.interfaces;
+using Gestion.core.interfaces.repository;
 using Gestion.core.model;
 using Gestion.Infrastructure.Services;
 using MySql.Data.MySqlClient;

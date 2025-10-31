@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using Gestion.core.interfaces;
+using Gestion.core.interfaces.service;
 using Gestion.core.model;
 
 namespace Gestion.presentation.viewmodel;
@@ -16,7 +16,7 @@ public class ClienteViewModel : Window
     
     public async Task LoadClientes()
     {
-        var lista = await _clienteService.GetClientes();
+        var lista = await _clienteService.FindAll();
         Clientes.Clear();
         foreach (var cliente in lista)
             Clientes.Add(cliente);

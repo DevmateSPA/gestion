@@ -1,6 +1,5 @@
 using MySql.Data.MySqlClient;
 using System.Data;
-using System.Threading.Tasks;
 
 namespace Gestion.Infrastructure.Services;
 

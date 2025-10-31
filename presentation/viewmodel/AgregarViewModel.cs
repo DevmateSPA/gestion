@@ -1,6 +1,5 @@
-using Gestion.core.interfaces;
+using Gestion.core.interfaces.service;
 using Gestion.core.model;
-using Gestion.core.services;
 
 namespace Gestion.presentation.viewmodel;
 
@@ -15,6 +14,6 @@ public class AgregarViewModel
 
     public async Task<List<Cliente>> GetClientes()
     {
-        return await _clienteService.GetClientes();
+        return await _clienteService.FindAll();
     }
 }

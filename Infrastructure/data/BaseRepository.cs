@@ -1,6 +1,7 @@
 using System.Data.Common;
 using System.Reflection;
-using Gestion.core.interfaces;
+using Gestion.core.interfaces.repository;
+using Gestion.core.interfaces.model;
 using Gestion.Infrastructure.Services;
 using MySql.Data.MySqlClient;
 
@@ -51,7 +52,23 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return default;
     }
 
-    public async Task<bool> DeteleById(int id)
+    public async Task<List<T>> FindAll()
+    {
+        using var conn = await _connectionFactory.CreateConnection();
+        string sql = $"SELECT * FROM {_tableName}";
+
+        using var cmd = new MySqlCommand(sql, (MySqlConnection)conn);
+        using var reader = await cmd.ExecuteReaderAsync();
+
+        var entities = new List<T>();
+        while (await reader.ReadAsync())
+        {
+            entities.Add(MapEntity(reader));
+        }
+        return entities;
+    }
+
+    public async Task<bool> DeleteById(int id)
     {
         using var conn = await _connectionFactory.CreateConnection();
         string sql = $"DELETE FROM {_tableName} WHERE id = @id";

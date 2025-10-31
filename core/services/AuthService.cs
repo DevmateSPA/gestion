@@ -1,4 +1,5 @@
-using Gestion.core.interfaces;
+using Gestion.core.interfaces.repository;
+using Gestion.core.interfaces.service;
 using Gestion.core.model;
 
 namespace Gestion.core.services;
