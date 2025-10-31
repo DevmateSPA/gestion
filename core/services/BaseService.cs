@@ -13,7 +13,7 @@ public abstract class BaseService<T> : IBaseService<T> where T : IModel
         _baseRepository = baseRepository;
     }
 
-    public async Task<T> FindById(int id)
+    public async Task<T?> FindById(int id)
     {
         return await _baseRepository.FindById(id);
     }
