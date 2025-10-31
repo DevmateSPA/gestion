@@ -5,19 +5,15 @@ using MySql.Data.MySqlClient;
 
 namespace Gestion.Infrastructure.data;
 
-public class ClienteRepository : IClienteRepository
+public class ClienteRepository : BaseRepository<Cliente>, IClienteRepository
 {
-    private readonly MySqlConnectionFactory _connectionFactory;
-
     public ClienteRepository(MySqlConnectionFactory connectionFactory)
-    {
-        _connectionFactory = connectionFactory;
-    }
+        : base(connectionFactory, "cliente") {}
 
     public async Task<List<Cliente>> GetClientes()
     {
         using var conn = await _connectionFactory.CreateConnection();
-        const string sql = "SELECT * FROM cliente";
+        string sql = $"SELECT * FROM {_tableName}";
 
         using var cmd = new MySqlCommand(sql, (MySqlConnection)conn);
 
@@ -47,5 +43,10 @@ public class ClienteRepository : IClienteRepository
         }
 
         return clientes;
+    }
+
+    public override Task<Cliente> Save(Cliente entity)
+    {
+        throw new NotImplementedException();
     }
 }

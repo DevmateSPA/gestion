@@ -1,14 +1,20 @@
 using System.Windows;
 using System.Windows.Input;
+using Gestion.presentation.viewmodel;
 
 namespace Gestion.presentation.views.windows
 {
     public partial class ClienteModalPage : Window
     {
+        private readonly ClienteViewModel _viewModel;
         public ClienteModalPage()
         {
             InitializeComponent();
+            _viewModel = new ClienteViewModel(App.ClienteService);
+            DataContext = _viewModel;
             Title = $"Clientes";
+
+            Loaded += ClienteModalPage_Loaded;
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -44,6 +50,11 @@ namespace Gestion.presentation.views.windows
             else if (e.Key == Key.Enter) BtnEditar_Click(sender, e);
             else if (e.Key == Key.F2) BtnBuscar_Click(sender, e);
             else if (e.Key == Key.F4) BtnImprimir_Click(sender, e);
+        }
+
+        private async void ClienteModalPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            await _viewModel.LoadClientes();
         }
     }
 }

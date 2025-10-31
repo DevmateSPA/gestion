@@ -1,7 +1,10 @@
+using Gestion.core.interfaces;
+
 namespace Gestion.core.model;
 
-public class Cliente
+public class Cliente : IModel
 {
+    public int Id { get; set; }
     public string Rut { get; private set; } = string.Empty;
     public string RazonSocial { get; private set; } = string.Empty;
     public string Giro { get; private set; } = string.Empty;
@@ -17,6 +20,7 @@ public class Cliente
     public long habe { get; private set; }
     public long saldo { get; private set; }
 
+    public Cliente() { }
     public Cliente(string rut,
         string razonSocial,
         string giro,

@@ -1,11 +1,24 @@
+using System.Collections.ObjectModel;
 using System.Windows;
+using Gestion.core.interfaces;
+using Gestion.core.model;
 
 namespace Gestion.presentation.viewmodel;
 
 public class ClienteViewModel : Window
 {
-    public ClienteViewModel(int numero)
+    private readonly IClienteService _clienteService;
+    public ObservableCollection<Cliente> Clientes { get; set; } = new ObservableCollection<Cliente>();
+    public ClienteViewModel(IClienteService clienteService)
     {
-        Title = $"Ventana Modal {numero}";
+        _clienteService = clienteService;
+    }
+    
+    public async Task LoadClientes()
+    {
+        var lista = await _clienteService.GetClientes();
+        Clientes.Clear();
+        foreach (var cliente in lista)
+            Clientes.Add(cliente);
     }
 }
