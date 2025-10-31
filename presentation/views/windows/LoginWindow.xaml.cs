@@ -31,19 +31,19 @@ public partial class LoginWindow : Window
 
     private async void BtnIniciarSesion_Click(object sender, RoutedEventArgs e)
     {
-        string nombreUsuario = txtUsuario.Text;
+        /*string nombreUsuario = txtUsuario.Text;
         string contraseña = txtContraseña.Password;
 
         string mensaje = await _viewModel.IniciarSesion(nombreUsuario, contraseña);
 
         if (mensaje.StartsWith("Bienvenido"))
-        {
+        {*/
             var main = new MainWindow();
             main.Show();
 
             this.Close();
-        }
+        /*}
         else
-            MessageBox.Show(mensaje);
+            MessageBox.Show(mensaje);*/
     }
 }

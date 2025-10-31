@@ -29,7 +29,7 @@
                 Background="#fff"/>
         </StackPanel>
 
-        <ListView x:Name="ClientesListView" Width="1920" Height="920">
+        <ListView x:Name="ClientesListView" Width="1920" Height="920"  Margin="0,20,0,0"> 
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Rut" DisplayMemberBinding="{Binding Rut}" Width="100"/>

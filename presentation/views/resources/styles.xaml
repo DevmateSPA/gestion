@@ -48,13 +48,20 @@
     <!-- #endregion -->
     
     <!--#region Window Header-->
-    <Style x:Key="MainWindowHeaderStyle" TargetType="StackPanel">
-        <Setter Property="DockPanel.Dock" Value="Top" />
-        <Setter Property="Background" Value="{StaticResource bg-card-light}" />
-        <Setter Property="VerticalAlignment" Value="Top" />
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="Orientation" Value="Horizontal" />
-    </Style>
+<Style x:Key="MainWindowHeaderStyle" TargetType="StackPanel">
+    <Setter Property="DockPanel.Dock" Value="Top" />
+    <Setter Property="Background" Value="{StaticResource bg-card-light}" />
+    <Setter Property="VerticalAlignment" Value="Top" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="Orientation" Value="Horizontal" />
+
+    <Style.Triggers>
+        <!-- Si algún elemento dentro del StackPanel tiene foco -->
+        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+            <Setter Property="Background" Value="#E0E0E0"/> <!-- color más claro -->
+        </Trigger>
+    </Style.Triggers>
+</Style>
 
     <Style x:Key="MainWindowButtonHeaderStyle" TargetType="Button">
         <Setter Property="Width" Value="250"/>

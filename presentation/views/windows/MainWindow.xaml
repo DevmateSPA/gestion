@@ -8,23 +8,98 @@
         d:DesignHeight="1080"
         d:DesignWidth="1920"
         Title="* Cambiame *"
-        WindowState="Maximized">
+        WindowState="Maximized"
+        Loaded="Window_Loaded">
+
+        <Window.Resources>
+            <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                <Setter Property="Background" Value="#1E1E1E"/> 
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Padding" Value="15,8"/>
+                <Style.Triggers>
+                    <!-- Hover -->
+                    <Trigger Property="IsHighlighted" Value="True">
+                        <Setter Property="Background" Value="#333333"/> 
+                        <Setter Property="Foreground" Value="Black"/>
+                    </Trigger>
+                    <!-- Submenús -->
+                    <Trigger Property="Role" Value="SubmenuItem">
+                        <Setter Property="Background" Value="#1E1E1E"/>
+                        <Setter Property="Foreground" Value="White"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </Window.Resources>
 
     <DockPanel>
 
         <!-- Header -->
-        <StackPanel DockPanel.Dock="Top"
-                    Style="{StaticResource MainWindowHeaderStyle}"
-                    Orientation="Horizontal">
-            <Button Style="{StaticResource MainWindowButtonHeaderStyle}"
-                    Content="Inicio"
-                    Click="BtnInicio_Click"
-                    Margin="5,0"/>
-            <Button Style="{StaticResource MainWindowButtonHeaderStyle}"
-                    Content="Agregar"
-                    Click="BtnAgregar_Click"
-                    Margin="5,0"/>
-        </StackPanel>
+        <Menu DockPanel.Dock="Top"             
+             Background="#333"
+            Foreground="White"
+            FontSize="20"
+            FontFamily="Segoe UI"
+            Padding="10"
+            Height="50"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Stretch">
+            
+            <MenuItem x:Name="MenuEntradas"  Header="Entradas">
+                <MenuItem Header="Información General">
+                    <MenuItem Header="Información de Bancos" Click="MenuItemInfGral_Click" Tag="ModuloBanco"/>
+                    <MenuItem Header="Información de Clientes" Click="MenuItemInfGral_Click" Tag="ModuloCliente"/>
+                    <MenuItem Header="Información de Proveedores" Click="MenuItemInfGral_Click" Tag="ModuloProveedor"/>
+                    <MenuItem Header="Información de Grupos" Click="MenuItemInfGral_Click" Tag="ModuloGrupo"/>
+                    <MenuItem Header="Información de Productos" Click="MenuItemInfGral_Click" Tag="ModuloProducto"/>
+                    <MenuItem Header="Información de Maquinas" Click="MenuItemInfGral_Click" Tag="ModuloMaquina"/>
+                    <MenuItem Header="Información de Operarios" Click="MenuItemInfGral_Click" Tag="ModuloOperador"/>
+                </MenuItem>
+                <MenuItem Header="Información de Costos"/>
+                <MenuItem Header="Documentos de Venta">
+                    <MenuItem Header="Gupias de Despacho" Click="MenuItemDocVen_Click" Tag="ModuloGuia"/>
+                    <MenuItem Header="Facturas" Click="MenuItemDocVen_Click" Tag="ModuloFactura"/>
+                    <MenuItem Header="Notas de Crédito" Click="MenuItemDocVen_Click" Tag="ModuloNotaCredito"/>
+                    <MenuItem Header="Documentos Nulos" Click="MenuItemDocVen_Click" Tag="ModuloDocNulo"/>
+                    <MenuItem Header="Pagos/Abonos de Facturas" Click="MenuItemDocVen_Click" Tag="ModuloPagoAbono"/>
+                    <MenuItem Header="Cancelación de Cheques" Click="MenuItemDocVen_Click" Tag="ModuloCancelacion"/>
+                </MenuItem>
+                <MenuItem Header="Documentos de Compra">
+                    <MenuItem Header="Facturas" Click="MenuItemDocCom_Click" Tag="ModuloFactura"/>
+                    <MenuItem Header="Notas de Crédito" Click="MenuItemDocCom_Click" Tag="ModuloNotaCredito"/>
+                    <MenuItem Header="Pagos/Abonos de Facturas" Click="MenuItemDocCom_Click" Tag="ModuloPagoAbono"/>
+                    <MenuItem Header="Cancelación de Cheques" Click="MenuItemDocCom_Click" Tag="ModuloCancelacion"/>
+                </MenuItem>
+                <MenuItem Header="Control Interno">
+                    <MenuItem Header="Orden de Trabajo" Click="MenuItemControl_Click" Tag="ModuloOrden"/>
+                    <MenuItem Header="Orden de Trabajo Pelicula" Click="MenuItemControl_Click" Tag="ModuloOrdenPel"/>
+                    <MenuItem Header="Salida de Productos" Click="MenuItemControl_Click" Tag="ModuloSalida"/>
+                    <MenuItem Header="Ajustes de Stock" Click="MenuItemControl_Click" Tag="ModuloAjuste"/>
+                    <MenuItem Header="Calculo de Costos" Click="MenuItemControl_Click" Tag="ModuloCalculo"/>
+                    <MenuItem Header="Cotizaciones" Click="MenuItemControl_Click" Tag="ModuloCotizacion"/>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="Salidas">
+                <MenuItem Header="Consulta/Informe de Ctas. Ctes (Clientes)"/>
+                <MenuItem Header="Consulta/Informe de Ctas. Ctes (Proveedores)"/>
+                <MenuItem Header="Consulta/Informe de Existencias"/>
+            </MenuItem>
+            <MenuItem Header="Reportes">
+                <MenuItem Header="Guías por Facturar"/>
+                <MenuItem Header="Libro de Ventas"/>
+                <MenuItem Header="Vcto. de Facturas"/>
+                <MenuItem Header="Vcto. de Cheques"/>
+                <MenuItem Header="O.T. Impagas por Cliente"/>
+                <MenuItem Header="O.T. Impagas por Cliente (Pel)"/>
+                <MenuItem Header="Correlativos O.T."/>
+                <MenuItem Header="Correlativos O.T. (Pel)"/>
+                <MenuItem Header="Pendientes de Producción"/>
+                <MenuItem Header="Pendientes por Maquina"/>
+            </MenuItem>
+            <MenuItem Header="Procesos"/>
+            <MenuItem Header="Salir" Click="BtnSalir_Click"/>
+            <MenuItem Header="Agregar" Click="BtnAgregar_Click"/>
+        </Menu>
+
 
         <!-- Footer: Links numerados -->
         <StackPanel DockPanel.Dock="Bottom"
