@@ -1,15 +1,16 @@
+using Gestion.core.interfaces.database;
 using MySql.Data.MySqlClient;
 using System.Data;
 
 namespace Gestion.Infrastructure.Services;
 
-public class MySqlConnectionFactory
+public class MySqlConnectionFactory : IDbConnectionFactory
 {
     private readonly string _connectionString;
 
     public MySqlConnectionFactory()
     {
-        _connectionString = "Server=0.tcp.sa.ngrok.io;Port=12639;Database=imprenta;User ID=root;Password=12345;";
+        _connectionString = DatabaseConfig.GetConnectionString();
     }
 
     /// <summary>

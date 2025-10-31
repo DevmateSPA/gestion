@@ -1,8 +1,10 @@
+using Gestion.core.interfaces.model;
+
 namespace Gestion.core.model;
 
-public class Usuario
+public class Usuario : IModel
 {
-    public int Id { get; private set; }
+    public int Id { get; set; }
     public string NombreUsuario { get; private set; } = string.Empty;
     public string Contraseña { get; private set; } = string.Empty;
 
@@ -12,4 +14,6 @@ public class Usuario
         this.NombreUsuario = nombreUsuario;
         this.Contraseña = contraseña;
     }
+
+    public Usuario() {}
 }

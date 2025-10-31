@@ -3,16 +3,16 @@ using System.Reflection;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.model;
 using Gestion.Infrastructure.Services;
-using MySql.Data.MySqlClient;
+using Gestion.core.interfaces.database;
 
 namespace Gestion.Infrastructure.data;
 
 public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, new()
 {
-    protected readonly MySqlConnectionFactory _connectionFactory;
+    protected readonly IDbConnectionFactory _connectionFactory;
     protected readonly string _tableName;
 
-    protected BaseRepository(MySqlConnectionFactory connectionFactory, string tableName)
+    protected BaseRepository(IDbConnectionFactory connectionFactory, string tableName)
     {
         _connectionFactory = connectionFactory;
         _tableName = tableName;
@@ -40,10 +40,13 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
     public async Task<T?> FindById(int id)
     {
         using var conn = await _connectionFactory.CreateConnection();
-        string sql = $"SELECT * FROM {_tableName} WHERE id = @id";
+        using var cmd = (DbCommand)conn.CreateCommand();
+        cmd.CommandText = $"SELECT * FROM {_tableName} WHERE id = @id";
 
-        using var cmd = new MySqlCommand(sql, (MySqlConnection)conn);
-        cmd.Parameters.AddWithValue("@id", id);
+        var param = cmd.CreateParameter();
+        param.ParameterName = "@id";
+        param.Value = id;
+        cmd.Parameters.Add(param);
 
         using var reader = await cmd.ExecuteReaderAsync();
         if (await reader.ReadAsync())
@@ -55,9 +58,9 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
     public async Task<List<T>> FindAll()
     {
         using var conn = await _connectionFactory.CreateConnection();
-        string sql = $"SELECT * FROM {_tableName}";
+        using var cmd = (DbCommand)conn.CreateCommand();
+        cmd.CommandText = $"SELECT * FROM {_tableName}";
 
-        using var cmd = new MySqlCommand(sql, (MySqlConnection)conn);
         using var reader = await cmd.ExecuteReaderAsync();
 
         var entities = new List<T>();
@@ -65,16 +68,20 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         {
             entities.Add(MapEntity(reader));
         }
+
         return entities;
     }
 
     public async Task<bool> DeleteById(int id)
     {
         using var conn = await _connectionFactory.CreateConnection();
-        string sql = $"DELETE FROM {_tableName} WHERE id = @id";
+        using var cmd = (DbCommand)conn.CreateCommand();
+        cmd.CommandText = $"DELETE FROM {_tableName} WHERE id = @id";
 
-        using var cmd = new MySqlCommand(sql, (MySqlConnection)conn);
-        cmd.Parameters.AddWithValue("@id", id);
+        var param = cmd.CreateParameter();
+        param.ParameterName = "@id";
+        param.Value = id;
+        cmd.Parameters.Add(param);
 
         int affected = await cmd.ExecuteNonQueryAsync();
         return affected > 0;

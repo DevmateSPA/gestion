@@ -1,12 +1,12 @@
+using Gestion.core.interfaces.database;
 using Gestion.core.interfaces.repository;
 using Gestion.core.model;
-using Gestion.Infrastructure.Services;
 
 namespace Gestion.Infrastructure.data;
 
 public class MaquinaRepository : BaseRepository<Maquina>, IMaquinaRepository
 {
-    public MaquinaRepository(MySqlConnectionFactory connectionFactory)
+    public MaquinaRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "maquina") {}
 
     public override Task<Maquina> Save(Maquina entity)

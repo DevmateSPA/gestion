@@ -1,23 +1,19 @@
+using Gestion.core.interfaces.database;
 using Gestion.core.interfaces.repository;
 using Gestion.core.model;
-using Gestion.Infrastructure.Services;
 using MySql.Data.MySqlClient;
 
 namespace Gestion.Infrastructure.data;
 
-public class UsuarioRepository : IUsuarioRepository
+public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
 {
-    private readonly MySqlConnectionFactory _connectionFactory;
-
-    public UsuarioRepository(MySqlConnectionFactory connectionFactory)
-    {
-        _connectionFactory = connectionFactory;
-    }
+    public UsuarioRepository(IDbConnectionFactory connectionFactory)
+        : base(connectionFactory, "usuario_pruebas") {}
 
     public async Task<Usuario?> GetByNombre(string nombreUsuario)
     {
         using var conn = await _connectionFactory.CreateConnection();
-        const string sql = "SELECT id, nombre, contraseña FROM usuario_pruebas WHERE nombre = @nombre";
+        string sql = $"SELECT id, nombre, contraseña FROM {_tableName} WHERE nombre = @nombre";
 
         using var cmd = new MySqlCommand(sql, (MySqlConnection)conn);
         cmd.Parameters.Add("@nombre", MySqlDbType.VarChar, 100).Value = nombreUsuario;
@@ -27,5 +23,10 @@ public class UsuarioRepository : IUsuarioRepository
             return new Usuario(reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
 
         return null;
+    }
+
+    public override Task<Usuario> Save(Usuario entity)
+    {
+        throw new NotImplementedException();
     }
 }

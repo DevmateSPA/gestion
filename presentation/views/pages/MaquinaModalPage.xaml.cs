@@ -7,10 +7,10 @@ namespace Gestion.presentation.views.windows
     public partial class MaquinaModalPage : Window
     {
         private readonly MaquinaViewModel _viewModel;
-        public MaquinaModalPage()
+        public MaquinaModalPage(MaquinaViewModel maquinaViewModel)
         {
             InitializeComponent();
-            _viewModel = new MaquinaViewModel(App.MaquinaService);
+            _viewModel = maquinaViewModel;
             DataContext = _viewModel;
             Title = $"Grupos";
 

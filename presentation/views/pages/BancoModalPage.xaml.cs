@@ -7,10 +7,10 @@ namespace Gestion.presentation.views.windows
     public partial class BancoModalPage : Window
     {
         private readonly BancoViewModel _viewModel;
-        public BancoModalPage()
+        public BancoModalPage(BancoViewModel viewModel)
         {
             InitializeComponent();
-            _viewModel = new BancoViewModel(App.BancoService);
+            _viewModel = viewModel;
             DataContext = _viewModel;
             Title = $"Bancos";
 

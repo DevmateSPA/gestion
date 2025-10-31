@@ -7,10 +7,10 @@ namespace Gestion.presentation.views.windows
     public partial class ProductoModalPage : Window
     {
         private readonly ProductoViewModel _viewModel;
-        public ProductoModalPage()
+        public ProductoModalPage(ProductoViewModel productoViewModel)
         {
             InitializeComponent();
-            _viewModel = new ProductoViewModel(App.ProductoService);
+            _viewModel = productoViewModel;
             DataContext = _viewModel;
             Title = $"Productos";
 

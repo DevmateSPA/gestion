@@ -7,10 +7,10 @@ namespace Gestion.presentation.views.windows
     public partial class OperarioModalPage : Window
     {
         private readonly OperarioViewModel _viewModel;
-        public OperarioModalPage()
+        public OperarioModalPage(OperarioViewModel operarioViewModel)
         {
             InitializeComponent();
-            _viewModel = new OperarioViewModel(App.OperadorService);
+            _viewModel = operarioViewModel;
             DataContext = _viewModel;
             Title = $"Grupos";
 

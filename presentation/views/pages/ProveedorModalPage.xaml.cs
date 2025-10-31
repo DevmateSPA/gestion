@@ -7,10 +7,10 @@ namespace Gestion.presentation.views.windows
     public partial class ProveedorModalPage : Window
     {
         private readonly ProveedorViewModel _viewModel;
-        public ProveedorModalPage()
+        public ProveedorModalPage(ProveedorViewModel proveedorViewModel)
         {
             InitializeComponent();
-            _viewModel = new ProveedorViewModel(App.ProveedorService);
+            _viewModel = proveedorViewModel;
             DataContext = _viewModel;
             Title = $"Proveedores";
 

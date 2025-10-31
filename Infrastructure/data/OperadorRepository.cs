@@ -1,12 +1,12 @@
+using Gestion.core.interfaces.database;
 using Gestion.core.interfaces.repository;
 using Gestion.core.model;
-using Gestion.Infrastructure.Services;
 
 namespace Gestion.Infrastructure.data;
 
 public class OperadorRepository : BaseRepository<Operador>, IOperadorRepository
 {
-    public OperadorRepository(MySqlConnectionFactory connectionFactory)
+    public OperadorRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "operador") {}
 
     public override Task<Operador> Save(Operador entity)

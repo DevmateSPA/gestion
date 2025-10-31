@@ -18,10 +18,10 @@ namespace Gestion.presentation.views.windows;
 public partial class LoginWindow : Window
 {
     private readonly LoginViewModel _viewModel;
-    public LoginWindow()
+    public LoginWindow(LoginViewModel loginViewModel)
     {
         InitializeComponent();
-        _viewModel = new LoginViewModel(App.AuthService);
+        _viewModel = loginViewModel;
     }
 
     private void LoginWindow_Loaded(object sender, RoutedEventArgs e)

@@ -8,10 +8,10 @@ namespace Gestion.presentation.views.windows
     public partial class GrupoModalPage : Window
     {
         private readonly GrupoViewModel _viewModel;
-        public GrupoModalPage()
+        public GrupoModalPage(GrupoViewModel grupoViewModel)
         {
             InitializeComponent();
-            _viewModel = new GrupoViewModel(App.GrupoService);
+            _viewModel = grupoViewModel;
             DataContext = _viewModel;
             Title = $"Grupos";
 

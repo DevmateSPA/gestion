@@ -7,10 +7,10 @@ namespace Gestion.presentation.views.windows
     public partial class ClienteModalPage : Window
     {
         private readonly ClienteViewModel _viewModel;
-        public ClienteModalPage()
+        public ClienteModalPage(ClienteViewModel clienteViewModel)
         {
             InitializeComponent();
-            _viewModel = new ClienteViewModel(App.ClienteService);
+            _viewModel = clienteViewModel;
             DataContext = _viewModel;
             Title = $"Clientes";
 

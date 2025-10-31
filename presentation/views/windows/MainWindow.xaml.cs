@@ -1,15 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Gestion.presentation.views.pages;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Gestion.presentation.views.windows
 {
@@ -26,13 +19,13 @@ namespace Gestion.presentation.views.windows
 
             Links = new List<LinkItem>
             {
-                new LinkItem { Nombre = "Bancos", CrearVentana = () => new BancoModalPage() },
-                new LinkItem { Nombre = "Clientes", CrearVentana = () => new ClienteModalPage() },
-                new LinkItem { Nombre = "Proveedores", CrearVentana = () => new ProveedorModalPage() },
-                new LinkItem { Nombre = "Grupos", CrearVentana = () => new GrupoModalPage() },
-                new LinkItem { Nombre = "Productos", CrearVentana = () => new ProductoModalPage() },
-                new LinkItem { Nombre = "Máquinas", CrearVentana = () => new MaquinaModalPage() },
-                new LinkItem { Nombre = "Operarios", CrearVentana = () => new OperarioModalPage() }
+                new LinkItem { Nombre = "Bancos", CrearVentana = () => App.ServiceProvider.GetRequiredService<BancoModalPage>() },
+                new LinkItem { Nombre = "Clientes", CrearVentana = () => App.ServiceProvider.GetRequiredService<ClienteModalPage>() },
+                new LinkItem { Nombre = "Proveedores", CrearVentana = () => App.ServiceProvider.GetRequiredService<ProveedorModalPage>() },
+                new LinkItem { Nombre = "Grupos", CrearVentana = () => App.ServiceProvider.GetRequiredService<GrupoModalPage>() },
+                new LinkItem { Nombre = "Productos", CrearVentana = () => App.ServiceProvider.GetRequiredService<ProductoModalPage>() },
+                new LinkItem { Nombre = "Máquinas", CrearVentana = () => App.ServiceProvider.GetRequiredService<MaquinaModalPage>() },
+                new LinkItem { Nombre = "Operarios", CrearVentana = () => App.ServiceProvider.GetRequiredService<OperarioModalPage>() }
             };
 
             DataContext = this;
@@ -127,8 +120,7 @@ namespace Gestion.presentation.views.windows
 
         private void BtnSalir_Click(object sender, RoutedEventArgs e)
         {
-            LoginWindow login = new LoginWindow();
-
+            var login = App.ServiceProvider.GetRequiredService<LoginWindow>();
             login.Show();
 
             this.Close();
@@ -142,7 +134,8 @@ namespace Gestion.presentation.views.windows
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(new AgregarPage());
+            var agregar = App.ServiceProvider.GetRequiredService<AgregarPage>();
+            MainFrame.Navigate(agregar);
         }
 
         private void Link_Click(object sender, MouseButtonEventArgs e)

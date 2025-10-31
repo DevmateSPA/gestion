@@ -22,10 +22,10 @@ namespace Gestion.presentation.views.pages;
 public partial class AgregarPage : Page
 {
     private readonly AgregarViewModel _viewModel;
-    public AgregarPage()
+    public AgregarPage(AgregarViewModel agregarViewModel)
     {
         InitializeComponent();
-        _viewModel = new AgregarViewModel(App.ClienteService);
+        _viewModel = agregarViewModel;
         this.DataContext = _viewModel;
     }
 

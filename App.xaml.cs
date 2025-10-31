@@ -1,47 +1,80 @@
 ﻿using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
 using Gestion.core.interfaces.service;
 using Gestion.core.services;
 using Gestion.Infrastructure.data;
 using Gestion.Infrastructure.Services;
 using Gestion.presentation.views.windows;
+using Gestion.presentation.viewmodel;
+using Gestion.presentation.views.pages;
+using Gestion.core.interfaces.repository;
+using Gestion.core.interfaces.database;
 
 namespace Gestion;
 
-/// <summary>
-/// Interaction logic for App.xaml
-/// </summary>
 public partial class App : Application
 {
-    public static IAuthService AuthService { get; private set; } = null!;
-    public static IClienteService ClienteService { get; private set; } = null!;
-    public static IProveedorService ProveedorService { get; private set; } = null!;
-    public static IBancoService BancoService { get; private set; } = null!;
-    public static IGrupoService GrupoService { get; private set; } = null!;
-    public static IProductoService ProductoService { get; private set; } = null!;
-    public static IMaquinaService MaquinaService { get; private set; } = null!;
-    public static IOperadorService OperadorService { get; private set; } = null!;
+    public static IServiceProvider ServiceProvider { get; private set; } = null!;
+
     private void Application_Startup(object sender, StartupEventArgs e)
     {
-        var connectionFactory = new MySqlConnectionFactory();
-        var usuarioRepository = new UsuarioRepository(connectionFactory);
-        var clienteRepository = new ClienteRepository(connectionFactory);
-        var proveedorRepository = new ProveedorRepository(connectionFactory);
-        var bancoRepository = new BancoRepository(connectionFactory);
-        var grupoRepository = new GrupoRepository(connectionFactory);
-        var productoRepository = new ProductoRepository(connectionFactory);
-        var maquinaRepository = new MaquinaRepository(connectionFactory);
-        var operadorRepository = new OperadorRepository(connectionFactory);
-        App.AuthService = new AuthService(usuarioRepository);
-        App.ClienteService = new ClienteService(clienteRepository);
-        App.ProveedorService = new ProveedorService(proveedorRepository);
-        App.BancoService = new BancoService(bancoRepository);
-        App.GrupoService = new GrupoService(grupoRepository);
-        App.ProductoService = new ProductoService(productoRepository);
-        App.MaquinaService = new MaquinaService(maquinaRepository);
-        App.OperadorService = new OperadorService(operadorRepository);
+        var services = new ServiceCollection();
 
-        LoginWindow login = new LoginWindow();
+        services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
+
+        // Repositorios
+        services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+        services.AddScoped<IClienteRepository, ClienteRepository>();
+        services.AddScoped<IProveedorRepository, ProveedorRepository>();
+        services.AddScoped<IBancoRepository, BancoRepository>();
+        services.AddScoped<IGrupoRepository, GrupoRepository>();
+        services.AddScoped<IProductoRepository, ProductoRepository>();
+        services.AddScoped<IMaquinaRepository, MaquinaRepository>();
+        services.AddScoped<IOperadorRepository, OperadorRepository>();
+
+        // Servicios
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IClienteService, ClienteService>();
+        services.AddScoped<IProveedorService, ProveedorService>();
+        services.AddScoped<IBancoService, BancoService>();
+        services.AddScoped<IGrupoService, GrupoService>();
+        services.AddScoped<IProductoService, ProductoService>();
+        services.AddScoped<IMaquinaService, MaquinaService>();
+        services.AddScoped<IOperadorService, OperadorService>();
+
+        // Login
+        services.AddTransient<LoginWindow>();
+        services.AddTransient<LoginViewModel>();
+
+        // Agregar
+        services.AddTransient<AgregarViewModel>();
+        services.AddTransient<AgregarPage>();
+
+        // Banco
+        services.AddTransient<BancoViewModel>();
+        services.AddTransient<BancoModalPage>();
+        //Cliente
+        services.AddTransient<ClienteViewModel>();
+        services.AddTransient<ClienteModalPage>();
+        // Grupo
+        services.AddTransient<GrupoViewModel>();
+        services.AddTransient<GrupoModalPage>();
+        // Maquinas
+        services.AddTransient<MaquinaViewModel>();
+        services.AddTransient<MaquinaModalPage>();
+        // Operario
+        services.AddTransient<OperarioViewModel>();
+        services.AddTransient<OperarioModalPage>();
+        // Producto
+        services.AddTransient<ProductoViewModel>();
+        services.AddTransient<ProductoModalPage>();
+        // Proveedor
+        services.AddTransient<ProveedorViewModel>();
+        services.AddTransient<ProveedorModalPage>();
+
+        ServiceProvider = services.BuildServiceProvider();
+
+        var login = ServiceProvider.GetRequiredService<LoginWindow>();
         login.Show();
     }
 }
-
