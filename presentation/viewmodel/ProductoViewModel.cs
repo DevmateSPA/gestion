@@ -1,11 +1,24 @@
+using System.Collections.ObjectModel;
 using System.Windows;
+using Gestion.core.interfaces.service;
+using Gestion.core.model;
 
 namespace Gestion.presentation.viewmodel;
 
-public class ProductoViewModel : Window
+public class ProductoViewModel
 {
-    public ProductoViewModel(int numero)
+    private readonly IProductoService _productoService;
+    public ObservableCollection<Producto> Productos { get; set; } = new ObservableCollection<Producto>();
+    public ProductoViewModel(IProductoService productoService)
     {
-        Title = $"Ventana Modal {numero}";
+        _productoService = productoService;
+    }
+
+    public async Task LoadProductos()
+    {
+        var lista = await _productoService.FindAll();
+        Productos.Clear();
+        foreach (var producto in lista)
+            Productos.Add(producto);
     }
 }

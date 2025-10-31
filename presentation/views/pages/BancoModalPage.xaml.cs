@@ -1,14 +1,20 @@
 using System.Windows;
 using System.Windows.Input;
+using Gestion.presentation.viewmodel;
 
 namespace Gestion.presentation.views.windows
 {
     public partial class BancoModalPage : Window
     {
+        private readonly BancoViewModel _viewModel;
         public BancoModalPage()
         {
             InitializeComponent();
+            _viewModel = new BancoViewModel(App.BancoService);
+            DataContext = _viewModel;
             Title = $"Bancos";
+
+            Loaded += BancoModalPage_Loaded;
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -45,11 +51,10 @@ namespace Gestion.presentation.views.windows
             else if (e.Key == Key.F2) BtnBuscar_Click(sender, e);
             else if (e.Key == Key.F4) BtnImprimir_Click(sender, e);
         }
-    }
 
-    public class Banco
-    {
-        public string Codigo { get; set; }
-        public string Nombre { get; set; }
+        private async void BancoModalPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            await _viewModel.LoadBancos();
+        }
     }
 }

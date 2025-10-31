@@ -29,7 +29,7 @@ public partial class LoginWindow : Window
         txtUsuario.Focus(); 
     }
 
-    private async void BtnIniciarSesion_Click(object sender, RoutedEventArgs e)
+    private void BtnIniciarSesion_Click(object sender, RoutedEventArgs e)
     {
         /*string nombreUsuario = txtUsuario.Text;
         string contraseña = txtContraseña.Password;

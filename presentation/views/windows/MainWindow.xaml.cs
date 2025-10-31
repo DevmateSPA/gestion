@@ -159,7 +159,7 @@ namespace Gestion.presentation.views.windows
 
     public class LinkItem
     {
-        public string Nombre { get; set; } 
-        public Func<Window> CrearVentana { get; set; } 
+        public string Nombre { get; set; } = string.Empty;
+        public required Func<Window> CrearVentana { get; set; } 
     }
 }

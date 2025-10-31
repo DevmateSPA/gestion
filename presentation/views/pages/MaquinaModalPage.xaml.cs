@@ -1,14 +1,20 @@
 using System.Windows;
 using System.Windows.Input;
+using Gestion.presentation.viewmodel;
 
 namespace Gestion.presentation.views.windows
 {
     public partial class MaquinaModalPage : Window
     {
+        private readonly MaquinaViewModel _viewModel;
         public MaquinaModalPage()
         {
             InitializeComponent();
+            _viewModel = new MaquinaViewModel(App.MaquinaService);
+            DataContext = _viewModel;
             Title = $"Grupos";
+
+            Loaded += MaquinaModalPage_Loaded;
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -44,6 +50,11 @@ namespace Gestion.presentation.views.windows
             else if (e.Key == Key.Enter) BtnEditar_Click(sender, e);
             else if (e.Key == Key.F2) BtnBuscar_Click(sender, e);
             else if (e.Key == Key.F4) BtnImprimir_Click(sender, e);
+        }
+
+        private async void MaquinaModalPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            await _viewModel.LoadMaquinas();
         }
     }
 }

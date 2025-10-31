@@ -1,14 +1,21 @@
 using System.Windows;
 using System.Windows.Input;
+using Gestion.core.model;
+using Gestion.presentation.viewmodel;
 
 namespace Gestion.presentation.views.windows
 {
     public partial class GrupoModalPage : Window
     {
+        private readonly GrupoViewModel _viewModel;
         public GrupoModalPage()
         {
             InitializeComponent();
+            _viewModel = new GrupoViewModel(App.GrupoService);
+            DataContext = _viewModel;
             Title = $"Grupos";
+
+            Loaded += GrupoModalPage_Loaded;
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -44,6 +51,11 @@ namespace Gestion.presentation.views.windows
             else if (e.Key == Key.Enter) BtnEditar_Click(sender, e);
             else if (e.Key == Key.F2) BtnBuscar_Click(sender, e);
             else if (e.Key == Key.F4) BtnImprimir_Click(sender, e);
+        }
+
+        private async void GrupoModalPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            await _viewModel.LoadGrupos();
         }
     }
 }

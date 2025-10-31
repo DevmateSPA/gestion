@@ -5,7 +5,7 @@ using Gestion.core.model;
 
 namespace Gestion.presentation.viewmodel;
 
-public class ClienteViewModel : Window
+public class ClienteViewModel
 {
     private readonly IClienteService _clienteService;
     public ObservableCollection<Cliente> Clientes { get; set; } = new ObservableCollection<Cliente>();

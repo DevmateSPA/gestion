@@ -1,14 +1,20 @@
 using System.Windows;
 using System.Windows.Input;
+using Gestion.presentation.viewmodel;
 
 namespace Gestion.presentation.views.windows
 {
     public partial class ProductoModalPage : Window
     {
+        private readonly ProductoViewModel _viewModel;
         public ProductoModalPage()
         {
             InitializeComponent();
+            _viewModel = new ProductoViewModel(App.ProductoService);
+            DataContext = _viewModel;
             Title = $"Productos";
+
+            Loaded += ProductoModalPage_Loaded;
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -44,6 +50,11 @@ namespace Gestion.presentation.views.windows
             else if (e.Key == Key.Enter) BtnEditar_Click(sender, e);
             else if (e.Key == Key.F2) BtnBuscar_Click(sender, e);
             else if (e.Key == Key.F4) BtnImprimir_Click(sender, e);
+        }
+
+        private async void ProductoModalPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            await _viewModel.LoadProductos();
         }
     }
 }

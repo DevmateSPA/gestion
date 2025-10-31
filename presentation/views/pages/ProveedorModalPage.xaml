@@ -22,16 +22,12 @@
         </StackPanel>
 
         <!-- Tabla -->
-        <DataGrid x:Name="dgClientes" Grid.Row="1"
-                  AutoGenerateColumns="False"
-                  CanUserAddRows="False"
-                  SelectionMode="Single">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="RUT" Binding="{Binding RUT}" Width="150"/>
-                <DataGridTextColumn Header="Razón Social" Binding="{Binding RazonSocial}" Width="*"/>
-                <DataGridTextColumn Header="Debe" Binding="{Binding Debe}" Width="100"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        <DataGrid x:Name="dgProveedores"
+                Grid.Row="1"
+                AutoGenerateColumns="True"
+                CanUserAddRows="False"
+                SelectionMode="Single"
+                ItemsSource="{Binding Proveedores}" />
 
         <!-- Botones -->
         <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Margin="0,5,0,0">
