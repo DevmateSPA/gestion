@@ -52,29 +52,30 @@ public partial class App : Application
 
         // Banco
         services.AddTransient<BancoViewModel>();
-        services.AddTransient<BancoModalPage>();
+        services.AddTransient<BancoPage>();
         //Cliente
         services.AddTransient<ClienteViewModel>();
-        services.AddTransient<ClienteModalPage>();
+        services.AddTransient<ClientePage>();
         // Grupo
         services.AddTransient<GrupoViewModel>();
-        services.AddTransient<GrupoModalPage>();
+        services.AddTransient<GrupoPage>();
         // Maquinas
         services.AddTransient<MaquinaViewModel>();
-        services.AddTransient<MaquinaModalPage>();
+        services.AddTransient<MaquinaPage>();
         // Operario
         services.AddTransient<OperarioViewModel>();
-        services.AddTransient<OperarioModalPage>();
+        services.AddTransient<OperarioPage>();
         // Producto
         services.AddTransient<ProductoViewModel>();
-        services.AddTransient<ProductoModalPage>();
+        services.AddTransient<ProductoPage>();
         // Proveedor
         services.AddTransient<ProveedorViewModel>();
-        services.AddTransient<ProveedorModalPage>();
+        services.AddTransient<ProveedorPage>();
 
         ServiceProvider = services.BuildServiceProvider();
 
         var login = ServiceProvider.GetRequiredService<LoginWindow>();
         login.Show();
+
     }
 }

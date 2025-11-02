@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         d:DesignHeight="1080"
         d:DesignWidth="1920"
-        Title="* Cambiame *"
+        Title="Gestion"
         WindowState="Maximized"
         Loaded="Window_Loaded">
 
@@ -101,7 +101,7 @@
         </Menu>
 
 
-        <!-- Footer: Links numerados -->
+        <!-- Footer: -->
         <StackPanel DockPanel.Dock="Bottom"
                     Orientation="Horizontal"
                     HorizontalAlignment="Center"
@@ -110,29 +110,8 @@
                     Background="Transparent"
                     Height="20">
 
-            <TextBlock Text="Links (Temporal mientras se crean los menus): "
-                    Margin="0,0,0,0"
-                    VerticalAlignment="Center"/>
 
-            <!-- ItemsControl horizontal limitado -->
-            <ItemsControl ItemsSource="{Binding Links}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Margin="10,0"
-                                   Text="{Binding Nombre}"
-                                   TextDecorations="Underline"
-                                   Foreground="Blue"
-                                   Cursor="Hand"
-                                   MouseLeftButtonDown="Link_Click"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+         
         </StackPanel>
 
         <!-- Contenido principal -->

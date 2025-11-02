@@ -11,22 +11,9 @@ namespace Gestion.presentation.views.windows
     /// </summary>
     public partial class MainWindow : Window
     {
-        public List<LinkItem> Links { get; set; }
-
         public MainWindow()
         {
             InitializeComponent();
-
-            Links = new List<LinkItem>
-            {
-                new LinkItem { Nombre = "Bancos", CrearVentana = () => App.ServiceProvider.GetRequiredService<BancoModalPage>() },
-                new LinkItem { Nombre = "Clientes", CrearVentana = () => App.ServiceProvider.GetRequiredService<ClienteModalPage>() },
-                new LinkItem { Nombre = "Proveedores", CrearVentana = () => App.ServiceProvider.GetRequiredService<ProveedorModalPage>() },
-                new LinkItem { Nombre = "Grupos", CrearVentana = () => App.ServiceProvider.GetRequiredService<GrupoModalPage>() },
-                new LinkItem { Nombre = "Productos", CrearVentana = () => App.ServiceProvider.GetRequiredService<ProductoModalPage>() },
-                new LinkItem { Nombre = "Máquinas", CrearVentana = () => App.ServiceProvider.GetRequiredService<MaquinaModalPage>() },
-                new LinkItem { Nombre = "Operarios", CrearVentana = () => App.ServiceProvider.GetRequiredService<OperarioModalPage>() }
-            };
 
             DataContext = this;
 
@@ -41,21 +28,34 @@ namespace Gestion.presentation.views.windows
 
         private void MenuItemInfGral_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuItem item)
+            try
             {
-                string mensaje = item.Tag switch
+                if (sender is MenuItem item)
                 {
-                    "ModuloBanco" => "Has hecho click en Banco",
-                    "ModuloCliente" => "Has hecho click en Cliente",
-                    "ModuloProveedor" => "Has hecho click en Proveedor",
-                    "ModuloGrupo" => "Has hecho click en Grupo",
-                    "ModuloProducto" => "Has hecho click en Producto",
-                    "ModuloMaquina" => "Has hecho click en Máquina",
-                    "ModuloOperador" => "Has hecho click en Operario",
-                    _ => "Módulo desconocido"
-                };
+                    Page? page = item.Tag switch
+                    {
+                        "ModuloBanco" => App.ServiceProvider.GetRequiredService<BancoPage>(),
+                        "ModuloCliente" => App.ServiceProvider.GetRequiredService<ClientePage>(),
+                        "ModuloProveedor" => App.ServiceProvider.GetRequiredService<ProveedorPage>(),
+                        "ModuloGrupo" => App.ServiceProvider.GetRequiredService<GrupoPage>(),
+                        "ModuloProducto" => App.ServiceProvider.GetRequiredService<ProductoPage>(),
+                        "ModuloMaquina" => App.ServiceProvider.GetRequiredService<MaquinaPage>(),
+                        "ModuloOperador" => App.ServiceProvider.GetRequiredService<OperarioPage>(),
+                        _ => null
+                    };
 
-                MessageBox.Show(mensaje, "Click en Módulo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    if (page != null)
+                    {
+                        MainFrame.Navigate(page);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Módulo no reconocido.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
+            }catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 

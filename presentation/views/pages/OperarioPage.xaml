@@ -1,11 +1,9 @@
-<Window x:Class="Gestion.presentation.views.windows.OperarioModalPage"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Entidad"
-        Height="400" Width="600"
-        WindowStartupLocation="CenterOwner"
-        WindowStyle="ToolWindow"
-        KeyDown="Window_KeyDown">
+<Page x:Class="Gestion.presentation.views.pages.OperarioPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Operarios"
+      KeyDown="Page_KeyDown"
+      Focusable="True">
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -37,4 +35,4 @@
             <Button Content="Imprimir (F4)" Click="BtnImprimir_Click" Margin="5"/>
         </StackPanel>
     </Grid>
-</Window>
+</Page>

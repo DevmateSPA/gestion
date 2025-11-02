@@ -1,13 +1,15 @@
-<Window x:Class="Gestion.presentation.views.windows.ProductoModalPage"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Entidad"
-        Height="400" Width="600"
-        WindowStartupLocation="CenterOwner"
-        WindowStyle="ToolWindow"
-        KeyDown="Window_KeyDown">
+<Page x:Class="Gestion.presentation.views.pages.BancoPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Gestion.presentation.views.pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="600"
+      Title="Bancos"
+      KeyDown="Page_KeyDown">
 
-    <Grid Margin="10">
+    <Grid Margin="10">  
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- Input búsqueda -->
             <RowDefinition Height="*"/>    <!-- Tabla -->
@@ -21,12 +23,12 @@
         </StackPanel>
 
         <!-- Tabla -->
-        <DataGrid x:Name="dgProductos"
-                Grid.Row="1"
-                AutoGenerateColumns="True"
-                CanUserAddRows="False"
-                SelectionMode="Single"
-                ItemsSource="{Binding Productos}" />
+        <DataGrid x:Name="dgBancos"
+                  Grid.Row="1"
+                  AutoGenerateColumns="True"
+                  CanUserAddRows="False"
+                  SelectionMode="Single"
+                  ItemsSource="{Binding Bancos}" />
 
         <!-- Botones -->
         <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Margin="0,5,0,0">
@@ -37,4 +39,4 @@
             <Button Content="Imprimir (F4)" Click="BtnImprimir_Click" Margin="5"/>
         </StackPanel>
     </Grid>
-</Window>
+</Page>

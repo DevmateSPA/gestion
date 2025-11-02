@@ -1,20 +1,21 @@
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Gestion.presentation.viewmodel;
 
-namespace Gestion.presentation.views.windows
+namespace Gestion.presentation.views.pages
 {
-    public partial class BancoModalPage : Window
+    public partial class BancoPage : Page
     {
         private readonly BancoViewModel _viewModel;
-        public BancoModalPage(BancoViewModel viewModel)
+        public BancoPage(BancoViewModel viewModel)
         {
             InitializeComponent();
             _viewModel = viewModel;
             DataContext = _viewModel;
             Title = $"Bancos";
 
-            Loaded += BancoModalPage_Loaded;
+            Loaded += BancoPage_Loaded;
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -43,7 +44,7 @@ namespace Gestion.presentation.views.windows
         }
 
         // Atajos de teclado
-        private void Window_KeyDown(object sender, KeyEventArgs e)
+        private void Page_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Insert) BtnAgregar_Click(sender, e);
             else if (e.Key == Key.Delete) BtnEliminar_Click(sender, e);
@@ -52,7 +53,7 @@ namespace Gestion.presentation.views.windows
             else if (e.Key == Key.F4) BtnImprimir_Click(sender, e);
         }
 
-        private async void BancoModalPage_Loaded(object sender, RoutedEventArgs e)
+        private async void BancoPage_Loaded(object sender, RoutedEventArgs e)
         {
             await _viewModel.LoadBancos();
         }

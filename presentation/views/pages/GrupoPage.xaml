@@ -1,12 +1,13 @@
+<Page x:Class="Gestion.presentation.views.pages.GrupoPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="600"
+      KeyDown="Page_KeyDown"
+      Title="Grupos">
 
-<Window x:Class="Gestion.presentation.views.windows.ProveedorModalPage"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Clientes"
-        Height="400" Width="600"
-        WindowStartupLocation="CenterOwner"
-        WindowStyle="ToolWindow"
-        KeyDown="Window_KeyDown">
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -22,12 +23,12 @@
         </StackPanel>
 
         <!-- Tabla -->
-        <DataGrid x:Name="dgProveedores"
+        <DataGrid x:Name="dgGrupos"
                 Grid.Row="1"
                 AutoGenerateColumns="True"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding Proveedores}" />
+                ItemsSource="{Binding Grupos}" />
 
         <!-- Botones -->
         <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Margin="0,5,0,0">
@@ -38,4 +39,4 @@
             <Button Content="Imprimir (F4)" Click="BtnImprimir_Click" Margin="5"/>
         </StackPanel>
     </Grid>
-</Window>
+</Page>

@@ -1,20 +1,21 @@
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Gestion.presentation.viewmodel;
 
-namespace Gestion.presentation.views.windows
+namespace Gestion.presentation.views.pages
 {
-    public partial class MaquinaModalPage : Window
+    public partial class ProveedorPage : Page
     {
-        private readonly MaquinaViewModel _viewModel;
-        public MaquinaModalPage(MaquinaViewModel maquinaViewModel)
+        private readonly ProveedorViewModel _viewModel;
+        public ProveedorPage(ProveedorViewModel proveedorViewModel)
         {
             InitializeComponent();
-            _viewModel = maquinaViewModel;
+            _viewModel = proveedorViewModel;
             DataContext = _viewModel;
-            Title = $"Grupos";
+            Title = $"Proveedores";
 
-            Loaded += MaquinaModalPage_Loaded;
+            Loaded += ProveedorPage_Loaded;
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -43,7 +44,7 @@ namespace Gestion.presentation.views.windows
         }
 
         // Atajos de teclado
-        private void Window_KeyDown(object sender, KeyEventArgs e)
+        private void Page_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Insert) BtnAgregar_Click(sender, e);
             else if (e.Key == Key.Delete) BtnEliminar_Click(sender, e);
@@ -52,9 +53,9 @@ namespace Gestion.presentation.views.windows
             else if (e.Key == Key.F4) BtnImprimir_Click(sender, e);
         }
 
-        private async void MaquinaModalPage_Loaded(object sender, RoutedEventArgs e)
+        private async void ProveedorPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await _viewModel.LoadMaquinas();
+            await _viewModel.LoadProveedores();
         }
     }
 }

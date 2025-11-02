@@ -1,20 +1,22 @@
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 
-namespace Gestion.presentation.views.windows
+namespace Gestion.presentation.views.pages
 {
-    public partial class ProveedorModalPage : Window
+    public partial class GrupoPage : Page
     {
-        private readonly ProveedorViewModel _viewModel;
-        public ProveedorModalPage(ProveedorViewModel proveedorViewModel)
+        private readonly GrupoViewModel _viewModel;
+        public GrupoPage(GrupoViewModel grupoViewModel)
         {
             InitializeComponent();
-            _viewModel = proveedorViewModel;
+            _viewModel = grupoViewModel;
             DataContext = _viewModel;
-            Title = $"Proveedores";
+            Title = $"Grupos";
 
-            Loaded += ProveedorModalPage_Loaded;
+            Loaded += GrupoPage_Loaded;
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -41,9 +43,9 @@ namespace Gestion.presentation.views.windows
         {
             MessageBox.Show("Imprimir listado...");
         }
-
+ 
         // Atajos de teclado
-        private void Window_KeyDown(object sender, KeyEventArgs e)
+        private void Page_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Insert) BtnAgregar_Click(sender, e);
             else if (e.Key == Key.Delete) BtnEliminar_Click(sender, e);
@@ -52,9 +54,9 @@ namespace Gestion.presentation.views.windows
             else if (e.Key == Key.F4) BtnImprimir_Click(sender, e);
         }
 
-        private async void ProveedorModalPage_Loaded(object sender, RoutedEventArgs e)
+        private async void GrupoPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await _viewModel.LoadProveedores();
+            await _viewModel.LoadGrupos();
         }
     }
 }

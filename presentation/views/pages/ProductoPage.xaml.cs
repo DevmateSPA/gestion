@@ -1,20 +1,21 @@
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Gestion.presentation.viewmodel;
 
-namespace Gestion.presentation.views.windows
+namespace Gestion.presentation.views.pages
 {
-    public partial class OperarioModalPage : Window
+    public partial class ProductoPage : Page
     {
-        private readonly OperarioViewModel _viewModel;
-        public OperarioModalPage(OperarioViewModel operarioViewModel)
+        private readonly ProductoViewModel _viewModel;
+        public ProductoPage(ProductoViewModel productoViewModel)
         {
             InitializeComponent();
-            _viewModel = operarioViewModel;
+            _viewModel = productoViewModel;
             DataContext = _viewModel;
-            Title = $"Grupos";
+            Title = $"Productos";
 
-            Loaded += OperarioModalPage_Loaded;
+            Loaded += ProductoPage_Loaded;
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -43,7 +44,7 @@ namespace Gestion.presentation.views.windows
         }
 
         // Atajos de teclado
-        private void Window_KeyDown(object sender, KeyEventArgs e)
+        private void Page_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Insert) BtnAgregar_Click(sender, e);
             else if (e.Key == Key.Delete) BtnEliminar_Click(sender, e);
@@ -52,9 +53,9 @@ namespace Gestion.presentation.views.windows
             else if (e.Key == Key.F4) BtnImprimir_Click(sender, e);
         }
 
-        private async void OperarioModalPage_Loaded(object sender, RoutedEventArgs e)
+        private async void ProductoPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await _viewModel.LoadOperadores();
+            await _viewModel.LoadProductos();
         }
     }
 }
