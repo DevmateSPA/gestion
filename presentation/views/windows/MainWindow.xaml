@@ -54,9 +54,13 @@
                     <MenuItem Header="Información de Maquinas" Click="MenuItemInfGral_Click" Tag="ModuloMaquina"/>
                     <MenuItem Header="Información de Operarios" Click="MenuItemInfGral_Click" Tag="ModuloOperador"/>
                 </MenuItem>
-                <MenuItem Header="Información de Costos"/>
+                <MenuItem Header="Información de Costos">
+                    <MenuItem Header="Información de Impresiones" Click="MenuItemCosto_Click" Tag="ModuloImp"/>
+                    <MenuItem Header="Información de Encuadernación" Click="MenuItemCosto_Click" Tag="ModuloEnc"/>
+                    <MenuItem Header="Información de Fotomecánica" Click="MenuItemCosto_Click" Tag="ModuloFot"/>
+                </MenuItem>
                 <MenuItem Header="Documentos de Venta">
-                    <MenuItem Header="Gupias de Despacho" Click="MenuItemDocVen_Click" Tag="ModuloGuia"/>
+                    <MenuItem Header="Guias de Despacho" Click="MenuItemDocVen_Click" Tag="ModuloGuia"/>
                     <MenuItem Header="Facturas" Click="MenuItemDocVen_Click" Tag="ModuloFactura"/>
                     <MenuItem Header="Notas de Crédito" Click="MenuItemDocVen_Click" Tag="ModuloNotaCredito"/>
                     <MenuItem Header="Documentos Nulos" Click="MenuItemDocVen_Click" Tag="ModuloDocNulo"/>

@@ -19,7 +19,6 @@ public partial class App : Application
     private void Application_Startup(object sender, StartupEventArgs e)
     {
         var services = new ServiceCollection();
-
         services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
 
         // Repositorios
@@ -31,6 +30,9 @@ public partial class App : Application
         services.AddScoped<IProductoRepository, ProductoRepository>();
         services.AddScoped<IMaquinaRepository, MaquinaRepository>();
         services.AddScoped<IOperadorRepository, OperadorRepository>();
+        services.AddScoped<IImpresionRepository, ImpresionRepository>();
+        services.AddScoped<IEncuadernacionRepository, EncuadernacionRepository>();
+        services.AddScoped<IFotomecanicaRepository, FotomecanicaRepository>();
 
         // Servicios
         services.AddScoped<IAuthService, AuthService>();
@@ -41,6 +43,9 @@ public partial class App : Application
         services.AddScoped<IProductoService, ProductoService>();
         services.AddScoped<IMaquinaService, MaquinaService>();
         services.AddScoped<IOperadorService, OperadorService>();
+        services.AddScoped<IImpresionService, ImpresionService>();
+        services.AddScoped<IEncuadernacionService, EncuadernacionService>();
+        services.AddScoped<IFotomecanicaService, FotomecanicaService>();
 
         // Login
         services.AddTransient<LoginWindow>();
@@ -71,11 +76,19 @@ public partial class App : Application
         // Proveedor
         services.AddTransient<ProveedorViewModel>();
         services.AddTransient<ProveedorPage>();
-
+        // Impresion
+        services.AddTransient<ImpresionViewModel>();
+        services.AddTransient<ImpresionPage>();
+        // Encuadernacion
+        services.AddTransient<EncuadernacionViewModel>();
+        services.AddTransient<EncuadernacionPage>();
+        // Fotomecanica
+        services.AddTransient<FotomecanicaViewModel>();
+        services.AddTransient<FotomecanicaPage>();
+       
         ServiceProvider = services.BuildServiceProvider();
 
         var login = ServiceProvider.GetRequiredService<LoginWindow>();
         login.Show();
-
     }
 }

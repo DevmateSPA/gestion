@@ -61,6 +61,25 @@ namespace Gestion.presentation.views.windows
 
         private void MenuItemCosto_Click(object sender, RoutedEventArgs e)
         {
+            if (sender is MenuItem item)
+            {
+                Page? page = item.Tag switch
+                {
+                    "ModuloImp" =>  App.ServiceProvider.GetRequiredService<ImpresionPage>(),
+                    "ModuloEnc" =>  App.ServiceProvider.GetRequiredService<EncuadernacionPage>(),
+                    "ModuloFot" =>  App.ServiceProvider.GetRequiredService<FotomecanicaPage>(),
+                    _ => null
+                };
+
+                if (page != null)
+                {
+                    MainFrame.Navigate(page);
+                }
+                else
+                {
+                    MessageBox.Show("Módulo no reconocido.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
         }
 
         private void MenuItemDocVen_Click(object sender, RoutedEventArgs e)
