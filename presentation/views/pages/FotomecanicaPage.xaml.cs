@@ -1,7 +1,9 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Gestion.core.model;
 using Gestion.presentation.viewmodel;
+using Gestion.presentation.views.windows;
 
 namespace Gestion.presentation.views.pages
 {
@@ -41,6 +43,23 @@ namespace Gestion.presentation.views.pages
         private void BtnImprimir_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Imprimir listado...");
+        }
+
+        private async void dgFotomecanica_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (dgFotomecanica.SelectedItem is Fotomecanica fotomecanicaSeleccionada)
+            {
+                var ventana = new EntidadEditorWindow(fotomecanicaSeleccionada)
+                {
+                    Title = "Editar Fotomecánica",
+                };
+
+                if (ventana.ShowDialog() == true)
+                {
+                    var fotomecanicaEditada = (Fotomecanica)ventana.EntidadEditada;
+                    await _viewModel.updateFotomecanica(fotomecanicaEditada);
+                }
+            }
         }
 
         // Atajos de teclado
