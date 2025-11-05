@@ -101,7 +101,7 @@
             </MenuItem>
             <MenuItem Header="Procesos"/>
             <MenuItem Header="Salir" Click="BtnSalir_Click"/>
-            <MenuItem Header="Agregar" Click="BtnAgregar_Click"/>
+            <MenuItem Header="Ir al inicio" Click="BtnInicio_Click"/>
         </Menu>
 
 
