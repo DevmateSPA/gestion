@@ -85,6 +85,9 @@ public partial class App : Application
         // Fotomecanica
         services.AddTransient<FotomecanicaViewModel>();
         services.AddTransient<FotomecanicaPage>();
+
+        // Ventanas modales
+        services.AddTransient<AgregarBancoWindow>();
        
         ServiceProvider = services.BuildServiceProvider();
 

@@ -26,12 +26,12 @@
                   SelectionMode="Single"
                   ItemsSource="{Binding Fotomecanica}"
                   IsReadOnly="True"
-                  Margin="0,5,0,5">
+                  Margin="0,5,0,5"
+                  FontSize="16" >
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Código" Binding="{Binding Codigo}" Width="*" />
                 <DataGridTextColumn Header="Descripción" Binding="{Binding Descripcion}" Width="2*" />
-                <DataGridTextColumn Header="Valor por mil" Binding="{Binding ValorPorMil, StringFormat={}{0:N0}}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
 

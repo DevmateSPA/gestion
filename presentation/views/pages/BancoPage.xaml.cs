@@ -2,6 +2,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Gestion.presentation.viewmodel;
+using Gestion.presentation.views.windows;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Gestion.presentation.views.pages
 {
@@ -20,7 +22,13 @@ namespace Gestion.presentation.views.pages
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Agregar banco...");
+            var ventana = App.ServiceProvider.GetRequiredService<AgregarBancoWindow>();
+            ventana.Owner = Window.GetWindow(this);
+            ventana.ShowDialog();
+
+            string codigo = ventana.Codigo;
+            string nombre = ventana.Nombre;
+            string direccion = ventana.Direccion;
         }
 
         private void BtnEliminar_Click(object sender, RoutedEventArgs e)

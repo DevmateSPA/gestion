@@ -27,7 +27,8 @@
                 AutoGenerateColumns="True"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding Clientes}" />
+                ItemsSource="{Binding Clientes}" 
+                FontSize="16" />
 
         <!-- Botones -->
         <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Margin="0,5,0,0">
