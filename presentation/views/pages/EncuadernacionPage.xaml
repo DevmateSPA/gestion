@@ -20,14 +20,15 @@
 
         <!-- Tabla -->
         <DataGrid x:Name="dgEncuadernacion"
-                  Grid.Row="1"
-                  AutoGenerateColumns="False"
-                  CanUserAddRows="False"
-                  SelectionMode="Single"
-                  ItemsSource="{Binding Encuadernacion}"
-                  IsReadOnly="True"
-                  Margin="0,5,0,5"
-                  FontSize="16" >
+                Grid.Row="1"
+                AutoGenerateColumns="False"
+                CanUserAddRows="False"
+                SelectionMode="Single"
+                ItemsSource="{Binding Encuadernacion}"
+                IsReadOnly="True"
+                Margin="0,5,0,5"
+                FontSize="16" 
+                MouseDoubleClick="dgEncuadernacion_MouseDoubleClick" >
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Código" Binding="{Binding Codigo}" Width="*" />
