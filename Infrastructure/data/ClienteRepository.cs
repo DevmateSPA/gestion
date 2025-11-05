@@ -8,9 +8,4 @@ public class ClienteRepository : BaseRepository<Cliente>, IClienteRepository
 {
     public ClienteRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "cliente") {}
-
-    public override Task<Cliente> Save(Cliente entity)
-    {
-        throw new NotImplementedException();
-    }
 }

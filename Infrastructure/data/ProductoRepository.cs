@@ -8,9 +8,4 @@ public class ProductoRepository : BaseRepository<Producto>, IProductoRepository
 {
     public ProductoRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "producto") {}
-
-    public override Task<Producto> Save(Producto entity)
-    {
-        throw new NotImplementedException();
-    }
 }

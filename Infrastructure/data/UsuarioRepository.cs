@@ -24,9 +24,4 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
 
         return null;
     }
-
-    public override Task<Usuario> Save(Usuario entity)
-    {
-        throw new NotImplementedException();
-    }
 }

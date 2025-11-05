@@ -8,9 +8,4 @@ public class FotomecanicaRepository : BaseRepository<Fotomecanica>, IFotomecanic
 {
     public FotomecanicaRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "fotomecanica") {}
-
-    public override Task<Fotomecanica> Save(Fotomecanica entity)
-    {
-        throw new NotImplementedException();
-    }
 }
