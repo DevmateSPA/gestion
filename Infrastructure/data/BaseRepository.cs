@@ -10,7 +10,7 @@ namespace Gestion.Infrastructure.data;
 public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, new()
 {
     protected readonly IDbConnectionFactory _connectionFactory;
-    protected readonly string _tableName;
+    protected readonly string _tableName; 
 
     protected BaseRepository(IDbConnectionFactory connectionFactory, string tableName)
     {
@@ -87,6 +87,37 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return affected > 0;
     }
 
-    // Cada Repositorio lo implementara
-    public abstract Task<T> Save(T entity);
+    public async Task<T> Update(T entity)
+    {
+        using var conn = await _connectionFactory.CreateConnection();
+        using var cmd = (DbCommand)conn.CreateCommand();
+
+        // Obtener las propiedades de la entidad (excluyendo Id)
+        var props = typeof(T).GetProperties()
+            .Where(p => p.Name != "Id") // asumimos que "Id" es la PK
+            .ToList();
+
+        // Construir dinámicamente el SET: "campo1 = @campo1, campo2 = @campo2, ..."
+        var setClause = string.Join(", ", props.Select(p => $"{p.Name.ToLower()} = @{p.Name.ToLower()}"));
+
+        cmd.CommandText = $"UPDATE {_tableName} SET {setClause} WHERE id = @id";
+
+        // Agregar parámetros para cada propiedad
+        foreach (var prop in props)
+        {
+            var param = cmd.CreateParameter();
+            param.ParameterName = $"@{prop.Name.ToLower()}";
+            param.Value = prop.GetValue(entity) ?? DBNull.Value;
+            cmd.Parameters.Add(param);
+        }
+
+        // Agregar parámetro Id
+        var idParam = cmd.CreateParameter();
+        idParam.ParameterName = "@id";
+        idParam.Value = typeof(T).GetProperty("Id")?.GetValue(entity) ?? DBNull.Value;
+        cmd.Parameters.Add(idParam);
+
+        await cmd.ExecuteNonQueryAsync();
+        return entity;
+    }
 }
