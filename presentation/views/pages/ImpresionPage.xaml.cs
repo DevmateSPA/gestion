@@ -1,9 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Gestion.core.model;
 using Gestion.presentation.viewmodel;
-using Gestion.presentation.views.windows;
 
 namespace Gestion.presentation.views.pages
 {
@@ -43,23 +41,6 @@ namespace Gestion.presentation.views.pages
         private void BtnImprimir_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Imprimir listado...");
-        }
-
-        private async void dgImpresion_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (dgImpresion.SelectedItem is Impresion impresionSeleccionado)
-            {
-                var ventana = new EntidadEditorWindow(impresionSeleccionado)
-                {
-                    Title = "Editar Impresión"
-                };
-
-                if (ventana.ShowDialog() == true)
-                {
-                    var impresionEditada = (Impresion)ventana.EntidadEditada;
-                    await _viewModel.updateImpresion(impresionEditada);
-                }
-            }
         }
 
         // Atajos de teclado

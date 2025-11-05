@@ -29,9 +29,7 @@
                 CanUserAddRows="False"
                 SelectionMode="Single"
                 ItemsSource="{Binding Grupos}" 
-                FontSize="16"                 
-                IsReadOnly="True"
-                MouseDoubleClick="dgGrupos_MouseDoubleClick" />
+                FontSize="16" />
 
         <!-- Botones -->
         <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Margin="0,5,0,0">

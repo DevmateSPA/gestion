@@ -29,9 +29,7 @@
                   CanUserAddRows="False"
                   SelectionMode="Single"
                   ItemsSource="{Binding Bancos}"
-                  FontSize="16"
-                  IsReadOnly="True"
-                  MouseDoubleClick="dgBancos_MouseDoubleClick" >
+                  FontSize="16" >
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Código" Binding="{Binding Codigo}" Width="*" />
                     <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}" Width="*" />

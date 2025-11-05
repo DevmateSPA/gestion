@@ -25,9 +25,7 @@
                 CanUserAddRows="False"
                 SelectionMode="Single"
                 ItemsSource="{Binding Operadores}" 
-                FontSize="16"
-                IsReadOnly="True"
-                MouseDoubleClick="dgOperadrios_MouseDoubleClick" />
+                FontSize="16" />
 
         <!-- Botones -->
         <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Margin="0,5,0,0">

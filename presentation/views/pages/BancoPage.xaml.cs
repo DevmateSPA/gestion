@@ -1,7 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,23 +49,6 @@ namespace Gestion.presentation.views.pages
         private void BtnImprimir_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Imprimir listado...");
-        }
-        
-        private async void dgBancos_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (dgBancos.SelectedItem is Banco bancoSeleccionado)
-            {
-                var ventana = new EntidadEditorWindow(bancoSeleccionado)
-                {
-                    Title = "Editar Banco"
-                };
-
-                if (ventana.ShowDialog() == true)
-                {
-                    var bancoEditado = (Banco)ventana.EntidadEditada;
-                    await _viewModel.updateBanco(bancoEditado);
-                }
-            }
         }
 
         // Atajos de teclado
