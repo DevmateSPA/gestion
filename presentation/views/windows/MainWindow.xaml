@@ -13,8 +13,8 @@
 
         <Window.Resources>
             <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
-                <Setter Property="Background" Value="#1E1E1E"/> 
-                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Background" Value="#fff"/> 
+                <Setter Property="Foreground" Value="Black"/>
                 <Setter Property="Padding" Value="15,8"/>
                 <Style.Triggers>
                     <!-- Hover -->
@@ -24,8 +24,8 @@
                     </Trigger>
                     <!-- Submenús -->
                     <Trigger Property="Role" Value="SubmenuItem">
-                        <Setter Property="Background" Value="#1E1E1E"/>
-                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="Background" Value="#fff"/>
+                        <Setter Property="Foreground" Value="Black"/>
                     </Trigger>
                 </Style.Triggers>
             </Style>
@@ -35,7 +35,7 @@
 
         <!-- Header -->
         <Menu DockPanel.Dock="Top"             
-             Background="#333"
+             Background="#fff"
             Foreground="White"
             FontSize="20"
             FontFamily="Segoe UI"

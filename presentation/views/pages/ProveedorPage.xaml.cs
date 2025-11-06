@@ -18,21 +18,35 @@ namespace Gestion.presentation.views.pages
             Title = $"Proveedores";
 
             Loaded += ProveedorPage_Loaded;
+            dgProveedores.ItemContainerGenerator.StatusChanged += DgProveedores_StatusChanged;
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Agregar banco...");
+            MessageBox.Show("Agregar proveedor...");
         }
 
         private void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Eliminar banco...");
+            MessageBox.Show("Eliminar proveedor...");
         }
 
         private void BtnEditar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Editar banco...");
+            if (dgProveedores.SelectedItem is Proveedor proveedorSeleccionado)
+            {
+                var ventana = new EntidadEditorWindow(proveedorSeleccionado)
+                {
+                    Title = "Editar Proveedor"
+                };
+
+                if (ventana.ShowDialog() == true)
+                {
+                    GridFocus(dgProveedores);
+                    //var proveedorEditado = (Proveedore)ventana.EntidadEditada;
+                    //await _viewModel.updateProveedore(proveedorEditado);
+                }
+            }
         }
 
         private void BtnBuscar_Click(object sender, RoutedEventArgs e)
@@ -62,19 +76,48 @@ namespace Gestion.presentation.views.pages
             }
         }
 
-        // Atajos de teclado
-        private void Page_KeyDown(object sender, KeyEventArgs e)
+        private async void dgProveedores_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Insert) BtnAgregar_Click(sender, e);
+            var teclas = new[] { Key.Enter, Key.Insert, Key.Delete, Key.F2, Key.F4 };
+            if (teclas.Contains(e.Key))
+            {
+                e.Handled = true;
+            }
+            if (e.Key == Key.Enter) BtnEditar_Click(sender, e);
+            else if (e.Key == Key.Insert) BtnAgregar_Click(sender, e);
             else if (e.Key == Key.Delete) BtnEliminar_Click(sender, e);
-            else if (e.Key == Key.Enter) BtnEditar_Click(sender, e);
             else if (e.Key == Key.F2) BtnBuscar_Click(sender, e);
             else if (e.Key == Key.F4) BtnImprimir_Click(sender, e);
+        }
+
+        private void DgProveedores_StatusChanged(object? sender, EventArgs e)
+        {
+            GridFocus(dgProveedores);
         }
 
         private async void ProveedorPage_Loaded(object sender, RoutedEventArgs e)
         {
             await _viewModel.LoadProveedores();
+        }
+
+        private void GridFocus(DataGrid dataGrid)
+        {
+            if (dataGrid.ItemContainerGenerator.Status == System.Windows.Controls.Primitives.GeneratorStatus.ContainersGenerated)
+            {
+                if (dataGrid.Items.Count > 0)
+                {
+                    dataGrid.SelectedIndex = 0;
+                    dataGrid.Focus();
+
+                    var firstRow = dataGrid.ItemContainerGenerator.ContainerFromIndex(0) as DataGridRow;
+                    if (firstRow != null)
+                    {
+                        firstRow.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                    }
+
+                    dataGrid.ItemContainerGenerator.StatusChanged -= DgProveedores_StatusChanged;
+                }
+            }
         }
     }
 }

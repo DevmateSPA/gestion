@@ -18,21 +18,35 @@ namespace Gestion.presentation.views.pages
             Title = $"Impresiones";
 
             Loaded += ImpresionPage_Loaded;
+            dgImpresion.ItemContainerGenerator.StatusChanged += DgImpresion_StatusChanged;
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Agregar banco...");
+            MessageBox.Show("Agregar impresion...");
         }
 
         private void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Eliminar banco...");
+            MessageBox.Show("Eliminar impresion...");
         }
 
         private void BtnEditar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Editar banco...");
+            if (dgImpresion.SelectedItem is Impresion impresionSeleccionado)
+            {
+                var ventana = new EntidadEditorWindow(impresionSeleccionado)
+                {
+                    Title = "Editar Impresion"
+                };
+
+                if (ventana.ShowDialog() == true)
+                {
+                    GridFocus(dgImpresion);
+                    //var impresionEditado = (Impresion)ventana.EntidadEditada;
+                    //await _viewModel.updateImpresion(impresionEditado);
+                }
+            }
         }
 
         private void BtnBuscar_Click(object sender, RoutedEventArgs e)
@@ -62,19 +76,48 @@ namespace Gestion.presentation.views.pages
             }
         }
 
-        // Atajos de teclado
-        private void Page_KeyDown(object sender, KeyEventArgs e)
+       private async void dgImpresion_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Insert) BtnAgregar_Click(sender, e);
+            var teclas = new[] { Key.Enter, Key.Insert, Key.Delete, Key.F2, Key.F4 };
+            if (teclas.Contains(e.Key))
+            {
+                e.Handled = true;
+            }
+            if (e.Key == Key.Enter) BtnEditar_Click(sender, e);
+            else if (e.Key == Key.Insert) BtnAgregar_Click(sender, e);
             else if (e.Key == Key.Delete) BtnEliminar_Click(sender, e);
-            else if (e.Key == Key.Enter) BtnEditar_Click(sender, e);
             else if (e.Key == Key.F2) BtnBuscar_Click(sender, e);
             else if (e.Key == Key.F4) BtnImprimir_Click(sender, e);
+        }
+
+        private void DgImpresion_StatusChanged(object? sender, EventArgs e)
+        {
+            GridFocus(dgImpresion);
         }
 
         private async void ImpresionPage_Loaded(object sender, RoutedEventArgs e)
         {
             await _viewModel.LoadImpresion();
+        }
+
+        private void GridFocus(DataGrid dataGrid)
+        {
+            if (dataGrid.ItemContainerGenerator.Status == System.Windows.Controls.Primitives.GeneratorStatus.ContainersGenerated)
+            {
+                if (dataGrid.Items.Count > 0)
+                {
+                    dataGrid.SelectedIndex = 0;
+                    dataGrid.Focus();
+
+                    var firstRow = dataGrid.ItemContainerGenerator.ContainerFromIndex(0) as DataGridRow;
+                    if (firstRow != null)
+                    {
+                        firstRow.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                    }
+
+                    dataGrid.ItemContainerGenerator.StatusChanged -= DgImpresion_StatusChanged;
+                }
+            }
         }
     }
 }

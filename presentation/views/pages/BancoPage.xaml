@@ -6,8 +6,7 @@
       xmlns:local="clr-namespace:Gestion.presentation.views.pages"
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="600"
-      Title="Bancos"
-      KeyDown="Page_KeyDown">
+      Title="Bancos" >
 
     <Grid Margin="10">  
         <Grid.RowDefinitions>
@@ -31,7 +30,8 @@
                   ItemsSource="{Binding Bancos}"
                   FontSize="16"
                   IsReadOnly="True"
-                  MouseDoubleClick="dgBancos_MouseDoubleClick" >
+                  MouseDoubleClick="dgBancos_MouseDoubleClick" 
+                  PreviewKeyDown="dgBancos_PreviewKeyDown">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Código" Binding="{Binding Codigo}" Width="*" />
                     <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}" Width="*" />
@@ -41,11 +41,11 @@
 
         <!-- Botones -->
         <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Margin="0,5,0,0">
-            <Button Content="Agregar (Ins)" Click="BtnAgregar_Click" Margin="5"/>
-            <Button Content="Eliminar (Del)" Click="BtnEliminar_Click" Margin="5"/>
-            <Button Content="Editar (Enter)" Click="BtnEditar_Click" Margin="5"/>
-            <Button Content="Buscar (F2)" Click="BtnBuscar_Click" Margin="5"/>
-            <Button Content="Imprimir (F4)" Click="BtnImprimir_Click" Margin="5"/>
+            <Button Width="150" Height="50" Content="Agregar (Ins)" Click="BtnAgregar_Click" Margin="5"/>
+            <Button Width="150" Height="50"  Content="Eliminar (Del)" Click="BtnEliminar_Click" Margin="5"/>
+            <Button Width="150" Height="50"  Content="Editar (Enter)" Click="BtnEditar_Click" Margin="5"/>
+            <Button Width="150" Height="50"  Content="Buscar (F2)" Click="BtnBuscar_Click" Margin="5"/>
+            <Button Width="150" Height="50"  Content="Imprimir (F4)" Click="BtnImprimir_Click" Margin="5"/>
         </StackPanel>
     </Grid>
 </Page>

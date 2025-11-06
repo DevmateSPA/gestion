@@ -18,21 +18,35 @@ namespace Gestion.presentation.views.pages
             Title = $"Encuadernacion";
 
             Loaded += FotomecanicaPage_Loaded;
+            dgFotomecanica.ItemContainerGenerator.StatusChanged += DgFotomecanica_StatusChanged;
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Agregar banco...");
+            MessageBox.Show("Agregar fotomecanica...");
         }
 
         private void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Eliminar banco...");
+            MessageBox.Show("Eliminar fotomecanica...");
         }
 
         private void BtnEditar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Editar banco...");
+            if (dgFotomecanica.SelectedItem is Fotomecanica fotomecanicaSeleccionado)
+            {
+                var ventana = new EntidadEditorWindow(fotomecanicaSeleccionado)
+                {
+                    Title = "Editar Fotomecanica"
+                };
+
+                if (ventana.ShowDialog() == true)
+                {
+                    GridFocus(dgFotomecanica);
+                    //var fotomecanicaEditado = (Fotomecanica)ventana.EntidadEditada;
+                    //await _viewModel.updateFotomecanica(fotomecanicaEditado);
+                }
+            }
         }
 
         private void BtnBuscar_Click(object sender, RoutedEventArgs e)
@@ -62,19 +76,50 @@ namespace Gestion.presentation.views.pages
             }
         }
 
-        // Atajos de teclado
-        private void Page_KeyDown(object sender, KeyEventArgs e)
+        private async void dgFotomecanica_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Insert) BtnAgregar_Click(sender, e);
+            var teclas = new[] { Key.Enter, Key.Insert, Key.Delete, Key.F2, Key.F4 };
+            if (teclas.Contains(e.Key))
+            {
+                e.Handled = true;
+            }
+            if (e.Key == Key.Enter) BtnEditar_Click(sender, e);
+            else if (e.Key == Key.Insert) BtnAgregar_Click(sender, e);
             else if (e.Key == Key.Delete) BtnEliminar_Click(sender, e);
-            else if (e.Key == Key.Enter) BtnEditar_Click(sender, e);
             else if (e.Key == Key.F2) BtnBuscar_Click(sender, e);
             else if (e.Key == Key.F4) BtnImprimir_Click(sender, e);
         }
 
+        private void DgFotomecanica_StatusChanged(object? sender, EventArgs e)
+        {
+            GridFocus(dgFotomecanica);
+        }
+
+
         private async void FotomecanicaPage_Loaded(object sender, RoutedEventArgs e)
         {
             await _viewModel.LoadFotomecanica();
+        }
+    
+
+        private void GridFocus(DataGrid dataGrid)
+        {
+            if (dataGrid.ItemContainerGenerator.Status == System.Windows.Controls.Primitives.GeneratorStatus.ContainersGenerated)
+            {
+                if (dataGrid.Items.Count > 0)
+                {
+                    dataGrid.SelectedIndex = 0;
+                    dataGrid.Focus();
+
+                    var firstRow = dataGrid.ItemContainerGenerator.ContainerFromIndex(0) as DataGridRow;
+                    if (firstRow != null)
+                    {
+                        firstRow.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                    }
+
+                    dataGrid.ItemContainerGenerator.StatusChanged -= DgFotomecanica_StatusChanged;
+                }
+            }
         }
     }
 }

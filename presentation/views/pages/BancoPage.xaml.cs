@@ -19,6 +19,7 @@ namespace Gestion.presentation.views.pages
             Title = $"Bancos";
 
             Loaded += BancoPage_Loaded;
+            dgBancos.ItemContainerGenerator.StatusChanged += DgBancos_StatusChanged;
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -39,7 +40,20 @@ namespace Gestion.presentation.views.pages
 
         private void BtnEditar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Editar banco...");
+            if (dgBancos.SelectedItem is Banco bancoSeleccionado)
+            {
+                var ventana = new EntidadEditorWindow(bancoSeleccionado)
+                {
+                    Title = "Editar Banco"
+                };
+
+                if (ventana.ShowDialog() == true)
+                {
+                    GridFocus(dgBancos);
+                    //var bancoEditado = (Banco)ventana.EntidadEditada;
+                    //await _viewModel.updateBanco(bancoEditado);
+                }
+            }
         }
 
         private void BtnBuscar_Click(object sender, RoutedEventArgs e)
@@ -51,7 +65,7 @@ namespace Gestion.presentation.views.pages
         {
             MessageBox.Show("Imprimir listado...");
         }
-        
+
         private async void dgBancos_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (dgBancos.SelectedItem is Banco bancoSeleccionado)
@@ -69,19 +83,48 @@ namespace Gestion.presentation.views.pages
             }
         }
 
-        // Atajos de teclado
-        private void Page_KeyDown(object sender, KeyEventArgs e)
+        private async void dgBancos_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Insert) BtnAgregar_Click(sender, e);
+            var teclas = new[] { Key.Enter, Key.Insert, Key.Delete, Key.F2, Key.F4 };
+            if (teclas.Contains(e.Key))
+            {
+                e.Handled = true;
+            }
+            if (e.Key == Key.Enter) BtnEditar_Click(sender, e);
+            else if (e.Key == Key.Insert) BtnAgregar_Click(sender, e);
             else if (e.Key == Key.Delete) BtnEliminar_Click(sender, e);
-            else if (e.Key == Key.Enter) BtnEditar_Click(sender, e);
             else if (e.Key == Key.F2) BtnBuscar_Click(sender, e);
             else if (e.Key == Key.F4) BtnImprimir_Click(sender, e);
+        }
+
+        private void DgBancos_StatusChanged(object? sender, EventArgs e)
+        {
+            GridFocus(dgBancos);
         }
 
         private async void BancoPage_Loaded(object sender, RoutedEventArgs e)
         {
             await _viewModel.LoadBancos();
+        }
+
+        private void GridFocus(DataGrid dataGrid)
+        {
+            if (dataGrid.ItemContainerGenerator.Status == System.Windows.Controls.Primitives.GeneratorStatus.ContainersGenerated)
+            {
+                if (dataGrid.Items.Count > 0)
+                {
+                    dataGrid.SelectedIndex = 0;
+                    dataGrid.Focus();
+
+                    var firstRow = dataGrid.ItemContainerGenerator.ContainerFromIndex(0) as DataGridRow;
+                    if (firstRow != null)
+                    {
+                        firstRow.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                    }
+
+                    dataGrid.ItemContainerGenerator.StatusChanged -= DgBancos_StatusChanged;
+                }
+            }
         }
     }
 }

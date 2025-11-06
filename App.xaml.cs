@@ -30,7 +30,7 @@ public partial class App : Application
         services.AddScoped<IGrupoRepository, GrupoRepository>();
         services.AddScoped<IProductoRepository, ProductoRepository>();
         services.AddScoped<IMaquinaRepository, MaquinaRepository>();
-        services.AddScoped<IOperadorRepository, OperadorRepository>();
+        services.AddScoped<IOperarioRepository, OperarioRepository>();
         services.AddScoped<IImpresionRepository, ImpresionRepository>();
         services.AddScoped<IEncuadernacionRepository, EncuadernacionRepository>();
         services.AddScoped<IFotomecanicaRepository, FotomecanicaRepository>();
@@ -43,7 +43,7 @@ public partial class App : Application
         services.AddScoped<IGrupoService, GrupoService>();
         services.AddScoped<IProductoService, ProductoService>();
         services.AddScoped<IMaquinaService, MaquinaService>();
-        services.AddScoped<IOperadorService, OperadorService>();
+        services.AddScoped<IOperarioService, OperarioService>();
         services.AddScoped<IImpresionService, ImpresionService>();
         services.AddScoped<IEncuadernacionService, EncuadernacionService>();
         services.AddScoped<IFotomecanicaService, FotomecanicaService>();

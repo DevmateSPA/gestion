@@ -8,37 +8,37 @@ namespace Gestion.presentation.viewmodel;
 
 public class OperarioViewModel
 {
-    private readonly IOperadorService _operadorService;
+    private readonly IOperarioService _operarioService;
     private readonly IDialogService _dialogService;
-    public ObservableCollection<Operador> Operadores { get; set; } = new ObservableCollection<Operador>();
-    public OperarioViewModel(IOperadorService operadorService, IDialogService dialogService)
+    public ObservableCollection<Operario> Operarios { get; set; } = new ObservableCollection<Operario>();
+    public OperarioViewModel(IOperarioService operadorService, IDialogService dialogService)
     {
-        _operadorService = operadorService;
+        _operarioService = operadorService;
         _dialogService = dialogService;
     }
 
-    public async Task updateOperador(Operador operador)
+    public async Task updateOperario(Operario operario)
     {
         await SafeExecutor.RunAsync(async () =>
         {
-            await _operadorService.Update(operador);
+            await _operarioService.Update(operario);
 
-            var index = Operadores.IndexOf(Operadores.FirstOrDefault(b => b.Id == operador.Id));
+            var index = Operarios.IndexOf(Operarios.FirstOrDefault(b => b.Id == operario.Id));
             if (index >= 0)
-                Operadores[index] = operador;
+                Operarios[index] = operario;
 
 
         }, _dialogService, "Error al actualizar el operario");
     }
 
-    public async Task LoadOperadores()
+    public async Task LoadOperarios()
     {
         await SafeExecutor.RunAsync(async () =>
         {
-            var lista = await _operadorService.FindAll();
-            Operadores.Clear();
+            var lista = await _operarioService.FindAll();
+            Operarios.Clear();
             foreach (var operador in lista)
-                Operadores.Add(operador);
+                Operarios.Add(operador);
         }, _dialogService, "Error al cargar los operarios");
     }
 }
