@@ -8,9 +8,4 @@ public class EncuadernacionRepository : BaseRepository<Encuadernacion>, IEncuade
 {
     public EncuadernacionRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "encuadernacion") {}
-
-    public override Task<Encuadernacion> Save(Encuadernacion entity)
-    {
-        throw new NotImplementedException();
-    }
 }

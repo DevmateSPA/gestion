@@ -28,8 +28,8 @@ public abstract class BaseService<T> : IBaseService<T> where T : IModel
         return await _baseRepository.DeleteById(id);
     }
 
-    public async Task<T> Save(T entity)
+    public async Task<T> Update(T entity)
     {
-        return await _baseRepository.Save(entity);
+        return await _baseRepository.Update(entity);
     }
 }

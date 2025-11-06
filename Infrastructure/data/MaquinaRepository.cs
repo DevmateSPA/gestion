@@ -8,9 +8,4 @@ public class MaquinaRepository : BaseRepository<Maquina>, IMaquinaRepository
 {
     public MaquinaRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "maquina") {}
-
-    public override Task<Maquina> Save(Maquina entity)
-    {
-        throw new NotImplementedException();
-    }
 }

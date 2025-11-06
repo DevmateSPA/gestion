@@ -20,6 +20,7 @@ public partial class App : Application
     {
         var services = new ServiceCollection();
         services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
+        services.AddSingleton<IDialogService, DialogService>();
 
         // Repositorios
         services.AddScoped<IUsuarioRepository, UsuarioRepository>();
@@ -50,10 +51,6 @@ public partial class App : Application
         // Login
         services.AddTransient<LoginWindow>();
         services.AddTransient<LoginViewModel>();
-
-        // Agregar
-        services.AddTransient<AgregarViewModel>();
-        services.AddTransient<AgregarPage>();
 
         // Banco
         services.AddTransient<BancoViewModel>();

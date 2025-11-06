@@ -150,13 +150,6 @@ namespace Gestion.presentation.views.windows
         {
             MainFrame.Navigate(new MainPage());
         }
-
-        private void BtnAgregar_Click(object sender, RoutedEventArgs e)
-        {
-            var agregar = App.ServiceProvider.GetRequiredService<AgregarPage>();
-            MainFrame.Navigate(agregar);
-        }
-
         private void Link_Click(object sender, MouseButtonEventArgs e)
         {
             if (sender is TextBlock textBlock && textBlock.DataContext is LinkItem link)

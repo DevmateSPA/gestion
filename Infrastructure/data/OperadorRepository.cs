@@ -8,9 +8,4 @@ public class OperadorRepository : BaseRepository<Operador>, IOperadorRepository
 {
     public OperadorRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "operador") {}
-
-    public override Task<Operador> Save(Operador entity)
-    {
-        throw new NotImplementedException();
-    }
 }
