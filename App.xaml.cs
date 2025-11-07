@@ -37,6 +37,7 @@ public partial class App : Application
         services.AddScoped<IFotomecanicaRepository, FotomecanicaRepository>();
         services.AddScoped<INotaCreditoRepository, NotaCreditoRepository>();
         services.AddScoped<IDocumentoNuloRepository, DocumentoNuloRepository>();
+        services.AddScoped<IFacturaRepository, FacturaRepository>();
 
         // Servicios
         services.AddScoped<IAuthService, AuthService>();
@@ -52,6 +53,7 @@ public partial class App : Application
         services.AddScoped<IFotomecanicaService, FotomecanicaService>();
         services.AddScoped<INotaCreditoService, NotaCreditoService>();
         services.AddScoped<IDocumentoNuloService, DocumentoNuloService>();
+        services.AddScoped<IFacturaService, FacturaService>();
 
         // Login
         services.AddTransient<LoginWindow>();
