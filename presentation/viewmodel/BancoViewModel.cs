@@ -17,17 +17,33 @@ public class BancoViewModel
         _dialogService = dialogService;
     }
 
-    public async Task updateBanco(Banco banco)
+    public async Task delete(int id)
     {
         await SafeExecutor.RunAsync(async () =>
         {
-            await _bancoService.Update(banco);
+            if (await _bancoService.DeleteById(id))
+            {
+                var bancoAEliminar = Bancos.FirstOrDefault(b => b.Id == id);
+                if (bancoAEliminar != null)
+                    Bancos.Remove(bancoAEliminar);
+            }
+        }, _dialogService, "Error al eliminar el banco");
+    }
 
-            var index = Bancos.IndexOf(Bancos.FirstOrDefault(b => b.Id == banco.Id));
-            if (index >= 0)
-                Bancos[index] = banco;
-
-
+    public async Task update(Banco banco)
+    {
+        await SafeExecutor.RunAsync(async () =>
+        {
+            if (await _bancoService.Update(banco))
+            {
+                var existing = Bancos.FirstOrDefault(b => b.Id == banco.Id);
+                if (existing != null)
+                {
+                    var index = Bancos.IndexOf(existing);
+                    if (index >= 0)
+                        Bancos[index] = banco;
+                }
+            }
         }, _dialogService, "Error al actualizar el banco");
     }
 

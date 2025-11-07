@@ -71,7 +71,7 @@ namespace Gestion.presentation.views.pages
                 if (ventana.ShowDialog() == true)
                 {
                     var maquinaEditada = (Maquina)ventana.EntidadEditada;
-                    await _viewModel.updateMaquina(maquinaEditada);
+                    await _viewModel.update(maquinaEditada);
                 }
             }
         }

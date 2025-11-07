@@ -17,17 +17,20 @@ public class ProductoViewModel
         _dialogService = dialogService;
     }
 
-    public async Task updateProducto(Producto producto)
+    public async Task update(Producto producto)
     {
         await SafeExecutor.RunAsync(async () =>
         {
-            await _productoService.Update(producto);
-
-            var index = Productos.IndexOf(Productos.FirstOrDefault(b => b.Id == producto.Id));
-            if (index >= 0)
-                Productos[index] = producto;
-
-
+            if (await _productoService.Update(producto))
+            {
+                var existing = Productos.FirstOrDefault(p => p.Id == producto.Id);
+                if (existing != null)
+                {
+                    var index = Productos.IndexOf(existing);
+                    if (index >= 0)
+                        Productos[index] = producto;
+                }
+            }
         }, _dialogService, "Error al actualizar el producto");
     }
 

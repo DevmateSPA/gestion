@@ -17,17 +17,20 @@ public class MaquinaViewModel
         _dialogService = dialogService;
     }
 
-    public async Task updateMaquina(Maquina maquina)
+    public async Task update(Maquina maquina)
     {
         await SafeExecutor.RunAsync(async () =>
         {
-            await _maquinaService.Update(maquina);
-
-            var index = Maquinas.IndexOf(Maquinas.FirstOrDefault(b => b.Id == maquina.Id));
-            if (index >= 0)
-                Maquinas[index] = maquina;
-
-
+            if (await _maquinaService.Update(maquina))
+            {
+                var existing = Maquinas.FirstOrDefault(m => m.Id == maquina.Id);
+                if (existing != null)
+                {
+                    var index = Maquinas.IndexOf(existing);
+                    if (index >= 0)
+                        Maquinas[index] = maquina;
+                }
+            }
         }, _dialogService, "Error al actualizar la máquina");
     }
 

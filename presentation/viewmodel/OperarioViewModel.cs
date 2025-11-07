@@ -17,17 +17,20 @@ public class OperarioViewModel
         _dialogService = dialogService;
     }
 
-    public async Task updateOperario(Operario operario)
+    public async Task update(Operario operario)
     {
         await SafeExecutor.RunAsync(async () =>
         {
-            await _operarioService.Update(operario);
-
-            var index = Operarios.IndexOf(Operarios.FirstOrDefault(b => b.Id == operario.Id));
-            if (index >= 0)
-                Operarios[index] = operario;
-
-
+            if (await _operarioService.Update(operario))
+            {
+                var existing = Operarios.FirstOrDefault(o => o.Id == operario.Id);
+                if (existing != null)
+                {
+                    var index = Operarios.IndexOf(existing);
+                    if (index >= 0)
+                        Operarios[index] = operario;
+                }
+            }
         }, _dialogService, "Error al actualizar el operario");
     }
 

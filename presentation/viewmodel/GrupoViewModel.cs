@@ -17,17 +17,20 @@ public class GrupoViewModel
         _dialogService = dialogService;
     }
 
-    public async Task updateGrupo(Grupo grupo)
+    public async Task update(Grupo grupo)
     {
         await SafeExecutor.RunAsync(async () =>
         {
-            await _grupoService.Update(grupo);
-
-            var index = Grupos.IndexOf(Grupos.FirstOrDefault(b => b.Id == grupo.Id));
-            if (index >= 0)
-                Grupos[index] = grupo;
-
-
+            if (await _grupoService.Update(grupo))
+            {
+                var existing = Grupos.FirstOrDefault(g => g.Id == grupo.Id);
+                if (existing != null)
+                {
+                    var index = Grupos.IndexOf(existing);
+                    if (index >= 0)
+                        Grupos[index] = grupo;
+                }
+            }
         }, _dialogService, "Error al actualizar el grupo");
     }
 

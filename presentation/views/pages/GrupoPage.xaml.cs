@@ -72,7 +72,7 @@ namespace Gestion.presentation.views.pages
                 if (ventana.ShowDialog() == true)
                 {
                     var grupoEditado = (Grupo)ventana.EntidadEditada;
-                    await _viewModel.updateGrupo(grupoEditado);
+                    await _viewModel.update(grupoEditado);
                 }
             }
         }

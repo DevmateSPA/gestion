@@ -28,7 +28,7 @@ public abstract class BaseService<T> : IBaseService<T> where T : IModel
         return await _baseRepository.DeleteById(id);
     }
 
-    public async Task<T> Update(T entity)
+    public async Task<bool> Update(T entity)
     {
         return await _baseRepository.Update(entity);
     }

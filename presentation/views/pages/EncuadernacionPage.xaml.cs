@@ -71,7 +71,7 @@ namespace Gestion.presentation.views.pages
                 if (ventana.ShowDialog() == true)
                 {
                     var encuadernacionEditada = (Encuadernacion)ventana.EntidadEditada;
-                    await _viewModel.updateEncuadernacion(encuadernacionEditada);
+                    await _viewModel.update(encuadernacionEditada);
                 }
             }
         }

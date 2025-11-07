@@ -17,17 +17,20 @@ public class ImpresionViewModel
         _dialogService = dialogService;
     }
 
-    public async Task updateImpresion(Impresion impresion)
+    public async Task update(Impresion impresion)
     {
         await SafeExecutor.RunAsync(async () =>
         {
-            await _impresionService.Update(impresion);
-
-            var index = Impresion.IndexOf(Impresion.FirstOrDefault(b => b.Id == impresion.Id));
-            if (index >= 0)
-                Impresion[index] = impresion;
-
-
+            if (await _impresionService.Update(impresion))
+            {
+                var existing = Impresion.FirstOrDefault(i => i.Id == impresion.Id);
+                if (existing != null)
+                {
+                    var index = Impresion.IndexOf(existing);
+                    if (index >= 0)
+                        Impresion[index] = impresion;
+                }
+            }
         }, _dialogService, "Error al actualizar la impresión");
     }
     

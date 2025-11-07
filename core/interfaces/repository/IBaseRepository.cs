@@ -7,5 +7,5 @@ public interface IBaseRepository<T> where T : IModel
     Task<T?> FindById(int id);
     Task<List<T>> FindAll();
     Task<bool> DeleteById(int id);
-    Task<T> Update(T entity); // Actualiza y Guarda
+    Task<bool> Update(T entity); // Actualiza y Guarda
 }

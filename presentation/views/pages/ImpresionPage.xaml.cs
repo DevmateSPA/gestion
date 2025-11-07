@@ -71,7 +71,7 @@ namespace Gestion.presentation.views.pages
                 if (ventana.ShowDialog() == true)
                 {
                     var impresionEditada = (Impresion)ventana.EntidadEditada;
-                    await _viewModel.updateImpresion(impresionEditada);
+                    await _viewModel.update(impresionEditada);
                 }
             }
         }

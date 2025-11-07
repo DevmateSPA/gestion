@@ -71,7 +71,7 @@ namespace Gestion.presentation.views.pages
                 if (ventana.ShowDialog() == true)
                 {
                     var operarioEditado = (Operario)ventana.EntidadEditada;
-                    await _viewModel.updateOperario(operarioEditado);
+                    await _viewModel.update(operarioEditado);
                 }
             }
         }

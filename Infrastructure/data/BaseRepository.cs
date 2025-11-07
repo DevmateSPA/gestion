@@ -87,7 +87,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return affected > 0;
     }
 
-    public async Task<T> Update(T entity)
+    public async Task<bool> Update(T entity)
     {
         using var conn = await _connectionFactory.CreateConnection();
         using var cmd = (DbCommand)conn.CreateCommand();
@@ -117,7 +117,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         idParam.Value = typeof(T).GetProperty("Id")?.GetValue(entity) ?? DBNull.Value;
         cmd.Parameters.Add(idParam);
 
-        await cmd.ExecuteNonQueryAsync();
-        return entity;
+        int affected = await cmd.ExecuteNonQueryAsync();
+        return affected > 0;
     }
 }

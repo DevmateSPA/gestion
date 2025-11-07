@@ -18,17 +18,20 @@ public class ClienteViewModel
 
     }
 
-    public async Task updateCliente(Cliente cliente)
+    public async Task update(Cliente cliente)
     {
         await SafeExecutor.RunAsync(async () =>
         {
-            await _clienteService.Update(cliente);
-
-            var index = Clientes.IndexOf(Clientes.FirstOrDefault(b => b.Id == cliente.Id));
-            if (index >= 0)
-                Clientes[index] = cliente;
-
-
+            if (await _clienteService.Update(cliente))
+            {
+                var existing = Clientes.FirstOrDefault(c => c.Id == cliente.Id);
+                if (existing != null)
+                {
+                    var index = Clientes.IndexOf(existing);
+                    if (index >= 0)
+                        Clientes[index] = cliente;
+                }
+            }
         }, _dialogService, "Error al actualizar el cliente");
     }
     

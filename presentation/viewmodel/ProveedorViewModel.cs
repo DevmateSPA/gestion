@@ -17,20 +17,22 @@ public class ProveedorViewModel
         _dialogService = dialogService;
     }
 
-    public async Task updateProveedor(Proveedor proveedor)
+    public async Task update(Proveedor proveedor)
     {
         await SafeExecutor.RunAsync(async () =>
         {
-            await _proveedorService.Update(proveedor);
-
-            var index = Proveedores.IndexOf(Proveedores.FirstOrDefault(b => b.Id == proveedor.Id));
-            if (index >= 0)
-                Proveedores[index] = proveedor;
-
-
+            if (await _proveedorService.Update(proveedor))
+            {
+                var existing = Proveedores.FirstOrDefault(p => p.Id == proveedor.Id);
+                if (existing != null)
+                {
+                    var index = Proveedores.IndexOf(existing);
+                    if (index >= 0)
+                        Proveedores[index] = proveedor;
+                }
+            }
         }, _dialogService, "Error al actualizar el proveedor");
     }
-
 
     public async Task LoadProveedores()
     {

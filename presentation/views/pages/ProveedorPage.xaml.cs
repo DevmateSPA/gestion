@@ -71,7 +71,7 @@ namespace Gestion.presentation.views.pages
                 if (ventana.ShowDialog() == true)
                 {
                     var proveedorEditado = (Proveedor)ventana.EntidadEditada;
-                    await _viewModel.updateProveedor(proveedorEditado);
+                    await _viewModel.update(proveedorEditado);
                 }
             }
         }

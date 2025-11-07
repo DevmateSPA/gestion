@@ -71,7 +71,7 @@ namespace Gestion.presentation.views.pages
                 if (ventana.ShowDialog() == true)
                 {
                     var clienteEditado = (Cliente)ventana.EntidadEditada;
-                    await _viewModel.updateCliente(clienteEditado);
+                    await _viewModel.update(clienteEditado);
                 }
             }
         }

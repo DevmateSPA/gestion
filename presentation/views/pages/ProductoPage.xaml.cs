@@ -71,7 +71,7 @@ namespace Gestion.presentation.views.pages
                 if (ventana.ShowDialog() == true)
                 {
                     var productoEditado = (Producto)ventana.EntidadEditada;
-                    await _viewModel.updateProducto(productoEditado);
+                    await _viewModel.update(productoEditado);
                 }
             }
         }

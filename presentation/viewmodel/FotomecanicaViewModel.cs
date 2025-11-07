@@ -17,17 +17,20 @@ public class FotomecanicaViewModel
         _dialogService = dialogService;
     }
 
-    public async Task updateFotomecanica(Fotomecanica fotomecanica)
+    public async Task update(Fotomecanica fotomecanica)
     {
         await SafeExecutor.RunAsync(async () =>
         {
-            await _fotomecanicaService.Update(fotomecanica);
-
-            var index = Fotomecanica.IndexOf(Fotomecanica.FirstOrDefault(b => b.Id == fotomecanica.Id));
-            if (index >= 0)
-                Fotomecanica[index] = fotomecanica;
-
-
+            if (await _fotomecanicaService.Update(fotomecanica))
+            {
+                var existing = Fotomecanica.FirstOrDefault(f => f.Id == fotomecanica.Id);
+                if (existing != null)
+                {
+                    var index = Fotomecanica.IndexOf(existing);
+                    if (index >= 0)
+                        Fotomecanica[index] = fotomecanica;
+                }
+            }
         }, _dialogService, "Error al actualizar la fotomecánica");
     }
     

@@ -17,17 +17,20 @@ public class EncuadernacionViewModel
         _dialogService = dialogService;
     }
 
-    public async Task updateEncuadernacion(Encuadernacion encuadernacion)
+    public async Task update(Encuadernacion encuadernacion)
     {
         await SafeExecutor.RunAsync(async () =>
         {
-            await _encuadernacionService.Update(encuadernacion);
-
-            var index = Encuadernacion.IndexOf(Encuadernacion.FirstOrDefault(b => b.Id == encuadernacion.Id));
-            if (index >= 0)
-                Encuadernacion[index] = encuadernacion;
-
-
+            if (await _encuadernacionService.Update(encuadernacion))
+            {
+                var existing = Encuadernacion.FirstOrDefault(e => e.Id == encuadernacion.Id);
+                if (existing != null)
+                {
+                    var index = Encuadernacion.IndexOf(existing);
+                    if (index >= 0)
+                        Encuadernacion[index] = encuadernacion;
+                }
+            }
         }, _dialogService, "Error al actualizar la encuadernación");
     }
 

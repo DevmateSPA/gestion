@@ -5,5 +5,5 @@ public interface IBaseService<T>
     Task<T?> FindById(int id);
     Task<List<T>> FindAll();
     Task<bool> DeleteById(int id);
-    Task<T> Update(T entity);
+    Task<bool> Update(T entity);
 }
