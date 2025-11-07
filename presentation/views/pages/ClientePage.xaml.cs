@@ -76,7 +76,7 @@ namespace Gestion.presentation.views.pages
             }
         }
 
-         private void dgClientes_PreviewKeyDown(object sender, KeyEventArgs e)
+         private async void dgClientes_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             var teclas = new[] { Key.Enter, Key.Insert, Key.Delete, Key.F2, Key.F4 };
             if (teclas.Contains(e.Key))
