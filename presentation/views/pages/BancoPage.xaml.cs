@@ -20,7 +20,7 @@ public partial class BancoPage : Page
         Title = $"Bancos";
 
         Loaded += async (_, _) => await _viewModel.LoadAll();
-        //dgBancos.ItemContainerGenerator.StatusChanged += DgBancos_StatusChanged;
+        dgBancos.ItemContainerGenerator.StatusChanged += DgBancos_StatusChanged;
     }
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -73,13 +73,12 @@ public partial class BancoPage : Page
         MessageBox.Show("Imprimir listado...");
     }
 
-    // Para que sirve esto?
-    /*private void DgBancos_StatusChanged(object? sender, EventArgs e)
+    private void DgBancos_StatusChanged(object? sender, EventArgs e)
     {
         GridFocus(dgBancos);
-    }*/
+    }
 
-    /*private void GridFocus(DataGrid dataGrid)
+    private void GridFocus(DataGrid dataGrid)
     {
         if (dataGrid.ItemContainerGenerator.Status == System.Windows.Controls.Primitives.GeneratorStatus.ContainersGenerated)
         {
@@ -97,19 +96,38 @@ public partial class BancoPage : Page
                 dataGrid.ItemContainerGenerator.StatusChanged -= DgBancos_StatusChanged;
             }
         }
-    }*/
+    }
 
     private void dgBancos_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         var teclas = new[] { Key.Enter, Key.Insert, Key.Delete, Key.F2, Key.F4 };
-        if (teclas.Contains(e.Key))
+
+        if (!teclas.Contains(e.Key))
+            return;
+
+        e.Handled = true;
+
+        switch (e.Key)
         {
-            e.Handled = true;
+            case Key.Enter:
+                BtnEditar_Click(sender, e);
+                break;
+
+            case Key.Insert:
+                BtnAgregar_Click(sender, e);
+                break;
+
+            case Key.Delete:
+                BtnEliminar_Click(sender, e);
+                break;
+
+            case Key.F2:
+                BtnBuscar_Click(sender, e);
+                break;
+
+            case Key.F4:
+                BtnImprimir_Click(sender, e);
+                break;
         }
-        if (e.Key == Key.Enter) BtnEditar_Click(sender, e);
-        else if (e.Key == Key.Insert) BtnAgregar_Click(sender, e);
-        else if (e.Key == Key.Delete) BtnEliminar_Click(sender, e);
-        else if (e.Key == Key.F2) BtnBuscar_Click(sender, e);
-        else if (e.Key == Key.F4) BtnImprimir_Click(sender, e);
     }
 }

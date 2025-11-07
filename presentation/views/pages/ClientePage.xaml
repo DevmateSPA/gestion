@@ -29,8 +29,8 @@
                 ItemsSource="{Binding Clientes}" 
                 FontSize="16" 
                 IsReadOnly="True"
-                MouseDoubleClick="dgClientes_MouseDoubleClick" 
-                PreviewKeyDown="dgClientes_PreviewKeyDown"/>
+                MouseDoubleClick="dataGrid_MouseDoubleClick" 
+                PreviewKeyDown="DataGrid_PreviewKeyDown"/>
 
         <!-- Botones -->
         <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Margin="0,5,0,0">

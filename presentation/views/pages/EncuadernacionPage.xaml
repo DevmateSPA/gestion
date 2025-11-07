@@ -27,8 +27,8 @@
                 IsReadOnly="True"
                 Margin="0,5,0,5"
                 FontSize="16" 
-                MouseDoubleClick="dgEncuadernacion_MouseDoubleClick" 
-                PreviewKeyDown="dgEncuadernacion_PreviewKeyDown">
+                MouseDoubleClick="dataGrid_MouseDoubleClick" 
+                PreviewKeyDown="DataGrid_PreviewKeyDown">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Código" Binding="{Binding Codigo}" Width="*" />
