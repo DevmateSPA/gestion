@@ -4,4 +4,6 @@ public interface IDialogService
 {
     void ShowMessage(string message, string title = "Información");
     void ShowError(string message, string title = "Error");
+    void ShowLoading();
+    void HideLoading();
 }
