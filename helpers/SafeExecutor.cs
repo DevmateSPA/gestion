@@ -8,16 +8,11 @@ public static class SafeExecutor
     {
         try
         {
-            dialogService.ShowLoading();
             await action();
         }
         catch (Exception ex)
         {
             dialogService.ShowError($"{mensajeError}: {ex.Message}");
-        }
-        finally
-        {
-            dialogService.HideLoading();
         }
     }
 }
