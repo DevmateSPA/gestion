@@ -92,17 +92,14 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         using var conn = await _connectionFactory.CreateConnection();
         using var cmd = (DbCommand)conn.CreateCommand();
 
-        // Obtener las propiedades de la entidad (excluyendo Id)
         var props = typeof(T).GetProperties()
-            .Where(p => p.Name != "Id") // asumimos que "Id" es la PK
+            .Where(p => p.Name != "Id")
             .ToList();
 
-        // Construir dinámicamente el SET: "campo1 = @campo1, campo2 = @campo2, ..."
         var setClause = string.Join(", ", props.Select(p => $"{p.Name.ToLower()} = @{p.Name.ToLower()}"));
 
         cmd.CommandText = $"UPDATE {_tableName} SET {setClause} WHERE id = @id";
 
-        // Agregar parámetros para cada propiedad
         foreach (var prop in props)
         {
             var param = cmd.CreateParameter();
@@ -111,11 +108,36 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
             cmd.Parameters.Add(param);
         }
 
-        // Agregar parámetro Id
         var idParam = cmd.CreateParameter();
         idParam.ParameterName = "@id";
         idParam.Value = typeof(T).GetProperty("Id")?.GetValue(entity) ?? DBNull.Value;
         cmd.Parameters.Add(idParam);
+
+        int affected = await cmd.ExecuteNonQueryAsync();
+        return affected > 0;
+    }
+
+    public async Task<bool> Save(T entity)
+    {
+        using var conn = await _connectionFactory.CreateConnection();
+        using var cmd = (DbCommand)conn.CreateCommand();
+
+        var props = typeof(T).GetProperties()
+            .Where(p => p.Name != "Id")
+            .ToList();
+
+        var columns = string.Join(", ", props.Select(p => p.Name.ToLower()));
+        var parameters = string.Join(", ", props.Select(p => $"@{p.Name.ToLower()}"));
+
+        cmd.CommandText = $"INSERT INTO {_tableName} ({columns}) VALUES ({parameters})";
+
+        foreach (var prop in props)
+        {
+            var param = cmd.CreateParameter();
+            param.ParameterName = $"@{prop.Name.ToLower()}";
+            param.Value = prop.GetValue(entity) ?? DBNull.Value;
+            cmd.Parameters.Add(param);
+        }
 
         int affected = await cmd.ExecuteNonQueryAsync();
         return affected > 0;

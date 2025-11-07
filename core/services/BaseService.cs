@@ -32,4 +32,9 @@ public abstract class BaseService<T> : IBaseService<T> where T : IModel
     {
         return await _baseRepository.Update(entity);
     }
+
+    public async Task<bool> Save(T entity)
+    {
+        return await _baseRepository.Save(entity);
+    }
 }
