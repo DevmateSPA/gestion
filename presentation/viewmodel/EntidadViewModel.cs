@@ -58,4 +58,14 @@ public abstract class EntidadViewModel<T> where T : IModel
             }
         }, _dialogService, $"Error al actualizar {typeof(T).Name}");
     }
+
+    public async Task Save(T entidad)
+    {
+        await SafeExecutor.RunAsync(async () =>
+        {
+            var entidadGuardada = await _service.Save(entidad);
+            if (entidadGuardada)
+                Entidades.Add(entidad);
+        }, _dialogService, $"Error al guardar {typeof(T).Name}");
+    }
 }
