@@ -17,7 +17,7 @@ namespace Gestion.presentation.views.pages
             DataContext = _viewModel;
             Title = $"Encuadernacion";
 
-            Loaded += FotomecanicaPage_Loaded;
+            Loaded += async (_, _) => await _viewModel.LoadAll();
             dgFotomecanica.ItemContainerGenerator.StatusChanged += DgFotomecanica_StatusChanged;
         }
 
@@ -94,14 +94,7 @@ namespace Gestion.presentation.views.pages
         {
             GridFocus(dgFotomecanica);
         }
-
-
-        private async void FotomecanicaPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            await _viewModel.LoadAll();
-        }
     
-
         private void GridFocus(DataGrid dataGrid)
         {
             if (dataGrid.ItemContainerGenerator.Status == System.Windows.Controls.Primitives.GeneratorStatus.ContainersGenerated)

@@ -17,7 +17,7 @@ namespace Gestion.presentation.views.pages
             DataContext = _viewModel;
             Title = $"Clientes";
 
-            Loaded += ClientePage_Loaded;
+            Loaded += async (_, _) => await _viewModel.LoadAll();
             dgClientes.ItemContainerGenerator.StatusChanged += DgClientes_StatusChanged;
         }
 
@@ -104,12 +104,6 @@ namespace Gestion.presentation.views.pages
             else if (e.Key == Key.F2) BtnBuscar_Click(sender, e);
             else if (e.Key == Key.F4) BtnImprimir_Click(sender, e);
         }
-
-        private async void ClientePage_Loaded(object sender, RoutedEventArgs e)
-        {
-            await _viewModel.LoadAll();
-        }
-
 
         private void GridFocus(DataGrid dataGrid)
         {

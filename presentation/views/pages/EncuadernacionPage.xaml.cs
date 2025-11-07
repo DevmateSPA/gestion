@@ -17,7 +17,7 @@ namespace Gestion.presentation.views.pages
             DataContext = _viewModel;
             Title = $"Encuadernacion";
 
-            Loaded += EncuadernacionPage_Loaded;
+            Loaded += async (_, _) => await _viewModel.LoadAll();
             dgEncuadernacion.ItemContainerGenerator.StatusChanged += DgEncuadernacion_StatusChanged;
         }
 
@@ -93,11 +93,6 @@ namespace Gestion.presentation.views.pages
         private void DgEncuadernacion_StatusChanged(object? sender, EventArgs e)
         {
             GridFocus(dgEncuadernacion);
-        }
-
-        private async void EncuadernacionPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            await _viewModel.LoadAll();
         }
 
         private void GridFocus(DataGrid dataGrid)

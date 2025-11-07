@@ -17,7 +17,7 @@ namespace Gestion.presentation.views.pages
             DataContext = _viewModel;
             Title = $"Impresiones";
 
-            Loaded += ImpresionPage_Loaded;
+            Loaded += async (_, _) => await _viewModel.LoadAll();
             dgImpresion.ItemContainerGenerator.StatusChanged += DgImpresion_StatusChanged;
         }
 
@@ -93,11 +93,6 @@ namespace Gestion.presentation.views.pages
         private void DgImpresion_StatusChanged(object? sender, EventArgs e)
         {
             GridFocus(dgImpresion);
-        }
-
-        private async void ImpresionPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            await _viewModel.LoadAll();
         }
 
         private void GridFocus(DataGrid dataGrid)

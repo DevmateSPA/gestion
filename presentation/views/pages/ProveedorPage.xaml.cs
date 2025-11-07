@@ -17,7 +17,7 @@ namespace Gestion.presentation.views.pages
             DataContext = _viewModel;
             Title = $"Proveedores";
 
-            Loaded += ProveedorPage_Loaded;
+            Loaded += async (_, _) => await _viewModel.LoadAll();
             dgProveedores.ItemContainerGenerator.StatusChanged += DgProveedores_StatusChanged;
         }
 
@@ -93,11 +93,6 @@ namespace Gestion.presentation.views.pages
         private void DgProveedores_StatusChanged(object? sender, EventArgs e)
         {
             GridFocus(dgProveedores);
-        }
-
-        private async void ProveedorPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            await _viewModel.LoadAll();
         }
 
         private void GridFocus(DataGrid dataGrid)

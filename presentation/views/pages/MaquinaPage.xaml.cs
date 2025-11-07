@@ -17,7 +17,7 @@ namespace Gestion.presentation.views.pages
             DataContext = _viewModel;
             Title = $"Grupos";
 
-            Loaded += MaquinaPage_Loaded;
+            Loaded += async (_, _) => await _viewModel.LoadAll();
             dgMaquinas.ItemContainerGenerator.StatusChanged += DgMaquinas_StatusChanged;
         }
 
@@ -93,12 +93,6 @@ namespace Gestion.presentation.views.pages
         private void DgMaquinas_StatusChanged(object? sender, EventArgs e)
         {
             GridFocus(dgMaquinas);
-        }
-
-
-        private async void MaquinaPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            await _viewModel.LoadAll();
         }
 
         private void GridFocus(DataGrid dataGrid)
