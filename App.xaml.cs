@@ -9,6 +9,7 @@ using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.pages;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.database;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Gestion;
 
@@ -34,6 +35,7 @@ public partial class App : Application
         services.AddScoped<IImpresionRepository, ImpresionRepository>();
         services.AddScoped<IEncuadernacionRepository, EncuadernacionRepository>();
         services.AddScoped<IFotomecanicaRepository, FotomecanicaRepository>();
+        services.AddScoped<INotaCreditoRepository, NotaCreditoRepository>();
 
         // Servicios
         services.AddScoped<IAuthService, AuthService>();
@@ -47,6 +49,7 @@ public partial class App : Application
         services.AddScoped<IImpresionService, ImpresionService>();
         services.AddScoped<IEncuadernacionService, EncuadernacionService>();
         services.AddScoped<IFotomecanicaService, FotomecanicaService>();
+        services.AddScoped<INotaCreditoService, NotaCreditoService>();
 
         // Login
         services.AddTransient<LoginWindow>();
