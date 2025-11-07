@@ -11,9 +11,11 @@ public partial class EntidadEditorWindow : Window
 
     public object EntidadEditada { get; private set; }
 
-    public EntidadEditorWindow(object entidad)
+    public EntidadEditorWindow(object entidad, string titulo = "Ventana")
     {
         InitializeComponent();
+
+        Title = titulo;
 
         _entidadOriginal = entidad;
 
