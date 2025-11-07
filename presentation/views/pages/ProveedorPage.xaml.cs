@@ -71,7 +71,7 @@ namespace Gestion.presentation.views.pages
                 if (ventana.ShowDialog() == true)
                 {
                     var proveedorEditado = (Proveedor)ventana.EntidadEditada;
-                    await _viewModel.update(proveedorEditado);
+                    await _viewModel.Update(proveedorEditado);
                 }
             }
         }
@@ -97,7 +97,7 @@ namespace Gestion.presentation.views.pages
 
         private async void ProveedorPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await _viewModel.LoadProveedores();
+            await _viewModel.LoadAll();
         }
 
         private void GridFocus(DataGrid dataGrid)

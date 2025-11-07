@@ -71,7 +71,7 @@ namespace Gestion.presentation.views.pages
                 if (ventana.ShowDialog() == true)
                 {
                     var maquinaEditada = (Maquina)ventana.EntidadEditada;
-                    await _viewModel.update(maquinaEditada);
+                    await _viewModel.Update(maquinaEditada);
                 }
             }
         }
@@ -98,7 +98,7 @@ namespace Gestion.presentation.views.pages
 
         private async void MaquinaPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await _viewModel.LoadMaquinas();
+            await _viewModel.LoadAll();
         }
 
         private void GridFocus(DataGrid dataGrid)

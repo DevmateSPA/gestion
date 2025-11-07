@@ -72,7 +72,7 @@ namespace Gestion.presentation.views.pages
                 if (ventana.ShowDialog() == true)
                 {
                     var grupoEditado = (Grupo)ventana.EntidadEditada;
-                    await _viewModel.update(grupoEditado);
+                    await _viewModel.Update(grupoEditado);
                 }
             }
         }
@@ -99,7 +99,7 @@ namespace Gestion.presentation.views.pages
 
         private async void GrupoPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await _viewModel.LoadGrupos();
+            await _viewModel.LoadAll();
         }
 
         private void GridFocus(DataGrid dataGrid)

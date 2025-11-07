@@ -71,7 +71,7 @@ namespace Gestion.presentation.views.pages
                 if (ventana.ShowDialog() == true)
                 {
                     var clienteEditado = (Cliente)ventana.EntidadEditada;
-                    await _viewModel.update(clienteEditado);
+                    await _viewModel.Update(clienteEditado);
                 }
             }
         }
@@ -107,7 +107,7 @@ namespace Gestion.presentation.views.pages
 
         private async void ClientePage_Loaded(object sender, RoutedEventArgs e)
         {
-            await _viewModel.LoadClientes();
+            await _viewModel.LoadAll();
         }
 
 

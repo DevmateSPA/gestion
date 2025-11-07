@@ -6,42 +6,9 @@ using Gestion.helpers;
 
 namespace Gestion.presentation.viewmodel;
 
-public class EncuadernacionViewModel
+public class EncuadernacionViewModel : EntidadViewModel<Encuadernacion>
 {
-    private readonly IEncuadernacionService _encuadernacionService;
-    private readonly IDialogService _dialogService;
-    public ObservableCollection<Encuadernacion> Encuadernacion { get; set; } = new ObservableCollection<Encuadernacion>();
+    public ObservableCollection<Encuadernacion> Encuadernacion => Entidades;
     public EncuadernacionViewModel(IEncuadernacionService encuadernacionService, IDialogService dialogService)
-    {
-        _encuadernacionService = encuadernacionService;
-        _dialogService = dialogService;
-    }
-
-    public async Task update(Encuadernacion encuadernacion)
-    {
-        await SafeExecutor.RunAsync(async () =>
-        {
-            if (await _encuadernacionService.Update(encuadernacion))
-            {
-                var existing = Encuadernacion.FirstOrDefault(e => e.Id == encuadernacion.Id);
-                if (existing != null)
-                {
-                    var index = Encuadernacion.IndexOf(existing);
-                    if (index >= 0)
-                        Encuadernacion[index] = encuadernacion;
-                }
-            }
-        }, _dialogService, "Error al actualizar la encuadernación");
-    }
-
-    public async Task LoadEncuadernaciones()
-    {
-        await SafeExecutor.RunAsync(async () =>
-        {
-            var lista = await _encuadernacionService.FindAll();
-            Encuadernacion.Clear();
-            foreach (var encuadernacion in lista)
-                Encuadernacion.Add(encuadernacion);
-        }, _dialogService, "Error al cargar las encuadernaciones");
-    }
+        : base(encuadernacionService, dialogService) {}
 }

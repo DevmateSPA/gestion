@@ -6,42 +6,9 @@ using Gestion.helpers;
 
 namespace Gestion.presentation.viewmodel;
 
-public class ProveedorViewModel
+public class ProveedorViewModel : EntidadViewModel<Proveedor>
 {
-    private readonly IProveedorService _proveedorService;
-    private readonly IDialogService _dialogService;
-    public ObservableCollection<Proveedor> Proveedores { get; set; } = new ObservableCollection<Proveedor>();
+    public ObservableCollection<Proveedor> Proveedores => Entidades;
     public ProveedorViewModel(IProveedorService proveedorService, IDialogService dialogService)
-    {
-        _proveedorService = proveedorService;
-        _dialogService = dialogService;
-    }
-
-    public async Task update(Proveedor proveedor)
-    {
-        await SafeExecutor.RunAsync(async () =>
-        {
-            if (await _proveedorService.Update(proveedor))
-            {
-                var existing = Proveedores.FirstOrDefault(p => p.Id == proveedor.Id);
-                if (existing != null)
-                {
-                    var index = Proveedores.IndexOf(existing);
-                    if (index >= 0)
-                        Proveedores[index] = proveedor;
-                }
-            }
-        }, _dialogService, "Error al actualizar el proveedor");
-    }
-
-    public async Task LoadProveedores()
-    {
-        await SafeExecutor.RunAsync(async () =>
-        {
-            var lista = await _proveedorService.FindAll();
-            Proveedores.Clear();
-            foreach (var proveedor in lista)
-                Proveedores.Add(proveedor);
-        }, _dialogService, "Error al cargar los proveedores");
-    }
+        : base(proveedorService, dialogService) {}
 }

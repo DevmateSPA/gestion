@@ -71,7 +71,7 @@ namespace Gestion.presentation.views.pages
                 if (ventana.ShowDialog() == true)
                 {
                     var impresionEditada = (Impresion)ventana.EntidadEditada;
-                    await _viewModel.update(impresionEditada);
+                    await _viewModel.Update(impresionEditada);
                 }
             }
         }
@@ -97,7 +97,7 @@ namespace Gestion.presentation.views.pages
 
         private async void ImpresionPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await _viewModel.LoadImpresion();
+            await _viewModel.LoadAll();
         }
 
         private void GridFocus(DataGrid dataGrid)

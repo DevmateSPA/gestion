@@ -71,7 +71,7 @@ namespace Gestion.presentation.views.pages
                 if (ventana.ShowDialog() == true)
                 {
                     var fotomecanicaEditada = (Fotomecanica)ventana.EntidadEditada;
-                    await _viewModel.update(fotomecanicaEditada);
+                    await _viewModel.Update(fotomecanicaEditada);
                 }
             }
         }
@@ -98,7 +98,7 @@ namespace Gestion.presentation.views.pages
 
         private async void FotomecanicaPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await _viewModel.LoadFotomecanica();
+            await _viewModel.LoadAll();
         }
     
 

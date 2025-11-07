@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -34,11 +33,11 @@ namespace Gestion.presentation.views.pages
             string direccion = ventana.Direccion;
         }
 
-        private async Task BtnEliminar_Click(object sender, RoutedEventArgs e)
+        private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
             if (dgBancos.SelectedItem is Banco bancoSeleccionado)
             {
-                await _viewModel.delete(bancoSeleccionado.Id);
+                await _viewModel.Delete(bancoSeleccionado.Id);
             }
         }
 
@@ -82,7 +81,7 @@ namespace Gestion.presentation.views.pages
                 if (ventana.ShowDialog() == true)
                 {
                     var bancoEditado = (Banco)ventana.EntidadEditada;
-                    await _viewModel.update(bancoEditado);
+                    await _viewModel.Update(bancoEditado);
                 }
             }
         }
@@ -108,7 +107,7 @@ namespace Gestion.presentation.views.pages
 
         private async void BancoPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await _viewModel.LoadBancos();
+            await _viewModel.LoadAll();
         }
 
         private void GridFocus(DataGrid dataGrid)

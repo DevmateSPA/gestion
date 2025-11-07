@@ -71,7 +71,7 @@ namespace Gestion.presentation.views.pages
                 if (ventana.ShowDialog() == true)
                 {
                     var operarioEditado = (Operario)ventana.EntidadEditada;
-                    await _viewModel.update(operarioEditado);
+                    await _viewModel.Update(operarioEditado);
                 }
             }
         }
@@ -97,7 +97,7 @@ namespace Gestion.presentation.views.pages
 
         private async void OperarioPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await _viewModel.LoadOperarios();
+            await _viewModel.LoadAll();
         }
 
         private void GridFocus(DataGrid dataGrid)

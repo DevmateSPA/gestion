@@ -71,7 +71,7 @@ namespace Gestion.presentation.views.pages
                 if (ventana.ShowDialog() == true)
                 {
                     var encuadernacionEditada = (Encuadernacion)ventana.EntidadEditada;
-                    await _viewModel.update(encuadernacionEditada);
+                    await _viewModel.Update(encuadernacionEditada);
                 }
             }
         }
@@ -97,7 +97,7 @@ namespace Gestion.presentation.views.pages
 
         private async void EncuadernacionPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await _viewModel.LoadEncuadernaciones();
+            await _viewModel.LoadAll();
         }
 
         private void GridFocus(DataGrid dataGrid)

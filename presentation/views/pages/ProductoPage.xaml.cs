@@ -71,7 +71,7 @@ namespace Gestion.presentation.views.pages
                 if (ventana.ShowDialog() == true)
                 {
                     var productoEditado = (Producto)ventana.EntidadEditada;
-                    await _viewModel.update(productoEditado);
+                    await _viewModel.Update(productoEditado);
                 }
             }
         }
@@ -97,7 +97,7 @@ namespace Gestion.presentation.views.pages
 
         private async void ProductoPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await _viewModel.LoadProductos();
+            await _viewModel.LoadAll();
         }
 
         private void GridFocus(DataGrid dataGrid)
