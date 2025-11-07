@@ -1,0 +1,32 @@
+﻿<Window x:Class="Gestion.presentation.views.windows.LoadingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="#88000000"
+        Width="250" Height="150"
+        ShowInTaskbar="False"
+        Topmost="True">
+
+    <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Border Background="White"
+                CornerRadius="12"
+                Padding="20">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" >
+                <TextBlock Text="Cargando..." 
+                           FontWeight="Bold" 
+                           FontSize="18"
+                           Foreground="#333"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,15"/>
+                <ProgressBar IsIndeterminate="True"
+                             Width="180"
+                             Height="10"
+                             Foreground="#2196F3"
+                             Background="#E0E0E0"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
