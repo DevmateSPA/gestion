@@ -11,7 +11,7 @@
     <Grid Style="{StaticResource GridStyle}">
         <Border Style="{StaticResource MainBorderStyle}">
             <TextBlock
-                Text="Aqui iran cosas relacionadas a la sesión¿? o reportes talvez?"
+                Text="Pantalla Principal"
                 Background="#fff"
                 Height="20"
                 Width="350"
