@@ -34,9 +34,8 @@
                 PreviewKeyDown="dgFacturasCompra_PreviewKeyDown">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Folio" Binding="{Binding Folio}" Width="*" />
-                    <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha}" Width="*" />
-                    <DataGridTextColumn Header="Proveedor" Binding="{Binding Proveedor}" Width="*" />
-                    <DataGridTextColumn Header="Giro" Binding="{Binding Giro}" Width="*" />
+                    <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha, StringFormat={}{0:dd/MM/yyyy}}" Width="*" />
+                    <DataGridTextColumn Header="Proveedor" Binding="{Binding RutCliente}" Width="*" />
                 </DataGrid.Columns>
         </DataGrid>
 

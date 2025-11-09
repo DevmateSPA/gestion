@@ -8,58 +8,58 @@ using Gestion.presentation.views.windows;
 
 namespace Gestion.presentation.views.pages;
 
-public partial class OrdenCompraPeliculaPage : Page
+public partial class OrdenTrabajoPeliculaPage : Page
 {
-    private readonly OrdenCompraPeliculaViewModel _viewModel;
-    public OrdenCompraPeliculaPage(OrdenCompraPeliculaViewModel viewModel)
+    private readonly OrdenTrabajoPeliculaViewModel _viewModel;
+    public OrdenTrabajoPeliculaPage(OrdenTrabajoPeliculaViewModel viewModel)
     {
         InitializeComponent();
         _viewModel = viewModel;
         DataContext = _viewModel;
-        Title = $"Ordenes de Compra Pelicula";
+        Title = $"Ordenes de Trabajo Pelicula";
 
         Loaded += async (_, _) => await _viewModel.LoadAll();
-        dgOrdenCompraPelicula.ItemContainerGenerator.StatusChanged += DgOrdenCompraPelicula_StatusChanged;
+        dgOrdenTrabajoPelicula.ItemContainerGenerator.StatusChanged += DgOrdenTrabajoPelicula_StatusChanged;
     }
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(new OrdenCompraPelicula(), "Ingresar Orden de Compra Pelicula");
+        var ventana = new EntidadEditorWindow(new OrdenTrabajoPelicula(), "Ingresar Orden de Trabajo Pelicula");
 
         if (ventana.ShowDialog() == true)
         {
-            var ordenCompraPeliculaEditado = (OrdenCompraPelicula)ventana.EntidadEditada;
-            await _viewModel.Save(ordenCompraPeliculaEditado);
+            var ordenTrabajoPeliculaEditado = (OrdenTrabajoPelicula)ventana.EntidadEditada;
+            await _viewModel.Save(ordenTrabajoPeliculaEditado);
         }
     }
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
-        if (dgOrdenCompraPelicula.SelectedItem is OrdenCompraPelicula ordenCompraPeliculaSeleccionado)
-            editar(ordenCompraPeliculaSeleccionado, "Editar Orden de Compra Pelicula");
+        if (dgOrdenTrabajoPelicula.SelectedItem is OrdenTrabajoPelicula ordenTrabajoPeliculaSeleccionado)
+            editar(ordenTrabajoPeliculaSeleccionado, "Editar Orden de Trabajo Pelicula");
     }
 
-    private async void dgOrdenCompraPelicula_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private async void dgOrdenTrabajoPelicula_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (dgOrdenCompraPelicula.SelectedItem is OrdenCompraPelicula ordenCompraPeliculaSeleccionado)
-            editar(ordenCompraPeliculaSeleccionado, "Editar Orden de Compra");
+        if (dgOrdenTrabajoPelicula.SelectedItem is OrdenTrabajoPelicula ordenTrabajoPeliculaSeleccionado)
+            editar(ordenTrabajoPeliculaSeleccionado, "Editar Orden de Trabajo");
     }
 
-    private async void editar(OrdenCompraPelicula ordenCompraPelicula, string titulo)
+    private async void editar(OrdenTrabajoPelicula ordenTrabajoPelicula, string titulo)
     {
-        var ventana = new EntidadEditorWindow(ordenCompraPelicula, titulo);
+        var ventana = new EntidadEditorWindow(ordenTrabajoPelicula, titulo);
 
         if (ventana.ShowDialog() == true)
         {
-            var ordenCompraPeliculaEditado = (OrdenCompraPelicula)ventana.EntidadEditada;
-            await _viewModel.Update(ordenCompraPeliculaEditado);
+            var ordenTrabajoPeliculaEditado = (OrdenTrabajoPelicula)ventana.EntidadEditada;
+            await _viewModel.Update(ordenTrabajoPeliculaEditado);
         }
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
-        if (dgOrdenCompraPelicula.SelectedItem is OrdenCompraPelicula ordenCompraPeliculaSeleccionado)
-            await _viewModel.Delete(ordenCompraPeliculaSeleccionado.Id);
+        if (dgOrdenTrabajoPelicula.SelectedItem is OrdenTrabajoPelicula ordenTrabajoPeliculaSeleccionado)
+            await _viewModel.Delete(ordenTrabajoPeliculaSeleccionado.Id);
     }
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)
@@ -72,9 +72,9 @@ public partial class OrdenCompraPeliculaPage : Page
         MessageBox.Show("Imprimir listado...");
     }
 
-    private void DgOrdenCompraPelicula_StatusChanged(object? sender, EventArgs e)
+    private void DgOrdenTrabajoPelicula_StatusChanged(object? sender, EventArgs e)
     {
-        GridFocus(dgOrdenCompraPelicula);
+        GridFocus(dgOrdenTrabajoPelicula);
     }
 
     private void GridFocus(DataGrid dataGrid)
@@ -92,12 +92,12 @@ public partial class OrdenCompraPeliculaPage : Page
                     firstRow.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
                 }
 
-                dataGrid.ItemContainerGenerator.StatusChanged -= DgOrdenCompraPelicula_StatusChanged;
+                dataGrid.ItemContainerGenerator.StatusChanged -= DgOrdenTrabajoPelicula_StatusChanged;
             }
         }
     }
 
-    private void dgOrdenCompraPelicula_PreviewKeyDown(object sender, KeyEventArgs e)
+    private void dgOrdenTrabajoPelicula_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         var teclas = new[] { Key.Enter, Key.Insert, Key.Delete, Key.F2, Key.F4 };
 

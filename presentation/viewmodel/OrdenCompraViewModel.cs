@@ -4,9 +4,9 @@ using Gestion.core.model;
 
 namespace Gestion.presentation.viewmodel;
 
-public class OrdenCompraViewModel : EntidadViewModel<OrdenCompra>
+public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>
 {
-    public ObservableCollection<OrdenCompra> OrdenCompra => Entidades;
-    public OrdenCompraViewModel(IOrdenCompraService ordenCompraService, IDialogService dialogService)
-        : base(ordenCompraService, dialogService) {}
+    public ObservableCollection<OrdenTrabajo> OrdenTrabajo => Entidades;
+    public OrdenTrabajoViewModel(IOrdenTrabajoService ordenTrabajoService, IDialogService dialogService)
+        : base(ordenTrabajoService, dialogService) {}
 }

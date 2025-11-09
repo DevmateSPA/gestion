@@ -13,7 +13,7 @@ public class Factura : IModel
     public string Guia3 { get; set; } = string.Empty;
     public string Guia4 { get; set; } = string.Empty;
     public string Guia5 { get; set; } = string.Empty;
-    public string OrdenCompra { get; set; } = string.Empty;
+    public string OrdenTrabajo { get; set; } = string.Empty;
     public string FechaVencimiento { get; set; } = string.Empty;
     public int TipoCredito { get; set; }
     public int Neto { get; set; }

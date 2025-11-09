@@ -8,58 +8,58 @@ using Gestion.presentation.views.windows;
 
 namespace Gestion.presentation.views.pages;
 
-public partial class OrdenCompraPage : Page
+public partial class OrdenTrabajoPage : Page
 {
-    private readonly OrdenCompraViewModel _viewModel;
-    public OrdenCompraPage(OrdenCompraViewModel viewModel)
+    private readonly OrdenTrabajoViewModel _viewModel;
+    public OrdenTrabajoPage(OrdenTrabajoViewModel viewModel)
     {
         InitializeComponent();
         _viewModel = viewModel;
         DataContext = _viewModel;
-        Title = $"Ordenes de Compra";
+        Title = $"Ordenes de Trabajo";
 
         Loaded += async (_, _) => await _viewModel.LoadAll();
-        dgOrdenCompra.ItemContainerGenerator.StatusChanged += DgOrdenCompra_StatusChanged;
+        dgOrdenTrabajo.ItemContainerGenerator.StatusChanged += DgOrdenTrabajo_StatusChanged;
     }
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(new OrdenCompra(), "Ingresar Orden de Compra");
+        var ventana = new EntidadEditorWindow(new OrdenTrabajo(), "Ingresar Orden de Trabajo");
 
         if (ventana.ShowDialog() == true)
         {
-            var ordenCompraEditado = (OrdenCompra)ventana.EntidadEditada;
-            await _viewModel.Save(ordenCompraEditado);
+            var ordenTrabajoEditado = (OrdenTrabajo)ventana.EntidadEditada;
+            await _viewModel.Save(ordenTrabajoEditado);
         }
     }
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
-        if (dgOrdenCompra.SelectedItem is OrdenCompra ordenCompraSeleccionado)
-            editar(ordenCompraSeleccionado, "Editar Orden de Compra");
+        if (dgOrdenTrabajo.SelectedItem is OrdenTrabajo ordenTrabajoSeleccionado)
+            editar(ordenTrabajoSeleccionado, "Editar Orden de Trabajo");
     }
 
-    private async void dgOrdenCompra_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private async void dgOrdenTrabajo_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (dgOrdenCompra.SelectedItem is OrdenCompra ordenCompraSeleccionado)
-            editar(ordenCompraSeleccionado, "Editar Orden de Compra");
+        if (dgOrdenTrabajo.SelectedItem is OrdenTrabajo ordenTrabajoSeleccionado)
+            editar(ordenTrabajoSeleccionado, "Editar Orden de Trabajo");
     }
 
-    private async void editar(OrdenCompra ordenCompra, string titulo)
+    private async void editar(OrdenTrabajo ordenTrabajo, string titulo)
     {
-        var ventana = new EntidadEditorWindow(ordenCompra, titulo);
+        var ventana = new EntidadEditorWindow(ordenTrabajo, titulo);
 
         if (ventana.ShowDialog() == true)
         {
-            var ordenCompraEditado = (OrdenCompra)ventana.EntidadEditada;
-            await _viewModel.Update(ordenCompraEditado);
+            var ordenTrabajoEditado = (OrdenTrabajo)ventana.EntidadEditada;
+            await _viewModel.Update(ordenTrabajoEditado);
         }
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
-        if (dgOrdenCompra.SelectedItem is OrdenCompra ordenCompraSeleccionado)
-            await _viewModel.Delete(ordenCompraSeleccionado.Id);
+        if (dgOrdenTrabajo.SelectedItem is OrdenTrabajo ordenTrabajoSeleccionado)
+            await _viewModel.Delete(ordenTrabajoSeleccionado.Id);
     }
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)
@@ -72,9 +72,9 @@ public partial class OrdenCompraPage : Page
         MessageBox.Show("Imprimir listado...");
     }
 
-    private void DgOrdenCompra_StatusChanged(object? sender, EventArgs e)
+    private void DgOrdenTrabajo_StatusChanged(object? sender, EventArgs e)
     {
-        GridFocus(dgOrdenCompra);
+        GridFocus(dgOrdenTrabajo);
     }
 
     private void GridFocus(DataGrid dataGrid)
@@ -92,12 +92,12 @@ public partial class OrdenCompraPage : Page
                     firstRow.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
                 }
 
-                dataGrid.ItemContainerGenerator.StatusChanged -= DgOrdenCompra_StatusChanged;
+                dataGrid.ItemContainerGenerator.StatusChanged -= DgOrdenTrabajo_StatusChanged;
             }
         }
     }
 
-    private void dgOrdenCompra_PreviewKeyDown(object sender, KeyEventArgs e)
+    private void dgOrdenTrabajo_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         var teclas = new[] { Key.Enter, Key.Insert, Key.Delete, Key.F2, Key.F4 };
 

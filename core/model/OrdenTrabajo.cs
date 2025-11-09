@@ -2,7 +2,7 @@ using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
-public class OrdenCompraPelicula : IModel
+public class OrdenTrabajo : IModel
 {
     public int Id { get; set; }
     public DateTime Fecha { get; set; }
@@ -13,5 +13,5 @@ public class OrdenCompraPelicula : IModel
     public int Iva { get; set; }
     public int Debe { get; set; }
     public int Habe { get; set; }
-    public int fopa { get; set; }
+    public string Fopa { get; set; } = string.Empty;
 }

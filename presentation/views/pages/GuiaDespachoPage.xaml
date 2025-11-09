@@ -24,7 +24,7 @@
         <!-- Tabla -->
         <DataGrid x:Name="dgGuiasDespacho"
                 Grid.Row="1"
-                AutoGenerateColumns="False"
+                AutoGenerateColumns="False" 
                 CanUserAddRows="False"
                 SelectionMode="Single"
                 ItemsSource="{Binding GuiasDespacho}"
@@ -34,8 +34,8 @@
                 PreviewKeyDown="dgGuiasDespacho_PreviewKeyDown">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Folio" Binding="{Binding Folio}" Width="*" />
-                    <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha}" Width="*" />
-                    <DataGridTextColumn Header="Cliente" Binding="{Binding Cliente}" Width="*" />
+                    <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha, StringFormat={}{0:dd/MM/yyyy}}" Width="*" />
+                    <DataGridTextColumn Header="Rut Cliente" Binding="{Binding RutCliente}" Width="*" />
                 </DataGrid.Columns>
         </DataGrid>
 

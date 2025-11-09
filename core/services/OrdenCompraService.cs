@@ -4,8 +4,8 @@ using Gestion.core.model;
 
 namespace Gestion.core.services;
 
-public class OrdenCompraService : BaseService<OrdenCompra>, IOrdenCompraService
+public class OrdenTrabajoService : BaseService<OrdenTrabajo>, IOrdenTrabajoService
 {
-    public OrdenCompraService(IOrdenCompraRepository ordenCompraRepository)
-        :base(ordenCompraRepository) { }
+    public OrdenTrabajoService(IOrdenTrabajoRepository ordenTrabajoRepository)
+        :base(ordenTrabajoRepository) { }
 }

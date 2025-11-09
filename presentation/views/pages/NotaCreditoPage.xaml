@@ -34,8 +34,8 @@
                 PreviewKeyDown="dgNotasCredito_PreviewKeyDown">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Folio" Binding="{Binding Folio}" Width="*" />
-                    <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha}" Width="*" />
-                    <DataGridTextColumn Header="Cliente" Binding="{Binding Cliente}" Width="*" />
+                    <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha, StringFormat={}{0:dd/MM/yyyy}}" Width="*" />
+                    <DataGridTextColumn Header="Cliente" Binding="{Binding RutCliente}" Width="*" />
                 </DataGrid.Columns>
         </DataGrid>
 

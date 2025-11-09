@@ -26,7 +26,7 @@ public partial class BancoPage : Page
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
         var ventana = new EntidadEditorWindow(new Banco(), "Ingresar Banco");
-
+        ventana.Owner = Window.GetWindow(this);
         if (ventana.ShowDialog() == true)
         {
             var bancoEditado = (Banco)ventana.EntidadEditada;

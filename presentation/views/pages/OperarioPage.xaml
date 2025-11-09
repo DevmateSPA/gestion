@@ -20,14 +20,19 @@
         <!-- Tabla -->
         <DataGrid x:Name="dgOperarios"
                 Grid.Row="1"
-                AutoGenerateColumns="True"
+                AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
                 ItemsSource="{Binding Operarios}" 
                 FontSize="16"
                 IsReadOnly="True"
                 MouseDoubleClick="dgOperarios_MouseDoubleClick" 
-                PreviewKeyDown="dgOperarios_PreviewKeyDown"/>
+                PreviewKeyDown="dgOperarios_PreviewKeyDown">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Código" Binding="{Binding Codigo}" Width="*" />
+                    <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}" Width="*" />
+                </DataGrid.Columns>
+            </DataGrid>
 
         <!-- Botones -->
         <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Margin="0,5,0,0">

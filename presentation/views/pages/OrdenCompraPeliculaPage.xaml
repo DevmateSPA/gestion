@@ -1,4 +1,4 @@
-<Page x:Class="Gestion.presentation.views.pages.OrdenCompraPeliculaPage"
+<Page x:Class="Gestion.presentation.views.pages.OrdenTrabajoPeliculaPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -22,16 +22,16 @@
         </StackPanel>
 
         <!-- Tabla -->
-        <DataGrid x:Name="dgOrdenCompraPelicula"
+        <DataGrid x:Name="dgOrdenTrabajoPelicula"
                 Grid.Row="1"
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding OrdenCompra}"
+                ItemsSource="{Binding OrdenTrabajo}"
                 FontSize="16"
                 IsReadOnly="True"
-                MouseDoubleClick="dgOrdenCompraPelicula_MouseDoubleClick" 
-                PreviewKeyDown="dgOrdenCompraPelicula_PreviewKeyDown">
+                MouseDoubleClick="dgOrdenTrabajoPelicula_MouseDoubleClick" 
+                PreviewKeyDown="dgOrdenTrabajoPelicula_PreviewKeyDown">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Folio" Binding="{Binding Folio}" Width="*" />
                     <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha}" Width="*" />

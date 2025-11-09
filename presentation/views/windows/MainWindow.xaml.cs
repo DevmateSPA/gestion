@@ -86,7 +86,7 @@ namespace Gestion.presentation.views.windows
         {
             if (sender is MenuItem item)
             {
-                string mensaje = item.Tag switch
+                /*string mensaje = item.Tag switch
                 {
                     "ModuloGuia" => "Has hecho click en Información de Bancos",
                     "ModuloFactura" => "Has hecho click en Información de Clientes",
@@ -97,7 +97,26 @@ namespace Gestion.presentation.views.windows
                     _ => "Módulo desconocido"
                 };
 
-                MessageBox.Show(mensaje, "Documentos de Venta", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(mensaje, "Documentos de Venta", MessageBoxButton.OK, MessageBoxImage.Information);*/
+                Page? page = item.Tag switch
+                {
+                    "ModuloGuia" =>  App.ServiceProvider.GetRequiredService<GuiaDespachoPage>(),
+                    "ModuloFactura" => App.ServiceProvider.GetRequiredService<FacturaPage>(),
+                    "ModuloNotaCredito" => App.ServiceProvider.GetRequiredService<NotaCreditoPage>(),
+                    "ModuloDocNulo" => App.ServiceProvider.GetRequiredService<DocumentoNuloPage>(),
+                    "ModuloPagoAbono" => null,
+                    "ModuloCancelacion" => null,
+                    _ => null
+                };
+
+                if (page != null)
+                {
+                    MainFrame.Navigate(page);
+                }
+                else
+                {
+                    MessageBox.Show("Módulo no reconocido.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
             }
         }
 
@@ -105,7 +124,7 @@ namespace Gestion.presentation.views.windows
         {
             if (sender is MenuItem item)
             {
-                string mensaje = item.Tag switch
+                /*string mensaje = item.Tag switch
                 {
                     "ModuloFactura" => "Has hecho click en Facturas",
                     "ModuloNotaCredito" => "Has hecho click en Notas de Crédito",
@@ -114,7 +133,24 @@ namespace Gestion.presentation.views.windows
                     _ => "Módulo desconocido"
                 };
 
-                MessageBox.Show(mensaje, "Documentos de Venta", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(mensaje, "Documentos de Venta", MessageBoxButton.OK, MessageBoxImage.Information);*/
+                Page? page = item.Tag switch
+                {
+                    "ModuloFactura" =>  App.ServiceProvider.GetRequiredService<FacturaCompraPage>(),
+                    "ModuloNotaCredito" => null,
+                    "ModuloPagoAbono" => null,
+                    "ModuloCancelacion" => null,
+                    _ => null
+                };
+
+                if (page != null)
+                {
+                    MainFrame.Navigate(page);
+                }
+                else
+                {
+                    MessageBox.Show("Módulo no reconocido.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
             }
         }
 
@@ -122,7 +158,7 @@ namespace Gestion.presentation.views.windows
         {
             if (sender is MenuItem item)
             {
-                string mensaje = item.Tag switch
+                /*string mensaje = item.Tag switch
                 {
                     "ModuloOrden" => "Has hecho click en Orden de Trabajo",
                     "ModuloOrdenPel" => "Has hecho click en Orden de Trabajo Película",
@@ -133,7 +169,26 @@ namespace Gestion.presentation.views.windows
                     _ => "Módulo desconocido"
                 };
 
-                MessageBox.Show(mensaje, "Control Interno", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(mensaje, "Control Interno", MessageBoxButton.OK, MessageBoxImage.Information);*/
+                Page? page = item.Tag switch
+                {
+                    "ModuloOrden" => App.ServiceProvider.GetRequiredService<OrdenTrabajoPage>(),
+                    "ModuloOrdenPel" => null,
+                    "ModuloSalida" => null,
+                    "ModuloAjuste" => null,
+                    "ModuloCalculo" => null,
+                    "ModuloCotizacion" => null,
+                    _ => null
+                };
+
+                if (page != null)
+                {
+                    MainFrame.Navigate(page);
+                }
+                else
+                {
+                    MessageBox.Show("Módulo no reconocido.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
             }
         }
 

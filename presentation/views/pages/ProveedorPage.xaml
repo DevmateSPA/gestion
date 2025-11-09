@@ -20,14 +20,21 @@
         <!-- Tabla -->
         <DataGrid x:Name="dgProveedores"
                 Grid.Row="1"
-                AutoGenerateColumns="True"
+                AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
                 ItemsSource="{Binding Proveedores}" 
                 FontSize="16" 
                 IsReadOnly="True"
                 MouseDoubleClick="dgProveedores_MouseDoubleClick" 
-                PreviewKeyDown="dgProveedores_PreviewKeyDown"/>
+                PreviewKeyDown="dgProveedores_PreviewKeyDown">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Rut Proveedor" Binding="{Binding Rut}" Width="*" />
+                    <DataGridTextColumn Header="Razón Social" Binding="{Binding Razon_Social}" Width="*" />
+                    <DataGridTextColumn Header="Giro" Binding="{Binding Giro}" Width="*" />
+                    <DataGridTextColumn Header="Debe" Binding="{Binding Debe}" Width="*" />
+                </DataGrid.Columns>
+                </DataGrid>
 
         <!-- Botones -->
         <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Margin="0,5,0,0">

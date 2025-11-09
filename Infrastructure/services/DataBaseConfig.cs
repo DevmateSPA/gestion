@@ -1,20 +1,37 @@
 using System.IO;
+using System.Windows;
 using dotenv.net;
 
 namespace Gestion.Infrastructure.Services;
 public static class DatabaseConfig
 {
-    static DatabaseConfig()
+static DatabaseConfig()
+{
+    try
     {
-        // Ruta explícita al archivo .env en la raíz del proyecto
         string projectRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..");
         string envPath = Path.GetFullPath(Path.Combine(projectRoot, ".env"));
 
-        if (!File.Exists(envPath))
-            throw new FileNotFoundException($".env no encontrado en {envPath}");
-
-        DotEnv.Load(new DotEnvOptions(envFilePaths: new[] { envPath }));
+        if (File.Exists(envPath))
+        {
+            DotEnv.Load(new DotEnvOptions(envFilePaths: new[] { envPath }));
+            Console.WriteLine($".env cargado desde {envPath}");
+        }
+        else
+        {
+            Console.WriteLine($".env no encontrado, usando valores por defecto.");
+            Environment.SetEnvironmentVariable("DB_HOST", "localhost");
+            Environment.SetEnvironmentVariable("DB_PORT", "3306");
+            Environment.SetEnvironmentVariable("DB_USER", "root");
+            Environment.SetEnvironmentVariable("DB_PASSWORD", "Devmate.2025@");
+            Environment.SetEnvironmentVariable("DB_NAME", "imprenta");
+        }
     }
+    catch (Exception ex)
+    {
+            MessageBox.Show(ex.Message);
+    }
+}
 
     private static string _getEnvVariable(string variable)
     {

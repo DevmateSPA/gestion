@@ -23,14 +23,21 @@
         <!-- Tabla -->
         <DataGrid x:Name="dgClientes"
                 Grid.Row="1"
-                AutoGenerateColumns="True"
+                AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
                 ItemsSource="{Binding Clientes}" 
                 FontSize="16" 
                 IsReadOnly="True"
                 MouseDoubleClick="dataGrid_MouseDoubleClick" 
-                PreviewKeyDown="DataGrid_PreviewKeyDown"/>
+                PreviewKeyDown="DataGrid_PreviewKeyDown">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Rut" Binding="{Binding Rut}" Width="*" />
+                    <DataGridTextColumn Header="Razón Social" Binding="{Binding Razon_Social}" Width="*" />
+                    <DataGridTextColumn Header="Giro" Binding="{Binding Giro}" Width="*" />
+                    <DataGridTextColumn Header="Dirección" Binding="{Binding Direccion}" Width="*" />
+                </DataGrid.Columns>
+                </DataGrid>
 
         <!-- Botones -->
         <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Margin="0,5,0,0">

@@ -1,4 +1,4 @@
-<Page x:Class="Gestion.presentation.views.pages.OrdenCompraPage"
+<Page x:Class="Gestion.presentation.views.pages.OrdenTrabajoPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -22,20 +22,20 @@
         </StackPanel>
 
         <!-- Tabla -->
-        <DataGrid x:Name="dgOrdenCompra"
+        <DataGrid x:Name="dgOrdenTrabajo"
                 Grid.Row="1"
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding OrdenCompra}"
+                ItemsSource="{Binding OrdenTrabajo}"
                 FontSize="16"
                 IsReadOnly="True"
-                MouseDoubleClick="dgOrdenCompra_MouseDoubleClick" 
-                PreviewKeyDown="dgOrdenCompra_PreviewKeyDown">
+                MouseDoubleClick="dgOrdenTrabajo_MouseDoubleClick" 
+                PreviewKeyDown="dgOrdenTrabajo_PreviewKeyDown">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Folio" Binding="{Binding Folio}" Width="*" />
-                    <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha}" Width="*" />
-                    <DataGridTextColumn Header="Razón Social" Binding="{Binding RazonSocial}" Width="*" />
+                    <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha, StringFormat={}{0:dd/MM/yyyy}}" Width="*" />
+                    <DataGridTextColumn Header="Rut Cliente" Binding="{Binding RutCliente}" Width="*" />
                 </DataGrid.Columns>
         </DataGrid>
 

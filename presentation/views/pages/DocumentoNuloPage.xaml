@@ -35,7 +35,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Tipo" Binding="{Binding Tipo}" Width="*" />
                     <DataGridTextColumn Header="Folio" Binding="{Binding Folio}" Width="*" />
-                    <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha}" Width="*" />
+                    <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha, StringFormat={}{0:dd/MM/yyyy}}" Width="*" />
                     <DataGridTextColumn Header="Glosa" Binding="{Binding Glosa}" Width="*" />
                 </DataGrid.Columns>
         </DataGrid>

@@ -6,7 +6,7 @@ namespace Gestion.presentation.viewmodel;
 
 public class NotaCreditoViewModel : EntidadViewModel<NotaCredito>
 {
-    public ObservableCollection<NotaCredito> NotaCredito => Entidades;
+    public ObservableCollection<NotaCredito> NotasCredito => Entidades;
     public NotaCreditoViewModel(INotaCreditoService notaCreditoService, IDialogService dialogService)
         : base(notaCreditoService, dialogService) {}
 }

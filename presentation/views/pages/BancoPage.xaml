@@ -31,7 +31,7 @@
                 FontSize="16"
                 IsReadOnly="True"
                 MouseDoubleClick="dgBancos_MouseDoubleClick" 
-                PreviewKeyDown="dgBancos_PreviewKeyDown">
+                PreviewKeyDown="dgBancos_PreviewKeyDown"> 
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Código" Binding="{Binding Codigo}" Width="*" />
                     <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}" Width="*" />

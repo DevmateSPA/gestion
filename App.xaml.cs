@@ -41,7 +41,7 @@ public partial class App : Application
         services.AddScoped<IFacturaCompraRepository, FacturaCompraRepository>();
         services.AddScoped<IFacturaCompraProductoRepository, FacturaCompraProductoRepository>();
         services.AddScoped<IGuiaDespachoRepository, GuiaDespachoRepository>();
-        services.AddScoped<IOrdenCompraRepository, OrdenCompraRepository>();
+        services.AddScoped<IOrdenTrabajoRepository, OrdenTrabajoRepository>();
 
         // Servicios
         services.AddScoped<IAuthService, AuthService>();
@@ -61,7 +61,7 @@ public partial class App : Application
         services.AddScoped<IFacturaCompraService, FacturaCompraService>();
         services.AddScoped<IFacturaCompraProductoService, FacturaCompraProductoService>();
         services.AddScoped<IGuiaDespachoService, GuiaDespachoService>();
-        services.AddScoped<IOrdenCompraService, OrdenCompraService>();
+        services.AddScoped<IOrdenTrabajoService, OrdenTrabajoService>();
 
         // Login
         services.AddTransient<LoginWindow>();
@@ -97,6 +97,24 @@ public partial class App : Application
         // Fotomecanica
         services.AddTransient<FotomecanicaViewModel>();
         services.AddTransient<FotomecanicaPage>();
+        // GuiaDespacho
+        services.AddTransient<GuiaDespachoViewModel>();
+        services.AddTransient<GuiaDespachoPage>();
+        // Factura
+        services.AddTransient<FacturaViewModel>();
+        services.AddTransient<FacturaPage>();
+        // NotaCredito
+        services.AddTransient<NotaCreditoViewModel>();
+        services.AddTransient<NotaCreditoPage>();
+        // DocumentoNulo
+        services.AddTransient<DocumentoNuloViewModel>();
+        services.AddTransient<DocumentoNuloPage>();
+        // FacturaCompra
+        services.AddTransient<FacturaCompraViewModel>();
+        services.AddTransient<FacturaCompraPage>();        
+        // OrdenTrabajo
+        services.AddTransient<OrdenTrabajoViewModel>();
+        services.AddTransient<OrdenTrabajoPage>();        
 
         // Ventanas modales
         services.AddTransient<AgregarBancoWindow>();

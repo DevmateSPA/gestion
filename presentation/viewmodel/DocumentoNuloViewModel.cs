@@ -6,7 +6,7 @@ namespace Gestion.presentation.viewmodel;
 
 public class DocumentoNuloViewModel : EntidadViewModel<DocumentoNulo>
 {
-    public ObservableCollection<DocumentoNulo> DocumentoNulo => Entidades;
+    public ObservableCollection<DocumentoNulo> DocumentosNulos => Entidades;
     public DocumentoNuloViewModel(IDocumentoNuloService documentoNuloService, IDialogService dialogService)
         : base(documentoNuloService, dialogService) {}
 }

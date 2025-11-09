@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Agregar Banco"
-        Height="300" Width="450"
+        Height="450" Width="650"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         Background="#FAFAFA"
@@ -12,91 +12,83 @@
         BorderThickness="1"
         BorderBrush="#CCCCCC">
 
-    <Border CornerRadius="8" BorderBrush="#DDDDDD" BorderThickness="1" Padding="20" Background="White" >
+    <Border CornerRadius="10"
+            BorderBrush="#DDDDDD"
+            BorderThickness="1"
+            Padding="25"
+            Background="White">
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <!-- Título -->
             <TextBlock Text="Agregar Banco"
                        FontWeight="Bold"
-                       FontSize="18"
+                       FontSize="22"
                        Foreground="#333333"
-                       Margin="0,0,0,15"/>
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,20"/>
 
-            <!-- Campos -->
+            <!-- Contenido -->
             <StackPanel Grid.Row="1" Margin="0,0,0,10">
-                <StackPanel Orientation="Horizontal" Margin="0,5">
-                    <TextBlock Text="Código" Width="100" VerticalAlignment="Center" Foreground="#555555"/>
+                <StackPanel Orientation="Horizontal" Margin="0,8">
+                    <TextBlock Text="Código" Width="130" VerticalAlignment="Center" Foreground="#555555"/>
                     <TextBox x:Name="txtCodigo"
-                             Width="200"
+                             Width="350"
                              Background="#FFFFFF"
                              Foreground="#222222"
                              BorderBrush="#CCCCCC"
-                             Padding="4"
+                             Padding="6"
                              BorderThickness="1"/>
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Margin="0,5">
-                    <TextBlock Text="Nombre" Width="100" VerticalAlignment="Center" Foreground="#555555"/>
+                <StackPanel Orientation="Horizontal" Margin="0,8">
+                    <TextBlock Text="Nombre" Width="130" VerticalAlignment="Center" Foreground="#555555"/>
                     <TextBox x:Name="txtNombre"
-                             Width="200"
+                             Width="350"
                              Background="#FFFFFF"
                              Foreground="#222222"
                              BorderBrush="#CCCCCC"
-                             Padding="4"
+                             Padding="6"
                              BorderThickness="1"/>
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Margin="0,5">
-                    <TextBlock Text="Dirección" Width="100" VerticalAlignment="Center" Foreground="#555555"/>
+                <StackPanel Orientation="Horizontal" Margin="0,8">
+                    <TextBlock Text="Dirección" Width="130" VerticalAlignment="Center" Foreground="#555555"/>
                     <TextBox x:Name="txtDireccion"
-                             Width="200"
+                             Width="350"
                              Background="#FFFFFF"
                              Foreground="#222222"
                              BorderBrush="#CCCCCC"
-                             Padding="4"
+                             Padding="6"
                              BorderThickness="1"/>
                 </StackPanel>
             </StackPanel>
 
-            <!-- Línea separadora -->
-            <Rectangle Grid.Row="2"
-                       Height="1"
-                       Fill="#DDDDDD"
-                       Margin="0,10,0,10"/>
-
-            <!-- Mensaje informativo -->
-            <TextBlock Grid.Row="3"
-                       Text="Complete los datos del banco antes de guardar."
-                       Foreground="#666666"
-                       HorizontalAlignment="Center"
-                       FontStyle="Italic"
-                       Margin="0,10,0,0"/>
-
             <!-- Botones -->
-            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <StackPanel Grid.Row="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="0,25,0,0">
                 <Button Content="Cancelar"
-                        Width="90"
+                        Width="110"
                         Click="BtnCancelar_Click"
-                        Margin="0,0,10,0"
+                        Margin="0,0,15,0"
                         Background="#F3F3F3"
                         BorderBrush="#CCCCCC"
                         Foreground="#333333"
-                        Padding="2,2"/>
+                        Padding="6,4"/>
                 <Button Content="Guardar"
-                        Width="90"
+                        Width="110"
                         Background="#0078D7"
                         BorderBrush="#0078D7"
                         Foreground="White"
-                        Padding="2,2"/>
-                </StackPanel>
+                        Padding="6,4"/>
+            </StackPanel>
         </Grid>
     </Border>
 </Window>

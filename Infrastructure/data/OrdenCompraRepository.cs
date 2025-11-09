@@ -4,8 +4,8 @@ using Gestion.core.model;
 
 namespace Gestion.Infrastructure.data;
 
-public class OrdenCompraRepository : BaseRepository<OrdenCompra>, IOrdenCompraRepository
+public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabajoRepository
 {
-    public OrdenCompraRepository(IDbConnectionFactory connectionFactory)
-        : base(connectionFactory, "ordencompra") {}
+    public OrdenTrabajoRepository(IDbConnectionFactory connectionFactory)
+        : base(connectionFactory, "ordentrabajo") {}
 }

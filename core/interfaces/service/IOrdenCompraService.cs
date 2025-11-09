@@ -1,7 +1,7 @@
 using Gestion.core.model;
 
 namespace Gestion.core.interfaces.service;
-public interface IOrdenCompraService : IBaseService<OrdenCompra>
+public interface IOrdenTrabajoService : IBaseService<OrdenTrabajo>
 {
 
 }

@@ -28,8 +28,8 @@ public partial class FacturaCompraPage : Page
 
         if (ventana.ShowDialog() == true)
         {
-            var facturaEditado = (FacturaCompra)ventana.EntidadEditada;
-            await _viewModel.Save(facturaEditado);
+            var facturaCompraEditado = (FacturaCompra)ventana.EntidadEditada;
+            await _viewModel.Save(facturaCompraEditado);
         }
     }
 
