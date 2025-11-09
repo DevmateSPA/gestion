@@ -39,7 +39,7 @@ public partial class GuiaDespachoPage : Page
             editar(guiaDespachoSeleccionado, "Editar Guias de Despacho");
     }
 
-    private async void dgGuiaDespacho_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private async void dgGuiasDespacho_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (dgGuiasDespacho.SelectedItem is GuiaDespacho guiaDespachoSeleccionado)
             editar(guiaDespachoSeleccionado, "Editar Guias de Despacho");
@@ -97,7 +97,7 @@ public partial class GuiaDespachoPage : Page
         }
     }
 
-    private void dgGuiaDespacho_PreviewKeyDown(object sender, KeyEventArgs e)
+    private void dgGuiasDespacho_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         var teclas = new[] { Key.Enter, Key.Insert, Key.Delete, Key.F2, Key.F4 };
 

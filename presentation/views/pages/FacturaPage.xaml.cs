@@ -97,7 +97,7 @@ public partial class FacturaPage : Page
         }
     }
 
-    private void dgFactura_PreviewKeyDown(object sender, KeyEventArgs e)
+    private void dgFacturas_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         var teclas = new[] { Key.Enter, Key.Insert, Key.Delete, Key.F2, Key.F4 };
 

@@ -35,14 +35,14 @@ public partial class FacturaCompraPage : Page
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
-        if (dgFacturaCompras.SelectedItem is FacturaCompra facturaSeleccionado)
-            editar(facturaSeleccionado, "Editar Facturas de Compra");
+        if (dgFacturasCompra.SelectedItem is FacturaCompra facturaCompraSeleccionado)
+            editar(facturaCompraSeleccionado, "Editar Facturas de Compra");
     }
 
     private async void dgFacturasCompra_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (dgFacturasCompra.SelectedItem is FacturaCompra facturaDespachoSeleccionado)
-            editar(facturaSeleccionado, "Editar Facturas de Compra");
+        if (dgFacturasCompra.SelectedItem is FacturaCompra facturaCompraSeleccionado)
+            editar(facturaCompraSeleccionado, "Editar Facturas de Compra");
     }
 
     private async void editar(FacturaCompra factura, string titulo)
@@ -97,7 +97,7 @@ public partial class FacturaCompraPage : Page
         }
     }
 
-    private void dgFacturaCompra_PreviewKeyDown(object sender, KeyEventArgs e)
+    private void dgFacturasCompra_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         var teclas = new[] { Key.Enter, Key.Insert, Key.Delete, Key.F2, Key.F4 };
 
