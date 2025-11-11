@@ -26,9 +26,15 @@ namespace Gestion.presentation.views.pages
         }
         
 
-        private void BtnAgregar_Click(object sender, RoutedEventArgs e)
+        private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Agregar grupo...");
+            var ventana = new EntidadEditorWindow(this,new Banco(), "Ingresar Grupo");
+
+            if (ventana.ShowDialog() == true)
+            {
+                var editado = (Grupo)ventana.EntidadEditada;
+                await _viewModel.Save(editado);
+            }
         }
 
         private async void BtnEliminar_Click(object sender, RoutedEventArgs e)

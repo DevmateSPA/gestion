@@ -28,7 +28,7 @@ public partial class FacturaPage : Page
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(this, new Factura(), "Ingresar Factura");
+        var ventana = new EntidadEditorTableWindow(this, new Factura(),null, "Ingresar Factura");
 
         if (ventana.ShowDialog() == true)
         {
@@ -51,7 +51,7 @@ public partial class FacturaPage : Page
 
     private async void editar(Factura factura, string titulo)
     {
-        var ventana = new EntidadEditorWindow(this, factura, titulo);
+        var ventana = new EntidadEditorTableWindow(this, factura,null, titulo);
 
         if (ventana.ShowDialog() == true)
         {

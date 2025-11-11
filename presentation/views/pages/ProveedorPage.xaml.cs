@@ -25,9 +25,15 @@ namespace Gestion.presentation.views.pages
             _dataGrid.ItemContainerGenerator.StatusChanged += DgProveedores_StatusChanged;
         }
 
-        private void BtnAgregar_Click(object sender, RoutedEventArgs e)
+        private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Agregar proveedor...");
+             var ventana = new EntidadEditorWindow(this,new Banco(), "Ingresar Proveedor");
+
+            if (ventana.ShowDialog() == true)
+            {
+                var editado = (Proveedor)ventana.EntidadEditada;
+                await _viewModel.Save(editado);
+            }
         }
 
         private async void BtnEliminar_Click(object sender, RoutedEventArgs e)

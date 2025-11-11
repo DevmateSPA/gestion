@@ -64,22 +64,22 @@
                     <MenuItem Header="Facturas" Click="MenuItemDocVen_Click" Tag="ModuloFactura"/>
                     <MenuItem Header="Notas de Crédito" Click="MenuItemDocVen_Click" Tag="ModuloNotaCredito"/>
                     <MenuItem Header="Documentos Nulos" Click="MenuItemDocVen_Click" Tag="ModuloDocNulo"/>
-                    <MenuItem Header="Pagos/Abonos de Facturas" Click="MenuItemDocVen_Click" Tag="ModuloPagoAbono"/>
-                    <MenuItem Header="Cancelación de Cheques" Click="MenuItemDocVen_Click" Tag="ModuloCancelacion"/>
+                    <!--<MenuItem Header="Pagos/Abonos de Facturas" Click="MenuItemDocVen_Click" Tag="ModuloPagoAbono"/>
+                    <MenuItem Header="Cancelación de Cheques" Click="MenuItemDocVen_Click" Tag="ModuloCancelacion"/>-->
                 </MenuItem>
                 <MenuItem Header="Documentos de Compra">
                     <MenuItem Header="Facturas" Click="MenuItemDocCom_Click" Tag="ModuloFactura"/>
-                    <MenuItem Header="Notas de Crédito" Click="MenuItemDocCom_Click" Tag="ModuloNotaCredito"/>
+                    <!--<MenuItem Header="Notas de Crédito" Click="MenuItemDocCom_Click" Tag="ModuloNotaCredito"/>
                     <MenuItem Header="Pagos/Abonos de Facturas" Click="MenuItemDocCom_Click" Tag="ModuloPagoAbono"/>
-                    <MenuItem Header="Cancelación de Cheques" Click="MenuItemDocCom_Click" Tag="ModuloCancelacion"/>
+                    <MenuItem Header="Cancelación de Cheques" Click="MenuItemDocCom_Click" Tag="ModuloCancelacion"/>-->
                 </MenuItem>
                 <MenuItem Header="Control Interno">
                     <MenuItem Header="Orden de Trabajo" Click="MenuItemControl_Click" Tag="ModuloOrden"/>
                     <MenuItem Header="Orden de Trabajo Pelicula" Click="MenuItemControl_Click" Tag="ModuloOrdenPel"/>
                     <MenuItem Header="Salida de Productos" Click="MenuItemControl_Click" Tag="ModuloSalida"/>
                     <MenuItem Header="Ajustes de Stock" Click="MenuItemControl_Click" Tag="ModuloAjuste"/>
-                    <MenuItem Header="Calculo de Costos" Click="MenuItemControl_Click" Tag="ModuloCalculo"/>
-                    <MenuItem Header="Cotizaciones" Click="MenuItemControl_Click" Tag="ModuloCotizacion"/>
+                    <!--<MenuItem Header="Calculo de Costos" Click="MenuItemControl_Click" Tag="ModuloCalculo"/>
+                    <MenuItem Header="Cotizaciones" Click="MenuItemControl_Click" Tag="ModuloCotizacion"/>-->
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="Salidas">

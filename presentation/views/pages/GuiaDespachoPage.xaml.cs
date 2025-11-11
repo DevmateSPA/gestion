@@ -28,7 +28,7 @@ public partial class GuiaDespachoPage : Page
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(this, new GuiaDespacho(), "Ingresar GuiaDespacho");
+        var ventana = new EntidadEditorWindow(this, new GuiaDespacho(), "Ingresar Guia de Despacho");
 
         if (ventana.ShowDialog() == true)
         {

@@ -1,24 +1,27 @@
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input; 
+using System.Windows.Input;
+using System.Collections.Generic; // ✅ necesario para IEnumerable<T>
 
 namespace Gestion.presentation.views.windows;
 
-public partial class EntidadEditorWindow : Window
+public partial class EntidadEditorTableWindow : Window
 {
     private readonly object _entidadOriginal;
     private readonly Dictionary<PropertyInfo, TextBox> _controles = new();
+    private readonly IEnumerable<object>? _detalles; // ✅ corregido
 
     public object EntidadEditada { get; private set; }
 
-    public EntidadEditorWindow(Page padre,object entidad, string titulo = "Ventana")
+    public EntidadEditorTableWindow(Page padre, object entidad, IEnumerable<object>? detalles, string titulo = "Ventana con tabla") // ✅ corregido
     {
         InitializeComponent();
         this.Owner = Window.GetWindow(padre);
         Title = titulo;
 
         _entidadOriginal = entidad;
+        _detalles = detalles;
 
         EntidadEditada = Activator.CreateInstance(entidad.GetType())!;
         foreach (var prop in entidad.GetType().GetProperties())
@@ -28,11 +31,10 @@ public partial class EntidadEditorWindow : Window
         }
 
         GenerarCampos(EntidadEditada);
+        CargarTabla();
 
         if (_controles.Values.FirstOrDefault() is TextBox primerCampo)
-        {
             primerCampo.Focus();
-        }
 
         this.PreviewKeyDown += (s, e) =>
         {
@@ -44,7 +46,8 @@ public partial class EntidadEditorWindow : Window
         };
     }
 
-private void GenerarCampos(object entidad)
+
+    private void GenerarCampos(object entidad)
 {
 
      var tipo = entidad.GetType();
@@ -110,6 +113,12 @@ private void GenerarCampos(object entidad)
     }
 }
 
+
+    private void CargarTabla()
+    {
+        if (_detalles == null) return;
+        dgDetalles.ItemsSource = _detalles;
+    }
 
     private void BtnGuardar_Click(object sender, RoutedEventArgs e)
     {

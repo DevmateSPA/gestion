@@ -25,9 +25,15 @@ namespace Gestion.presentation.views.pages
             _dataGrid.ItemContainerGenerator.StatusChanged += DgMaquinas_StatusChanged;
         }
 
-        private void BtnAgregar_Click(object sender, RoutedEventArgs e)
+        private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Agregar maquina...");
+            var ventana = new EntidadEditorWindow(this,new Banco(), "Ingresar Maquina");
+
+            if (ventana.ShowDialog() == true)
+            {
+                var editado = (Maquina)ventana.EntidadEditada;
+                await _viewModel.Save(editado);
+            }
         }
 
         private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
