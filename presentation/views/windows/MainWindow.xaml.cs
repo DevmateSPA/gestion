@@ -86,18 +86,6 @@ namespace Gestion.presentation.views.windows
         {
             if (sender is MenuItem item)
             {
-                /*string mensaje = item.Tag switch
-                {
-                    "ModuloGuia" => "Has hecho click en Información de Bancos",
-                    "ModuloFactura" => "Has hecho click en Información de Clientes",
-                    "ModuloNotaCredito" => "Has hecho click en Información de Proveedores",
-                    "ModuloDocNulo" => "Has hecho click en Información de Grupos",
-                    "ModuloPagoAbono" => "Has hecho click en Información de Productos",
-                    "ModuloCancelacion" => "Has hecho click en Información de Maquinas",
-                    _ => "Módulo desconocido"
-                };
-
-                MessageBox.Show(mensaje, "Documentos de Venta", MessageBoxButton.OK, MessageBoxImage.Information);*/
                 Page? page = item.Tag switch
                 {
                     "ModuloGuia" =>  App.ServiceProvider.GetRequiredService<GuiaDespachoPage>(),
@@ -124,16 +112,6 @@ namespace Gestion.presentation.views.windows
         {
             if (sender is MenuItem item)
             {
-                /*string mensaje = item.Tag switch
-                {
-                    "ModuloFactura" => "Has hecho click en Facturas",
-                    "ModuloNotaCredito" => "Has hecho click en Notas de Crédito",
-                    "ModuloPagoAbono" => "Has hecho click en Pagos/Abonos de Facturas",
-                    "ModuloCancelacion" => "Has hecho click en Cancelación de Cheques",
-                    _ => "Módulo desconocido"
-                };
-
-                MessageBox.Show(mensaje, "Documentos de Venta", MessageBoxButton.OK, MessageBoxImage.Information);*/
                 Page? page = item.Tag switch
                 {
                     "ModuloFactura" =>  App.ServiceProvider.GetRequiredService<FacturaCompraPage>(),
@@ -158,18 +136,6 @@ namespace Gestion.presentation.views.windows
         {
             if (sender is MenuItem item)
             {
-                /*string mensaje = item.Tag switch
-                {
-                    "ModuloOrden" => "Has hecho click en Orden de Trabajo",
-                    "ModuloOrdenPel" => "Has hecho click en Orden de Trabajo Película",
-                    "ModuloSalida" => "Has hecho click en Salida de Productos",
-                    "ModuloAjuste" => "Has hecho click en Ajustes de Stock",
-                    "ModuloCalculo" => "Has hecho click en Cálculo de Costos",
-                    "ModuloCotizacion" => "Has hecho click en Cotizaciones",
-                    _ => "Módulo desconocido"
-                };
-
-                MessageBox.Show(mensaje, "Control Interno", MessageBoxButton.OK, MessageBoxImage.Information);*/
                 Page? page = item.Tag switch
                 {
                     "ModuloOrden" => App.ServiceProvider.GetRequiredService<OrdenTrabajoPage>(),
