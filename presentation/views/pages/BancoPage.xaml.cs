@@ -6,11 +6,14 @@ using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
 using Microsoft.Extensions.DependencyInjection;
+using Gestion.presentation.utils;
 
 namespace Gestion.presentation.views.pages;
 
 public partial class BancoPage : Page
 {
+    private DataGrid _dataGrid;
+
     private readonly BancoViewModel _viewModel;
     public BancoPage(BancoViewModel viewModel)
     {
@@ -20,13 +23,14 @@ public partial class BancoPage : Page
         Title = $"Bancos";
 
         Loaded += async (_, _) => await _viewModel.LoadAll();
-        dgBancos.ItemContainerGenerator.StatusChanged += DgBancos_StatusChanged;
+        _dataGrid = dgBancos;
+        _dataGrid.ItemContainerGenerator.StatusChanged += DgBancos_StatusChanged;
     }
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(new Banco(), "Ingresar Banco");
-        ventana.Owner = Window.GetWindow(this);
+        var ventana = new EntidadEditorWindow(this,new Banco(), "Ingresar Banco");
+
         if (ventana.ShowDialog() == true)
         {
             var bancoEditado = (Banco)ventana.EntidadEditada;
@@ -48,7 +52,7 @@ public partial class BancoPage : Page
 
     private async void editar(Banco banco, string titulo)
     {
-        var ventana = new EntidadEditorWindow(banco, titulo);
+        var ventana = new EntidadEditorWindow(this,banco, titulo);
 
         if (ventana.ShowDialog() == true)
         {
@@ -59,8 +63,18 @@ public partial class BancoPage : Page
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
-        if (dgBancos.SelectedItem is Banco bancoSeleccionado)
-            await _viewModel.Delete(bancoSeleccionado.Id);
+        if (_dataGrid.SelectedItem is Banco seleccionado)
+        {
+            if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar al banco \"{seleccionado.Nombre}\"?", "Confirmar eliminación"))
+            {
+                await _viewModel.Delete(seleccionado.Id);
+                DialogUtils.MostrarInfo("Banco eliminado correctamente.", "Éxito");
+            }
+        }
+        else
+        {
+            DialogUtils.MostrarAdvertencia("Selecciona un banco antes de eliminar.", "Aviso");
+        }
     }
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)

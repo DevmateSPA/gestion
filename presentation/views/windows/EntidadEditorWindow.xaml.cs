@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input; 
 
 namespace Gestion.presentation.views.windows;
 
@@ -11,15 +12,14 @@ public partial class EntidadEditorWindow : Window
 
     public object EntidadEditada { get; private set; }
 
-    public EntidadEditorWindow(object entidad, string titulo = "Ventana")
+    public EntidadEditorWindow(Page padre,object entidad, string titulo = "Ventana")
     {
         InitializeComponent();
-
+        this.Owner = Window.GetWindow(padre);
         Title = titulo;
 
         _entidadOriginal = entidad;
 
-        // Clonamos la entidad para no modificar la original hasta confirmar
         EntidadEditada = Activator.CreateInstance(entidad.GetType())!;
         foreach (var prop in entidad.GetType().GetProperties())
         {
@@ -28,42 +28,87 @@ public partial class EntidadEditorWindow : Window
         }
 
         GenerarCampos(EntidadEditada);
-    }
 
-    private void GenerarCampos(object entidad)
-    {
-        var tipo = entidad.GetType();
-
-        var propiedades = tipo.GetProperties()
-            .Where(p =>
-                p.CanWrite &&
-                !string.Equals(p.Name, "Id", StringComparison.OrdinalIgnoreCase) &&
-                (p.PropertyType == typeof(string) || p.PropertyType.IsValueType)
-            )
-            .ToList();
-
-        foreach (var prop in propiedades)
+        if (_controles.Values.FirstOrDefault() is TextBox primerCampo)
         {
-            var label = new TextBlock
-            {
-                Text = prop.Name,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 8, 0, 2)
-            };
-
-            var valorActual = prop.GetValue(entidad)?.ToString() ?? "";
-            var textBox = new TextBox
-            {
-                Text = valorActual,
-                Margin = new Thickness(0, 0, 0, 10)
-            };
-
-            _controles[prop] = textBox;
-
-            spCampos.Children.Add(label);
-            spCampos.Children.Add(textBox);
+            primerCampo.Focus();
         }
+
+        this.PreviewKeyDown += (s, e) =>
+        {
+            if (e.Key == Key.Escape)
+            {
+                this.DialogResult = false;
+                this.Close();
+            }
+        };
     }
+
+private void GenerarCampos(object entidad)
+{
+
+     var tipo = entidad.GetType();
+
+    var propiedades = tipo.GetProperties()
+        .Where(p =>
+            p.CanWrite &&
+            !string.Equals(p.Name, "Id", StringComparison.OrdinalIgnoreCase) &&
+            (p.PropertyType == typeof(string) || p.PropertyType.IsValueType)
+        )
+        .ToList();
+
+
+    spCampos.Children.Clear();
+
+    int maxPorFila = 3;
+    StackPanel filaActual = null;
+
+    for (int i = 0; i < propiedades.Count; i++)
+    {
+        var prop = propiedades[i];
+
+        var label = new TextBlock
+        {
+            Text = prop.GetCustomAttribute<NombreAttribute>()?.Texto ?? prop.Name,
+            FontSize = 16,
+            FontWeight = FontWeights.Bold,
+            Margin = new Thickness(0, 4, 0, 2),
+            TextWrapping = TextWrapping.Wrap
+        };
+
+        var valorActual = prop.GetValue(entidad)?.ToString() ?? "";
+        var textBox = new TextBox
+        {
+            Text = valorActual,
+            FontSize = 20,
+            Height = 30,
+            Width = 300,
+            Margin = new Thickness(5, 0, 5, 10)
+        };
+
+        _controles[prop] = textBox;
+
+        var bloque = new StackPanel
+        {
+            Orientation = Orientation.Vertical,
+            Width = 310
+        };
+        bloque.Children.Add(label);
+        bloque.Children.Add(textBox);
+
+        if (i % maxPorFila == 0)
+        {
+            filaActual = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+            spCampos.Children.Add(filaActual);
+        }
+
+        filaActual.Children.Add(bloque);
+    }
+}
+
 
     private void BtnGuardar_Click(object sender, RoutedEventArgs e)
     {

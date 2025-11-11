@@ -4,11 +4,14 @@ using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
+using Gestion.presentation.utils;
 
 namespace Gestion.presentation.views.pages
 {
     public partial class OperarioPage : Page
     {
+        private DataGrid _dataGrid;
+
         private readonly OperarioViewModel _viewModel;
         public OperarioPage(OperarioViewModel operarioViewModel)
         {
@@ -18,7 +21,8 @@ namespace Gestion.presentation.views.pages
             Title = $"Grupos";
 
             Loaded += async (_, _) => await _viewModel.LoadAll();
-            dgOperarios.ItemContainerGenerator.StatusChanged += DgOperarios_StatusChanged;
+            _dataGrid = dgOperarios;
+            _dataGrid.ItemContainerGenerator.StatusChanged += DgOperarios_StatusChanged;
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -26,23 +30,34 @@ namespace Gestion.presentation.views.pages
             MessageBox.Show("Agregar operario...");
         }
 
-        private void BtnEliminar_Click(object sender, RoutedEventArgs e)
+        private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Eliminar operario...");
+            if (_dataGrid.SelectedItem is Operario seleccionado)
+            {
+                if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar al operario \"{seleccionado.Nombre}\"?", "Confirmar eliminación"))
+                {
+                    await _viewModel.Delete(seleccionado.Id);
+                    DialogUtils.MostrarInfo("Operario eliminado correctamente.", "Éxito");
+                }
+            }
+            else
+            {
+                DialogUtils.MostrarAdvertencia("Selecciona un operario antes de eliminar.", "Aviso");
+            }
         }
 
         private void BtnEditar_Click(object sender, RoutedEventArgs e)
         {
-            if (dgOperarios.SelectedItem is Operario operarioSeleccionado)
+            if (_dataGrid.SelectedItem is Operario operarioSeleccionado)
             {
-                var ventana = new EntidadEditorWindow(operarioSeleccionado)
+                var ventana = new EntidadEditorWindow(this, operarioSeleccionado)
                 {
                     Title = "Editar Operario"
                 };
 
                 if (ventana.ShowDialog() == true)
                 {
-                    GridFocus(dgOperarios);
+                    GridFocus(_dataGrid);
                     //var operarioEditado = (Operario)ventana.EntidadEditada;
                     //await _viewModel.updateOperario(operarioEditado);
                 }
@@ -61,9 +76,9 @@ namespace Gestion.presentation.views.pages
 
         private async void dgOperarios_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (dgOperarios.SelectedItem is Operario operadorSeleccionada)
+            if (_dataGrid.SelectedItem is Operario operadorSeleccionada)
             {
-                var ventana = new EntidadEditorWindow(operadorSeleccionada)
+                var ventana = new EntidadEditorWindow(this, operadorSeleccionada)
                 {
                     Title = "Editar Operario",
                 };
@@ -91,7 +106,7 @@ namespace Gestion.presentation.views.pages
 
         private void DgOperarios_StatusChanged(object? sender, EventArgs e)
         {
-            GridFocus(dgOperarios);
+            GridFocus(_dataGrid);
         }
 
         private void GridFocus(DataGrid dataGrid)

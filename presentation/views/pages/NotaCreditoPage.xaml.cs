@@ -5,11 +5,14 @@ using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
+using Gestion.presentation.utils;
 
 namespace Gestion.presentation.views.pages;
 
 public partial class NotaCreditoPage : Page
 {
+    private DataGrid _dataGrid;
+
     private readonly NotaCreditoViewModel _viewModel;
     public NotaCreditoPage(NotaCreditoViewModel viewModel)
     {
@@ -19,12 +22,13 @@ public partial class NotaCreditoPage : Page
         Title = $"Notas de crédito";
 
         Loaded += async (_, _) => await _viewModel.LoadAll();
-        dgNotasCredito.ItemContainerGenerator.StatusChanged += DgNotasCredito_StatusChanged;
+        _dataGrid = dgNotasCredito;
+        _dataGrid.ItemContainerGenerator.StatusChanged += DgNotasCredito_StatusChanged;
     }
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(new NotaCredito(), "Ingresar Nota de crédito");
+        var ventana = new EntidadEditorWindow(this, new NotaCredito(), "Ingresar Nota de crédito");
 
         if (ventana.ShowDialog() == true)
         {
@@ -35,19 +39,19 @@ public partial class NotaCreditoPage : Page
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
-        if (dgNotasCredito.SelectedItem is NotaCredito notaCreditoSeleccionado)
+        if (_dataGrid.SelectedItem is NotaCredito notaCreditoSeleccionado)
             editar(notaCreditoSeleccionado, "Editar Nota credito");
     }
 
     private async void dgNotasCredito_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (dgNotasCredito.SelectedItem is NotaCredito notaCreditoSeleccionado)
+        if (_dataGrid.SelectedItem is NotaCredito notaCreditoSeleccionado)
             editar(notaCreditoSeleccionado, "Editar Nota credito");
     }
 
     private async void editar(NotaCredito notaCredito, string titulo)
     {
-        var ventana = new EntidadEditorWindow(notaCredito, titulo);
+        var ventana = new EntidadEditorWindow(this, notaCredito, titulo);
 
         if (ventana.ShowDialog() == true)
         {
@@ -58,8 +62,18 @@ public partial class NotaCreditoPage : Page
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
-        if (dgNotasCredito.SelectedItem is NotaCredito notaCreditoSeleccionado)
-            await _viewModel.Delete(notaCreditoSeleccionado.Id);
+        if (_dataGrid.SelectedItem is NotaCredito seleccionado)
+        {
+            if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar la nota de crédito \"{seleccionado.Folio}\"?", "Confirmar eliminación"))
+            {
+                await _viewModel.Delete(seleccionado.Id);
+                DialogUtils.MostrarInfo("Nota de crédito eliminada correctamente.", "Éxito");
+            }
+        }
+        else
+        {
+            DialogUtils.MostrarAdvertencia("Selecciona una nota de crédito antes de eliminar.", "Aviso");
+        }
     }
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)
@@ -74,7 +88,7 @@ public partial class NotaCreditoPage : Page
 
     private void DgNotasCredito_StatusChanged(object? sender, EventArgs e)
     {
-        GridFocus(dgNotasCredito);
+        GridFocus(_dataGrid);
     }
 
     private void GridFocus(DataGrid dataGrid)

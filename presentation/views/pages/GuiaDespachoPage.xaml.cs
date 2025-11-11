@@ -5,11 +5,14 @@ using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
+using Gestion.presentation.utils;
 
 namespace Gestion.presentation.views.pages;
 
 public partial class GuiaDespachoPage : Page
 {
+    private DataGrid _dataGrid;
+
     private readonly GuiaDespachoViewModel _viewModel;
     public GuiaDespachoPage(GuiaDespachoViewModel viewModel)
     {
@@ -19,12 +22,13 @@ public partial class GuiaDespachoPage : Page
         Title = $"Guías de Despacho";
 
         Loaded += async (_, _) => await _viewModel.LoadAll();
-        dgGuiasDespacho.ItemContainerGenerator.StatusChanged += DgGuiasDespacho_StatusChanged;
+        _dataGrid = dgGuiasDespacho;
+        _dataGrid.ItemContainerGenerator.StatusChanged += DgGuiasDespacho_StatusChanged;
     }
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(new GuiaDespacho(), "Ingresar GuiaDespacho");
+        var ventana = new EntidadEditorWindow(this, new GuiaDespacho(), "Ingresar GuiaDespacho");
 
         if (ventana.ShowDialog() == true)
         {
@@ -47,7 +51,7 @@ public partial class GuiaDespachoPage : Page
 
     private async void editar(GuiaDespacho guiaDespacho, string titulo)
     {
-        var ventana = new EntidadEditorWindow(guiaDespacho, titulo);
+        var ventana = new EntidadEditorWindow(this, guiaDespacho, titulo);
 
         if (ventana.ShowDialog() == true)
         {
@@ -58,8 +62,18 @@ public partial class GuiaDespachoPage : Page
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
-        if (dgGuiasDespacho.SelectedItem is GuiaDespacho guiaDespachoSeleccionado)
-            await _viewModel.Delete(guiaDespachoSeleccionado.Id);
+        if (_dataGrid.SelectedItem is GuiaDespacho seleccionado)
+        {
+            if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar la guía \"{seleccionado.Folio}\"?", "Confirmar eliminación"))
+            {
+                await _viewModel.Delete(seleccionado.Id);
+                DialogUtils.MostrarInfo("Guía eliminado correctamente.", "Éxito");
+            }
+        }
+        else
+        {
+            DialogUtils.MostrarAdvertencia("Selecciona una guía antes de eliminar.", "Aviso");
+        }
     }
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)

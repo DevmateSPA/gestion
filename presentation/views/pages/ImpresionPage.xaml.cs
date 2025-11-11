@@ -4,11 +4,14 @@ using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
+using Gestion.presentation.utils;
 
 namespace Gestion.presentation.views.pages
 {
     public partial class ImpresionPage : Page
     {
+        private DataGrid _dataGrid;
+
         private readonly ImpresionViewModel _viewModel;
         public ImpresionPage(ImpresionViewModel impresionViewModel)
         {
@@ -18,7 +21,8 @@ namespace Gestion.presentation.views.pages
             Title = $"Impresiones";
 
             Loaded += async (_, _) => await _viewModel.LoadAll();
-            dgImpresion.ItemContainerGenerator.StatusChanged += DgImpresion_StatusChanged;
+            _dataGrid = dgImpresion;
+            _dataGrid.ItemContainerGenerator.StatusChanged += DgImpresion_StatusChanged;
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -26,23 +30,34 @@ namespace Gestion.presentation.views.pages
             MessageBox.Show("Agregar impresion...");
         }
 
-        private void BtnEliminar_Click(object sender, RoutedEventArgs e)
+        private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Eliminar impresion...");
+            if (_dataGrid.SelectedItem is Impresion seleccionado)
+            {
+                if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar el item \"{seleccionado.Id}\"?", "Confirmar eliminación"))
+                {
+                    await _viewModel.Delete(seleccionado.Id);
+                    DialogUtils.MostrarInfo("Item eliminado correctamente.", "Éxito");
+                }
+            }
+            else
+            {
+                DialogUtils.MostrarAdvertencia("Selecciona un item antes de eliminar.", "Aviso");
+            }
         }
 
         private void BtnEditar_Click(object sender, RoutedEventArgs e)
         {
-            if (dgImpresion.SelectedItem is Impresion impresionSeleccionado)
+            if (_dataGrid.SelectedItem is Impresion impresionSeleccionado)
             {
-                var ventana = new EntidadEditorWindow(impresionSeleccionado)
+                var ventana = new EntidadEditorWindow(this, impresionSeleccionado)
                 {
                     Title = "Editar Impresion"
                 };
 
                 if (ventana.ShowDialog() == true)
                 {
-                    GridFocus(dgImpresion);
+                    GridFocus(_dataGrid);
                     //var impresionEditado = (Impresion)ventana.EntidadEditada;
                     //await _viewModel.updateImpresion(impresionEditado);
                 }
@@ -61,9 +76,9 @@ namespace Gestion.presentation.views.pages
 
         private async void dgImpresion_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (dgImpresion.SelectedItem is Impresion impresionSeleccionado)
+            if (_dataGrid.SelectedItem is Impresion impresionSeleccionado)
             {
-                var ventana = new EntidadEditorWindow(impresionSeleccionado)
+                var ventana = new EntidadEditorWindow(this, impresionSeleccionado)
                 {
                     Title = "Editar Impresión"
                 };
@@ -92,7 +107,7 @@ namespace Gestion.presentation.views.pages
 
         private void DgImpresion_StatusChanged(object? sender, EventArgs e)
         {
-            GridFocus(dgImpresion);
+            GridFocus(_dataGrid);
         }
 
         private void GridFocus(DataGrid dataGrid)

@@ -4,21 +4,25 @@ using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
+using Gestion.presentation.utils;
 
 namespace Gestion.presentation.views.pages
 {
     public partial class MaquinaPage : Page
     {
+        private DataGrid _dataGrid;
+
         private readonly MaquinaViewModel _viewModel;
         public MaquinaPage(MaquinaViewModel maquinaViewModel)
         {
             InitializeComponent();
             _viewModel = maquinaViewModel;
             DataContext = _viewModel;
-            Title = $"Grupos";
+            Title = $"Maquinas";
 
             Loaded += async (_, _) => await _viewModel.LoadAll();
-            dgMaquinas.ItemContainerGenerator.StatusChanged += DgMaquinas_StatusChanged;
+            _dataGrid = dgMaquinas;
+            _dataGrid.ItemContainerGenerator.StatusChanged += DgMaquinas_StatusChanged;
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -26,23 +30,34 @@ namespace Gestion.presentation.views.pages
             MessageBox.Show("Agregar maquina...");
         }
 
-        private void BtnEliminar_Click(object sender, RoutedEventArgs e)
+        private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Eliminar maquina...");
+            if (_dataGrid.SelectedItem is Maquina seleccionado)
+            {
+                if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar la maquina \"{seleccionado.Codigo}\"?", "Confirmar eliminación"))
+                {
+                    await _viewModel.Delete(seleccionado.Id);
+                    DialogUtils.MostrarInfo("Maquina eliminada correctamente.", "Éxito");
+                }
+            }
+            else
+            {
+                DialogUtils.MostrarAdvertencia("Selecciona una maquina antes de eliminar.", "Aviso");
+            }
         }
 
         private void BtnEditar_Click(object sender, RoutedEventArgs e)
         {
-            if (dgMaquinas.SelectedItem is Maquina maquinaSeleccionado)
+            if (_dataGrid.SelectedItem is Maquina maquinaSeleccionado)
             {
-                var ventana = new EntidadEditorWindow(maquinaSeleccionado)
+                var ventana = new EntidadEditorWindow(this, maquinaSeleccionado)
                 {
                     Title = "Editar Maquina"
                 };
 
                 if (ventana.ShowDialog() == true)
                 {
-                    GridFocus(dgMaquinas);
+                    GridFocus(_dataGrid);
                     //var maquinaEditado = (Maquina)ventana.EntidadEditada;
                     //await _viewModel.updateMaquina(maquinaEditado);
                 }
@@ -61,9 +76,9 @@ namespace Gestion.presentation.views.pages
 
         private async void dgMaquinas_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (dgMaquinas.SelectedItem is Maquina maquinaSeleccionada)
+            if (_dataGrid.SelectedItem is Maquina maquinaSeleccionada)
             {
-                var ventana = new EntidadEditorWindow(maquinaSeleccionada)
+                var ventana = new EntidadEditorWindow(this, maquinaSeleccionada)
                 {
                     Title = "Editar Máquina",
                 };
@@ -92,7 +107,7 @@ namespace Gestion.presentation.views.pages
 
         private void DgMaquinas_StatusChanged(object? sender, EventArgs e)
         {
-            GridFocus(dgMaquinas);
+            GridFocus(_dataGrid);
         }
 
         private void GridFocus(DataGrid dataGrid)

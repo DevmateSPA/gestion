@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
+using Gestion.presentation.utils;
 
 namespace Gestion.presentation.views.pages;
     public partial class ClientePage : Page
@@ -26,7 +27,7 @@ namespace Gestion.presentation.views.pages;
     
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(new Cliente(), "Ingresar Cliente");
+        var ventana = new EntidadEditorWindow(this,new Cliente(), "Ingresar Cliente");
 
         if (ventana.ShowDialog() == true)
         {
@@ -49,7 +50,7 @@ namespace Gestion.presentation.views.pages;
 
     private async void editar(Cliente cliente, string titulo)
     {
-        var ventana = new EntidadEditorWindow(cliente, titulo);
+        var ventana = new EntidadEditorWindow(this, cliente, titulo);
 
         if (ventana.ShowDialog() == true)
         {
@@ -61,7 +62,17 @@ namespace Gestion.presentation.views.pages;
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
         if (_dataGrid.SelectedItem is Cliente seleccionado)
-            await _viewModel.Delete(seleccionado.Id);
+        {
+            if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar al cliente \"{seleccionado.Razon_Social}\"?", "Confirmar eliminación"))
+            {
+                await _viewModel.Delete(seleccionado.Id);
+                DialogUtils.MostrarInfo("Cliente eliminado correctamente.", "Éxito");
+            }
+        }
+        else
+        {
+            DialogUtils.MostrarAdvertencia("Selecciona un cliente antes de eliminar.", "Aviso");
+        }
     }
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)

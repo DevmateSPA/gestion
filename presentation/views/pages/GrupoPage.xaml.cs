@@ -4,11 +4,14 @@ using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
+using Gestion.presentation.utils;
 
 namespace Gestion.presentation.views.pages
 {
     public partial class GrupoPage : Page
     {
+        private DataGrid _dataGrid;
+
         private readonly GrupoViewModel _viewModel;
         public GrupoPage(GrupoViewModel grupoViewModel)
         {
@@ -18,7 +21,8 @@ namespace Gestion.presentation.views.pages
             Title = $"Grupos";
 
             Loaded += async (_, _) => await _viewModel.LoadAll();
-            dgGrupos.ItemContainerGenerator.StatusChanged += DgGrupos_StatusChanged;
+            _dataGrid = dgGrupos;
+            _dataGrid.ItemContainerGenerator.StatusChanged += DgGrupos_StatusChanged;
         }
         
 
@@ -27,23 +31,34 @@ namespace Gestion.presentation.views.pages
             MessageBox.Show("Agregar grupo...");
         }
 
-        private void BtnEliminar_Click(object sender, RoutedEventArgs e)
+        private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Eliminar grupo...");
+            if (_dataGrid.SelectedItem is Grupo seleccionado)
+            {
+                if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar el grupo \"{seleccionado.Descripcion}\"?", "Confirmar eliminación"))
+                {
+                    await _viewModel.Delete(seleccionado.Id);
+                    DialogUtils.MostrarInfo("Grupo eliminado correctamente.", "Éxito");
+                }
+            }
+            else
+            {
+                DialogUtils.MostrarAdvertencia("Selecciona un grupo antes de eliminar.", "Aviso");
+            }
         }
 
         private void BtnEditar_Click(object sender, RoutedEventArgs e)
         {
-            if (dgGrupos.SelectedItem is Grupo grupoSeleccionado)
+            if (_dataGrid.SelectedItem is Grupo grupoSeleccionado)
             {
-                var ventana = new EntidadEditorWindow(grupoSeleccionado)
+                var ventana = new EntidadEditorWindow(this, grupoSeleccionado)
                 {
                     Title = "Editar Grupo"
                 };
 
                 if (ventana.ShowDialog() == true)
                 {
-                    GridFocus(dgGrupos);
+                    GridFocus(_dataGrid);
                     //var grupoEditado = (Grupo)ventana.EntidadEditada;
                     //await _viewModel.updateGrupo(grupoEditado);
                 }
@@ -62,9 +77,9 @@ namespace Gestion.presentation.views.pages
 
         private async void dgGrupos_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (dgGrupos.SelectedItem is Grupo grupoSeleccionado)
+            if (_dataGrid.SelectedItem is Grupo grupoSeleccionado)
             {
-                var ventana = new EntidadEditorWindow(grupoSeleccionado)
+                var ventana = new EntidadEditorWindow(this, grupoSeleccionado)
                 {
                     Title = "Editar Grupo"
                 };
@@ -93,7 +108,7 @@ namespace Gestion.presentation.views.pages
 
         private void DgGrupos_StatusChanged(object? sender, EventArgs e)
         {
-            GridFocus(dgGrupos);
+            GridFocus(_dataGrid);
         }
 
         private void GridFocus(DataGrid dataGrid)

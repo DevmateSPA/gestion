@@ -5,11 +5,14 @@ using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
+using Gestion.presentation.utils;
 
 namespace Gestion.presentation.views.pages;
 
 public partial class FacturaPage : Page
 {
+    private DataGrid _dataGrid;
+
     private readonly FacturaViewModel _viewModel;
     public FacturaPage(FacturaViewModel viewModel)
     {
@@ -19,12 +22,13 @@ public partial class FacturaPage : Page
         Title = $"Facturas";
 
         Loaded += async (_, _) => await _viewModel.LoadAll();
-        dgFacturas.ItemContainerGenerator.StatusChanged += DgFacturas_StatusChanged;
+        _dataGrid = dgFacturas;
+        _dataGrid.ItemContainerGenerator.StatusChanged += DgFacturas_StatusChanged;
     }
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(new Factura(), "Ingresar Factura");
+        var ventana = new EntidadEditorWindow(this, new Factura(), "Ingresar Factura");
 
         if (ventana.ShowDialog() == true)
         {
@@ -35,19 +39,19 @@ public partial class FacturaPage : Page
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
-        if (dgFacturas.SelectedItem is Factura facturaSeleccionado)
+        if (_dataGrid.SelectedItem is Factura facturaSeleccionado)
             editar(facturaSeleccionado, "Editar Facturas");
     }
 
     private async void dgFacturas_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (dgFacturas.SelectedItem is Factura facturaSeleccionado)
+        if (_dataGrid.SelectedItem is Factura facturaSeleccionado)
             editar(facturaSeleccionado, "Editar Facturas");
     }
 
     private async void editar(Factura factura, string titulo)
     {
-        var ventana = new EntidadEditorWindow(factura, titulo);
+        var ventana = new EntidadEditorWindow(this, factura, titulo);
 
         if (ventana.ShowDialog() == true)
         {
@@ -58,9 +62,20 @@ public partial class FacturaPage : Page
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
-        if (dgFacturas.SelectedItem is Factura facturaSeleccionado)
-            await _viewModel.Delete(facturaSeleccionado.Id);
+        if (_dataGrid.SelectedItem is Factura seleccionado)
+        {
+            if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar la factura \"{seleccionado.Id}\"?", "Confirmar eliminación"))
+            {
+                await _viewModel.Delete(seleccionado.Id);
+                DialogUtils.MostrarInfo("Factura eliminada correctamente.", "Éxito");
+            }
+        }
+        else
+        {
+            DialogUtils.MostrarAdvertencia("Selecciona una factura antes de eliminar.", "Aviso");
+        }
     }
+    
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)
     {
@@ -74,7 +89,7 @@ public partial class FacturaPage : Page
 
     private void DgFacturas_StatusChanged(object? sender, EventArgs e)
     {
-        GridFocus(dgFacturas);
+        GridFocus(_dataGrid);
     }
 
     private void GridFocus(DataGrid dataGrid)

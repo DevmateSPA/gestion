@@ -5,11 +5,14 @@ using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
+using Gestion.presentation.utils;
 
 namespace Gestion.presentation.views.pages;
 
 public partial class DocumentoNuloPage : Page
 {
+    private DataGrid _dataGrid;
+    
     private readonly DocumentoNuloViewModel _viewModel;
     public DocumentoNuloPage(DocumentoNuloViewModel viewModel)
     {
@@ -19,13 +22,14 @@ public partial class DocumentoNuloPage : Page
         Title = $"Notas de crédito";
 
         Loaded += async (_, _) => await _viewModel.LoadAll();
-        dgDocumentosNulos.ItemContainerGenerator.StatusChanged += DgDocumentosNulos_StatusChanged;
+        _dataGrid = dgDocumentosNulos;
+        _dataGrid.ItemContainerGenerator.StatusChanged += DgDocumentosNulos_StatusChanged;
     }
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(new DocumentoNulo(), "Ingresar Nota de crédito");
-
+        var ventana = new EntidadEditorWindow(this, new DocumentoNulo(), "Ingresar Nota de crédito");
+        ventana.Owner = Window.GetWindow(this);
         if (ventana.ShowDialog() == true)
         {
             var documentoNuloEditado = (DocumentoNulo)ventana.EntidadEditada;
@@ -35,19 +39,19 @@ public partial class DocumentoNuloPage : Page
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
-        if (dgDocumentosNulos.SelectedItem is DocumentoNulo documentoNuloSeleccionado)
+        if (_dataGrid.SelectedItem is DocumentoNulo documentoNuloSeleccionado)
             editar(documentoNuloSeleccionado, "Editar Nota credito");
     }
 
     private async void dgDocumentosNulos_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (dgDocumentosNulos.SelectedItem is DocumentoNulo documentoNuloSeleccionado)
+        if (_dataGrid.SelectedItem is DocumentoNulo documentoNuloSeleccionado)
             editar(documentoNuloSeleccionado, "Editar Nota credito");
     }
 
     private async void editar(DocumentoNulo documentoNulo, string titulo)
     {
-        var ventana = new EntidadEditorWindow(documentoNulo, titulo);
+        var ventana = new EntidadEditorWindow(this, documentoNulo, titulo);
 
         if (ventana.ShowDialog() == true)
         {
@@ -58,8 +62,18 @@ public partial class DocumentoNuloPage : Page
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
-        if (dgDocumentosNulos.SelectedItem is DocumentoNulo documentoNuloSeleccionado)
-            await _viewModel.Delete(documentoNuloSeleccionado.Id);
+        if (_dataGrid.SelectedItem is DocumentoNulo seleccionado)
+        {
+            if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar el documento \"{seleccionado.Folio}\"?", "Confirmar eliminación"))
+            {
+                await _viewModel.Delete(seleccionado.Id);
+                DialogUtils.MostrarInfo("Documento eliminado correctamente.", "Éxito");
+            }
+        }
+        else
+        {
+            DialogUtils.MostrarAdvertencia("Selecciona un documento antes de eliminar.", "Aviso");
+        }
     }
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)
@@ -74,7 +88,7 @@ public partial class DocumentoNuloPage : Page
 
     private void DgDocumentosNulos_StatusChanged(object? sender, EventArgs e)
     {
-        GridFocus(dgDocumentosNulos);
+        GridFocus(_dataGrid);
     }
 
     private void GridFocus(DataGrid dataGrid)

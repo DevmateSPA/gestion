@@ -4,11 +4,14 @@ using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
+using Gestion.presentation.utils;
 
 namespace Gestion.presentation.views.pages
 {
     public partial class ProveedorPage : Page
     {
+        private DataGrid _dataGrid;
+
         private readonly ProveedorViewModel _viewModel;
         public ProveedorPage(ProveedorViewModel proveedorViewModel)
         {
@@ -18,7 +21,8 @@ namespace Gestion.presentation.views.pages
             Title = $"Proveedores";
 
             Loaded += async (_, _) => await _viewModel.LoadAll();
-            dgProveedores.ItemContainerGenerator.StatusChanged += DgProveedores_StatusChanged;
+            _dataGrid = dgProveedores;
+            _dataGrid.ItemContainerGenerator.StatusChanged += DgProveedores_StatusChanged;
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -26,23 +30,34 @@ namespace Gestion.presentation.views.pages
             MessageBox.Show("Agregar proveedor...");
         }
 
-        private void BtnEliminar_Click(object sender, RoutedEventArgs e)
+        private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Eliminar proveedor...");
+            if (_dataGrid.SelectedItem is Proveedor seleccionado)
+            {
+                if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar el proveedor \"{seleccionado.Razon_Social}\"?", "Confirmar eliminación"))
+                {
+                    await _viewModel.Delete(seleccionado.Id);
+                    DialogUtils.MostrarInfo("Proveedor eliminado correctamente.", "Éxito");
+                }
+            }
+            else
+            {
+                DialogUtils.MostrarAdvertencia("Selecciona un proveedor antes de eliminar.", "Aviso");
+            }
         }
 
         private void BtnEditar_Click(object sender, RoutedEventArgs e)
         {
-            if (dgProveedores.SelectedItem is Proveedor proveedorSeleccionado)
+            if (_dataGrid.SelectedItem is Proveedor proveedorSeleccionado)
             {
-                var ventana = new EntidadEditorWindow(proveedorSeleccionado)
+                var ventana = new EntidadEditorWindow(this, proveedorSeleccionado)
                 {
                     Title = "Editar Proveedor"
                 };
 
                 if (ventana.ShowDialog() == true)
                 {
-                    GridFocus(dgProveedores);
+                    GridFocus(_dataGrid);
                     //var proveedorEditado = (Proveedore)ventana.EntidadEditada;
                     //await _viewModel.updateProveedore(proveedorEditado);
                 }
@@ -61,9 +76,9 @@ namespace Gestion.presentation.views.pages
 
         private async void dgProveedores_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (dgProveedores.SelectedItem is Proveedor proveedorSeleccionado)
+            if (_dataGrid.SelectedItem is Proveedor proveedorSeleccionado)
             {
-                var ventana = new EntidadEditorWindow(proveedorSeleccionado)
+                var ventana = new EntidadEditorWindow(this, proveedorSeleccionado)
                 {
                     Title = "Editar Proveedor",
                 };
@@ -92,7 +107,7 @@ namespace Gestion.presentation.views.pages
 
         private void DgProveedores_StatusChanged(object? sender, EventArgs e)
         {
-            GridFocus(dgProveedores);
+            GridFocus(_dataGrid);
         }
 
         private void GridFocus(DataGrid dataGrid)

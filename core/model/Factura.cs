@@ -35,4 +35,7 @@ public class Factura : IModel
     public string Op5 { get; set; } = string.Empty;
     public string peli { get; set; } = string.Empty;
     public string plan { get; set; } = string.Empty;
+
+    public List<Detalle> Detalles { get; set; } = new List<Detalle>();
+
 }

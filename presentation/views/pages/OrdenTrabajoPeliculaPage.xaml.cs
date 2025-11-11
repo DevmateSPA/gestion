@@ -5,61 +5,75 @@ using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
+using Gestion.presentation.utils;
 
 namespace Gestion.presentation.views.pages;
 
-public partial class OrdenTrabajoPage : Page
+public partial class OrdenTrabajoPeliculaPage : Page
 {
-    private readonly OrdenTrabajoViewModel _viewModel;
-    public OrdenTrabajoPage(OrdenTrabajoViewModel viewModel)
+    private DataGrid _dataGrid;
+
+    private readonly OrdenTrabajoPeliculaViewModel _viewModel;
+    public OrdenTrabajoPeliculaPage(OrdenTrabajoPeliculaViewModel viewModel)
     {
         InitializeComponent();
         _viewModel = viewModel;
         DataContext = _viewModel;
-        Title = $"Ordenes de Trabajo";
+        Title = $"Ordenes de Trabajo Pelicula";
 
         Loaded += async (_, _) => await _viewModel.LoadAll();
-        dgOrdenTrabajo.ItemContainerGenerator.StatusChanged += DgOrdenTrabajo_StatusChanged;
+        _dataGrid = dgOrdenTrabajoPelicula;
+        _dataGrid.ItemContainerGenerator.StatusChanged += DgOrdenTrabajoPelicula_StatusChanged;
     }
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(new OrdenTrabajo(), "Ingresar Orden de Trabajo");
+        var ventana = new EntidadEditorWindow(this, new OrdenTrabajoPelicula(), "Ingresar Orden de Trabajo Pelicula");
 
         if (ventana.ShowDialog() == true)
         {
-            var ordenTrabajoEditado = (OrdenTrabajo)ventana.EntidadEditada;
-            await _viewModel.Save(ordenTrabajoEditado);
+            var ordenTrabajoPeliculaEditado = (OrdenTrabajoPelicula)ventana.EntidadEditada;
+            await _viewModel.Save(ordenTrabajoPeliculaEditado);
         }
     }
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
-        if (dgOrdenTrabajo.SelectedItem is OrdenTrabajo ordenTrabajoSeleccionado)
-            editar(ordenTrabajoSeleccionado, "Editar Orden de Trabajo");
+        if (_dataGrid.SelectedItem is OrdenTrabajoPelicula ordenTrabajoPeliculaSeleccionado)
+            editar(ordenTrabajoPeliculaSeleccionado, "Editar Orden de Trabajo Pelicula");
     }
 
-    private async void dgOrdenTrabajo_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private async void dgOrdenTrabajoPelicula_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (dgOrdenTrabajo.SelectedItem is OrdenTrabajo ordenTrabajoSeleccionado)
-            editar(ordenTrabajoSeleccionado, "Editar Orden de Trabajo");
+        if (_dataGrid.SelectedItem is OrdenTrabajoPelicula ordenTrabajoPeliculaSeleccionado)
+            editar(ordenTrabajoPeliculaSeleccionado, "Editar Orden de Trabajo");
     }
 
-    private async void editar(OrdenTrabajo ordenTrabajo, string titulo)
+    private async void editar(OrdenTrabajoPelicula ordenTrabajoPelicula, string titulo)
     {
-        var ventana = new EntidadEditorWindow(ordenTrabajo, titulo);
+        var ventana = new EntidadEditorWindow(this, ordenTrabajoPelicula, titulo);
 
         if (ventana.ShowDialog() == true)
         {
-            var ordenTrabajoEditado = (OrdenTrabajo)ventana.EntidadEditada;
-            await _viewModel.Update(ordenTrabajoEditado);
+            var ordenTrabajoPeliculaEditado = (OrdenTrabajoPelicula)ventana.EntidadEditada;
+            await _viewModel.Update(ordenTrabajoPeliculaEditado);
         }
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
-        if (dgOrdenTrabajo.SelectedItem is OrdenTrabajo ordenTrabajoSeleccionado)
-            await _viewModel.Delete(ordenTrabajoSeleccionado.Id);
+        if (_dataGrid.SelectedItem is OrdenTrabajoPelicula seleccionado)
+        {
+            if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar la orden de trabajo \"{seleccionado.Folio}\"?", "Confirmar eliminación"))
+            {
+                await _viewModel.Delete(seleccionado.Id);
+                DialogUtils.MostrarInfo("Orden de trabajo eliminada correctamente.", "Éxito");
+            }
+        }
+        else
+        {
+            DialogUtils.MostrarAdvertencia("Selecciona una orden de trabajo antes de eliminar.", "Aviso");
+        }
     }
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)
@@ -72,9 +86,9 @@ public partial class OrdenTrabajoPage : Page
         MessageBox.Show("Imprimir listado...");
     }
 
-    private void DgOrdenTrabajo_StatusChanged(object? sender, EventArgs e)
+    private void DgOrdenTrabajoPelicula_StatusChanged(object? sender, EventArgs e)
     {
-        GridFocus(dgOrdenTrabajo);
+        GridFocus(_dataGrid);
     }
 
     private void GridFocus(DataGrid dataGrid)
@@ -92,12 +106,12 @@ public partial class OrdenTrabajoPage : Page
                     firstRow.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
                 }
 
-                dataGrid.ItemContainerGenerator.StatusChanged -= DgOrdenTrabajo_StatusChanged;
+                dataGrid.ItemContainerGenerator.StatusChanged -= DgOrdenTrabajoPelicula_StatusChanged;
             }
         }
     }
 
-    private void dgOrdenTrabajo_PreviewKeyDown(object sender, KeyEventArgs e)
+    private void dgOrdenTrabajoPelicula_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         var teclas = new[] { Key.Enter, Key.Insert, Key.Delete, Key.F2, Key.F4 };
 

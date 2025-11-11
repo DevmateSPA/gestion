@@ -4,11 +4,14 @@ using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
+using Gestion.presentation.utils;
 
 namespace Gestion.presentation.views.pages
 {
     public partial class FotomecanicaPage : Page
     {
+        private DataGrid _dataGrid;
+
         private readonly FotomecanicaViewModel _viewModel;
         public FotomecanicaPage(FotomecanicaViewModel fotomecanicaViewModel)
         {
@@ -18,7 +21,8 @@ namespace Gestion.presentation.views.pages
             Title = $"Encuadernacion";
 
             Loaded += async (_, _) => await _viewModel.LoadAll();
-            dgFotomecanica.ItemContainerGenerator.StatusChanged += DgFotomecanica_StatusChanged;
+            _dataGrid = dgFotomecanica;
+            _dataGrid.ItemContainerGenerator.StatusChanged += DgFotomecanica_StatusChanged;   
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -26,23 +30,34 @@ namespace Gestion.presentation.views.pages
             MessageBox.Show("Agregar fotomecanica...");
         }
 
-        private void BtnEliminar_Click(object sender, RoutedEventArgs e)
+        private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Eliminar fotomecanica...");
+            if (_dataGrid.SelectedItem is Fotomecanica seleccionado)
+            {
+                if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar el item \"{seleccionado.Id}\"?", "Confirmar eliminación"))
+                {
+                    await _viewModel.Delete(seleccionado.Id);
+                    DialogUtils.MostrarInfo("Item eliminado correctamente.", "Éxito");
+                }
+            }
+            else
+            {
+                DialogUtils.MostrarAdvertencia("Selecciona un item antes de eliminar.", "Aviso");
+            }
         }
 
         private void BtnEditar_Click(object sender, RoutedEventArgs e)
         {
-            if (dgFotomecanica.SelectedItem is Fotomecanica fotomecanicaSeleccionado)
+            if (_dataGrid.SelectedItem is Fotomecanica fotomecanicaSeleccionado)
             {
-                var ventana = new EntidadEditorWindow(fotomecanicaSeleccionado)
+                var ventana = new EntidadEditorWindow(this, fotomecanicaSeleccionado)
                 {
                     Title = "Editar Fotomecanica"
                 };
 
                 if (ventana.ShowDialog() == true)
                 {
-                    GridFocus(dgFotomecanica);
+                    GridFocus(_dataGrid);
                     //var fotomecanicaEditado = (Fotomecanica)ventana.EntidadEditada;
                     //await _viewModel.updateFotomecanica(fotomecanicaEditado);
                 }
@@ -61,9 +76,9 @@ namespace Gestion.presentation.views.pages
 
         private async void dgFotomecanica_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (dgFotomecanica.SelectedItem is Fotomecanica fotomecanicaSeleccionada)
+            if (_dataGrid.SelectedItem is Fotomecanica fotomecanicaSeleccionada)
             {
-                var ventana = new EntidadEditorWindow(fotomecanicaSeleccionada)
+                var ventana = new EntidadEditorWindow(this, fotomecanicaSeleccionada)
                 {
                     Title = "Editar Fotomecánica",
                 };
@@ -92,7 +107,7 @@ namespace Gestion.presentation.views.pages
 
         private void DgFotomecanica_StatusChanged(object? sender, EventArgs e)
         {
-            GridFocus(dgFotomecanica);
+            GridFocus(_dataGrid);
         }
     
         private void GridFocus(DataGrid dataGrid)

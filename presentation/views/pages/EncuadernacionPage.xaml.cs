@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
+using Gestion.presentation.utils;
 
 namespace Gestion.presentation.views.pages;
 
@@ -26,8 +27,8 @@ public partial class EncuadernacionPage : Page
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(new Encuadernacion(), "Ingresar Encuadernación");
-
+        var ventana = new EntidadEditorWindow(this, new Encuadernacion(), "Ingresar Encuadernación");
+        ventana.Owner = Window.GetWindow(this);
         if (ventana.ShowDialog() == true)
         {
             var guardado = (Encuadernacion)ventana.EntidadEditada;
@@ -49,7 +50,7 @@ public partial class EncuadernacionPage : Page
 
     private async void editar(Encuadernacion encuadernacion, string titulo)
     {
-        var ventana = new EntidadEditorWindow(encuadernacion, titulo);
+        var ventana = new EntidadEditorWindow(this, encuadernacion, titulo);
 
         if (ventana.ShowDialog() == true)
         {
@@ -60,8 +61,18 @@ public partial class EncuadernacionPage : Page
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
-        if (_dataGrid.SelectedItem is Cliente seleccionado)
-            await _viewModel.Delete(seleccionado.Id);
+        if (_dataGrid.SelectedItem is Encuadernacion seleccionado)
+        {
+            if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar el item \"{seleccionado.Id}\"?", "Confirmar eliminación"))
+            {
+                await _viewModel.Delete(seleccionado.Id);
+                DialogUtils.MostrarInfo("Item eliminado correctamente.", "Éxito");
+            }
+        }
+        else
+        {
+            DialogUtils.MostrarAdvertencia("Selecciona un item antes de eliminar.", "Aviso");
+        }
     }
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)
