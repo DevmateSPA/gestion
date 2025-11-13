@@ -6,6 +6,15 @@ namespace Gestion.core.services;
 
 public class FacturaService : BaseService<Factura>, IFacturaService
 {
+    private readonly IFacturaRepository _facturaRepository;
     public FacturaService(IFacturaRepository facturaRepository)
-        :base(facturaRepository) { }
+        : base(facturaRepository)
+    {
+        _facturaRepository = facturaRepository;
+    }
+        
+    public async Task<List<Factura>> FindAllConDetalle()
+    {
+        return await _facturaRepository.FindAllConDetalles();
+    }
 }

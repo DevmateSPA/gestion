@@ -1,12 +1,47 @@
 using System.Collections.ObjectModel;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.helpers;
 
 namespace Gestion.presentation.viewmodel;
 
 public class FacturaViewModel : EntidadViewModel<Factura>
 {
+    private readonly IDetalleService _detalleService;
     public ObservableCollection<Factura> Facturas => Entidades;
-    public FacturaViewModel(IFacturaService facturaService, IDialogService dialogService)
-        : base(facturaService, dialogService) {}
+    public ObservableCollection<Detalle> Detalles = new ObservableCollection<Detalle>();
+    public FacturaViewModel(IFacturaService facturaService, IDetalleService detalleService, IDialogService dialogService)
+        : base(facturaService, dialogService)
+    {
+        _detalleService = detalleService;
+    }
+
+    public async Task saveDetails(List<Detalle> detalles)
+    {
+        foreach (var detalle in detalles)
+        {
+            await _detalleService.Save(detalle);
+        }
+    }
+
+    public async Task updateDetails(List<Detalle> detalles)
+    {
+        foreach (var detalle in detalles)
+        {
+            await _detalleService.Update(detalle);
+        }
+    }
+        
+    public async Task LoadAllDetalles()
+    {
+        await SafeExecutor.RunAsync(async () =>
+        {
+            var detalles = await _detalleService.FindAll();
+
+            Detalles.Clear();
+            foreach (var d in detalles)
+                Detalles.Add(d);
+
+        }, _dialogService, "Error al cargar los detalles de facturas");
+    }
 }

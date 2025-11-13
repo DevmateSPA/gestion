@@ -42,6 +42,7 @@ public partial class App : Application
         services.AddScoped<IFacturaCompraProductoRepository, FacturaCompraProductoRepository>();
         services.AddScoped<IGuiaDespachoRepository, GuiaDespachoRepository>();
         services.AddScoped<IOrdenTrabajoRepository, OrdenTrabajoRepository>();
+        services.AddScoped<IDetalleRepository, DetalleRepository>();
 
         // Servicios
         services.AddScoped<IAuthService, AuthService>();
@@ -62,6 +63,7 @@ public partial class App : Application
         services.AddScoped<IFacturaCompraProductoService, FacturaCompraProductoService>();
         services.AddScoped<IGuiaDespachoService, GuiaDespachoService>();
         services.AddScoped<IOrdenTrabajoService, OrdenTrabajoService>();
+        services.AddScoped<IDetalleService, DetalleService>();
 
         // Login
         services.AddTransient<LoginWindow>();

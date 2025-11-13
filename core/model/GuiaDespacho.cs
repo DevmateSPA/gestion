@@ -5,7 +5,7 @@ namespace Gestion.core.model;
 public class GuiaDespacho : IModel
 {
     public int Id { get; set; }
-    public String Folio { get; set; }
+    public String Folio { get; set; } = string.Empty;
     [Nombre("Rut Cliente")]
     public string RutCliente { get; set; } = string.Empty;
     [Nombre("Orden de trabajo")]

@@ -4,6 +4,7 @@ using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.model;
 using Gestion.Infrastructure.Services;
 using Gestion.core.interfaces.database;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Gestion.Infrastructure.data;
 
@@ -55,7 +56,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return default;
     }
 
-    public async Task<List<T>> FindAll()
+    public virtual async Task<List<T>> FindAll()
     {
         using var conn = await _connectionFactory.CreateConnection();
         using var cmd = (DbCommand)conn.CreateCommand();
@@ -93,7 +94,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         using var cmd = (DbCommand)conn.CreateCommand();
 
         var props = typeof(T).GetProperties()
-            .Where(p => p.Name != "Id")
+            .Where(p => p.Name != "Id" && Attribute.IsDefined(p, typeof(NotMappedAttribute)) == false)
             .ToList();
 
         var setClause = string.Join(", ", props.Select(p => $"{p.Name.ToLower()} = @{p.Name.ToLower()}"));
@@ -123,7 +124,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         using var cmd = (DbCommand)conn.CreateCommand();
 
         var props = typeof(T).GetProperties()
-            .Where(p => p.Name != "Id")
+            .Where(p => p.Name != "Id" && Attribute.IsDefined(p, typeof(NotMappedAttribute)) == false)
             .ToList();
 
         var columns = string.Join(", ", props.Select(p => p.Name.ToLower()));

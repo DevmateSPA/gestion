@@ -1,3 +1,6 @@
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Windows.Documents;
 using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
@@ -6,7 +9,7 @@ public class Factura : IModel
 {
     public int Id { get; set; }
     public string Folio { get; set; } = string.Empty;
-    public DateTime Fecha { get; set; }
+    public DateTime Fecha { get; set; } = DateTime.Now;
     [Nombre("Rut Cliente")]
     public string RutCliente { get; set; } = string.Empty;
     public string Guia1 { get; set; } = string.Empty;
@@ -36,30 +39,29 @@ public class Factura : IModel
     [Visible(false)]
     public string Tipo { get; set; } = string.Empty;
     [Nombre("Orden de trabajo")]
-    public string Ot1 { get; set; } = string.Empty;
+    public string Ot01 { get; set; } = string.Empty;
     [Visible(false)]
-    public string Ot2 { get; set; } = string.Empty;
+    public string Ot02 { get; set; } = string.Empty;
     [Visible(false)]
-    public string Ot3 { get; set; } = string.Empty;
+    public string Ot03 { get; set; } = string.Empty;
     [Visible(false)]
-    public string Ot4 { get; set; } = string.Empty;
+    public string Ot04 { get; set; } = string.Empty;
     [Visible(false)]
-    public string Ot5 { get; set; } = string.Empty;
+    public string Ot05 { get; set; } = string.Empty;
     [Visible(false)]
-    public string Op1 { get; set; } = string.Empty;
+    public string Op01 { get; set; } = string.Empty;
     [Visible(false)]
-    public string Op2 { get; set; } = string.Empty;
+    public string Op02 { get; set; } = string.Empty;
     [Visible(false)]
-    public string Op3 { get; set; } = string.Empty;
+    public string Op03 { get; set; } = string.Empty;
     [Visible(false)]
-    public string Op4 { get; set; } = string.Empty;
+    public string Op04 { get; set; } = string.Empty;
     [Visible(false)]
-    public string Op5 { get; set; } = string.Empty;
+    public string Op05 { get; set; } = string.Empty;
     [Visible(false)]
     public string peli { get; set; } = string.Empty;
     [Visible(false)]
     public string plan { get; set; } = string.Empty;
-
-    public List<Detalle> Detalles { get; set; } = new List<Detalle>();
-
+    [NotMapped]
+    public ObservableCollection<Detalle> DetalleFactura { get; set; } = new();
 }

@@ -2,7 +2,8 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Collections.Generic; // ✅ necesario para IEnumerable<T>
+using System.Collections.Generic;
+using Gestion.core.model; // ✅ necesario para IEnumerable<T>
 
 namespace Gestion.presentation.views.windows;
 
@@ -48,70 +49,70 @@ public partial class EntidadEditorTableWindow : Window
 
 
     private void GenerarCampos(object entidad)
-{
-
-     var tipo = entidad.GetType();
-
-    var propiedades = tipo.GetProperties()
-        .Where(p =>
-            p.CanWrite &&
-            !string.Equals(p.Name, "Id", StringComparison.OrdinalIgnoreCase) &&
-            (p.PropertyType == typeof(string) || p.PropertyType.IsValueType) &&
-            (p.GetCustomAttribute<VisibleAttribute>()?.Mostrar ?? true)
-        )
-        .ToList();
-
-
-    spCampos.Children.Clear();
-
-    int maxPorFila = 3;
-    StackPanel filaActual = null;
-
-    for (int i = 0; i < propiedades.Count; i++)
     {
-        var prop = propiedades[i];
 
-        var label = new TextBlock
+        var tipo = entidad.GetType();
+
+        var propiedades = tipo.GetProperties()
+            .Where(p =>
+                p.CanWrite &&
+                !string.Equals(p.Name, "Id", StringComparison.OrdinalIgnoreCase) &&
+                (p.PropertyType == typeof(string) || p.PropertyType.IsValueType) &&
+                (p.GetCustomAttribute<VisibleAttribute>()?.Mostrar ?? true)
+            )
+            .ToList();
+
+
+        spCampos.Children.Clear();
+
+        int maxPorFila = 3;
+        StackPanel filaActual = null;
+
+        for (int i = 0; i < propiedades.Count; i++)
         {
-            Text = prop.GetCustomAttribute<NombreAttribute>()?.Texto ?? prop.Name,
-            FontSize = 16,
-            FontWeight = FontWeights.Bold,
-            Margin = new Thickness(0, 4, 0, 2),
-            TextWrapping = TextWrapping.Wrap
-        };
+            var prop = propiedades[i];
 
-        var valorActual = prop.GetValue(entidad)?.ToString() ?? "";
-        var textBox = new TextBox
-        {
-            Text = valorActual,
-            FontSize = 20,
-            Height = 30,
-            Width = 300,
-            Margin = new Thickness(5, 0, 5, 10)
-        };
-
-        _controles[prop] = textBox;
-
-        var bloque = new StackPanel
-        {
-            Orientation = Orientation.Vertical,
-            Width = 310
-        };
-        bloque.Children.Add(label);
-        bloque.Children.Add(textBox);
-
-        if (i % maxPorFila == 0)
-        {
-            filaActual = new StackPanel
+            var label = new TextBlock
             {
-                Orientation = Orientation.Horizontal
+                Text = prop.GetCustomAttribute<NombreAttribute>()?.Texto ?? prop.Name,
+                FontSize = 16,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(0, 4, 0, 2),
+                TextWrapping = TextWrapping.Wrap
             };
-            spCampos.Children.Add(filaActual);
-        }
 
-        filaActual.Children.Add(bloque);
+            var valorActual = prop.GetValue(entidad)?.ToString() ?? "";
+            var textBox = new TextBox
+            {
+                Text = valorActual,
+                FontSize = 20,
+                Height = 30,
+                Width = 300,
+                Margin = new Thickness(5, 0, 5, 10)
+            };
+
+            _controles[prop] = textBox;
+
+            var bloque = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                Width = 310
+            };
+            bloque.Children.Add(label);
+            bloque.Children.Add(textBox);
+
+            if (i % maxPorFila == 0)
+            {
+                filaActual = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal
+                };
+                spCampos.Children.Add(filaActual);
+            }
+
+            filaActual.Children.Add(bloque);
+        }
     }
-}
 
 
     private void CargarTabla()
@@ -152,5 +153,11 @@ public partial class EntidadEditorTableWindow : Window
     {
         DialogResult = false;
         Close();
+    }
+
+    private void dgDetalles_InitializingNewItem(object sender, InitializingNewItemEventArgs e)
+    {
+        if (_entidadOriginal is Factura factura && e.NewItem is Detalle detalle)
+            detalle.Folio = factura.Folio;
     }
 }
