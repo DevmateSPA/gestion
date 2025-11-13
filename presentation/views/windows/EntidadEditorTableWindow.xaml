@@ -34,7 +34,7 @@
                         <DataGridTextColumn Header="Folio" Binding="{Binding Folio}" IsReadOnly="True" Width="Auto" />
                         <DataGridTextColumn Header="Cantidad" Binding="{Binding Cantidad}" Width="Auto" />
                         <DataGridTextColumn Header="Precio" Binding="{Binding Precio}" Width="Auto" />
-                        <DataGridTextColumn Header="Total" Binding="{Binding Total}" Width="Auto" />
+                        <DataGridTextColumn Header="Total" Binding="{Binding Total}" IsReadOnly="True" Width="Auto" />
                         <DataGridTextColumn Header="Producto" Binding="{Binding Producto}" Width="*" />
                     </DataGrid.Columns>
                 </DataGrid>
