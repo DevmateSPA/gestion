@@ -1,13 +1,10 @@
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Windows.Documents;
 using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
-public class Factura : IModel
+// Implementa la lista de detalles, implementa la interfaz IModel
+public class Factura : FacturaBase<Detalle>
 {
-    public int Id { get; set; }
     public string Folio { get; set; } = string.Empty;
     public DateTime Fecha { get; set; } = DateTime.Now;
     [Nombre("Rut Cliente")]
@@ -62,6 +59,4 @@ public class Factura : IModel
     public string peli { get; set; } = string.Empty;
     [Visible(false)]
     public string plan { get; set; } = string.Empty;
-    [NotMapped]
-    public ObservableCollection<Detalle> DetalleFactura { get; set; } = new();
 }
