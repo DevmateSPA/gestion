@@ -14,17 +14,19 @@ public partial class FacturaPage : Page
     private DataGrid _dataGrid;
 
     private readonly FacturaViewModel _viewModel;
-    public FacturaPage(FacturaViewModel viewModel)
+    private readonly DetalleViewModel _viewModelDetalle;
+    public FacturaPage(FacturaViewModel viewModel, DetalleViewModel viewModelDetalle)
     {
         InitializeComponent();
         _viewModel = viewModel;
+        _viewModelDetalle = viewModelDetalle;
         DataContext = _viewModel;
         Title = $"Facturas";
 
         Loaded += async (_, _) =>
         {
             await _viewModel.LoadAll();          // carga facturas
-            await _viewModel.LoadAllDetalles();  // carga todos los detalles
+            await _viewModelDetalle.LoadAll();
         };
 
         _dataGrid = dgFacturas;
@@ -59,7 +61,7 @@ public partial class FacturaPage : Page
         if (factura == null)
             return;
 
-        var detallesFiltrados = _viewModel.Detalles
+        var detallesFiltrados = _viewModelDetalle.Detalles
             .Where(d => d.Folio == factura.Folio)
             .ToList();
 
@@ -82,29 +84,24 @@ public partial class FacturaPage : Page
             foreach (var detalle in detalleEditar)
                 detalle.Folio = folio;
 
-            // 🔹 Separar detalles nuevos y existentes
             var nuevosDetalles = detalleEditar.Where(d => d.Id == 0).ToList();
             var detallesExistentes = detalleEditar.Where(d => d.Id != 0).ToList();
 
-            // 🔹 Actualizar la colección global
-            // Eliminar antiguos detalles del folio
-            var detallesAntiguos = _viewModel.Detalles.Where(d => d.Folio == folio).ToList();
+            var detallesAntiguos = _viewModelDetalle.Detalles.Where(d => d.Folio == folio).ToList();
             foreach (var detalle in detallesAntiguos)
-                _viewModel.Detalles.Remove(detalle);
+                _viewModelDetalle.Detalles.Remove(detalle);
 
-            // Agregar todos los detalles editados (para que el ObservableCollection se actualice en UI)
             foreach (var detalle in detalleEditar)
-                _viewModel.Detalles.Add(detalle);
+                _viewModelDetalle.Detalles.Add(detalle);
 
-            // 🔹 Guardar nuevos detalles
-            if (nuevosDetalles.Any())
-                await _viewModel.saveDetails(nuevosDetalles);
+            // Guardar detalles nuevos
+            foreach (var nuevo in nuevosDetalles)
+                await _viewModelDetalle.Save(nuevo);
 
-            // 🔹 Actualizar detalles existentes
-            if (detallesExistentes.Any())
-                await _viewModel.updateDetails(detallesExistentes);
+            // Actualizar detalles existentes
+            foreach (var existente in detallesExistentes)
+                await _viewModelDetalle.Update(existente);
 
-            // 🔹 Actualizar la factura
             await _viewModel.Update(facturaEditada);
         }
         else
