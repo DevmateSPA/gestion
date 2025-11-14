@@ -56,6 +56,7 @@ public partial class FacturaPage : Page
             editar(facturaSeleccionado, "Editar Facturas");
     }
 
+    // Metodo Editar -------------------------------------------- |
     private async void editar(Factura factura, string titulo)
     {
         if (factura == null)
@@ -91,12 +92,10 @@ public partial class FacturaPage : Page
         var nuevosDetalles       = detalleEditar.Where(d => d.Id == 0).ToList();
         var detallesExistentes   = detalleEditar.Where(d => d.Id != 0).ToList();
 
-        // Los antiguos antes de editar (BD o cache)
         var detallesAntiguos = _viewModelDetalle.Detalles
             .Where(d => d.Folio == folio)
             .ToList();
 
-        // 6️⃣ Sincronizar: eliminar los que ya no están
         var detallesEliminados = detallesAntiguos
             .Where(old => detalleEditar.All(n => n.Id != old.Id))
             .ToList();
@@ -107,23 +106,19 @@ public partial class FacturaPage : Page
             _viewModelDetalle.Detalles.Remove(eliminado);
         }
 
-        // 7️⃣ Agregar nuevos en la colección global y guardar en BD
         foreach (var nuevo in nuevosDetalles)
         {
             await _viewModelDetalle.Save(nuevo);
             _viewModelDetalle.Detalles.Add(nuevo);
         }
 
-        // 8️⃣ Actualizar existentes en BD y colección
         foreach (var existente in detallesExistentes)
-        {
             await _viewModelDetalle.Update(existente);
-            // no hace falta tocar la colección: ya estaba
-        }
 
-        // 9️⃣ Finalmente actualizar la factura en BD
         await _viewModel.Update(facturaEditada);
     }
+
+    // ------------------------------------------------------ |
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
