@@ -25,10 +25,11 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
 
         foreach (PropertyInfo prop in typeof(T).GetProperties())
         {
-            if (!reader.HasColumn(prop.Name)) 
+            string col = prop.Name.ToLower();
+            if (!reader.HasColumn(col)) 
                 continue;
 
-            object? value = reader[prop.Name];
+            object? value = reader[col];
             if (value == DBNull.Value)
                 value = null;
 

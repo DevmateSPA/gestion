@@ -5,6 +5,7 @@ using Gestion.core.interfaces.model;
 public abstract class FacturaBase<T> : IConDetalles<T>
 {
     public int Id { get; set; }
+    [Nombre("Rut")]
     public string RutCliente { get; set; } = string.Empty;
     public string Folio { get; set; } = string.Empty;
     public DateTime Fecha { get; set; } = DateTime.Now;
