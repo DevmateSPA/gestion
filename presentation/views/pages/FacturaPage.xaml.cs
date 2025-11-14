@@ -38,11 +38,18 @@ public partial class FacturaPage : Page
         var factura = new Factura();
         var ventana = new EntidadEditorTableWindow(this, factura, factura.Detalles, "Ingresar Factura");
 
-        if (ventana.ShowDialog() == true)
-        {
-            var facturaEditado = (Factura)ventana.EntidadEditada;
-            await _viewModel.Save(facturaEditado);
-        }
+        if (ventana.ShowDialog() != true)
+            return; 
+
+        var facturaEditado = (Factura)ventana.EntidadEditada;
+
+        await _viewModel.Save(facturaEditado);
+
+        foreach (var det in facturaEditado.Detalles)
+            det.Folio = facturaEditado.Folio;
+
+        foreach (var det in facturaEditado.Detalles)
+            await _viewModelDetalle.Save(det);
     }
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
