@@ -20,7 +20,11 @@ public class FacturaViewModel : EntidadViewModel<Factura>
     {
         foreach (var detalle in detalles)
         {
-            await _detalleService.Save(detalle);
+            await SafeExecutor.RunAsync(async () =>
+            {
+                await _detalleService.Save(detalle);
+
+            }, _dialogService, $"Error al guardar el producto {detalle.Producto}");
         }
     }
 
@@ -28,8 +32,14 @@ public class FacturaViewModel : EntidadViewModel<Factura>
     {
         foreach (var detalle in detalles)
         {
-            await _detalleService.Update(detalle);
+            await SafeExecutor.RunAsync(async () =>
+            {
+                await _detalleService.Update(detalle);
+
+            }, _dialogService, $"Error al actualizar el producto {detalle.Producto}");
         }
+
+        
     }
         
     public async Task LoadAllDetalles()

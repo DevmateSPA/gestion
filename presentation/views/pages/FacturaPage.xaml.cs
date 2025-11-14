@@ -63,18 +63,18 @@ public partial class FacturaPage : Page
             .Where(d => d.Folio == factura.Folio)
             .ToList();
 
-        factura.DetalleFactura.Clear();
+        factura.Detalles.Clear();
         foreach (var detalle in detallesFiltrados)
-            factura.DetalleFactura.Add(detalle);
+            factura.Detalles.Add(detalle);
 
-        var detalleEditar = factura.DetalleFactura;
+        var detalleEditar = factura.Detalles;
 
         var ventana = new EntidadEditorTableWindow(this, factura, detalleEditar, titulo);
 
         if (ventana.ShowDialog() == true)
         {
             var facturaEditada = (Factura)ventana.EntidadEditada;
-            facturaEditada.DetalleFactura = detalleEditar;
+            facturaEditada.Detalles = detalleEditar;
 
             var folio = facturaEditada.Folio;
 
@@ -110,7 +110,7 @@ public partial class FacturaPage : Page
         else
         {
             var facturaEditada = (Factura)ventana.EntidadEditada;
-            facturaEditada.DetalleFactura = factura.DetalleFactura;
+            facturaEditada.Detalles = factura.Detalles;
         }
     }
 
