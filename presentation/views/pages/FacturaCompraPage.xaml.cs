@@ -14,26 +14,33 @@ public partial class FacturaCompraPage : Page
     private DataGrid _dataGrid;
 
     private readonly FacturaCompraViewModel _viewModel;
-    public FacturaCompraPage(FacturaCompraViewModel viewModel)
+    private readonly DetalleViewModel _viewModelDetalle;
+    public FacturaCompraPage(FacturaCompraViewModel viewModel, DetalleViewModel viewModelDetalle)
     {
         InitializeComponent();
         _viewModel = viewModel;
+        _viewModelDetalle = viewModelDetalle;
         DataContext = _viewModel;
         Title = $"Facturas de Compra";
 
-        Loaded += async (_, _) => await _viewModel.LoadAll();
+        Loaded += async (_, _) =>
+        {
+            await _viewModel.LoadAll();
+            await _viewModelDetalle.LoadAll();
+        };
         _dataGrid = dgFacturasCompra;
         _dataGrid.ItemContainerGenerator.StatusChanged += DgFacturasCompra_StatusChanged;
     }
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(this, new FacturaCompra(), "Ingresar Facturas de compra");
+        var factura = new FacturaCompra();
+        var ventana = new EntidadEditorTableWindow(this, factura, factura.Detalles, "Ingresar Factura");
 
         if (ventana.ShowDialog() == true)
         {
-            var facturaCompraEditado = (FacturaCompra)ventana.EntidadEditada;
-            await _viewModel.Save(facturaCompraEditado);
+            var facturaEditado = (FacturaCompra)ventana.EntidadEditada;
+            await _viewModel.Save(facturaEditado);
         }
     }
 
@@ -49,16 +56,69 @@ public partial class FacturaCompraPage : Page
             editar(facturaCompraSeleccionado, "Editar Facturas de Compra");
     }
 
+    // Metodo Editar -------------------------------------------- |
     private async void editar(FacturaCompra factura, string titulo)
     {
-        var ventana = new EntidadEditorWindow(this, factura, titulo);
+        if (factura == null)
+            return;
 
-        if (ventana.ShowDialog() == true)
+        var detallesFiltrados = _viewModelDetalle.Detalles
+            .Where(d => d.Folio == factura.Folio)
+            .ToList();
+
+        factura.Detalles.Clear();
+        foreach (var d in detallesFiltrados)
+            factura.Detalles.Add(d);
+
+        var detalleEditar = factura.Detalles;
+
+        var ventana = new EntidadEditorTableWindow(this, factura, detalleEditar, titulo);
+
+        if (ventana.ShowDialog() != true)
         {
-            var facturaEditado = (FacturaCompra)ventana.EntidadEditada;
-            await _viewModel.Update(facturaEditado);
+            var facturaCancelada = (FacturaCompra)ventana.EntidadEditada;
+            facturaCancelada.Detalles = factura.Detalles;
+            return;
         }
+
+        var facturaEditada = (FacturaCompra)ventana.EntidadEditada;
+        facturaEditada.Detalles = detalleEditar;
+
+        var folio = facturaEditada.Folio;
+
+        foreach (var det in detalleEditar)
+            det.Folio = folio;
+
+        var nuevosDetalles       = detalleEditar.Where(d => d.Id == 0).ToList();
+        var detallesExistentes   = detalleEditar.Where(d => d.Id != 0).ToList();
+
+        var detallesAntiguos = _viewModelDetalle.Detalles
+            .Where(d => d.Folio == folio)
+            .ToList();
+
+        var detallesEliminados = detallesAntiguos
+            .Where(old => detalleEditar.All(n => n.Id != old.Id))
+            .ToList();
+
+        foreach (var eliminado in detallesEliminados)
+        {
+            await _viewModelDetalle.Delete(eliminado.Id);
+            _viewModelDetalle.Detalles.Remove(eliminado);
+        }
+
+        foreach (var nuevo in nuevosDetalles)
+        {
+            await _viewModelDetalle.Save(nuevo);
+            _viewModelDetalle.Detalles.Add(nuevo);
+        }
+
+        foreach (var existente in detallesExistentes)
+            await _viewModelDetalle.Update(existente);
+
+        await _viewModel.Update(facturaEditada);
     }
+
+    // ------------------------------------------------------ |
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {

@@ -157,7 +157,7 @@ public partial class EntidadEditorTableWindow : Window
 
     private void dgDetalles_InitializingNewItem(object sender, InitializingNewItemEventArgs e)
     {
-        if (_entidadOriginal is Factura factura && e.NewItem is Detalle detalle)
+        if (_entidadOriginal is FacturaBase<Detalle> factura && e.NewItem is Detalle detalle)
             detalle.Folio = factura.Folio;
     }
 }
