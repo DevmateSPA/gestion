@@ -5,7 +5,6 @@ namespace Gestion.core.model;
 // Implementa la lista de detalles, implementa la interfaz IModel
 public class Factura : FacturaBase<Detalle>
 {
-    public string Folio { get; set; } = string.Empty;
     public DateTime Fecha { get; set; } = DateTime.Now;
     [Nombre("Rut Cliente")]
     public string RutCliente { get; set; } = string.Empty;
