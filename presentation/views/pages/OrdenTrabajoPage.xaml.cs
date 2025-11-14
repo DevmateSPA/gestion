@@ -11,30 +11,44 @@ namespace Gestion.presentation.views.pages;
 
 public partial class OrdenTrabajoPage : Page
 {
-    private DataGrid _dataGrid;
+    private DataGrid _dataGrid; 
 
     private readonly OrdenTrabajoViewModel _viewModel;
-    public OrdenTrabajoPage(OrdenTrabajoViewModel viewModel)
+    private readonly DetalleOrdenTrabajoViewModel _viewModelDetalle;
+    public OrdenTrabajoPage(OrdenTrabajoViewModel viewModel, DetalleOrdenTrabajoViewModel viewModelDetalle)
     {
         InitializeComponent();
         _viewModel = viewModel;
+        _viewModelDetalle = viewModelDetalle;
         DataContext = _viewModel;
         Title = $"Ordenes de Trabajo";
 
-        Loaded += async (_, _) => await _viewModel.LoadAll();
+        Loaded += async (_, _) =>
+        {
+            await _viewModel.LoadAll();         
+            await _viewModelDetalle.LoadAll();
+        };
         _dataGrid = dgOrdenTrabajo;
         _dataGrid.ItemContainerGenerator.StatusChanged += DgOrdenTrabajo_StatusChanged;
     }
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(this, new OrdenTrabajo(), "Ingresar Orden de Trabajo");
+        var ordenTrabajo = new OrdenTrabajo();
+        var ventana = new EntidadEditorWindow(this, ordenTrabajo, "Ingresar Orden de Trabajo");
 
-        if (ventana.ShowDialog() == true)
-        {
-            var ordenTrabajoEditado = (OrdenTrabajo)ventana.EntidadEditada;
-            await _viewModel.Save(ordenTrabajoEditado);
-        }
+        if (ventana.ShowDialog() != true)
+            return; 
+
+        var ordenTrabajoEditado = (OrdenTrabajo)ventana.EntidadEditada;
+
+        await _viewModel.Save(ordenTrabajoEditado);
+
+        foreach (var det in ordenTrabajoEditado.Detalles)
+            det.Folio = ordenTrabajoEditado.Folio;
+
+        foreach (var det in ordenTrabajoEditado.Detalles)
+            await _viewModelDetalle.Save(det);
     }
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
@@ -51,13 +65,63 @@ public partial class OrdenTrabajoPage : Page
 
     private async void editar(OrdenTrabajo ordenTrabajo, string titulo)
     {
-        var ventana = new EntidadEditorWindow(this, ordenTrabajo, titulo);
+        if (ordenTrabajo == null)
+            return;
 
-        if (ventana.ShowDialog() == true)
+        var detallesFiltrados = _viewModelDetalle.Detalles
+            .Where(d => d.Folio == ordenTrabajo.Folio)
+            .ToList();
+
+        ordenTrabajo.Detalles.Clear();
+        foreach (var d in detallesFiltrados)
+            ordenTrabajo.Detalles.Add(d);
+
+        var detalleEditar = ordenTrabajo.Detalles;
+
+        var ventana = new EntidadEditorTableWindow(this, ordenTrabajo, detalleEditar, titulo);
+
+        if (ventana.ShowDialog() != true)
         {
-            var ordenTrabajoEditado = (OrdenTrabajo)ventana.EntidadEditada;
-            await _viewModel.Update(ordenTrabajoEditado);
+            var ordenTrabajoCancelada = (OrdenTrabajo)ventana.EntidadEditada;
+            ordenTrabajoCancelada.Detalles = ordenTrabajo.Detalles;
+            return;
         }
+
+        var ordenTrabajoEditada = (OrdenTrabajo)ventana.EntidadEditada;
+        ordenTrabajoEditada.Detalles = detalleEditar;
+
+        var folio = ordenTrabajoEditada.Folio;
+
+        foreach (var det in detalleEditar)
+            det.Folio = folio;
+
+        var nuevosDetalles       = detalleEditar.Where(d => d.Id == 0).ToList();
+        var detallesExistentes   = detalleEditar.Where(d => d.Id != 0).ToList();
+
+        var detallesAntiguos = _viewModelDetalle.Detalles
+            .Where(d => d.Folio == folio)
+            .ToList();
+
+        var detallesEliminados = detallesAntiguos
+            .Where(old => detalleEditar.All(n => n.Id != old.Id))
+            .ToList();
+
+        foreach (var eliminado in detallesEliminados)
+        {
+            await _viewModelDetalle.Delete(eliminado.Id);
+            _viewModelDetalle.Detalles.Remove(eliminado);
+        }
+
+        foreach (var nuevo in nuevosDetalles)
+        {
+            await _viewModelDetalle.Save(nuevo);
+            _viewModelDetalle.Detalles.Add(nuevo);
+        }
+
+        foreach (var existente in detallesExistentes)
+            await _viewModelDetalle.Update(existente);
+
+        await _viewModel.Update(ordenTrabajoEditada);
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)

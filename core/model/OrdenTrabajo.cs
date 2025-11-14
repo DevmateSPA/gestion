@@ -2,7 +2,7 @@ using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
-public class OrdenTrabajo : IModel
+public class OrdenTrabajo : FacturaBase<Detalle>
 {
     public int Id { get; set; }
     public DateTime Fecha { get; set; }

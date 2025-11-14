@@ -14,8 +14,8 @@ public partial class FacturaPage : Page
     private DataGrid _dataGrid;
 
     private readonly FacturaViewModel _viewModel;
-    private readonly DetalleViewModel _viewModelDetalle;
-    public FacturaPage(FacturaViewModel viewModel, DetalleViewModel viewModelDetalle)
+    private readonly DetalleFacturaViewModel _viewModelDetalle;
+    public FacturaPage(FacturaViewModel viewModel, DetalleFacturaViewModel viewModelDetalle)
     {
         InitializeComponent();
         _viewModel = viewModel;
@@ -25,7 +25,7 @@ public partial class FacturaPage : Page
 
         Loaded += async (_, _) =>
         {
-            await _viewModel.LoadAll();          // carga facturas
+            await _viewModel.LoadAll();          
             await _viewModelDetalle.LoadAll();
         };
 
@@ -157,7 +157,7 @@ public partial class FacturaPage : Page
 
     private void DgFacturas_StatusChanged(object? sender, EventArgs e)
     {
-        GridFocus(_dataGrid);
+        GridFocus(_dataGrid); 
     }
 
     private void GridFocus(DataGrid dataGrid)

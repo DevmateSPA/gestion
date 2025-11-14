@@ -14,27 +14,42 @@ public partial class GuiaDespachoPage : Page
     private DataGrid _dataGrid;
 
     private readonly GuiaDespachoViewModel _viewModel;
-    public GuiaDespachoPage(GuiaDespachoViewModel viewModel)
+    private readonly DetalleGuiaDespachoViewModel _viewModelDetalle;
+    public GuiaDespachoPage(GuiaDespachoViewModel viewModel, DetalleGuiaDespachoViewModel viewModelDetalle) 
     {
         InitializeComponent();
         _viewModel = viewModel;
+        _viewModelDetalle = viewModelDetalle;
         DataContext = _viewModel;
         Title = $"Guías de Despacho";
 
-        Loaded += async (_, _) => await _viewModel.LoadAll();
+        Loaded += async (_, _) =>
+        {
+            await _viewModel.LoadAll();          
+            await _viewModelDetalle.LoadAll();
+        };
+
         _dataGrid = dgGuiasDespacho;
         _dataGrid.ItemContainerGenerator.StatusChanged += DgGuiasDespacho_StatusChanged;
     }
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(this, new GuiaDespacho(), "Ingresar Guia de Despacho");
+        var guiaDespacho = new GuiaDespacho();
+        var ventana = new EntidadEditorTableWindow(this, guiaDespacho, guiaDespacho.Detalles, "Ingresar Guía de despacho");
 
-        if (ventana.ShowDialog() == true)
-        {
-            var guiaDespachoEditado = (GuiaDespacho)ventana.EntidadEditada;
-            await _viewModel.Save(guiaDespachoEditado);
-        }
+        if (ventana.ShowDialog() != true)
+            return; 
+
+        var guiaDespachoEditado = (GuiaDespacho)ventana.EntidadEditada;
+
+        await _viewModel.Save(guiaDespachoEditado);
+
+        foreach (var det in guiaDespachoEditado.Detalles)
+            det.Folio = guiaDespachoEditado.Folio;
+
+        foreach (var det in guiaDespachoEditado.Detalles)
+            await _viewModelDetalle.Save(det);
     }
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
@@ -51,13 +66,63 @@ public partial class GuiaDespachoPage : Page
 
     private async void editar(GuiaDespacho guiaDespacho, string titulo)
     {
-        var ventana = new EntidadEditorWindow(this, guiaDespacho, titulo);
+        if (guiaDespacho == null)
+            return;
 
-        if (ventana.ShowDialog() == true)
+        var detallesFiltrados = _viewModelDetalle.Detalles
+            .Where(d => d.Folio == guiaDespacho.Folio)
+            .ToList();
+       
+        guiaDespacho.Detalles.Clear();
+        foreach (var d in detallesFiltrados)
+            guiaDespacho.Detalles.Add(d);
+
+        var detalleEditar = guiaDespacho.Detalles;
+
+        var ventana = new EntidadEditorTableWindow(this, guiaDespacho, detalleEditar, titulo);
+
+        if (ventana.ShowDialog() != true)
         {
-            var guiaDespachoEditado = (GuiaDespacho)ventana.EntidadEditada;
-            await _viewModel.Update(guiaDespachoEditado);
+            var guiaDespachoCancelada = (GuiaDespacho)ventana.EntidadEditada;
+            guiaDespachoCancelada.Detalles = guiaDespacho.Detalles;
+            return;
         }
+
+        var guiaDespachoEditada = (GuiaDespacho)ventana.EntidadEditada;
+        guiaDespachoEditada.Detalles = detalleEditar;
+
+        var folio = guiaDespachoEditada.Folio;
+
+        foreach (var det in detalleEditar)
+            det.Folio = folio;
+
+        var nuevosDetalles       = detalleEditar.Where(d => d.Id == 0).ToList();
+        var detallesExistentes   = detalleEditar.Where(d => d.Id != 0).ToList();
+
+        var detallesAntiguos = _viewModelDetalle.Detalles
+            .Where(d => d.Folio == folio)
+            .ToList();
+
+        var detallesEliminados = detallesAntiguos
+            .Where(old => detalleEditar.All(n => n.Id != old.Id))
+            .ToList();
+
+        foreach (var eliminado in detallesEliminados)
+        {
+            await _viewModelDetalle.Delete(eliminado.Id);
+            _viewModelDetalle.Detalles.Remove(eliminado);
+        }
+
+        foreach (var nuevo in nuevosDetalles)
+        {
+            await _viewModelDetalle.Save(nuevo);
+            _viewModelDetalle.Detalles.Add(nuevo);
+        }
+
+        foreach (var existente in detallesExistentes)
+            await _viewModelDetalle.Update(existente);
+
+        await _viewModel.Update(guiaDespachoEditada);
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)

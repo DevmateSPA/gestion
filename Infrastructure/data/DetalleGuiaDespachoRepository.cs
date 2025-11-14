@@ -5,10 +5,10 @@ using Gestion.core.model;
 
 namespace Gestion.Infrastructure.data;
 
-public class DetalleRepository : BaseRepository<Detalle>, IDetalleRepository
+public class DetalleGuiaDespachoRepository : BaseRepository<Detalle>, IDetalleGuiaDespachoRepository
 {
-    public DetalleRepository(IDbConnectionFactory connectionFactory)
-        : base(connectionFactory, "facturadetalle") {}
+    public DetalleGuiaDespachoRepository(IDbConnectionFactory connectionFactory)
+        : base(connectionFactory, "guiadespachodetalle") {}
 
     public async Task<List<Detalle>> FindByFolio(string folio)
     {

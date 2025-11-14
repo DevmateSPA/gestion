@@ -2,7 +2,7 @@ using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
-public class GuiaDespacho : IModel
+public class GuiaDespacho : FacturaBase<Detalle>
 {
     public int Id { get; set; }
     public String Folio { get; set; } = string.Empty;

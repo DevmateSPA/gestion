@@ -2,6 +2,8 @@ using System.Collections.ObjectModel;
 using Gestion.core.interfaces.model;
 using Gestion.core.interfaces.service;
 using Gestion.helpers;
+using System.Windows;
+using System.IO;
 
 namespace Gestion.presentation.viewmodel;
 

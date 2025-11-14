@@ -4,9 +4,9 @@
         Title="Editar entidad con tabla"
         WindowStartupLocation="CenterOwner"
         Height="720"
-        Width="1080"
+        Width="1000"
         ResizeMode="NoResize"
-        SizeToContent="WidthAndHeight">
+        SizeToContent="Height">
 
     <DockPanel Margin="20" LastChildFill="True">
 

@@ -119,6 +119,8 @@ public partial class EntidadEditorTableWindow : Window
     {
         if (_detalles == null) return;
         dgDetalles.ItemsSource = _detalles;
+
+        AplicarAtributosColumnas();
     }
 
     private void BtnGuardar_Click(object sender, RoutedEventArgs e)
@@ -159,5 +161,32 @@ public partial class EntidadEditorTableWindow : Window
     {
         if (_entidadOriginal is FacturaBase<Detalle> factura && e.NewItem is Detalle detalle)
             detalle.Folio = factura.Folio;
+    }
+
+    private void AplicarAtributosColumnas()
+    {
+        var tipo = typeof(Detalle); // Usa tu clase real
+
+        foreach (var col in dgDetalles.Columns)
+        {
+            var prop = tipo.GetProperty(col.SortMemberPath);
+            if (prop == null) continue;
+
+            var visibleAttr = prop.GetCustomAttributes(typeof(VisibleAttribute), true)
+                                .FirstOrDefault() as VisibleAttribute;
+
+            if (visibleAttr != null && visibleAttr.Mostrar == false)
+            {
+                col.Visibility = Visibility.Collapsed;
+            }
+
+            var orderAttr = prop.GetCustomAttributes(typeof(OrdenAttribute), true)
+                                .FirstOrDefault() as OrdenAttribute;
+
+            if (orderAttr != null)
+            {
+                col.DisplayIndex = orderAttr.Index;
+            }
+        }
     }
 }
