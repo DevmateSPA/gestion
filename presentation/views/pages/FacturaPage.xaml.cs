@@ -14,8 +14,8 @@ public partial class FacturaPage : Page
     private DataGrid _dataGrid;
 
     private readonly FacturaViewModel _viewModel;
-    private readonly DetalleFacturaViewModel _viewModelDetalle;
-    public FacturaPage(FacturaViewModel viewModel, DetalleFacturaViewModel viewModelDetalle)
+    private readonly DetalleViewModel _viewModelDetalle;
+    public FacturaPage(FacturaViewModel viewModel, DetalleViewModel viewModelDetalle)
     {
         InitializeComponent();
         _viewModel = viewModel;

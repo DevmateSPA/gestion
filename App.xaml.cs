@@ -122,7 +122,7 @@ public partial class App : Application
         services.AddTransient<OrdenTrabajoViewModel>();
         services.AddTransient<OrdenTrabajoPage>();     
         // Detalle Facturas ViewModel
-        services.AddTransient<DetalleFacturaViewModel>();   
+        services.AddTransient<DetalleViewModel>();   
         services.AddTransient<DetalleGuiaDespachoViewModel>();   
         services.AddTransient<DetalleOrdenTrabajoViewModel>();   
 
