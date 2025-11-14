@@ -66,49 +66,63 @@ public partial class FacturaPage : Page
             .ToList();
 
         factura.Detalles.Clear();
-        foreach (var detalle in detallesFiltrados)
-            factura.Detalles.Add(detalle);
+        foreach (var d in detallesFiltrados)
+            factura.Detalles.Add(d);
 
         var detalleEditar = factura.Detalles;
 
         var ventana = new EntidadEditorTableWindow(this, factura, detalleEditar, titulo);
 
-        if (ventana.ShowDialog() == true)
+        if (ventana.ShowDialog() != true)
         {
-            var facturaEditada = (Factura)ventana.EntidadEditada;
-            facturaEditada.Detalles = detalleEditar;
-
-            var folio = facturaEditada.Folio;
-
-            // 🔹 Asignar Folio a todos los detalles editados
-            foreach (var detalle in detalleEditar)
-                detalle.Folio = folio;
-
-            var nuevosDetalles = detalleEditar.Where(d => d.Id == 0).ToList();
-            var detallesExistentes = detalleEditar.Where(d => d.Id != 0).ToList();
-
-            var detallesAntiguos = _viewModelDetalle.Detalles.Where(d => d.Folio == folio).ToList();
-            foreach (var detalle in detallesAntiguos)
-                _viewModelDetalle.Detalles.Remove(detalle);
-
-            foreach (var detalle in detalleEditar)
-                _viewModelDetalle.Detalles.Add(detalle);
-
-            // Guardar detalles nuevos
-            foreach (var nuevo in nuevosDetalles)
-                await _viewModelDetalle.Save(nuevo);
-
-            // Actualizar detalles existentes
-            foreach (var existente in detallesExistentes)
-                await _viewModelDetalle.Update(existente);
-
-            await _viewModel.Update(facturaEditada);
+            var facturaCancelada = (Factura)ventana.EntidadEditada;
+            facturaCancelada.Detalles = factura.Detalles;
+            return;
         }
-        else
+
+        var facturaEditada = (Factura)ventana.EntidadEditada;
+        facturaEditada.Detalles = detalleEditar;
+
+        var folio = facturaEditada.Folio;
+
+        foreach (var det in detalleEditar)
+            det.Folio = folio;
+
+        var nuevosDetalles       = detalleEditar.Where(d => d.Id == 0).ToList();
+        var detallesExistentes   = detalleEditar.Where(d => d.Id != 0).ToList();
+
+        // Los antiguos antes de editar (BD o cache)
+        var detallesAntiguos = _viewModelDetalle.Detalles
+            .Where(d => d.Folio == folio)
+            .ToList();
+
+        // 6️⃣ Sincronizar: eliminar los que ya no están
+        var detallesEliminados = detallesAntiguos
+            .Where(old => detalleEditar.All(n => n.Id != old.Id))
+            .ToList();
+
+        foreach (var eliminado in detallesEliminados)
         {
-            var facturaEditada = (Factura)ventana.EntidadEditada;
-            facturaEditada.Detalles = factura.Detalles;
+            await _viewModelDetalle.Delete(eliminado.Id);
+            _viewModelDetalle.Detalles.Remove(eliminado);
         }
+
+        // 7️⃣ Agregar nuevos en la colección global y guardar en BD
+        foreach (var nuevo in nuevosDetalles)
+        {
+            await _viewModelDetalle.Save(nuevo);
+            _viewModelDetalle.Detalles.Add(nuevo);
+        }
+
+        // 8️⃣ Actualizar existentes en BD y colección
+        foreach (var existente in detallesExistentes)
+        {
+            await _viewModelDetalle.Update(existente);
+            // no hace falta tocar la colección: ya estaba
+        }
+
+        // 9️⃣ Finalmente actualizar la factura en BD
+        await _viewModel.Update(facturaEditada);
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
