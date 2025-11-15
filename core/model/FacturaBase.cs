@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -21,12 +22,37 @@ public abstract class FacturaBase<T> : IConDetalles<T>, INotifyPropertyChanged
     public string Folio { get; set; } = string.Empty;
     [Orden(2)]
     public DateTime Fecha { get; set; } = DateTime.Now;
-    public int Neto { get; set; }
+    private int _neto;
+    [NotMapped]
+    public int Neto
+    {
+        get => _neto;
+        private set
+        {
+            if (_neto != value)
+            {
+                _neto = value;
+                OnPropertyChanged(nameof(Neto));
+            }
+        }
+    }
 
-    public int Iva { get; set; }
+    private int _iva;
+    [NotMapped]
+    public int Iva
+    {
+        get => _iva;
+        private set
+        {
+            if (_iva != value)
+            {
+                _iva = value;
+                OnPropertyChanged(nameof(Iva));
+            }
+        }
+    }
 
     private int _total;
-
     [NotMapped]
     public int Total
     {
@@ -65,7 +91,8 @@ public abstract class FacturaBase<T> : IConDetalles<T>, INotifyPropertyChanged
             RecalcularTotal();
         }
     }
-    private void DetallesChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+
+    private void DetallesChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         if (e.NewItems != null)
         {
@@ -93,5 +120,8 @@ public abstract class FacturaBase<T> : IConDetalles<T>, INotifyPropertyChanged
         Total = Detalles
             .Select(d => (int?)d.GetType().GetProperty("Total")?.GetValue(d) ?? 0)
             .Sum();
+
+        Neto = (int)Math.Round(Total / 1.19);
+        Iva = Total - Neto;
     }
 }
