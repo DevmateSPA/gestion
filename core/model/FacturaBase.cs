@@ -15,12 +15,12 @@ public abstract class FacturaBase<T> : IConDetalles<T>, INotifyPropertyChanged
     public int Id { get; set; }
 
     [Nombre("Rut")]
+    [Orden(0)]
     public string RutCliente { get; set; } = string.Empty;
-
+    [Orden(1)]
     public string Folio { get; set; } = string.Empty;
-
+    [Orden(2)]
     public DateTime Fecha { get; set; } = DateTime.Now;
-
     public int Neto { get; set; }
 
     public int Iva { get; set; }

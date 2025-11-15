@@ -5,6 +5,7 @@ namespace Gestion.core.model;
 // Implementa la lista de detalles, implementa la interfaz IModel
 public class Factura : FacturaBase<Detalle>
 {
+    [Visible(false)]
     public string Guia1 { get; set; } = string.Empty;
     [Visible(false)]
     public string Guia2 { get; set; } = string.Empty;
@@ -15,20 +16,25 @@ public class Factura : FacturaBase<Detalle>
     [Visible(false)]
     public string Guia5 { get; set; } = string.Empty;
     [Nombre("Orden de trabajo")]
+    [Orden(3)]
     public string OrdenTrabajo { get; set; } = string.Empty;
     [Nombre("Fecha de vencimiento")]
+    [Orden(4)]
     public string FechaVencimiento { get; set; } = string.Empty;
     [Nombre("Crédito")]
+    [Orden(5)]
     public int TipoCredito { get; set; }
     [Nombre("Haber")]
+    [Orden(6)]
     public int Habe { get; set; }
     [Nombre("Nota de crédito")]
+    [Orden(7)]
     public int NotaCredito { get; set; }
     [Visible(false)]
     public string Memo { get; set; } = string.Empty;
     [Visible(false)]
     public string Tipo { get; set; } = string.Empty;
-    [Nombre("Orden de trabajo")]
+    [Nombre("Orden de trabajo (campo ot01)")]
     public string Ot01 { get; set; } = string.Empty;
     [Visible(false)]
     public string Ot02 { get; set; } = string.Empty;
