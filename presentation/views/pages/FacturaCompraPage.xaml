@@ -39,6 +39,7 @@
                     <DataGridTextColumn Header="Tipo" Binding="{Binding Tipo}" Width="*" />
                     <DataGridTextColumn Header="Iva" Binding="{Binding Iva}" Width="*" />
                     <DataGridTextColumn Header="Neto" Binding="{Binding Neto}" Width="*" />
+                    <DataGridTextColumn Header="Total" Binding="{Binding Total}" Width="*" />
                 </DataGrid.Columns>
         </DataGrid>
 
