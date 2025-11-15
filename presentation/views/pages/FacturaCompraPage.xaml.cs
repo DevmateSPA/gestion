@@ -26,7 +26,6 @@ public partial class FacturaCompraPage : Page
         Loaded += async (_, _) =>
         {
             await _viewModel.LoadAll();
-            await _viewModelDetalle.LoadAll();
         };
         _dataGrid = dgFacturasCompra;
         _dataGrid.ItemContainerGenerator.StatusChanged += DgFacturasCompra_StatusChanged;
@@ -61,14 +60,6 @@ public partial class FacturaCompraPage : Page
     {
         if (factura == null)
             return;
-
-        var detallesFiltrados = _viewModelDetalle.Detalles
-            .Where(d => d.Folio == factura.Folio)
-            .ToList();
-
-        factura.Detalles.Clear();
-        foreach (var d in detallesFiltrados)
-            factura.Detalles.Add(d);
 
         var detalleEditar = factura.Detalles;
 
