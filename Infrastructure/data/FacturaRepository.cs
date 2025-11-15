@@ -17,17 +17,14 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
         using var cmd = (DbCommand)conn.CreateCommand();
             cmd.CommandText = $@"
                 SELECT 
-                    f.id AS factura_id,
-                    f.rutcliente,
-                    f.folio,
-                    f.fecha,
-                    d.id AS detalle_id,
+                    f.*,
+                    d.id as id_detalle,
                     d.producto,
-                    d.cantidad,
-                    d.precio
+                    d.precio,
+                    d.cantidad
                 FROM {_tableName} f
-                LEFT JOIN FACTURADETALLE d ON f.folio = d.folio
-                ORDER BY f.folio;";
+                JOIN FACTURADETALLE d
+                ON f.folio = d.folio";
 
         using var reader = await cmd.ExecuteReaderAsync();
 
@@ -43,10 +40,9 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
             {
                 facturaActual = new Factura
                 {
-                    Id = reader.GetInt32(reader.GetOrdinal("factura_id")),
+                    Id = reader.GetInt32(reader.GetOrdinal("id")),
                     RutCliente = reader.GetString(reader.GetOrdinal("rutcliente")),
                     Folio = folio,
-                    Fecha = reader.GetDateTime(reader.GetOrdinal("fecha")),
                     Detalles = new ObservableCollection<Detalle>()
                 };
 
@@ -54,18 +50,18 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
                 folioActual = folio;
             }
 
-            if (!reader.IsDBNull(reader.GetOrdinal("detalle_id")))
+            if (!reader.IsDBNull(reader.GetOrdinal("id_detalle")) && facturaActual != null)
             {
-                var detalle = new Detalle()
+                var detalle = new Detalle
                 {
-                    Id = reader.GetInt32(reader.GetOrdinal("detalle_id")),
+                    Id = reader.GetInt32(reader.GetOrdinal("id_detalle")),
                     Folio = folio,
                     Producto = reader.GetString(reader.GetOrdinal("producto")),
-                    Cantidad = reader.GetInt32(reader.GetOrdinal("cantidad")),
-                    Precio = reader.GetInt32(reader.GetOrdinal("precio"))
+                    Precio = reader.GetInt32(reader.GetOrdinal("precio")),
+                    Cantidad = reader.GetInt32(reader.GetOrdinal("cantidad"))
                 };
 
-                facturaActual!.Detalles.Add(detalle);
+                facturaActual.Detalles.Add(detalle);
             }
         }
 

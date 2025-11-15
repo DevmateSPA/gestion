@@ -44,7 +44,7 @@ public abstract class EntidadViewModel<T> where T : IModel
             Entidades.Add(entidad);
     }
 
-    public async Task LoadAll()
+    public virtual async Task LoadAll()
     {
         await SafeExecutor.RunAsync(async () =>
         {
