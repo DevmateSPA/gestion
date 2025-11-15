@@ -43,6 +43,11 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
                     Id = reader.GetInt32(reader.GetOrdinal("id")),
                     RutCliente = reader.GetString(reader.GetOrdinal("rutcliente")),
                     Folio = folio,
+                    Fecha = reader.GetDateTime(reader.GetOrdinal("fecha")),
+                    FechaVencimiento = reader.GetString(reader.GetOrdinal("fechavencimiento")),
+                    OrdenTrabajo = reader.GetString(reader.GetOrdinal("ordentrabajo")),
+                    NotaCredito = reader.GetInt32(reader.GetOrdinal("notacredito")),
+                    TipoCredito = reader.GetInt32(reader.GetOrdinal("tipocredito")),
                     Detalles = new ObservableCollection<Detalle>()
                 };
 
