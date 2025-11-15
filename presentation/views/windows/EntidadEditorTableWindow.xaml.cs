@@ -50,18 +50,15 @@ public partial class EntidadEditorTableWindow : Window
 
     private void GenerarCampos(object entidad)
     {
-
         var tipo = entidad.GetType();
 
         var propiedades = tipo.GetProperties()
             .Where(p =>
-                p.CanWrite &&
                 !string.Equals(p.Name, "Id", StringComparison.OrdinalIgnoreCase) &&
                 (p.PropertyType == typeof(string) || p.PropertyType.IsValueType) &&
                 (p.GetCustomAttribute<VisibleAttribute>()?.Mostrar ?? true)
             )
             .ToList();
-
 
         spCampos.Children.Clear();
 
@@ -82,13 +79,16 @@ public partial class EntidadEditorTableWindow : Window
             };
 
             var valorActual = prop.GetValue(entidad)?.ToString() ?? "";
+
             var textBox = new TextBox
             {
                 Text = valorActual,
                 FontSize = 20,
                 Height = 30,
                 Width = 300,
-                Margin = new Thickness(5, 0, 5, 10)
+                Margin = new Thickness(5, 0, 5, 10),
+
+                IsReadOnly = !prop.CanWrite
             };
 
             _controles[prop] = textBox;
@@ -98,6 +98,7 @@ public partial class EntidadEditorTableWindow : Window
                 Orientation = Orientation.Vertical,
                 Width = 310
             };
+
             bloque.Children.Add(label);
             bloque.Children.Add(textBox);
 
@@ -130,6 +131,9 @@ public partial class EntidadEditorTableWindow : Window
             var prop = kvp.Key;
             var textBox = kvp.Value;
             var texto = textBox.Text;
+
+            if (!prop.CanWrite)
+                continue;
 
             try
             {

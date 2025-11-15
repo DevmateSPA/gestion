@@ -32,7 +32,7 @@ public class DetalleFacturaRepository : BaseRepository<Detalle>, IDetalleFactura
                 Producto = reader["producto"]?.ToString() ?? string.Empty,
                 Precio = reader.GetInt32(reader.GetOrdinal("precio")),
                 Cantidad = reader.GetInt32(reader.GetOrdinal("cantidad")),
-                Total = reader.GetInt32(reader.GetOrdinal("total")),
+                //Total = reader.GetInt32(reader.GetOrdinal("total")),
                 Folio = reader["folio"]?.ToString() ?? string.Empty,
                 Fecha = reader.GetDateTime(reader.GetOrdinal("fecha"))
             };

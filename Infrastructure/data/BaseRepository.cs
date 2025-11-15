@@ -25,8 +25,17 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
 
         foreach (PropertyInfo prop in typeof(T).GetProperties())
         {
+            // Ignorar propiedades sin setter
+            if (!prop.CanWrite)
+                continue;
+
+            // Ignorar propiedades [NotMapped]
+            if (Attribute.IsDefined(prop, typeof(NotMappedAttribute)))
+                continue;
+
             string col = prop.Name.ToLower();
-            if (!reader.HasColumn(col)) 
+
+            if (!reader.HasColumn(col))
                 continue;
 
             object? value = reader[col];
