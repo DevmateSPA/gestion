@@ -5,6 +5,7 @@ using Gestion.helpers;
 using System.Windows;
 using System.IO;
 using System.Reflection;
+using Gestion.presentation.utils;
 
 namespace Gestion.presentation.viewmodel;
 
@@ -51,7 +52,6 @@ public abstract class EntidadViewModel<T> where T : IModel
         {
             var lista = await _service.FindAll();
             var dateProp = GetDateProperty(typeof(T));
-            MessageBox.Show(dateProp+"");
             if (dateProp != null)
             {
                 lista = lista.OrderByDescending(x => dateProp.GetValue(x)).ToList();
@@ -62,12 +62,11 @@ public abstract class EntidadViewModel<T> where T : IModel
         }, _dialogService, $"Error al cargar {typeof(T).Name}");
     }
 
-    private PropertyInfo? GetDateProperty(Type t)
+    public static PropertyInfo? GetDateProperty(Type t)
     {
         return t.GetProperty("Fecha", 
             BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
     }
-
     private protected async Task RunServiceAction(Func<Task<bool>> serviceAction, Action onSuccess, string mensajeError)
     {
         await SafeExecutor.RunAsync(async () =>

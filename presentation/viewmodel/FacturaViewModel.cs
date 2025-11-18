@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
 using Gestion.helpers;
+using Gestion.presentation.utils;
 
 namespace Gestion.presentation.viewmodel;
 
@@ -20,9 +21,15 @@ public class FacturaViewModel : EntidadViewModel<Factura>
         await SafeExecutor.RunAsync(async () =>
         {
             var lista = await _facturaService.FindAllWithDetails();
+            var dateProp = PageUtils.GetDateProperty(typeof(Factura));
+            if (dateProp != null)
+            {
+                lista = lista.OrderByDescending(x => dateProp.GetValue(x)).ToList();
+            }
             Facturas.Clear();
             foreach (var entidad in lista)
                 addEntity(entidad);
         }, _dialogService, $"Error al cargar las facturas");
     }
+    
 }

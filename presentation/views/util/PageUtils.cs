@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -26,5 +27,16 @@ namespace Gestion.presentation.utils
                 }
             }
         }
+
+        
+        public static PropertyInfo? GetDateProperty(Type t)
+        {
+            return t.GetProperty(
+                "Fecha",
+                BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase
+            );
+        }
     }
+
+    
 }

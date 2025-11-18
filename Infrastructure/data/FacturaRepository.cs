@@ -23,7 +23,7 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
                     d.precio,
                     d.cantidad
                 FROM {_tableName} f
-                JOIN FACTURADETALLE d
+                LEFT JOIN FACTURADETALLE d
                 ON f.folio = d.folio";
 
         using var reader = await cmd.ExecuteReaderAsync();
@@ -44,7 +44,7 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
                     RutCliente = reader.GetString(reader.GetOrdinal("rutcliente")),
                     Folio = folio,
                     Fecha = reader.GetDateTime(reader.GetOrdinal("fecha")),
-                    FechaVencimiento = reader.GetString(reader.GetOrdinal("fechavencimiento")),
+                    FechaVencimiento = reader.GetDateTime(reader.GetOrdinal("fechavencimiento")),
                     OrdenTrabajo = reader.GetString(reader.GetOrdinal("ordentrabajo")),
                     NotaCredito = reader.GetInt32(reader.GetOrdinal("notacredito")),
                     TipoCredito = reader.GetInt32(reader.GetOrdinal("tipocredito")),
