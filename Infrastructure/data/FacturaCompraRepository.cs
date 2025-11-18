@@ -19,12 +19,12 @@ public class FacturaCompraRepository : BaseRepository<FacturaCompra>, IFacturaCo
             SELECT 
                 f.*,
                 d.id as id_detalle,
-                d.producto,
-                d.precio,
-                d.cantidad
+                p.descripcion
             FROM {_tableName} f
-            LEFT JOIN FACTURADETALLE d
-            ON f.folio = d.folio";
+            LEFT JOIN FACTURACOMPRAPRODUCTO d
+            ON f.folio = d.folio
+            LEFT JOIN PRODUCTO p
+            ON p.codigo = d.producto";
 
         using var reader = await cmd.ExecuteReaderAsync();
 
@@ -58,17 +58,11 @@ public class FacturaCompraRepository : BaseRepository<FacturaCompra>, IFacturaCo
 
             var detalle = new Detalle
             {
-                Id = reader.GetInt32(idxDetalle),
+
                 Folio = folio,
-                Producto = reader.IsDBNull(reader.GetOrdinal("producto"))
+                Producto = reader.IsDBNull(reader.GetOrdinal("descripcion"))
                     ? ""
-                    : reader.GetString(reader.GetOrdinal("producto")),
-                Precio = reader.IsDBNull(reader.GetOrdinal("precio"))
-                    ? 0
-                    : reader.GetInt32(reader.GetOrdinal("precio")),
-                Cantidad = reader.IsDBNull(reader.GetOrdinal("cantidad"))
-                    ? 0
-                    : reader.GetInt32(reader.GetOrdinal("cantidad"))
+                    : reader.GetString(reader.GetOrdinal("descripcion"))
             };
 
             facturaActual.Detalles.Add(detalle);
