@@ -6,6 +6,7 @@ using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
 using Gestion.presentation.utils;
+using System.ComponentModel;
 
 namespace Gestion.presentation.views.pages;
 
@@ -25,6 +26,7 @@ public partial class FacturaCompraPage : Page
 
         Loaded += async (_, _) =>
         {
+           
             await _viewModel.LoadAll();
             await _viewModelDetalle.LoadAll();
         };

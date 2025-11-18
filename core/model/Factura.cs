@@ -18,7 +18,7 @@ public class Factura : FacturaBase<Detalle>
     [Nombre("Orden de trabajo")]
     public string OrdenTrabajo { get; set; } = string.Empty;
     [Nombre("Fecha de vencimiento")]
-    public string FechaVencimiento { get; set; } = string.Empty;
+    public DateTime FechaVencimiento { get; set; } = DateTime.Now;
     [Nombre("Crédito")]
     public int TipoCredito { get; set; }
     [Nombre("Haber")]

@@ -6,6 +6,7 @@ using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
 using Gestion.presentation.utils;
+using System.ComponentModel;
 
 namespace Gestion.presentation.views.pages;
 
@@ -25,7 +26,7 @@ public partial class OrdenTrabajoPage : Page
 
         Loaded += async (_, _) =>
         {
-            await _viewModel.LoadAll();         
+            await _viewModel.LoadAll();  
             await _viewModelDetalle.LoadAll();
         };
         _dataGrid = dgOrdenTrabajo;
@@ -153,28 +154,9 @@ public partial class OrdenTrabajoPage : Page
 
     private void DgOrdenTrabajo_StatusChanged(object? sender, EventArgs e)
     {
-        GridFocus(_dataGrid);
+        PageUtils.GridFocus(_dataGrid,DgOrdenTrabajo_StatusChanged);
     }
 
-    private void GridFocus(DataGrid dataGrid)
-    {
-        if (dataGrid.ItemContainerGenerator.Status == System.Windows.Controls.Primitives.GeneratorStatus.ContainersGenerated)
-        {
-            if (dataGrid.Items.Count > 0)
-            {
-                dataGrid.SelectedIndex = 0;
-                dataGrid.Focus();
-
-                var firstRow = dataGrid.ItemContainerGenerator.ContainerFromIndex(0) as DataGridRow;
-                if (firstRow != null)
-                {
-                    firstRow.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
-                }
-
-                dataGrid.ItemContainerGenerator.StatusChanged -= DgOrdenTrabajo_StatusChanged;
-            }
-        }
-    }
 
     private void dgOrdenTrabajo_PreviewKeyDown(object sender, KeyEventArgs e)
     {
