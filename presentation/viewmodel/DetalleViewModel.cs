@@ -4,9 +4,9 @@ using Gestion.core.model;
 
 namespace Gestion.presentation.viewmodel;
 
-public class DetalleFacturaViewModel : EntidadViewModel<Detalle>
+public class DetalleViewModel : EntidadViewModel<Detalle>
 {
     public ObservableCollection<Detalle> Detalles => Entidades;
-    public DetalleFacturaViewModel(IDetalleFacturaService detalleFacturaService, IDialogService dialogService)
+    public DetalleViewModel(IDetalleFacturaService detalleFacturaService, IDialogService dialogService)
         : base(detalleFacturaService, dialogService) {}
 }

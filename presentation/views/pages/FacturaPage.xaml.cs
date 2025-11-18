@@ -14,8 +14,8 @@ public partial class FacturaPage : Page
     private DataGrid _dataGrid;
 
     private readonly FacturaViewModel _viewModel;
-    private readonly DetalleFacturaViewModel _viewModelDetalle;
-    public FacturaPage(FacturaViewModel viewModel, DetalleFacturaViewModel viewModelDetalle)
+    private readonly DetalleViewModel _viewModelDetalle;
+    public FacturaPage(FacturaViewModel viewModel, DetalleViewModel viewModelDetalle)
     {
         InitializeComponent();
         _viewModel = viewModel;
@@ -25,8 +25,7 @@ public partial class FacturaPage : Page
 
         Loaded += async (_, _) =>
         {
-            await _viewModel.LoadAll();          
-            await _viewModelDetalle.LoadAll();
+            await _viewModel.LoadAll();
         };
 
         _dataGrid = dgFacturas;
@@ -69,14 +68,6 @@ public partial class FacturaPage : Page
     {
         if (factura == null)
             return;
-
-        var detallesFiltrados = _viewModelDetalle.Detalles
-            .Where(d => d.Folio == factura.Folio)
-            .ToList();
-
-        factura.Detalles.Clear();
-        foreach (var d in detallesFiltrados)
-            factura.Detalles.Add(d);
 
         var detalleEditar = factura.Detalles;
 
