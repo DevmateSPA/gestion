@@ -20,7 +20,7 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
 
         using var reader = await cmd.ExecuteReaderAsync();
         if (await reader.ReadAsync())
-            return new Usuario(reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
+            return new Usuario(reader.GetInt64(0), reader.GetString(1), reader.GetString(2));
 
         return null;
     }

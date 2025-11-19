@@ -4,7 +4,7 @@ namespace Gestion.core.model;
 
 public class Maquina : IModel
 {
-    public int Id { set; get; }
+    public long Id { set; get; }
     [Nombre("Código")]
     public string Codigo { get; private set; } = string.Empty;
     [Nombre("Descripción")]

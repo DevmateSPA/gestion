@@ -13,7 +13,7 @@ public abstract class BaseService<T> : IBaseService<T> where T : IModel
         _baseRepository = baseRepository;
     }
 
-    public async Task<T?> FindById(int id)
+    public async Task<T?> FindById(long id)
     {
         return await _baseRepository.FindById(id);
     }
@@ -23,7 +23,7 @@ public abstract class BaseService<T> : IBaseService<T> where T : IModel
         return await _baseRepository.FindAll();
     }
 
-    public async Task<bool> DeleteById(int id)
+    public async Task<bool> DeleteById(long id)
     {
         return await _baseRepository.DeleteById(id);
     }

@@ -4,7 +4,7 @@ namespace Gestion.core.model;
 
 public class Banco : IModel
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
     [Nombre("Código")]
     public string Codigo { get; private set; } = string.Empty;
     public string Nombre { get; private set; } = string.Empty;

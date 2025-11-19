@@ -4,7 +4,7 @@ namespace Gestion.core.model;
 
 public class NotaCredito : IModel
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
     public string Folio { get; set; } = string.Empty;
     [Nombre("Rut Cliente")]
     public string RutCliente { get; set; } = string.Empty;

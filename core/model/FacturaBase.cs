@@ -13,7 +13,7 @@ public abstract class FacturaBase<T> : IConDetalles<T>, INotifyPropertyChanged
     protected void OnPropertyChanged(string propertyName)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-    public int Id { get; set; }
+    public long Id { get; set; }
 
     [Nombre("Rut")]
     [Orden(0)]
@@ -22,9 +22,9 @@ public abstract class FacturaBase<T> : IConDetalles<T>, INotifyPropertyChanged
     public string Folio { get; set; } = string.Empty;
     [Orden(2)]
     public DateTime Fecha { get; set; } = DateTime.Now;
-    private int _neto;
+    private long _neto;
     [NotMapped]
-    public int Neto
+    public long Neto
     {
         get => _neto;
         private set
@@ -37,9 +37,9 @@ public abstract class FacturaBase<T> : IConDetalles<T>, INotifyPropertyChanged
         }
     }
 
-    private int _iva;
+    private long _iva;
     [NotMapped]
-    public int Iva
+    public long Iva
     {
         get => _iva;
         private set
@@ -52,9 +52,9 @@ public abstract class FacturaBase<T> : IConDetalles<T>, INotifyPropertyChanged
         }
     }
 
-    private int _total;
+    private long _total;
     [NotMapped]
-    public int Total
+    public long Total
     {
         get => _total;
         private set
@@ -118,10 +118,10 @@ public abstract class FacturaBase<T> : IConDetalles<T>, INotifyPropertyChanged
     private void RecalcularTotal()
     {
         Total = Detalles
-            .Select(d => (int?)d.GetType().GetProperty("Total")?.GetValue(d) ?? 0)
+            .Select(d => (long?)d.GetType().GetProperty("Total")?.GetValue(d) ?? 0)
             .Sum();
 
-        Neto = (int)Math.Round(Total / 1.19);
+        Neto = (long)Math.Round(Total / 1.19);
         Iva = Total - Neto;
     }
 }

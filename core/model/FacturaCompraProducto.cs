@@ -4,7 +4,7 @@ namespace Gestion.core.model;
 
 public class FacturaCompraProducto : IModel
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
     public string Tipo { get; set; } = string.Empty;
     public string Folio { get; set; } = string.Empty;
     public int Producto { get; set; }

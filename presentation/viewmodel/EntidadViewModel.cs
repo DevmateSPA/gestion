@@ -22,7 +22,7 @@ public abstract class EntidadViewModel<T> where T : IModel
         _service = baseService;
     }
 
-    private protected void removeEntityById(int id)
+    private protected void removeEntityById(long id)
     {
         var entidad = Entidades.FirstOrDefault(e => e.Id == id);
         if (entidad != null)
@@ -75,7 +75,7 @@ public abstract class EntidadViewModel<T> where T : IModel
                 onSuccess();
         }, _dialogService, mensajeError);
     }
-    public Task Delete(int id) =>
+    public Task Delete(long id) =>
         RunServiceAction(() => _service.DeleteById(id), () => removeEntityById(id), $"Error al eliminar {typeof(T).Name}");
 
     public Task Update(T entidad) =>

@@ -40,14 +40,14 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
             {
                 facturaActual = new Factura
                 {
-                    Id = reader.GetInt32(reader.GetOrdinal("id")),
+                    Id = reader.GetInt64(reader.GetOrdinal("id")),
                     RutCliente = reader.GetString(reader.GetOrdinal("rutcliente")),
                     Folio = folio,
                     Fecha = reader.GetDateTime(reader.GetOrdinal("fecha")),
                     FechaVencimiento = reader.GetDateTime(reader.GetOrdinal("fechavencimiento")),
                     OrdenTrabajo = reader.GetString(reader.GetOrdinal("ordentrabajo")),
-                    NotaCredito = reader.GetInt32(reader.GetOrdinal("notacredito")),
-                    TipoCredito = reader.GetInt32(reader.GetOrdinal("tipocredito")),
+                    NotaCredito = reader.GetInt64(reader.GetOrdinal("notacredito")),
+                    TipoCredito = reader.GetInt64(reader.GetOrdinal("tipocredito")),
                     Detalles = new ObservableCollection<Detalle>()
                 };
 
@@ -59,11 +59,11 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
             {
                 var detalle = new Detalle
                 {
-                    Id = reader.GetInt32(reader.GetOrdinal("id_detalle")),
+                    Id = reader.GetInt64(reader.GetOrdinal("id_detalle")),
                     Folio = folio,
                     Producto = reader.GetString(reader.GetOrdinal("producto")),
-                    Precio = reader.GetInt32(reader.GetOrdinal("precio")),
-                    Cantidad = reader.GetInt32(reader.GetOrdinal("cantidad"))
+                    Precio = reader.GetInt64(reader.GetOrdinal("precio")),
+                    Cantidad = reader.GetInt64(reader.GetOrdinal("cantidad"))
                 };
 
                 facturaActual.Detalles.Add(detalle);

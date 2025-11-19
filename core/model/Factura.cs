@@ -23,13 +23,13 @@ public class Factura : FacturaBase<Detalle>
     public DateTime FechaVencimiento { get; set; } = DateTime.Now;
     [Nombre("Crédito")]
     [Orden(5)]
-    public int TipoCredito { get; set; }
+    public long TipoCredito { get; set; }
     [Nombre("Haber")]
     [Orden(6)]
     public int Habe { get; set; }
     [Nombre("Nota de crédito")]
     [Orden(7)]
-    public int NotaCredito { get; set; }
+    public long NotaCredito { get; set; }
     [Visible(false)]
     public string Memo { get; set; } = string.Empty;
     [Visible(false)]

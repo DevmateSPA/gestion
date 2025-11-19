@@ -48,7 +48,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return entity;
     }
 
-    public async Task<T?> FindById(int id)
+    public async Task<T?> FindById(long id)
     {
         using var conn = await _connectionFactory.CreateConnection();
         using var cmd = (DbCommand)conn.CreateCommand();
@@ -83,7 +83,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return entities;
     }
 
-    public async Task<bool> DeleteById(int id)
+    public async Task<bool> DeleteById(long id)
     {
         using var conn = await _connectionFactory.CreateConnection();
         using var cmd = (DbCommand)conn.CreateCommand();

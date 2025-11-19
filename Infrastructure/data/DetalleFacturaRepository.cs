@@ -28,10 +28,10 @@ public class DetalleFacturaRepository : BaseRepository<Detalle>, IDetalleFactura
         {
             var detalle = new Detalle
             {
-                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                Id = reader.GetInt64(reader.GetOrdinal("id")),
                 Producto = reader["producto"]?.ToString() ?? string.Empty,
-                Precio = reader.GetInt32(reader.GetOrdinal("precio")),
-                Cantidad = reader.GetInt32(reader.GetOrdinal("cantidad")),
+                Precio = reader.GetInt64(reader.GetOrdinal("precio")),
+                Cantidad = reader.GetInt64(reader.GetOrdinal("cantidad")),
                 //Total = reader.GetInt32(reader.GetOrdinal("total")),
                 Folio = reader["folio"]?.ToString() ?? string.Empty,
                 Fecha = reader.GetDateTime(reader.GetOrdinal("fecha"))

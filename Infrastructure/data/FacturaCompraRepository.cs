@@ -40,7 +40,7 @@ public class FacturaCompraRepository : BaseRepository<FacturaCompra>, IFacturaCo
             {
                 facturaActual = new FacturaCompra
                 {
-                    Id = reader.GetInt32(reader.GetOrdinal("id")),
+                    Id = reader.GetInt64(reader.GetOrdinal("id")),
                     RutCliente = reader.GetString(reader.GetOrdinal("rutcliente")),
                     Folio = folio,
                     Fecha = reader.GetDateTime(reader.GetOrdinal("fecha")),

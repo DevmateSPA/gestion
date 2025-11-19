@@ -7,9 +7,9 @@ public interface IConDetalles<T> : IModel, INotifyPropertyChanged
     string Folio { get; set; }
     string RutCliente { get; set; }
     DateTime Fecha { get; set; }
-    int Neto { get; }
-    int Iva { get; }
-    int Total { get; }
+    long Neto { get; }
+    long Iva { get; }
+    long Total { get; }
 
     ObservableCollection<T> Detalles { get; }
 }

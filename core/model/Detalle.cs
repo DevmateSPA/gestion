@@ -12,16 +12,16 @@ public class Detalle : IModel, INotifyPropertyChanged
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     // Campos privados
-    private int _cantidad;
-    private int _precio;
-    public int Id { get; set; }
+    private long _cantidad;
+    private long _precio;
+    public long Id { get; set; }
     [Visible(false)]
     [Orden(0)]
     public string Folio { get; set; } = string.Empty;
     [Orden(1)]
     public string Producto { get; set; } = string.Empty;
     [Orden(2)]
-    public int Cantidad
+    public long Cantidad
     {
         get => _cantidad;
         set
@@ -36,7 +36,7 @@ public class Detalle : IModel, INotifyPropertyChanged
     }
 
     [Orden(3)]
-    public int Precio
+    public long Precio
     {
         get => _precio;
         set
@@ -52,6 +52,6 @@ public class Detalle : IModel, INotifyPropertyChanged
 
     [Orden(4)]
     [NotMapped]
-    public int Total => Cantidad * Precio;
+    public long Total => Cantidad * Precio;
     public DateTime Fecha { get; set; }
 }

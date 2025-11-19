@@ -4,7 +4,7 @@ namespace Gestion.core.model;
 
 public class Proveedor : IModel
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
     public string Rut { get; private set; } = string.Empty;
     [Nombre("Razón Social")]
     public string Razon_Social { get; private set; } = string.Empty;
