@@ -17,14 +17,23 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
         using var cmd = (DbCommand)conn.CreateCommand();
             cmd.CommandText = $@"
                 SELECT 
-                    f.*,
-                    d.id as id_detalle,
+                    f.id,
+                    f.folio AS folio_factura,
+                    f.rutcliente,
+                    f.fecha,
+                    f.fechavencimiento,
+                    f.ordentrabajo,
+                    f.notacredito,
+                    f.tipocredito,
+                    f.iva,
+                    f.neto,
+                    f.total,
+                    d.id AS id_detalle,
                     d.producto,
                     d.precio,
                     d.cantidad
-                FROM {_tableName} f
-                JOIN FACTURADETALLE d
-                ON f.folio = d.folio
+                FROM FACTURA f
+                LEFT JOIN FACTURADETALLE d ON f.folio = d.folio
                 ORDER BY f.folio";
 
         using var reader = await cmd.ExecuteReaderAsync();
@@ -33,7 +42,10 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
 
         while (await reader.ReadAsync())
         {
-            string folio = reader.GetString(reader.GetOrdinal("folio"));
+            if (reader.IsDBNull(reader.GetOrdinal("folio_factura")))
+                continue;
+
+            string folio = reader.GetString(reader.GetOrdinal("folio_factura"));
 
             if (!facturasDict.TryGetValue(folio, out var factura))
             {
