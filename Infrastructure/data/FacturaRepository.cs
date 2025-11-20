@@ -48,6 +48,17 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
                     OrdenTrabajo = reader.GetString(reader.GetOrdinal("ordentrabajo")),
                     NotaCredito = reader.GetInt64(reader.GetOrdinal("notacredito")),
                     TipoCredito = reader.GetInt64(reader.GetOrdinal("tipocredito")),
+                    Iva = reader.IsDBNull(reader.GetOrdinal("iva"))
+                            ? 0
+                            : reader.GetInt64(reader.GetOrdinal("iva")),
+
+                    Neto = reader.IsDBNull(reader.GetOrdinal("neto"))
+                            ? 0
+                            : reader.GetInt64(reader.GetOrdinal("neto")),
+
+                    Total = reader.IsDBNull(reader.GetOrdinal("total"))
+                            ? 0
+                            : reader.GetInt64(reader.GetOrdinal("total")),
                     Detalles = new ObservableCollection<Detalle>()
                 };
 
