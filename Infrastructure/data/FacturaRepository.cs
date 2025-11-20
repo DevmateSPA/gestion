@@ -32,7 +32,7 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
                     d.producto,
                     d.precio,
                     d.cantidad
-                FROM FACTURA f
+                FROM {_tableName} f
                 LEFT JOIN FACTURADETALLE d ON f.folio = d.folio
                 ORDER BY f.folio";
 
