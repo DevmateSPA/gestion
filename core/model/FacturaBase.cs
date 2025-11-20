@@ -22,7 +22,13 @@ public abstract class FacturaBase<T> : IConDetalles<T>, INotifyPropertyChanged
     public string Folio { get; set; } = string.Empty;
     [Orden(2)]
     public DateTime Fecha { get; set; } = DateTime.Now;
-    private long _neto;
+    [NotMapped]
+    public ObservableCollection<T> Detalles { get; set; } = new();
+
+    public long Neto { set; get; }
+    public long Iva { set; get; }
+    public long Total { set; get; }
+    /*private long _neto;
     [NotMapped]
     public long Neto
     {
@@ -67,31 +73,6 @@ public abstract class FacturaBase<T> : IConDetalles<T>, INotifyPropertyChanged
         }
     }
 
-    private ObservableCollection<T> _detalles = new();
-    
-    [NotMapped]
-    public ObservableCollection<T> Detalles
-    {
-        get => _detalles;
-        set
-        {
-            if (_detalles != null)
-            {
-                _detalles.CollectionChanged -= DetallesChanged;
-                foreach (var d in _detalles)
-                    d.PropertyChanged -= DetalleChanged;
-            }
-
-            _detalles = value;
-
-            _detalles.CollectionChanged += DetallesChanged;
-            foreach (var d in _detalles)
-                d.PropertyChanged += DetalleChanged;
-
-            RecalcularTotal();
-        }
-    }
-
     private void DetallesChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         if (e.NewItems != null)
@@ -123,5 +104,5 @@ public abstract class FacturaBase<T> : IConDetalles<T>, INotifyPropertyChanged
 
         Neto = (long)Math.Round(Total / 1.19);
         Iva = Total - Neto;
-    }
+    }*/
 }
