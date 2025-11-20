@@ -10,6 +10,5 @@ public interface IConDetalles<T> : IModel, INotifyPropertyChanged
     long Neto { get; }
     long Iva { get; }
     long Total { get; }
-
-    ObservableCollection<T> Detalles { get; }
+    string Detalle { get; }
 }
