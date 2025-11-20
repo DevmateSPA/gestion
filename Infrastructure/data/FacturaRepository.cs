@@ -24,30 +24,45 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
                     d.cantidad
                 FROM {_tableName} f
                 JOIN FACTURADETALLE d
-                ON f.folio = d.folio";
+                ON f.folio = d.folio
+                ORDER BY f.folio";
 
         using var reader = await cmd.ExecuteReaderAsync();
 
-        var facturas = new List<Factura>();
-        Factura? facturaActual = null;
-        string? folioActual = null;
+        var facturasDict = new Dictionary<string, Factura>();
 
         while (await reader.ReadAsync())
         {
             string folio = reader.GetString(reader.GetOrdinal("folio"));
 
-            if (folioActual != folio)
+            if (!facturasDict.TryGetValue(folio, out var factura))
             {
-                facturaActual = new Factura
+                factura = new Factura
                 {
                     Id = reader.GetInt64(reader.GetOrdinal("id")),
-                    RutCliente = reader.GetString(reader.GetOrdinal("rutcliente")),
+                    RutCliente = reader.IsDBNull(reader.GetOrdinal("rutcliente"))
+                                ? string.Empty
+                                : reader.GetString(reader.GetOrdinal("rutcliente")),
                     Folio = folio,
-                    Fecha = reader.GetDateTime(reader.GetOrdinal("fecha")),
-                    FechaVencimiento = reader.GetString(reader.GetOrdinal("fechavencimiento")),
-                    OrdenTrabajo = reader.GetString(reader.GetOrdinal("ordentrabajo")),
-                    NotaCredito = reader.GetInt64(reader.GetOrdinal("notacredito")),
-                    TipoCredito = reader.GetInt64(reader.GetOrdinal("tipocredito")),
+                    Fecha = reader.IsDBNull(reader.GetOrdinal("fecha"))
+                                ? default
+                                : reader.GetDateTime(reader.GetOrdinal("fecha")),
+
+                    FechaVencimiento = reader.IsDBNull(reader.GetOrdinal("fechavencimiento"))
+                                ? string.Empty
+                                : reader.GetString(reader.GetOrdinal("fechavencimiento")),
+
+                    OrdenTrabajo = reader.IsDBNull(reader.GetOrdinal("ordentrabajo"))
+                                ? string.Empty
+                                : reader.GetString(reader.GetOrdinal("ordentrabajo")),
+
+                    NotaCredito = reader.IsDBNull(reader.GetOrdinal("notacredito"))
+                                ? 0
+                                : reader.GetInt64(reader.GetOrdinal("notacredito")),
+
+                    TipoCredito = reader.IsDBNull(reader.GetOrdinal("tipocredito"))
+                                ? 0
+                                : reader.GetInt64(reader.GetOrdinal("tipocredito")),
                     Iva = reader.IsDBNull(reader.GetOrdinal("iva"))
                             ? 0
                             : reader.GetInt64(reader.GetOrdinal("iva")),
@@ -62,25 +77,31 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
                     Detalles = new ObservableCollection<Detalle>()
                 };
 
-                facturas.Add(facturaActual);
-                folioActual = folio;
+                facturasDict.Add(folio, factura);
             }
 
-            if (!reader.IsDBNull(reader.GetOrdinal("id_detalle")) && facturaActual != null)
+            if (!reader.IsDBNull(reader.GetOrdinal("id_detalle")))
             {
-                var detalle = new Detalle
+                factura.Detalles.Add(new Detalle
                 {
                     Id = reader.GetInt64(reader.GetOrdinal("id_detalle")),
                     Folio = folio,
-                    Producto = reader.GetString(reader.GetOrdinal("producto")),
-                    Precio = reader.GetInt64(reader.GetOrdinal("precio")),
-                    Cantidad = reader.GetInt64(reader.GetOrdinal("cantidad"))
-                };
 
-                facturaActual.Detalles.Add(detalle);
+                    Producto = reader.IsDBNull(reader.GetOrdinal("producto"))
+                            ? string.Empty
+                            : reader.GetString(reader.GetOrdinal("producto")),
+
+                    Precio = reader.IsDBNull(reader.GetOrdinal("precio"))
+                            ? 0
+                            : reader.GetInt64(reader.GetOrdinal("precio")),
+
+                    Cantidad = reader.IsDBNull(reader.GetOrdinal("cantidad"))
+                            ? 0
+                            : reader.GetInt64(reader.GetOrdinal("cantidad")),
+                });
             }
         }
 
-        return facturas;
+        return facturasDict.Values.ToList();
     }
 }
