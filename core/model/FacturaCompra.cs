@@ -2,7 +2,7 @@ using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
-public class FacturaCompra : FacturaBase<Detalle>
+public class FacturaCompra : FacturaBase
 {
     [Visible(false)]
     public string Tipo { get; set; } = string.Empty;

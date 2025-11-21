@@ -3,7 +3,7 @@ using Gestion.core.interfaces.model;
 namespace Gestion.core.model;
 
 // Implementa la lista de detalles, implementa la interfaz IModel
-public class Factura : FacturaBase<Detalle>
+public class Factura : FacturaBase
 {
     [Visible(false)]
     public string Guia1 { get; set; } = string.Empty;
@@ -20,7 +20,7 @@ public class Factura : FacturaBase<Detalle>
     public string OrdenTrabajo { get; set; } = string.Empty;
     [Nombre("Fecha de vencimiento")]
     [Orden(4)]
-    public String FechaVencimiento { get; set; } = string.Empty;
+    public DateTime FechaVencimiento { get; set; }
     [Nombre("Crédito")]
     [Orden(5)]
     public long TipoCredito { get; set; }
@@ -30,8 +30,7 @@ public class Factura : FacturaBase<Detalle>
     [Nombre("Nota de crédito")]
     [Orden(7)]
     public long NotaCredito { get; set; }
-    [Visible(false)]
-    public string Memo { get; set; } = string.Empty;
+
     [Visible(false)]
     public string Tipo { get; set; } = string.Empty;
     [Nombre("Orden de trabajo (campo ot01)")]

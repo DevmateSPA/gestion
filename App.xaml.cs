@@ -42,9 +42,6 @@ public partial class App : Application
         services.AddScoped<IFacturaCompraProductoRepository, FacturaCompraProductoRepository>();
         services.AddScoped<IGuiaDespachoRepository, GuiaDespachoRepository>();
         services.AddScoped<IOrdenTrabajoRepository, OrdenTrabajoRepository>();
-        services.AddScoped<IDetalleFacturaRepository, DetalleFacturaRepository>();
-        services.AddScoped<IDetalleGuiaDespachoRepository, DetalleGuiaDespachoRepository>();
-        services.AddScoped<IDetalleOrdenTrabajoRepository, DetalleOrdenTrabajoRepository>();
 
         // Servicios
         services.AddScoped<IAuthService, AuthService>();
@@ -65,9 +62,6 @@ public partial class App : Application
         services.AddScoped<IFacturaCompraProductoService, FacturaCompraProductoService>();
         services.AddScoped<IGuiaDespachoService, GuiaDespachoService>();
         services.AddScoped<IOrdenTrabajoService, OrdenTrabajoService>();
-        services.AddScoped<IDetalleFacturaService, DetalleFacturaService>();
-        services.AddScoped<IDetalleGuiaDespachoService, DetalleGuiaDespachoService>();
-        services.AddScoped<IDetalleOrdenTrabajoService, DetalleOrdenTrabajoService>();
 
         // Login
         services.AddTransient<LoginWindow>();
@@ -120,11 +114,7 @@ public partial class App : Application
         services.AddTransient<FacturaCompraPage>();        
         // OrdenTrabajo
         services.AddTransient<OrdenTrabajoViewModel>();
-        services.AddTransient<OrdenTrabajoPage>();     
-        // Detalle Facturas ViewModel
-        services.AddTransient<DetalleViewModel>();   
-        services.AddTransient<DetalleGuiaDespachoViewModel>();   
-        services.AddTransient<DetalleOrdenTrabajoViewModel>();   
+        services.AddTransient<OrdenTrabajoPage>();      
 
         // Ventanas modales
         services.AddTransient<AgregarBancoWindow>();

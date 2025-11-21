@@ -15,18 +15,15 @@ public partial class FacturaCompraPage : Page
     private DataGrid _dataGrid;
 
     private readonly FacturaCompraViewModel _viewModel;
-    private readonly DetalleViewModel _viewModelDetalle;
-    public FacturaCompraPage(FacturaCompraViewModel viewModel, DetalleViewModel viewModelDetalle)
+    public FacturaCompraPage(FacturaCompraViewModel viewModel)
     {
         InitializeComponent();
         _viewModel = viewModel;
-        _viewModelDetalle = viewModelDetalle;
         DataContext = _viewModel;
         Title = $"Facturas de Compra";
 
         Loaded += async (_, _) =>
         {
-           
             await _viewModel.LoadAll();
         };
         _dataGrid = dgFacturasCompra;
@@ -36,7 +33,7 @@ public partial class FacturaCompraPage : Page
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
         var factura = new FacturaCompra();
-        var ventana = new EntidadEditorTableWindow(this, factura, factura.Detalles, "Ingresar Factura");
+        var ventana = new EntidadEditorWindow(this, factura, "Agregar Factura");
 
         if (ventana.ShowDialog() == true)
         {
@@ -63,50 +60,15 @@ public partial class FacturaCompraPage : Page
         if (factura == null)
             return;
 
-        var detalleEditar = factura.Detalles;
-
-        var ventana = new EntidadEditorTableWindow(this, factura, detalleEditar, titulo);
+        var ventana = new EntidadEditorWindow(this, factura, titulo);
 
         if (ventana.ShowDialog() != true)
         {
             var facturaCancelada = (FacturaCompra)ventana.EntidadEditada;
-            facturaCancelada.Detalles = factura.Detalles;
             return;
         }
 
         var facturaEditada = (FacturaCompra)ventana.EntidadEditada;
-        facturaEditada.Detalles = detalleEditar;
-
-        var folio = facturaEditada.Folio;
-
-        foreach (var det in detalleEditar)
-            det.Folio = folio;
-
-        var nuevosDetalles       = detalleEditar.Where(d => d.Id == 0).ToList();
-        var detallesExistentes   = detalleEditar.Where(d => d.Id != 0).ToList();
-
-        var detallesAntiguos = _viewModelDetalle.Detalles
-            .Where(d => d.Folio == folio)
-            .ToList();
-
-        var detallesEliminados = detallesAntiguos
-            .Where(old => detalleEditar.All(n => n.Id != old.Id))
-            .ToList();
-
-        foreach (var eliminado in detallesEliminados)
-        {
-            await _viewModelDetalle.Delete(eliminado.Id);
-            _viewModelDetalle.Detalles.Remove(eliminado);
-        }
-
-        foreach (var nuevo in nuevosDetalles)
-        {
-            await _viewModelDetalle.Save(nuevo);
-            _viewModelDetalle.Detalles.Add(nuevo);
-        }
-
-        foreach (var existente in detallesExistentes)
-            await _viewModelDetalle.Update(existente);
 
         await _viewModel.Update(facturaEditada);
     }

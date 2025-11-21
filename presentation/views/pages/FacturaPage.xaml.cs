@@ -14,12 +14,10 @@ public partial class FacturaPage : Page
     private DataGrid _dataGrid;
 
     private readonly FacturaViewModel _viewModel;
-    private readonly DetalleViewModel _viewModelDetalle;
-    public FacturaPage(FacturaViewModel viewModel, DetalleViewModel viewModelDetalle)
+    public FacturaPage(FacturaViewModel viewModel)
     {
         InitializeComponent();
         _viewModel = viewModel;
-        _viewModelDetalle = viewModelDetalle;
         DataContext = _viewModel;
         Title = $"Facturas";
 
@@ -35,7 +33,7 @@ public partial class FacturaPage : Page
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
         var factura = new Factura();
-        var ventana = new EntidadEditorTableWindow(this, factura, factura.Detalles, "Ingresar Factura");
+        var ventana = new EntidadEditorWindow(this, factura, "Ingresar Factura");
 
         if (ventana.ShowDialog() != true)
             return; 
@@ -43,12 +41,6 @@ public partial class FacturaPage : Page
         var facturaEditado = (Factura)ventana.EntidadEditada;
 
         await _viewModel.Save(facturaEditado);
-
-        foreach (var det in facturaEditado.Detalles)
-            det.Folio = facturaEditado.Folio;
-
-        foreach (var det in facturaEditado.Detalles)
-            await _viewModelDetalle.Save(det);
     }
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
@@ -69,50 +61,15 @@ public partial class FacturaPage : Page
         if (factura == null)
             return;
 
-        var detalleEditar = factura.Detalles;
-
-        var ventana = new EntidadEditorTableWindow(this, factura, detalleEditar, titulo);
+        var ventana = new EntidadEditorWindow(this, factura, titulo);
 
         if (ventana.ShowDialog() != true)
         {
             var facturaCancelada = (Factura)ventana.EntidadEditada;
-            facturaCancelada.Detalles = factura.Detalles;
             return;
         }
 
         var facturaEditada = (Factura)ventana.EntidadEditada;
-        facturaEditada.Detalles = detalleEditar;
-
-        var folio = facturaEditada.Folio;
-
-        foreach (var det in detalleEditar)
-            det.Folio = folio;
-
-        var nuevosDetalles       = detalleEditar.Where(d => d.Id == 0).ToList();
-        var detallesExistentes   = detalleEditar.Where(d => d.Id != 0).ToList();
-
-        var detallesAntiguos = _viewModelDetalle.Detalles
-            .Where(d => d.Folio == folio)
-            .ToList();
-
-        var detallesEliminados = detallesAntiguos
-            .Where(old => detalleEditar.All(n => n.Id != old.Id))
-            .ToList();
-
-        foreach (var eliminado in detallesEliminados)
-        {
-            await _viewModelDetalle.Delete(eliminado.Id);
-            _viewModelDetalle.Detalles.Remove(eliminado);
-        }
-
-        foreach (var nuevo in nuevosDetalles)
-        {
-            await _viewModelDetalle.Save(nuevo);
-            _viewModelDetalle.Detalles.Add(nuevo);
-        }
-
-        foreach (var existente in detallesExistentes)
-            await _viewModelDetalle.Update(existente);
 
         await _viewModel.Update(facturaEditada);
     }
