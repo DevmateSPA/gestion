@@ -23,7 +23,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding Proveedores}" 
+                ItemsSource="{Binding ProveedoresFiltrados}" 
                 FontSize="16" 
                 IsReadOnly="True"
                 MouseDoubleClick="dgProveedores_MouseDoubleClick" 

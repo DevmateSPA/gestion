@@ -26,7 +26,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding Clientes}" 
+                ItemsSource="{Binding ClientesFiltrados}" 
                 FontSize="16" 
                 IsReadOnly="True"
                 MouseDoubleClick="dataGrid_MouseDoubleClick" 

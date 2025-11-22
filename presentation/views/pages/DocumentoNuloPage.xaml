@@ -27,7 +27,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding DocumentosNulos}"
+                ItemsSource="{Binding DocumentosNulosFiltrados}"
                 FontSize="16"
                 IsReadOnly="True"
                 MouseDoubleClick="dgDocumentosNulos_MouseDoubleClick" 

@@ -27,7 +27,7 @@
                 AutoGenerateColumns="False" 
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding GuiasDespacho}"
+                ItemsSource="{Binding GuiasDespachoFiltradas}"
                 FontSize="16"
                 IsReadOnly="True"
                 MouseDoubleClick="dgGuiasDespacho_MouseDoubleClick" 

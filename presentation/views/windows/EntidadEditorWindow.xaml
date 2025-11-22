@@ -14,7 +14,23 @@
         </StackPanel>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel x:Name="spCampos" Orientation="Vertical"/>
+            <StackPanel>
+
+                <!-- Campos automáticos -->
+                <StackPanel x:Name="spCampos" Orientation="Vertical"/>
+
+                <!-- Campo Memo especial -->
+                <StackPanel x:Name="spMemo" Orientation="Vertical" Margin="0,20,0,0" Visibility="Collapsed">
+                    <TextBlock Text="Memo" FontSize="16" FontWeight="Bold"/>
+                    <TextBox x:Name="txtMemo"
+                             FontSize="16"
+                             AcceptsReturn="True"
+                             Height="120"
+                             TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto"/>
+                </StackPanel>
+
+            </StackPanel>
         </ScrollViewer>
 
     </DockPanel>

@@ -27,7 +27,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding Grupos}" 
+                ItemsSource="{Binding GruposFiltrados}" 
                 FontSize="16"                 
                 IsReadOnly="True"
                 MouseDoubleClick="dgGrupos_MouseDoubleClick" 

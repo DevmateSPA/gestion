@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input; 
+using System.Windows.Input;
 
 namespace Gestion.presentation.views.windows;
 
@@ -12,7 +12,7 @@ public partial class EntidadEditorWindow : Window
 
     public object EntidadEditada { get; private set; }
 
-    public EntidadEditorWindow(Page padre,object entidad, string titulo = "Ventana")
+    public EntidadEditorWindow(Page padre, object entidad, string titulo = "Ventana")
     {
         InitializeComponent();
         this.Owner = Window.GetWindow(padre);
@@ -20,6 +20,7 @@ public partial class EntidadEditorWindow : Window
 
         _entidadOriginal = entidad;
 
+        // Clonar entidad
         EntidadEditada = Activator.CreateInstance(entidad.GetType())!;
         foreach (var prop in entidad.GetType().GetProperties())
         {
@@ -29,11 +30,20 @@ public partial class EntidadEditorWindow : Window
 
         GenerarCampos(EntidadEditada);
 
+        // Cargar MEMO si aplica
+        if (entidad is Gestion.core.model.Factura factura)
+        {
+            spMemo.Visibility = Visibility.Visible;
+            txtMemo.Text = factura.Memo;
+        }
+
+        // Focus
         if (_controles.Values.FirstOrDefault() is TextBox primerCampo)
         {
             primerCampo.Focus();
         }
 
+        // ESC para cerrar
         this.PreviewKeyDown += (s, e) =>
         {
             if (e.Key == Key.Escape)
@@ -44,75 +54,71 @@ public partial class EntidadEditorWindow : Window
         };
     }
 
-private void GenerarCampos(object entidad)
-{
-
-     var tipo = entidad.GetType();
-
-    var propiedades = tipo.GetProperties()
-        .Where(p =>
-            p.CanWrite &&
-            !string.Equals(p.Name, "Id", StringComparison.OrdinalIgnoreCase) &&
-            (p.PropertyType == typeof(string) || p.PropertyType.IsValueType) &&
-            (p.GetCustomAttribute<VisibleAttribute>()?.Mostrar ?? true)
-        )
-        .ToList();
-
-
-    spCampos.Children.Clear();
-
-    int maxPorFila = 3;
-    StackPanel filaActual = null;
-
-    for (int i = 0; i < propiedades.Count; i++)
+    private void GenerarCampos(object entidad)
     {
-        var prop = propiedades[i];
+        var tipo = entidad.GetType();
 
-        var label = new TextBlock
+        // Excluir "Memo" para evitar que aparezca arriba
+        var propiedades = tipo.GetProperties()
+            .Where(p =>
+                p.CanWrite &&
+                p.Name != "Memo" &&               // <--- EXCLUIDO
+                !string.Equals(p.Name, "Id", StringComparison.OrdinalIgnoreCase) &&
+                (p.PropertyType == typeof(string) || p.PropertyType.IsValueType) &&
+                (p.GetCustomAttribute<VisibleAttribute>()?.Mostrar ?? true)
+            )
+            .ToList();
+
+        spCampos.Children.Clear();
+        int maxPorFila = 3;
+        StackPanel filaActual = null;
+
+        for (int i = 0; i < propiedades.Count; i++)
         {
-            Text = prop.GetCustomAttribute<NombreAttribute>()?.Texto ?? prop.Name,
-            FontSize = 16,
-            FontWeight = FontWeights.Bold,
-            Margin = new Thickness(0, 4, 0, 2),
-            TextWrapping = TextWrapping.Wrap
-        };
+            var prop = propiedades[i];
 
-        var valorActual = prop.GetValue(entidad)?.ToString() ?? "";
-        var textBox = new TextBox
-        {
-            Text = valorActual,
-            FontSize = 20,
-            Height = 30,
-            Width = 300,
-            Margin = new Thickness(5, 0, 5, 10)
-        };
-
-        _controles[prop] = textBox;
-
-        var bloque = new StackPanel
-        {
-            Orientation = Orientation.Vertical,
-            Width = 310
-        };
-        bloque.Children.Add(label);
-        bloque.Children.Add(textBox);
-
-        if (i % maxPorFila == 0)
-        {
-            filaActual = new StackPanel
+            var label = new TextBlock
             {
-                Orientation = Orientation.Horizontal
+                Text = prop.GetCustomAttribute<NombreAttribute>()?.Texto ?? prop.Name,
+                FontSize = 16,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(0, 4, 0, 2),
+                TextWrapping = TextWrapping.Wrap
             };
-            spCampos.Children.Add(filaActual);
+
+            var valorActual = prop.GetValue(entidad)?.ToString() ?? "";
+            var textBox = new TextBox
+            {
+                Text = valorActual,
+                FontSize = 20,
+                Height = 30,
+                Width = 300,
+                Margin = new Thickness(5, 0, 5, 10)
+            };
+
+            _controles[prop] = textBox;
+
+            var bloque = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                Width = 310
+            };
+            bloque.Children.Add(label);
+            bloque.Children.Add(textBox);
+
+            if (i % maxPorFila == 0)
+            {
+                filaActual = new StackPanel { Orientation = Orientation.Horizontal };
+                spCampos.Children.Add(filaActual);
+            }
+
+            filaActual.Children.Add(bloque);
         }
-
-        filaActual.Children.Add(bloque);
     }
-}
-
 
     private void BtnGuardar_Click(object sender, RoutedEventArgs e)
     {
+        // Guardar propiedades normales
         foreach (var kvp in _controles)
         {
             var prop = kvp.Key;
@@ -133,6 +139,13 @@ private void GenerarCampos(object entidad)
                 MessageBox.Show($"El valor ingresado para {prop.Name} no es válido.");
                 return;
             }
+        }
+
+        // Guardar MEMO
+        var memoProp = EntidadEditada.GetType().GetProperty("Memo");
+        if (memoProp != null)
+        {
+            memoProp.SetValue(EntidadEditada, txtMemo.Text);
         }
 
         DialogResult = true;

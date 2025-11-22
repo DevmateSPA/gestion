@@ -27,7 +27,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding NotasCredito}"
+                ItemsSource="{Binding NotasCreditoFiltradas}"
                 FontSize="16"
                 IsReadOnly="True"
                 MouseDoubleClick="dgNotasCredito_MouseDoubleClick" 

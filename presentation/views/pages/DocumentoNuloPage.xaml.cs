@@ -24,6 +24,8 @@ public partial class DocumentoNuloPage : Page
         Loaded += async (_, _) => await _viewModel.LoadAll();
         _dataGrid = dgDocumentosNulos;
         _dataGrid.ItemContainerGenerator.StatusChanged += DgDocumentosNulos_StatusChanged;
+
+         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -78,7 +80,8 @@ public partial class DocumentoNuloPage : Page
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)
     {
-        MessageBox.Show($"Buscar: {txtBuscar.Text}");
+        _viewModel.Filtro = txtBuscar.Text;
+        _viewModel.Buscar();     
     }
 
     private void BtnImprimir_Click(object sender, RoutedEventArgs e)
@@ -141,6 +144,14 @@ public partial class DocumentoNuloPage : Page
             case Key.F4:
                 BtnImprimir_Click(sender, e);
                 break;
+        }
+    }
+    private void TxtBuscar_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+        {
+            BtnBuscar_Click(sender, e);
+            e.Handled = true;
         }
     }
 }

@@ -28,6 +28,8 @@ public partial class FacturaPage : Page
 
         _dataGrid = dgFacturas;
         _dataGrid.ItemContainerGenerator.StatusChanged += DgFacturas_StatusChanged;
+
+        txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -95,7 +97,8 @@ public partial class FacturaPage : Page
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)
     {
-        MessageBox.Show($"Buscar: {txtBuscar.Text}");
+        _viewModel.Filtro = txtBuscar.Text;
+        _viewModel.Buscar();    
     }
 
     private void BtnImprimir_Click(object sender, RoutedEventArgs e)
@@ -158,6 +161,15 @@ public partial class FacturaPage : Page
             case Key.F4:
                 BtnImprimir_Click(sender, e);
                 break;
+        }
+    }
+
+    private void TxtBuscar_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+        {
+            BtnBuscar_Click(sender, e);
+            e.Handled = true;
         }
     }
 }

@@ -23,7 +23,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding Operarios}" 
+                ItemsSource="{Binding OperariosFiltrados}" 
                 FontSize="16"
                 IsReadOnly="True"
                 MouseDoubleClick="dgOperarios_MouseDoubleClick" 

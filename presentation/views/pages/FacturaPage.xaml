@@ -27,7 +27,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding Facturas}"
+                ItemsSource="{Binding FacturasFiltradas}"
                 FontSize="16"
                 IsReadOnly="True"
                 MouseDoubleClick="dgFacturas_MouseDoubleClick" 
@@ -37,9 +37,9 @@
                     <DataGridTextColumn Header="Rut Cliente" Binding="{Binding RutCliente}" Width="*" />
                     <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha, StringFormat={}{0:dd/MM/yyyy}}" Width="*" />
                     <DataGridTextColumn Header="Fecha Vencimiento" Binding="{Binding FechaVencimiento, StringFormat={}{0:dd/MM/yyyy}}" Width="*" />
-                    <!--<DataGridTextColumn Header="Iva" Binding="{Binding Iva, StringFormat=C0}" Width="*" />
+                    <DataGridTextColumn Header="Iva" Binding="{Binding Iva, StringFormat=C0}" Width="*" />
                     <DataGridTextColumn Header="Neto" Binding="{Binding Neto, StringFormat=C0}" Width="*" />
-                    <DataGridTextColumn Header="Total" Binding="{Binding Total, StringFormat=C0}" Width="*" />-->
+                    <DataGridTextColumn Header="Total" Binding="{Binding Total, StringFormat=C0}" Width="*" />
                 </DataGrid.Columns>
         </DataGrid>
 

@@ -24,7 +24,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding Maquinas}" 
+                ItemsSource="{Binding MaquinasFiltradas}" 
                 FontSize="16" 
                 IsReadOnly="True"
                 MouseDoubleClick="dgMaquinas_MouseDoubleClick" 

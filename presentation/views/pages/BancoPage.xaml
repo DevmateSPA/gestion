@@ -27,7 +27,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding Bancos}"
+                ItemsSource="{Binding BancosFiltrados}"
                 FontSize="16"
                 IsReadOnly="True"
                 MouseDoubleClick="dgBancos_MouseDoubleClick" 
