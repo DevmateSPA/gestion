@@ -5,6 +5,8 @@ namespace Gestion.core.model;
 // Implementa la lista de detalles, implementa la interfaz IModel
 public class Factura : FacturaBase
 {
+    public string Memo { get; set; }  = string.Empty;
+    public long Total { set; get; }
     [Visible(false)]
     public string Guia1 { get; set; } = string.Empty;
     [Visible(false)]

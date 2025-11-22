@@ -1,8 +1,7 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using Gestion.core.interfaces.model;
 
-public interface IConDetalles<T> : IModel, INotifyPropertyChanged
+public interface IConDetalles<T> : IModel
 {
     string Folio { get; set; }
     string RutCliente { get; set; }
@@ -10,5 +9,5 @@ public interface IConDetalles<T> : IModel, INotifyPropertyChanged
     long Neto { get; }
     long Iva { get; }
     long Total { get; }
-    string Detalle { get; }
+    ObservableCollection<T> Detalles { get; set; }
 }

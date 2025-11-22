@@ -9,7 +9,6 @@ using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.pages;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.database;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Gestion;
 

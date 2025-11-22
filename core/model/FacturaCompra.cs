@@ -1,4 +1,7 @@
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using Gestion.core.interfaces.model;
+using Gestion.core.model.detalles;
 
 namespace Gestion.core.model;
 
@@ -13,4 +16,6 @@ public class FacturaCompra : FacturaBase
     public int Habe { get; set; }
     [Visible(false)]
     public string Fopa { get; set; } = string.Empty;
+    [NotMapped]
+    public ObservableCollection<Detalle> Detalles = new();
 }

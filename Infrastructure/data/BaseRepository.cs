@@ -48,7 +48,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return entity;
     }
 
-    public async Task<T?> FindById(long id)
+    public virtual async Task<T?> FindById(long id)
     {
         using var conn = await _connectionFactory.CreateConnection();
         using var cmd = (DbCommand)conn.CreateCommand();
@@ -98,7 +98,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return affected > 0;
     }
 
-    public async Task<bool> Update(T entity)
+    public virtual async Task<bool> Update(T entity)
     {
         using var conn = await _connectionFactory.CreateConnection();
         using var cmd = (DbCommand)conn.CreateCommand();
@@ -128,7 +128,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return affected > 0;
     }
 
-    public async Task<bool> Save(T entity)
+    public virtual async Task<bool> Save(T entity)
     {
         using var conn = await _connectionFactory.CreateConnection();
         using var cmd = (DbCommand)conn.CreateCommand();

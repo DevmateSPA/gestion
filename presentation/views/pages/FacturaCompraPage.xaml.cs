@@ -33,7 +33,7 @@ public partial class FacturaCompraPage : Page
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
         var factura = new FacturaCompra();
-        var ventana = new EntidadEditorWindow(this, factura, "Agregar Factura");
+        var ventana = new EntidadEditorTableWindow(this, factura, factura.Detalles, "Agregar Factura");
 
         if (ventana.ShowDialog() == true)
         {
@@ -60,7 +60,7 @@ public partial class FacturaCompraPage : Page
         if (factura == null)
             return;
 
-        var ventana = new EntidadEditorWindow(this, factura, titulo);
+        var ventana = new EntidadEditorTableWindow(this, factura, factura.Detalles, titulo);
 
         if (ventana.ShowDialog() != true)
         {
