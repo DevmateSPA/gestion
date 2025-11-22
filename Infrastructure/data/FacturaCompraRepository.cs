@@ -23,14 +23,16 @@ public override async Task<List<FacturaCompra>> FindAll()
             d.id AS detalle_id,
             d.folio as detalle_folio,
             d.tipo as detalle_tipo,
-            d.producto,
+            p.descripcion,
             d.entrada,
             d.salida,
             d.maquina,
             d.operario
         FROM {_tableName} f
         LEFT JOIN FACTURACOMPRAPRODUCTO d
-        ON f.folio = d.folio";
+        ON f.folio = d.folio
+        LEFT JOIN PRODUCTO p
+        ON p.codigo = d.producto";
 
     using var reader = await cmd.ExecuteReaderAsync();
 
@@ -54,7 +56,7 @@ public override async Task<List<FacturaCompra>> FindAll()
                 Id = reader.GetInt64(reader.GetOrdinal("detalle_id")),
                 Folio = reader.GetString(reader.GetOrdinal("detalle_folio")),
                 Tipo = reader.GetString(reader.GetOrdinal("detalle_tipo")),
-                Producto = reader.GetString(reader.GetOrdinal("producto")),
+                Producto = reader.GetString(reader.GetOrdinal("descripcion")),
                 Entrada = reader.GetInt64(reader.GetOrdinal("entrada")),
                 Salida = reader.GetInt64(reader.GetOrdinal("salida")),
                 Maquina = reader.GetString(reader.GetOrdinal("maquina")),
