@@ -20,6 +20,11 @@
                     <PasswordBox x:Name="txtContraseña" Width="250" Height="25" Margin="0,5,0,0" HorizontalAlignment="Center"/>
                 </StackPanel>
                 <Button Content="Iniciar Sesión" Style="{StaticResource LoginButtonStyle}" Click="BtnIniciarSesion_Click" IsDefault="True"/>
+                <!-- NUEVO ComboBox -->
+                <StackPanel Margin="0,10,0,0">
+                    <TextBlock Text="Empresa:"/>
+                    <ComboBox x:Name="cmbEmpresa" Width="250" Height="25" Margin="0,5,0,0" HorizontalAlignment="Center"/>
+                </StackPanel>
             </StackPanel>
         </Border>
     </Grid>

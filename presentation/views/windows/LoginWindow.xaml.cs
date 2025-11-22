@@ -24,9 +24,17 @@ public partial class LoginWindow : Window
         _viewModel = loginViewModel;
     }
 
-    private void LoginWindow_Loaded(object sender, RoutedEventArgs e)
+    private async void LoginWindow_Loaded(object sender, RoutedEventArgs e)
     {
         txtUsuario.Focus(); 
+
+        var empresas = await _viewModel.CargarEmpresas();
+
+        cmbEmpresa.ItemsSource = empresas;
+        cmbEmpresa.DisplayMemberPath = "Nombre";
+        cmbEmpresa.SelectedValuePath = "Id";
+
+        cmbEmpresa.SelectedIndex = 0;
     }
 
     private void BtnIniciarSesion_Click(object sender, RoutedEventArgs e)

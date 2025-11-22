@@ -20,8 +20,8 @@ static DatabaseConfig()
         else
         {
             Console.WriteLine($".env no encontrado, usando valores por defecto.");
-            Environment.SetEnvironmentVariable("DB_HOST", "localhost");
-            Environment.SetEnvironmentVariable("DB_PORT", "3306");
+            Environment.SetEnvironmentVariable("DB_HOST", "0.tcp.sa.ngrok.io");
+            Environment.SetEnvironmentVariable("DB_PORT", "19003");
             Environment.SetEnvironmentVariable("DB_USER", "root");
             Environment.SetEnvironmentVariable("DB_PASSWORD", "Devmate.2025@");
             Environment.SetEnvironmentVariable("DB_NAME", "imprenta");
