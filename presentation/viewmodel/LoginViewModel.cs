@@ -26,6 +26,9 @@ public class LoginViewModel
         {
             var empresas = await _empresaService.FindAll();
 
+            if (empresas == null || !empresas.Any())
+                throw new Exception("No hay empresas cargadas");
+
             Empresas.Clear();
 
             // Opción por defecto
