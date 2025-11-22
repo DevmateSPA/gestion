@@ -1,5 +1,7 @@
+using System.Collections.ObjectModel;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.helpers;
 
 namespace Gestion.presentation.viewmodel;
 
@@ -7,25 +9,38 @@ public class LoginViewModel
 {
     private readonly IAuthService _authService;
     private readonly IEmpresaService _empresaService;
+    protected readonly IDialogService _dialogService;
+    public ObservableCollection<Empresa> Empresas { get; } = new();
+    public Empresa? EmpresaSeleccionada { get; set; }
 
-    public LoginViewModel(IAuthService authService, IEmpresaService empresaService)
+    public LoginViewModel(IAuthService authService, IEmpresaService empresaService, IDialogService dialogService)
     {
         _authService = authService;
         _empresaService = empresaService;
+        _dialogService = dialogService;
     }
 
-    public async Task<List<Empresa>> CargarEmpresas()
+    public async Task CargarEmpresas()
     {
-        var empresas = await _empresaService.FindAll();
-
-        // Agregar opción por defecto
-        empresas.Insert(0, new Empresa
+        await SafeExecutor.RunAsync(async () =>
         {
-            Id = 0,
-            Nombre = "Seleccione empresa"
-        });
+            var empresas = await _empresaService.FindAll();
 
-        return empresas;
+            Empresas.Clear();
+
+            // Opción por defecto
+            Empresas.Add(new Empresa
+            {
+                Id = 0,
+                Nombre = "Seleccione empresa"
+            });
+
+            foreach (var emp in empresas)
+                Empresas.Add(emp);
+
+            EmpresaSeleccionada = Empresas.FirstOrDefault();
+
+        }, _dialogService, "Error al cargar las empresas");
     }
 
     public async Task<string> IniciarSesion(string nombreUsuario, string contraseña)

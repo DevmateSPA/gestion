@@ -24,24 +24,21 @@ public partial class LoginWindow : Window
     {
         InitializeComponent();
         _viewModel = loginViewModel;
+        DataContext = _viewModel;
     }
 
     private async void LoginWindow_Loaded(object sender, RoutedEventArgs e)
     {
         txtUsuario.Focus(); 
 
-        var empresas = await _viewModel.CargarEmpresas();
-
-        cmbEmpresa.ItemsSource = empresas;
-        cmbEmpresa.DisplayMemberPath = "Nombre";
-        cmbEmpresa.SelectedValuePath = "Id";
-
+        await _viewModel.CargarEmpresas();
         cmbEmpresa.SelectedIndex = 0;
     }
 
     private void BtnIniciarSesion_Click(object sender, RoutedEventArgs e)
     {
-        if (cmbEmpresa.SelectedValue == null || (long)cmbEmpresa.SelectedValue == 0)
+        if (_viewModel.EmpresaSeleccionada == null ||
+            _viewModel.EmpresaSeleccionada.Id == 0)
         {
             MessageBox.Show("Debe seleccionar una empresa");
             return;
@@ -54,9 +51,8 @@ public partial class LoginWindow : Window
 
         if (mensaje.StartsWith("Bienvenido"))
         {*/
-            SesionApp.IdEmpresa = (long)cmbEmpresa.SelectedValue;
-            Empresa empresa = (Empresa)cmbEmpresa.SelectedItem;
-            SesionApp.NombreEmpresa = empresa.Nombre;
+            SesionApp.IdEmpresa = _viewModel.EmpresaSeleccionada.Id;
+            SesionApp.NombreEmpresa = _viewModel.EmpresaSeleccionada.Nombre;
             var main = new MainWindow();
             main.Show();
 

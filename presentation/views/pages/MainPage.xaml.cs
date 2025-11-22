@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Gestion.core.session;
 
 namespace Gestion.presentation.views.pages
 {
@@ -23,6 +24,7 @@ namespace Gestion.presentation.views.pages
         public MainPage()
         {
             InitializeComponent();
+            txtTitulo.Text = $"Empresa: {SesionApp.NombreEmpresa}";
         }
     }
 }

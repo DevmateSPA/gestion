@@ -11,6 +11,7 @@
     <Grid Style="{StaticResource GridStyle}">
         <Border Style="{StaticResource MainBorderStyle}">
             <TextBlock
+                x:Name="txtTitulo"
                 Text="Pantalla Principal"
                 Background="#fff"
                 Height="20"
