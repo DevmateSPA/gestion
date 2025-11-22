@@ -1,4 +1,6 @@
-﻿using Gestion.presentation.viewmodel;
+﻿using Gestion.core.model;
+using Gestion.core.session;
+using Gestion.presentation.viewmodel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +41,12 @@ public partial class LoginWindow : Window
 
     private void BtnIniciarSesion_Click(object sender, RoutedEventArgs e)
     {
+        if (cmbEmpresa.SelectedValue == null || (long)cmbEmpresa.SelectedValue == 0)
+        {
+            MessageBox.Show("Debe seleccionar una empresa");
+            return;
+        }
+
         /*string nombreUsuario = txtUsuario.Text;
         string contraseña = txtContraseña.Password;
 
@@ -46,6 +54,9 @@ public partial class LoginWindow : Window
 
         if (mensaje.StartsWith("Bienvenido"))
         {*/
+            SesionApp.IdEmpresa = (long)cmbEmpresa.SelectedValue;
+            Empresa empresa = (Empresa)cmbEmpresa.SelectedItem;
+            SesionApp.NombreEmpresa = empresa.Nombre;
             var main = new MainWindow();
             main.Show();
 
