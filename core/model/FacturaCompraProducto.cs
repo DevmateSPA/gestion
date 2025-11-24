@@ -13,4 +13,6 @@ public class FacturaCompraProducto : IModel
     public string Maquina { get; set; } = string.Empty;
     public string Operario { get; set; } = string.Empty;
     public DateTime Fecha { get; set; }
+    [Visible(false)]
+    public int Empresa { get; set; }
 }

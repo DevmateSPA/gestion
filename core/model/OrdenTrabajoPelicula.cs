@@ -18,4 +18,6 @@ public class OrdenTrabajoPelicula : IModel
     public int Habe { get; set; }
     [Visible(false)]
     public int fopa { get; set; }
+    [Visible(false)]
+    public int Empresa { get; set; }
 }

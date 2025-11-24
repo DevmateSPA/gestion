@@ -1,4 +1,4 @@
-using Gestion.core.interfaces.model;
+    using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
@@ -8,6 +8,7 @@ public class Operario : IModel
     [Nombre("Código")]
     public string Codigo { get; private set; } = string.Empty;
     public string Nombre { get; private set; } = string.Empty;
-
+    [Visible(false)]
+    public int Empresa { get; set; }
     public Operario() {}
 }

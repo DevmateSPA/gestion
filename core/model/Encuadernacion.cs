@@ -12,6 +12,7 @@ public class Encuadernacion : IModel
     public string Descripcion { get; private set; } = string.Empty;
     [Nombre("Valor por mil")]
     public int Valorpormil { get; private set; } = 0;
-
+    [Visible(false)]
+    public int Empresa { get; set; }
     public Encuadernacion() {}
 }

@@ -11,4 +11,6 @@ public class OrdenTrabajo : FacturaBase
     public int Habe { get; set; }
     [Visible(false)]
     public string Fopa { get; set; } = string.Empty;
+    [Visible(false)]
+    public int Empresa { get; set; }
 }

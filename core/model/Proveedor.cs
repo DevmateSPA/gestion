@@ -27,6 +27,7 @@ public class Proveedor : IModel
     [Nombre("Haber")]
     public long Habe { get; private set; }
     public long Saldo { get; private set; }
-
+    [Visible(false)]
+    public int Empresa { get; set; }
     public Proveedor() { }
 }

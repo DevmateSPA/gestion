@@ -9,4 +9,6 @@ public class DocumentoNulo : IModel
     public string Folio { get; set; } = string.Empty;
     public string Glosa { get; set; } = string.Empty;
     public DateTime Fecha { get; set; }
+    [Visible(false)]
+    public int Empresa { get; set; }
 }

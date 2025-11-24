@@ -9,6 +9,8 @@ public class Grupo : IModel
     public string Codigo { get; private set; } = string.Empty;
     [Nombre("Descripción")]
     public string Descripcion { get; private set; } = string.Empty;
+    [Visible(false)]
+    public int Empresa { get; set; }
 
     public Grupo() {}
 }

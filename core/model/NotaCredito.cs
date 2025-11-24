@@ -15,4 +15,6 @@ public class NotaCredito : IModel
      [Nombre("Detalle")]
     public string Memo { get; set; } = string.Empty;
     public DateTime Fecha { get; set; }
+    [Visible(false)]
+    public int Empresa { get; set; }
 }

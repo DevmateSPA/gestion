@@ -10,6 +10,7 @@ public class Banco : IModel
     public string Nombre { get; private set; } = string.Empty;
     [Nombre("Dirección")]
     public string Direccion { get; private set; } = string.Empty;
-
+    [Visible(false)]
+    public int Empresa { get; set; }
     public Banco() {}
 }

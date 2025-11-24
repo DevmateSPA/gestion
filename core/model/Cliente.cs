@@ -26,6 +26,8 @@ public class Cliente : IModel
     public long habe { get; private set; }
     [Nombre("Saldo")]
     public long saldo { get; private set; }
+    [Visible(false)]
+    public int Empresa { get; set; }
 
     public Cliente() { }
     public Cliente(string rut,
