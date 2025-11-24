@@ -60,6 +60,4 @@ public class Factura : FacturaBase
     public string peli { get; set; } = string.Empty;
     [Visible(false)]
     public string plan { get; set; } = string.Empty;
-    [Visible(false)]
-    public int Empresa { get; set; }
 }
