@@ -9,7 +9,7 @@ using Gestion.presentation.utils;
 namespace Gestion.presentation.views.pages
 {
     public partial class MaquinaPage : Page
-    {
+    { 
         private DataGrid _dataGrid;
 
         private readonly MaquinaViewModel _viewModel;

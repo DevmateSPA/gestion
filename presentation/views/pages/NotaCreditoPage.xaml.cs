@@ -51,7 +51,7 @@ public partial class NotaCreditoPage : Page
             editar(notaCreditoSeleccionado, "Editar Nota credito");
     }
 
-    private async void editar(NotaCredito notaCredito, string titulo)
+    private async void editar(NotaCredito notaCredito, string titulo) 
     {
         var ventana = new EntidadEditorWindow(this, notaCredito, titulo);
 
@@ -60,6 +60,10 @@ public partial class NotaCreditoPage : Page
             var notaCreditoEditado = (NotaCredito)ventana.EntidadEditada;
             await _viewModel.Update(notaCreditoEditado);
         }
+
+        var notaCreditoEditada = (NotaCredito)ventana.EntidadEditada;
+
+        await _viewModel.Update(notaCreditoEditada);
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)

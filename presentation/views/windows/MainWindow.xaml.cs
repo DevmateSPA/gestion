@@ -171,6 +171,11 @@ namespace Gestion.presentation.views.windows
         {
             MainFrame.Navigate(new MainPage());
         }
+        private void BtnOT_Click(object sender, RoutedEventArgs e)
+        {
+            Page? page = App.ServiceProvider.GetRequiredService<OrdenTrabajoPruebaPage>();
+            MainFrame.Navigate(page);
+        }
         private void Link_Click(object sender, MouseButtonEventArgs e)
         {
             if (sender is TextBlock textBlock && textBlock.DataContext is LinkItem link)

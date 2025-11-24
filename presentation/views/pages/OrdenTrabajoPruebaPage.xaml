@@ -1,0 +1,195 @@
+<Page x:Class="Gestion.presentation.views.pages.OrdenTrabajoPruebaPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Operarios"
+      Focusable="True">
+<ScrollViewer VerticalScrollBarVisibility="Auto">
+
+    <StackPanel Margin="20" Orientation="Vertical" >
+
+        <!-- ENCABEZADO -->
+        <GroupBox Header="Datos del Documento" Margin="0 0 0 15">
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="35"/>
+                    <RowDefinition Height="35"/>
+                    <RowDefinition Height="35"/>
+                    <RowDefinition Height="35"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Folio:" Grid.Row="0" />
+                <TextBox Grid.Row="0" Grid.Column="1" Width="150"/>
+
+                <TextBlock Text="Fecha:" Grid.Row="1"/>
+                <DatePicker Grid.Row="1" Grid.Column="1"/>
+
+                <TextBlock Text="RUT:" Grid.Row="2"/>
+                <TextBox Grid.Row="2" Grid.Column="1"/>
+
+                <TextBlock Text="Cliente:" Grid.Row="3"/>
+                <TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"/>
+            </Grid>
+        </GroupBox>
+
+
+        <!-- TRABAJO -->
+        <GroupBox Header="Información del Trabajo" Margin="0 0 0 15">
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="35"/>
+                    <RowDefinition Height="35"/>
+                    <RowDefinition Height="35"/>
+                    <RowDefinition Height="35"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Trabajo:" Grid.Row="0"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"/>
+
+                <TextBlock Text="Cantidad:" Grid.Row="1"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Width="100"/>
+
+                <TextBlock Text="Total Impresiones:" Grid.Row="2"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Width="100"/>
+
+                <TextBlock Text="Folio del Cliente:" Grid.Row="3"/>
+                <TextBox Grid.Row="3" Grid.Column="1" Width="100"/>
+                <TextBox Grid.Row="3" Grid.Column="2" Width="100"/>
+            </Grid>
+        </GroupBox>
+
+
+        <!-- CORTAR / TAMAÑOS -->
+        <GroupBox Header="Tamaños y Montaje" Margin="0 0 0 15">
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="35"/>
+                    <RowDefinition Height="35"/>
+                    <RowDefinition Height="35"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Cortar a Tamaño:" Grid.Row="0"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Width="80"/>
+                <TextBlock Text="de:" Grid.Row="0" Grid.Column="2"/>
+                <TextBox Grid.Row="0" Grid.Column="3" Width="80"/>
+
+                <TextBlock Text="Montar:" Grid.Row="1"/>
+                <TextBox Grid.Row="1" Grid.Column="1"/>
+
+                <TextBlock Text="Moldes x Tamaño:" Grid.Row="2"/>
+                <TextBox Grid.Row="2" Grid.Column="1"/>
+
+                <TextBlock Text="Tamaño Final:" Grid.Row="2" Grid.Column="2"/>
+                <StackPanel Grid.Row="2" Grid.Column="3" Orientation="Horizontal">
+                    <TextBox Width="80"/>
+                    <TextBlock Text="x" Margin="5 0"/>
+                    <TextBox Width="80"/>
+                </StackPanel>
+
+            </Grid>
+        </GroupBox>
+
+
+        <!-- CLIENTE PROPORCIONA -->
+        <GroupBox Header="Cliente Proporciona" Margin="0 0 0 15">
+            <StackPanel Margin="10">
+                <CheckBox Content="Nada"/>
+                <CheckBox Content="Original"/>
+                <CheckBox Content="Películas"/>
+                <CheckBox Content="Planchas"/>
+                <CheckBox Content="Papel"/>
+            </StackPanel>
+        </GroupBox>
+
+
+        <!-- TIPOS DE IMPRESIÓN -->
+        <GroupBox Header="Tipo de Impresión" Margin="0 0 0 15">
+            <StackPanel Margin="10">
+                <RadioButton Content="Solo tiro"/>
+                <RadioButton Content="T/R M.P."/>
+                <RadioButton Content="T/R P.D."/>
+            </StackPanel>
+        </GroupBox>
+
+
+        <!-- TIPOS DE PAPEL -->
+        <GroupBox Header="Tipo de Papel" Margin="0 0 0 15">
+            <DataGrid AutoGenerateColumns="False" Height="180" Margin="10">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Descripción" Binding="{Binding Descripcion}" Width="*"/>
+                    <DataGridTextColumn Header="Cant." Binding="{Binding Cantidad}" Width="70"/>
+                    <DataGridTextColumn Header="Sobr." Binding="{Binding Sobras}" Width="70"/>
+                    <DataGridTextColumn Header="Total" Binding="{Binding Total}" Width="70"/>
+                    <DataGridTextColumn Header="Tam. C.Plie" Binding="{Binding TamPliegos}" Width="120"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </GroupBox>
+
+
+        <!-- SOBRES -->
+        <GroupBox Header="Sobres" Margin="0 0 0 15">
+            <WrapPanel Margin="10">
+                <CheckBox Content="Cte." Width="120"/>
+                <CheckBox Content="Amer." Width="120"/>
+                <CheckBox Content="Amer. Especial" Width="150"/>
+                <CheckBox Content="½ Oficio" Width="120"/>
+                <CheckBox Content="Oficio" Width="120"/>
+                <CheckBox Content="Otro" Width="120"/>
+            </WrapPanel>
+        </GroupBox>
+
+        <!-- SACOS -->
+        <GroupBox Header="Sacos" Margin="0 0 0 15">
+            <WrapPanel Margin="10">
+                <CheckBox Content="Cte." Width="120"/>
+                <CheckBox Content="Amer." Width="120"/>
+                <CheckBox Content="Amer. Especial" Width="150"/>
+                <CheckBox Content="½ Oficio" Width="120"/>
+                <CheckBox Content="Oficio" Width="120"/>
+                <CheckBox Content="Otro" Width="120"/>
+            </WrapPanel>
+        </GroupBox>
+
+        <!-- TINTAS -->
+        <GroupBox Header="Tintas">
+            <StackPanel Margin="10">
+                <ItemsControl>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="0 5">
+                                <ComboBox Width="120">
+                                    <ComboBoxItem Content="Tricomía"/>
+                                    <ComboBoxItem Content="Pantone"/>
+                                    <ComboBoxItem Content="Muestra"/>
+                                </ComboBox>
+                                <TextBox Width="200" Margin="10 0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </GroupBox>
+
+    </StackPanel>
+
+</ScrollViewer>
+</Page>

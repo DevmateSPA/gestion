@@ -23,7 +23,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding Impresion}"
+                ItemsSource="{Binding ImpresionesFiltradas}"
                 IsReadOnly="True"
                 Margin="0,5,0,5"
                 FontSize="16" 

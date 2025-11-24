@@ -92,7 +92,7 @@ public partial class OrdenTrabajoPage : Page
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)
     {
-        MessageBox.Show($"Buscar: {txtBuscar.Text}");
+        //MessageBox.Show($"Buscar: {txtBuscar.Text}");
     }
 
     private void BtnImprimir_Click(object sender, RoutedEventArgs e)

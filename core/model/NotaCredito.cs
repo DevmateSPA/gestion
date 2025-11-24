@@ -12,7 +12,7 @@ public class NotaCredito : IModel
     public int Neto { get; set; }
     public int Iva { get; set; }
     public int Total { get; set; }
-    [Visible(false)]
-    public string Memoria { get; set; } = string.Empty;
+     [Nombre("Detalle")]
+    public string Memo { get; set; } = string.Empty;
     public DateTime Fecha { get; set; }
 }

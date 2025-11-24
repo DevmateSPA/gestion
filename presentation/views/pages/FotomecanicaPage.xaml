@@ -23,7 +23,7 @@
             AutoGenerateColumns="False"
             CanUserAddRows="False"
             SelectionMode="Single"
-            ItemsSource="{Binding Fotomecanica}"
+            ItemsSource="{Binding FotomecanicasFiltradas}"
             IsReadOnly="True"
             Margin="0,5,0,5"
             FontSize="16" 

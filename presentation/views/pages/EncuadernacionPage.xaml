@@ -23,7 +23,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding Encuadernacion}"
+                ItemsSource="{Binding EncuadernacionesFiltradas}"
                 IsReadOnly="True"
                 Margin="0,5,0,5"
                 FontSize="16" 

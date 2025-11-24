@@ -31,10 +31,22 @@ public partial class EntidadEditorWindow : Window
         GenerarCampos(EntidadEditada);
 
         // Cargar MEMO si aplica
-        if (entidad is Gestion.core.model.Factura factura)
+        switch (entidad)
         {
-            spMemo.Visibility = Visibility.Visible;
-            txtMemo.Text = factura.Memo;
+            case Gestion.core.model.Factura f:
+                spMemo.Visibility = Visibility.Visible;
+                txtMemo.Text = f.Memo;
+                break;
+
+            case Gestion.core.model.NotaCredito nc:
+                spMemo.Visibility = Visibility.Visible;
+                txtMemo.Text = nc.Memo;
+                break;
+
+            case Gestion.core.model.GuiaDespacho gd:
+                spMemo.Visibility = Visibility.Visible;
+                txtMemo.Text = gd.Memo;
+                break;
         }
 
         // Focus

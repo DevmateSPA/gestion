@@ -21,7 +21,7 @@
 
                 <!-- Campo Memo especial -->
                 <StackPanel x:Name="spMemo" Orientation="Vertical" Margin="0,20,0,0" Visibility="Collapsed">
-                    <TextBlock Text="Memo" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock Text="Detalle" FontSize="16" FontWeight="Bold"/>
                     <TextBox x:Name="txtMemo"
                              FontSize="16"
                              AcceptsReturn="True"

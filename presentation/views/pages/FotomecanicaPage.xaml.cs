@@ -22,7 +22,9 @@ namespace Gestion.presentation.views.pages
 
             Loaded += async (_, _) => await _viewModel.LoadAll();
             _dataGrid = dgFotomecanica;
-            _dataGrid.ItemContainerGenerator.StatusChanged += DgFotomecanica_StatusChanged;   
+            _dataGrid.ItemContainerGenerator.StatusChanged += DgFotomecanica_StatusChanged;  
+
+            txtBuscar.KeyDown += TxtBuscar_KeyDown; 
         }
 
         private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -72,8 +74,8 @@ namespace Gestion.presentation.views.pages
 
         private void BtnBuscar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show($"Buscar: {txtBuscar.Text}");
-        }
+            _viewModel.Filtro = txtBuscar.Text;
+            _viewModel.Buscar();         }
 
         private void BtnImprimir_Click(object sender, RoutedEventArgs e)
         {
@@ -133,6 +135,15 @@ namespace Gestion.presentation.views.pages
 
                     dataGrid.ItemContainerGenerator.StatusChanged -= DgFotomecanica_StatusChanged;
                 }
+            }
+        }
+            
+        private void TxtBuscar_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                BtnBuscar_Click(sender, e);
+                e.Handled = true;
             }
         }
     }
