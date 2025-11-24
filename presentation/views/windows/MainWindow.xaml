@@ -102,7 +102,7 @@
             <MenuItem Header="Procesos"/>
             <MenuItem Header="Salir" Click="BtnSalir_Click"/>
             <MenuItem Header="Ir al inicio" Click="BtnInicio_Click"/>
-            <MenuItem Header="Prueba OT" Click="BtnOT_Click"/>
+            <!--<MenuItem Header="Prueba OT" Click="BtnOT_Click"/>-->
         </Menu>
 
 
