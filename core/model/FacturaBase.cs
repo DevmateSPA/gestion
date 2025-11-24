@@ -18,7 +18,8 @@ public abstract class FacturaBase : IModel
     public DateTime Fecha { get; set; } = DateTime.Now;
     public long Neto { set; get; }
     public long Iva { set; get; }
-    public int Empresa { get; set; }
+    [Visible(false)]
+    public long Empresa { get; set; }
     [Visible(false)]
     public string EmpresaNombre { get; set; } = string.Empty;
 }
