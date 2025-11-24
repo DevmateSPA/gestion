@@ -83,6 +83,25 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return entities;
     }
 
+    public virtual async Task<List<T>> FindWhere(string where, params DbParameter[] parameters)
+    {
+        using var conn = await _connectionFactory.CreateConnection();
+        using var cmd = (DbCommand)conn.CreateCommand();
+
+        cmd.CommandText = $"SELECT * FROM {_tableName} WHERE {where}";
+
+        foreach (var p in parameters)
+            cmd.Parameters.Add(p);
+
+        var list = new List<T>();
+        using var reader = await cmd.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
+            list.Add(MapEntity(reader));
+
+        return list;
+    }
+
     public async Task<bool> DeleteById(long id)
     {
         using var conn = await _connectionFactory.CreateConnection();

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.core.session;
+using Gestion.helpers;
 using Gestion.presentation.utils;
 
 namespace Gestion.presentation.viewmodel;
@@ -32,8 +34,34 @@ public class FacturaViewModel : EntidadViewModel<Factura>, INotifyPropertyChange
 
     public override async Task LoadAll()
     {
-        await base.LoadAll();
-        FacturasFiltradas = new ObservableCollection<Factura>(Facturas);
+        await SafeExecutor.RunAsync(async () =>
+        {
+            long empresaId = SesionApp.IdEmpresa;
+
+            var servicio = (IFacturaService)_service;
+            var lista = await servicio.FindAllByEmpresa(empresaId);
+
+
+            if (!lista.Any())
+            {
+                _dialogService.ShowMessage(
+                    $"No existen facturas para la empresa: {SesionApp.NombreEmpresa}.",
+                    "Información");
+            }
+
+            var dateProp = GetDateProperty(typeof(Factura));
+            if (dateProp != null)
+            {
+                lista = lista.OrderByDescending(x => dateProp.GetValue(x)).ToList();
+            }
+
+            Entidades.Clear();
+            foreach (var entidad in lista)
+                addEntity(entidad);
+
+            FacturasFiltradas = new ObservableCollection<Factura>(Entidades);
+
+        }, _dialogService, "Error al cargar facturas");
     }
 
     public void Buscar()
