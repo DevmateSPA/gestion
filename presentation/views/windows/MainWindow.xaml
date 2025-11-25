@@ -84,18 +84,18 @@
             </MenuItem>
             <MenuItem Header="Salidas">
                 <MenuItem Header="Consulta/Informe de Ctas. Ctes (Clientes)"/>
-                <MenuItem Header="Consulta/Informe de Ctas. Ctes (Proveedores)"/>
-                <MenuItem Header="Consulta/Informe de Existencias"/>
+                <!--<MenuItem Header="Consulta/Informe de Ctas. Ctes (Proveedores)"/>
+                <MenuItem Header="Consulta/Informe de Existencias"/>-->
             </MenuItem>
             <MenuItem Header="Reportes">
-                <MenuItem Header="Guías por Facturar"/>
+                <!--<MenuItem Header="Guías por Facturar"/>
                 <MenuItem Header="Libro de Ventas"/>
                 <MenuItem Header="Vcto. de Facturas"/>
                 <MenuItem Header="Vcto. de Cheques"/>
                 <MenuItem Header="O.T. Impagas por Cliente"/>
                 <MenuItem Header="O.T. Impagas por Cliente (Pel)"/>
                 <MenuItem Header="Correlativos O.T."/>
-                <MenuItem Header="Correlativos O.T. (Pel)"/>
+                <MenuItem Header="Correlativos O.T. (Pel)"/>-->
                 <MenuItem Header="Pendientes de Producción"/>
                 <MenuItem Header="Pendientes por Maquina"/>
             </MenuItem>

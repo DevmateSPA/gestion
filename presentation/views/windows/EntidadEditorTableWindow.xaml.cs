@@ -116,8 +116,15 @@ public partial class EntidadEditorTableWindow : Window
 
     private void CargarTabla()
     {
-        if (_detalles == null) return;
-        dgDetalles.ItemsSource = _detalles;
+        try
+        {
+            if (_detalles == null) return;
+            dgDetalles.ItemsSource = _detalles;
+        } catch(Exception e)
+        {
+            MessageBox.Show(e.Message);
+        }
+
     }
 
     private void BtnGuardar_Click(object sender, RoutedEventArgs e)
