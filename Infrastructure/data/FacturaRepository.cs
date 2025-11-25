@@ -8,11 +8,12 @@ namespace Gestion.Infrastructure.data;
 public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
 {
     public FacturaRepository(IDbConnectionFactory connectionFactory)
-        : base(connectionFactory, "vw_factura") { }
+        : base(connectionFactory, "factura") { }
 
     public Task<List<Factura>> FindAllByEmpresa(long empresaId)
     {
         var p = new MySqlParameter("@empresa", empresaId);
-        return base.FindWhere("empresa = @empresa", p);
+
+        return FindWhereFrom("vw_factura", "empresa = @empresa", p);
     }
 }

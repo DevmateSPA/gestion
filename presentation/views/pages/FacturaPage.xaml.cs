@@ -6,6 +6,7 @@ using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
 using Gestion.presentation.utils;
+using Gestion.core.session;
 
 namespace Gestion.presentation.views.pages;
 
@@ -35,6 +36,7 @@ public partial class FacturaPage : Page
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
         var factura = new Factura();
+        factura.Empresa = SesionApp.IdEmpresa;
         var ventana = new EntidadEditorWindow(this, factura, "Ingresar Factura");
 
         if (ventana.ShowDialog() != true)
