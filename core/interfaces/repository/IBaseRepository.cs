@@ -7,7 +7,7 @@ public interface IBaseRepository<T> where T : IModel
 {
     Task<T?> FindById(long id);
     Task<List<T>> FindAll();
-    Task<List<T>> FindWhere(string where, params DbParameter[] parameters);
+    Task<List<T>> FindWhereFrom(string tableOrView, string where, params DbParameter[] parameters);
     Task<bool> DeleteById(long id);
     Task<bool> Update(T entity); // Actualiza
     Task<bool> Save(T entity);   // Crea

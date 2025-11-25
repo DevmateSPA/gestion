@@ -5,6 +5,7 @@ using Gestion.core.interfaces.model;
 using Gestion.Infrastructure.Services;
 using Gestion.core.interfaces.database;
 using System.ComponentModel.DataAnnotations.Schema;
+using Gestion.core.attributes;
 
 namespace Gestion.Infrastructure.data;
 
@@ -83,19 +84,22 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return entities;
     }
 
-    public virtual async Task<List<T>> FindWhere(string where, params DbParameter[] parameters)
+    public async Task<List<T>> FindWhereFrom(
+        string tableOrView,
+        string where,
+        params DbParameter[] parameters)
     {
         using var conn = await _connectionFactory.CreateConnection();
         using var cmd = (DbCommand)conn.CreateCommand();
 
-        cmd.CommandText = $"SELECT * FROM {_tableName} WHERE {where}";
+        cmd.CommandText = $"SELECT * FROM {tableOrView} WHERE {where}";
 
         foreach (var p in parameters)
             cmd.Parameters.Add(p);
 
-        var list = new List<T>();
         using var reader = await cmd.ExecuteReaderAsync();
 
+        var list = new List<T>();
         while (await reader.ReadAsync())
             list.Add(MapEntity(reader));
 
@@ -123,7 +127,9 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         using var cmd = (DbCommand)conn.CreateCommand();
 
         var props = typeof(T).GetProperties()
-            .Where(p => p.Name != "Id" && Attribute.IsDefined(p, typeof(NotMappedAttribute)) == false)
+            .Where(p => p.Name != "Id" 
+            && Attribute.IsDefined(p, typeof(NotMappedAttribute)) == false
+            && !Attribute.IsDefined(p, typeof(DbIgnoreAttribute)))
             .ToList();
 
         var setClause = string.Join(", ", props.Select(p => $"{p.Name.ToLower()} = @{p.Name.ToLower()}"));
@@ -153,7 +159,9 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         using var cmd = (DbCommand)conn.CreateCommand();
 
         var props = typeof(T).GetProperties()
-            .Where(p => p.Name != "Id" && Attribute.IsDefined(p, typeof(NotMappedAttribute)) == false)
+            .Where(p => p.Name != "Id" 
+            && Attribute.IsDefined(p, typeof(NotMappedAttribute)) == false
+            && !Attribute.IsDefined(p, typeof(DbIgnoreAttribute)))
             .ToList();
 
         var columns = string.Join(", ", props.Select(p => p.Name.ToLower()));
