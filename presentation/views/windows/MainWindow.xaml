@@ -75,10 +75,10 @@
                 </MenuItem>
                 <MenuItem Header="Control Interno">
                     <MenuItem Header="Orden de Trabajo" Click="MenuItemControl_Click" Tag="ModuloOrden"/>
-                    <MenuItem Header="Orden de Trabajo Pelicula" Click="MenuItemControl_Click" Tag="ModuloOrdenPel"/>
+                    <!--<MenuItem Header="Orden de Trabajo Pelicula" Click="MenuItemControl_Click" Tag="ModuloOrdenPel"/>
                     <MenuItem Header="Salida de Productos" Click="MenuItemControl_Click" Tag="ModuloSalida"/>
                     <MenuItem Header="Ajustes de Stock" Click="MenuItemControl_Click" Tag="ModuloAjuste"/>
-                    <!--<MenuItem Header="Calculo de Costos" Click="MenuItemControl_Click" Tag="ModuloCalculo"/>
+                    <MenuItem Header="Calculo de Costos" Click="MenuItemControl_Click" Tag="ModuloCalculo"/>
                     <MenuItem Header="Cotizaciones" Click="MenuItemControl_Click" Tag="ModuloCotizacion"/>-->
                 </MenuItem>
             </MenuItem>
