@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
@@ -5,6 +6,7 @@ namespace Gestion.core.model;
 public class Cliente : IModel
 {
     public long Id { get; set; }
+    [Required]
     public string Rut { get; private set; } = string.Empty;
     [Nombre("Razón Social")]
     public string Razon_Social { get; private set; } = string.Empty;
@@ -16,7 +18,7 @@ public class Cliente : IModel
     public string Telefono { get; private set; } = string.Empty;
     public string Fax { get; private set; } = string.Empty;
     [Nombre("Observación")]
-    public string Obs1 { get; private set; } = string.Empty;
+    public string Observaciones1 { get; private set; } = string.Empty;
     public int debi { get; private set; }
     [Nombre("Debe Inicial")]
     public int habi { get; private set; }
@@ -28,7 +30,6 @@ public class Cliente : IModel
     public long saldo { get; private set; }
     [Visible(false)]
     public int Empresa { get; set; }
-
     public Cliente() { }
     public Cliente(string rut,
         string razonSocial,
@@ -51,7 +52,7 @@ public class Cliente : IModel
         this.Ciudad = ciudad;
         this.Telefono = telefono;
         this.Fax = fax;
-        this.Obs1 = obs1;
+        this.Observaciones1 = obs1;
         this.debi = debi;
         this.habi = habi;
         this.debe = debe;

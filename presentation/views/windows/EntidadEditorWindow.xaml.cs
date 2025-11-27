@@ -1,7 +1,9 @@
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Gestion.presentation.utils;
 
 namespace Gestion.presentation.views.windows;
 
@@ -139,6 +141,13 @@ public partial class EntidadEditorWindow : Window
 
             try
             {
+                if (!ValidatorProperties.Validar(prop, texto, textBox, out string? mensaje))
+                {
+                    MessageBox.Show(mensaje);
+                    textBox.Focus();
+                    return;
+                }
+
                 object valorConvertido = texto;
 
                 if (prop.PropertyType != typeof(string))
