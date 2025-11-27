@@ -14,6 +14,4 @@ public class Impresion : IModel
     public int Valorpormil { get; private set; } = 0;
     [Visible(false)]
     public int Empresa { get; set; }
-
-    public Impresion() {}
 }

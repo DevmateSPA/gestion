@@ -12,5 +12,4 @@ public class Banco : IModel
     public string Direccion { get; private set; } = string.Empty;
     [Visible(false)]
     public int Empresa { get; set; }
-    public Banco() {}
 }

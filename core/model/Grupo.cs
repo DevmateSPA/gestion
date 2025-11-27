@@ -11,6 +11,4 @@ public class Grupo : IModel
     public string Descripcion { get; private set; } = string.Empty;
     [Visible(false)]
     public int Empresa { get; set; }
-
-    public Grupo() {}
 }
