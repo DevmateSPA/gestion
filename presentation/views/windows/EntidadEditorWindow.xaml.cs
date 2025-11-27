@@ -142,6 +142,7 @@ public partial class EntidadEditorWindow : Window
             try
             {
                 // Valida la propiedad segun los metadatos de la entidad
+                // Podía usar el DialogService para mostrar este cuadro
                 if (!ValidatorProperties.Validar(prop, texto, out var mensaje))
                 {
                     MessageBox.Show(mensaje);
