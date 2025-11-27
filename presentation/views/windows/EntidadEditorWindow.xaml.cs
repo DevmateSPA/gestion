@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -107,12 +106,14 @@ public partial class EntidadEditorWindow : Window
             var valor = prop.GetValue(entidad);
             string valorTexto = "";
 
-            if (prop.GetCustomAttribute<FechaAttribute>() != null)
+            var fechaAttr = prop.GetCustomAttribute<FechaAttribute>();
+
+            if (fechaAttr != null && valor != null)
             {
                 if (valor is DateTime fecha)
-                    valorTexto = fecha.ToString("dd/MM/yyyy");
-                else
-                    valorTexto = "";
+                {
+                    valorTexto = fecha.ToString(fechaAttr.Formato);
+                }
             }
             else
             {
@@ -125,7 +126,8 @@ public partial class EntidadEditorWindow : Window
                 FontSize = 20,
                 Height = 30,
                 Width = 300,
-                Margin = new Thickness(5, 0, 5, 10)
+                Margin = new Thickness(5, 0, 5, 10),
+                Tag = prop
             };
 
             _controles[prop] = textBox;
@@ -173,22 +175,6 @@ public partial class EntidadEditorWindow : Window
 
                 if (prop.PropertyType != typeof(string))
                     valorConvertido = Convert.ChangeType(texto, prop.PropertyType);
-
-                if (prop.PropertyType == typeof(DateTime))
-                {
-                    if (!DateTime.TryParseExact(
-                            texto,
-                            "dd/MM/yyyy",
-                            CultureInfo.InvariantCulture,
-                            DateTimeStyles.None,
-                            out var fecha))
-                    {
-                        MessageBox.Show($"Fecha inválida en {prop.Name}");
-                        return;
-                    }
-
-                    prop.SetValue(EntidadEditada, fecha);
-                }
 
                 prop.SetValue(EntidadEditada, valorConvertido);
             }
