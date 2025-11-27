@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Gestion.core.attributes;
+using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
 
 public abstract class FacturaBase : IModel
@@ -16,6 +17,7 @@ public abstract class FacturaBase : IModel
     [Orden(1)]
     public string Folio { get; set; } = string.Empty;
     [Orden(2)]
+    [Fecha]
     public DateTime Fecha { get; set; } = DateTime.Now;
     public long Neto { set; get; }
     public long Iva { set; get; }

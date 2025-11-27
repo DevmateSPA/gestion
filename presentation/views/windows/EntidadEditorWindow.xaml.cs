@@ -1,7 +1,10 @@
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Gestion.core.attributes.validation;
+using Gestion.presentation.utils;
 
 namespace Gestion.presentation.views.windows;
 
@@ -70,11 +73,11 @@ public partial class EntidadEditorWindow : Window
     {
         var tipo = entidad.GetType();
 
-        // Excluir "Memo" para evitar que aparezca arriba
+        // Seleccionar propiedades visibles
         var propiedades = tipo.GetProperties()
             .Where(p =>
                 p.CanWrite &&
-                p.Name != "Memo" &&               // <--- EXCLUIDO
+                p.Name != "Memo" &&
                 !string.Equals(p.Name, "Id", StringComparison.OrdinalIgnoreCase) &&
                 (p.PropertyType == typeof(string) || p.PropertyType.IsValueType) &&
                 (p.GetCustomAttribute<VisibleAttribute>()?.Mostrar ?? true)
@@ -82,6 +85,8 @@ public partial class EntidadEditorWindow : Window
             .ToList();
 
         spCampos.Children.Clear();
+        _controles.Clear();
+
         int maxPorFila = 3;
         StackPanel filaActual = null;
 
@@ -98,14 +103,31 @@ public partial class EntidadEditorWindow : Window
                 TextWrapping = TextWrapping.Wrap
             };
 
-            var valorActual = prop.GetValue(entidad)?.ToString() ?? "";
+            var valor = prop.GetValue(entidad);
+            string valorTexto = "";
+
+            var fechaAttr = prop.GetCustomAttribute<FechaAttribute>();
+
+            if (fechaAttr != null && valor != null)
+            {
+                if (valor is DateTime fecha)
+                {
+                    valorTexto = fecha.ToString(fechaAttr.Formato);
+                }
+            }
+            else
+            {
+                valorTexto = valor?.ToString() ?? "";
+            }
+
             var textBox = new TextBox
             {
-                Text = valorActual,
+                Text = valorTexto,
                 FontSize = 20,
                 Height = 30,
                 Width = 300,
-                Margin = new Thickness(5, 0, 5, 10)
+                Margin = new Thickness(5, 0, 5, 10),
+                Tag = prop
             };
 
             _controles[prop] = textBox;
@@ -115,6 +137,7 @@ public partial class EntidadEditorWindow : Window
                 Orientation = Orientation.Vertical,
                 Width = 310
             };
+
             bloque.Children.Add(label);
             bloque.Children.Add(textBox);
 
@@ -139,6 +162,15 @@ public partial class EntidadEditorWindow : Window
 
             try
             {
+                // Valida la propiedad segun los metadatos de la entidad
+                // Podía usar el DialogService para mostrar este cuadro
+                if (!ValidatorProperties.Validar(prop, texto, out var mensaje))
+                {
+                    MessageBox.Show(mensaje);
+                    textBox.Focus();
+                    return;
+                }
+
                 object valorConvertido = texto;
 
                 if (prop.PropertyType != typeof(string))
