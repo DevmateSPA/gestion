@@ -1,3 +1,4 @@
+using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
@@ -23,6 +24,7 @@ public class Factura : FacturaBase
     public string OrdenTrabajo { get; set; } = string.Empty;
     [Nombre("Fecha de vencimiento")]
     [Orden(4)]
+    [Fecha]
     public DateTime FechaVencimiento { get; set; }
     [Nombre("Crédito")]
     [Orden(5)]
