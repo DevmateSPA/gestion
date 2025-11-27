@@ -173,7 +173,7 @@ namespace Gestion.presentation.views.windows
         }
         private void BtnOT_Click(object sender, RoutedEventArgs e)
         {
-            Page? page = App.ServiceProvider.GetRequiredService<OrdenTrabajoPruebaPage>();
+            Page? page = App.ServiceProvider.GetRequiredService<OrdenTrabajoPage>();
             MainFrame.Navigate(page);
         }
         private void Link_Click(object sender, MouseButtonEventArgs e)

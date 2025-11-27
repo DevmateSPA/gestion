@@ -10,9 +10,9 @@ using System.ComponentModel;
 
 namespace Gestion.presentation.views.pages;
 
-public partial class OrdenTrabajoPruebaPage : Page
+public partial class OrdenTrabajoDetallePage : Window
 {
-    public OrdenTrabajoPruebaPage()
+    public OrdenTrabajoDetallePage()
     {
         InitializeComponent();
         

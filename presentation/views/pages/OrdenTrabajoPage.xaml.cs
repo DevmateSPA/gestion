@@ -7,6 +7,7 @@ using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
 using Gestion.presentation.utils;
 using System.ComponentModel;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Gestion.presentation.views.pages;
 
@@ -33,14 +34,14 @@ public partial class OrdenTrabajoPage : Page
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
         var ordenTrabajo = new OrdenTrabajo();
-        var ventana = new EntidadEditorWindow(this, ordenTrabajo, "Ingresar Orden de Trabajo");
+        var ventana = new OrdenTrabajoDetallePage();
 
         if (ventana.ShowDialog() != true)
             return; 
 
-        var ordenTrabajoEditado = (OrdenTrabajo)ventana.EntidadEditada;
+        //var ordenTrabajoEditado = (OrdenTrabajo)ventana.EntidadEditada;
 
-        await _viewModel.Save(ordenTrabajoEditado);
+        //await _viewModel.Save(ordenTrabajoEditado);
     }
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
@@ -60,17 +61,16 @@ public partial class OrdenTrabajoPage : Page
         if (ordenTrabajo == null)
             return;
 
-        var ventana = new EntidadEditorWindow(this, ordenTrabajo, titulo);
-
+        var ventana = App.ServiceProvider.GetRequiredService<OrdenTrabajoDetallePage>();
         if (ventana.ShowDialog() != true)
         {
-            var ordenTrabajoCancelada = (OrdenTrabajo)ventana.EntidadEditada;
-            return;
+            //var ordenTrabajoCancelada = (OrdenTrabajo)ventana.EntidadEditada;
+            //return;
         }
 
-        var ordenTrabajoEditada = (OrdenTrabajo)ventana.EntidadEditada;
+        //var ordenTrabajoEditada = (OrdenTrabajo)ventana.EntidadEditada;
 
-        await _viewModel.Update(ordenTrabajoEditada);
+        //await _viewModel.Update(ordenTrabajoEditada);
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
