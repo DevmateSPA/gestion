@@ -141,6 +141,7 @@ public partial class EntidadEditorWindow : Window
 
             try
             {
+                // Valida la propiedad segun los metadatos de la entidad
                 if (!ValidatorProperties.Validar(prop, texto, textBox, out string? mensaje))
                 {
                     MessageBox.Show(mensaje);
