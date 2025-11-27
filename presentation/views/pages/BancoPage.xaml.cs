@@ -7,6 +7,9 @@ using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
 using Microsoft.Extensions.DependencyInjection;
 using Gestion.presentation.utils;
+using System.Drawing.Printing;
+using System.Windows.Documents;
+using System.Printing;
 
 namespace Gestion.presentation.views.pages;
 
@@ -87,7 +90,10 @@ public partial class BancoPage : Page
 
     private void BtnImprimir_Click(object sender, RoutedEventArgs e)
     {
-        MessageBox.Show("Imprimir listado...");
+        //SeleccionarImpresora();
+        //ImprimirDataGrid(dgBancos);
+        //ImprimirDirecto(dgBancos,"Microsoft Print to PDF");
+        ImprimirDataGridCompleto(dgBancos,"Microsoft Print to PDF");
     }
 
     private void DgBancos_StatusChanged(object? sender, EventArgs e)
@@ -157,4 +163,44 @@ public partial class BancoPage : Page
             e.Handled = true;
         }
     }
+
+    public void ImprimirDataGridCompleto(DataGrid grid, string impresora)
+{
+    // Obtener impresora
+    LocalPrintServer server = new LocalPrintServer();
+    PrintQueue cola = server.GetPrintQueue(impresora);
+
+    if (cola == null)
+    {
+        MessageBox.Show($"La impresora '{impresora}' no existe.");
+        return;
+    }
+
+    PrintDialog pd = new PrintDialog
+    {
+        PrintQueue = cola
+    };
+
+    // 1. Guardar tamaño original
+    double originalHeight = grid.Height;
+    double originalWidth = grid.Width;
+
+    // 2. Expandir para mostrar todo
+    grid.Height = double.NaN; // Auto
+    grid.Width = pd.PrintableAreaWidth;
+
+    grid.UpdateLayout();
+
+    // Medir nuevamente
+    grid.Measure(new Size(pd.PrintableAreaWidth, double.PositiveInfinity));
+    grid.Arrange(new Rect(new Point(0, 0), grid.DesiredSize));
+
+    // 3. Imprimir TODO el contenido
+    pd.PrintVisual(grid, "Impresion DataGrid Completo");
+
+    // 4. Restaurar tamaños
+    grid.Height = originalHeight;
+    grid.Width = originalWidth;
+    grid.UpdateLayout();
+}
 }
