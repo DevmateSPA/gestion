@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
@@ -6,7 +7,7 @@ namespace Gestion.core.model;
 public class Cliente : IModel
 {
     public long Id { get; set; }
-    [Required]
+    [Rut]
     public string Rut { get; set; } = string.Empty;
     [Nombre("Razón Social")]
     public string Razon_Social { get; set; } = string.Empty;
