@@ -1,3 +1,4 @@
+using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
@@ -5,6 +6,7 @@ namespace Gestion.core.model;
 public class Proveedor : IModel
 {
     public long Id { get; set; }
+    [Rut]
     public string Rut { get; private set; } = string.Empty;
     [Nombre("Razón Social")]
     public string Razon_Social { get; private set; } = string.Empty;
@@ -29,5 +31,4 @@ public class Proveedor : IModel
     public long Saldo { get; private set; }
     [Visible(false)]
     public int Empresa { get; set; }
-    public Proveedor() { }
 }

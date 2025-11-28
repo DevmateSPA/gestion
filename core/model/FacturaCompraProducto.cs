@@ -1,3 +1,4 @@
+using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
@@ -12,6 +13,7 @@ public class FacturaCompraProducto : IModel
     public int Salida { get; set; }
     public string Maquina { get; set; } = string.Empty;
     public string Operario { get; set; } = string.Empty;
+    [Fecha]
     public DateTime Fecha { get; set; }
     [Visible(false)]
     public int Empresa { get; set; }

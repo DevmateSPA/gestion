@@ -10,7 +10,4 @@ public class GuiaDespacho : FacturaBase
     public string OrdenTrabajo { get; set; } = string.Empty;
     [Visible(false)]
     public string Factura { get; set; } = string.Empty;
-    [Visible(false)]
-    public int Empresa { get; set; }
-
 }

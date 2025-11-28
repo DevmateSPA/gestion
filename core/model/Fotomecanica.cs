@@ -11,5 +11,4 @@ public class Fotomecanica : IModel
     public string Descripcion { get; private set; } = string.Empty;
     [Visible(false)]
     public int Empresa { get; set; }
-    public Fotomecanica() {}
 }

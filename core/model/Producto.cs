@@ -28,6 +28,4 @@ public class Producto : IModel
     public int Entrada { get; private set; }
     [Visible(false)]
     public int Empresa { get; set; }
-    public Producto() {}
-
 }

@@ -13,6 +13,7 @@ public abstract class FacturaBase : IModel
 
     [Nombre("Rut")]
     [Orden(0)]
+    [Rut]
     public string RutCliente { get; set; } = string.Empty;
     [Orden(1)]
     public string Folio { get; set; } = string.Empty;
