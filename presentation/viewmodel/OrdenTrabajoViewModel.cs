@@ -1,24 +1,23 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
 using Gestion.core.session;
 using Gestion.helpers;
-using Gestion.presentation.utils;
 
 namespace Gestion.presentation.viewmodel;
 
-public class FacturaViewModel : EntidadViewModel<Factura>, INotifyPropertyChanged
+public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>
 {
-    public ObservableCollection<Factura> Facturas => Entidades;
+    public ObservableCollection<OrdenTrabajo> OrdenesTrabajo => Entidades;
 
-    private ObservableCollection<Factura> _facturasFiltradas = new();
-    public ObservableCollection<Factura> FacturasFiltradas
+    private ObservableCollection<OrdenTrabajo> _ordenesTrabajosFiltradas = new();
+    public ObservableCollection<OrdenTrabajo> OrdenesTrabajoFiltradas
     {
-        get => _facturasFiltradas;
-        set { _facturasFiltradas = value; OnPropertyChanged(); }
+        get => _ordenesTrabajosFiltradas;
+        set { _ordenesTrabajosFiltradas = value; OnPropertyChanged(); }
     }
 
     private string _filtro = "";
@@ -29,18 +28,18 @@ public class FacturaViewModel : EntidadViewModel<Factura>, INotifyPropertyChange
     }
 
     private bool _isLoading;
-public bool IsLoading
-{
-    get => _isLoading;
-    set
+    public bool IsLoading
     {
-        _isLoading = value;
-        OnPropertyChanged();
+        get => _isLoading;
+        set
+        {
+            _isLoading = value;
+            OnPropertyChanged();
+        }
     }
-}
 
-    public FacturaViewModel(IFacturaService facturaService, IDialogService dialogService)
-        : base(facturaService, dialogService)
+    public OrdenTrabajoViewModel(IOrdenTrabajoService ordenTrabajoService, IDialogService dialogService)
+        : base(ordenTrabajoService, dialogService)
     {}
 
     public override async Task LoadAll()
@@ -49,18 +48,17 @@ public bool IsLoading
         {
             long empresaId = SesionApp.IdEmpresa;
 
-            var servicio = (IFacturaService)_service;
+            var servicio = (IOrdenTrabajoService)_service;
             var lista = await servicio.FindAllByEmpresa(empresaId);
-
 
             if (!lista.Any())
             {
                 _dialogService.ShowMessage(
-                    $"No existen facturas para la empresa: {SesionApp.NombreEmpresa}.",
+                    $"No existen Ordenes de Trabajo para la empresa: {SesionApp.NombreEmpresa}.",
                     "Información");
             }
 
-            var dateProp = GetDateProperty(typeof(Factura));
+            var dateProp = GetDateProperty(typeof(OrdenTrabajo));
             if (dateProp != null)
             {
                 lista = lista.OrderByDescending(x => dateProp.GetValue(x)).ToList();
@@ -70,23 +68,24 @@ public bool IsLoading
             foreach (var entidad in lista)
                 addEntity(entidad);
 
-            FacturasFiltradas = new ObservableCollection<Factura>(Entidades);
+            OrdenesTrabajoFiltradas = new ObservableCollection<OrdenTrabajo>(Entidades);
+            MessageBox("ordenadas: "+OrdenesTrabajoFiltradas);
 
-        }, _dialogService, "Error al cargar facturas");
+        }, _dialogService, "Error al cargar Ordenes de Trabajo");
     }
 
     public void Buscar()
     {
         if (string.IsNullOrWhiteSpace(Filtro))
         {
-            FacturasFiltradas = new ObservableCollection<Factura>(Facturas);
+            OrdenesTrabajoFiltradas = new ObservableCollection<OrdenTrabajo>(OrdenesTrabajo);
             return;
         }
 
         var lower = Filtro.ToLower();
 
-        FacturasFiltradas = new ObservableCollection<Factura>(
-            Facturas.Where(f =>
+        OrdenesTrabajoFiltradas = new ObservableCollection<OrdenTrabajo>(
+            OrdenesTrabajo.Where(f =>
                    f.Folio.ToString().Contains(lower)
                 || f.RutCliente.ToLower().Contains(lower)
                 || f.Fecha.ToString("dd/MM/yyyy").Contains(lower)

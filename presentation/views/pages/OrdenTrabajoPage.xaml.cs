@@ -25,7 +25,9 @@ public partial class OrdenTrabajoPage : Page
 
         Loaded += async (_, _) =>
         {
-            await _viewModel.LoadAll();  
+            _viewModel.IsLoading = true;
+            await _viewModel.LoadAll();
+            _viewModel.IsLoading = false;
         };
         _dataGrid = dgOrdenTrabajo;
         _dataGrid.ItemContainerGenerator.StatusChanged += DgOrdenTrabajo_StatusChanged;

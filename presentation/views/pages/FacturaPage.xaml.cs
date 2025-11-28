@@ -26,7 +26,9 @@ public partial class FacturaPage : Page
 
         Loaded += async (_, _) =>
         {
+            _viewModel.IsLoading = true;
             await _viewModel.LoadAll();
+            _viewModel.IsLoading = false;
         };
 
         _dataGrid = dgFacturas;
@@ -110,7 +112,7 @@ public partial class FacturaPage : Page
         //SeleccionarImpresora();
         //ImprimirDataGrid(dgBancos);
         //ImprimirDirecto(_dataGrid,"Microsoft Print to PDF");
-        ImprimirDataGridCompleto(_dataGrid,"Microsoft Print to PDF");
+        //ImprimirDataGridCompleto(_dataGrid,"Microsoft Print to PDF");
     }
 
     private void DgFacturas_StatusChanged(object? sender, EventArgs e)
@@ -241,43 +243,5 @@ public partial class FacturaPage : Page
         pd.PrintVisual(grid, "Impresión directa");
     }
 
-    public void ImprimirDataGridCompleto(DataGrid grid, string impresora)
-{
-    // Obtener impresora
-    LocalPrintServer server = new LocalPrintServer();
-    PrintQueue cola = server.GetPrintQueue(impresora);
-
-    if (cola == null)
-    {
-        MessageBox.Show($"La impresora '{impresora}' no existe.");
-        return;
-    }
-
-    PrintDialog pd = new PrintDialog
-    {
-        PrintQueue = cola
-    };
-
-    // 1. Guardar tamaño original
-    double originalHeight = grid.Height;
-    double originalWidth = grid.Width;
-
-    // 2. Expandir para mostrar todo
-    grid.Height = double.NaN; // Auto
-    grid.Width = pd.PrintableAreaWidth;
-
-    grid.UpdateLayout();
-
-    // Medir nuevamente
-    grid.Measure(new Size(pd.PrintableAreaWidth, double.PositiveInfinity));
-    grid.Arrange(new Rect(new Point(0, 0), grid.DesiredSize));
-
-    // 3. Imprimir TODO el contenido
-    pd.PrintVisual(grid, "Impresion DataGrid Completo");
-
-    // 4. Restaurar tamaños
-    grid.Height = originalHeight;
-    grid.Width = originalWidth;
-    grid.UpdateLayout();
-}
+    
 }
