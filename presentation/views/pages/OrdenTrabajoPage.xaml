@@ -25,7 +25,7 @@
             <TextBox x:Name="txtBuscar" Width="200" Height="25" />
         </StackPanel>
 
-                <!-- LOADING OVERLAY -->
+        <!-- LOADING OVERLAY -->
         <Grid x:Name="LoadingOverlay"
             Background="#80000000"
             Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
@@ -50,7 +50,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding OrdenTrabajo}"
+                ItemsSource="{Binding OrdenesTrabajoFiltradas}"
                 FontSize="16"
                 IsReadOnly="True"
                 MouseDoubleClick="dgOrdenTrabajo_MouseDoubleClick" 
@@ -72,3 +72,4 @@
         </StackPanel>
     </Grid>
 </Page>
+ 

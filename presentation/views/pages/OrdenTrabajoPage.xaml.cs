@@ -31,6 +31,8 @@ public partial class OrdenTrabajoPage : Page
         };
         _dataGrid = dgOrdenTrabajo;
         _dataGrid.ItemContainerGenerator.StatusChanged += DgOrdenTrabajo_StatusChanged;
+
+        txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
@@ -138,6 +140,15 @@ public partial class OrdenTrabajoPage : Page
             case Key.F4:
                 BtnImprimir_Click(sender, e);
                 break;
+        }
+    }
+
+    private void TxtBuscar_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+        {
+            BtnBuscar_Click(sender, e);
+            e.Handled = true;
         }
     }
 }

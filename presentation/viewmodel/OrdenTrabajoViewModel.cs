@@ -7,9 +7,9 @@ using Gestion.core.model;
 using Gestion.core.session;
 using Gestion.helpers;
 
-namespace Gestion.presentation.viewmodel;
+namespace Gestion.presentation.viewmodel; 
 
-public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>
+public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyPropertyChanged
 {
     public ObservableCollection<OrdenTrabajo> OrdenesTrabajo => Entidades;
 
@@ -69,7 +69,6 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>
                 addEntity(entidad);
 
             OrdenesTrabajoFiltradas = new ObservableCollection<OrdenTrabajo>(Entidades);
-            MessageBox("ordenadas: "+OrdenesTrabajoFiltradas);
 
         }, _dialogService, "Error al cargar Ordenes de Trabajo");
     }
