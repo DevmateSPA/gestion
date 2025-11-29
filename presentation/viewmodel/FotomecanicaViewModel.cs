@@ -36,6 +36,12 @@ namespace Gestion.presentation.viewmodel
             FotomecanicasFiltradas = new ObservableCollection<Fotomecanica>(Fotomecanicas);
         }
 
+        public override async Task LoadAllByEmpresa()
+        {
+            await base.LoadAllByEmpresa();
+            FotomecanicasFiltradas = new ObservableCollection<Fotomecanica>(Fotomecanicas);
+        }
+
         public void Buscar()
         {
             if (string.IsNullOrWhiteSpace(Filtro))

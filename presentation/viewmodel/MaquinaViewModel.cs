@@ -35,6 +35,12 @@ namespace Gestion.presentation.viewmodel
             MaquinasFiltradas = new ObservableCollection<Maquina>(Maquinas);
         }
 
+        public override async Task LoadAllByEmpresa()
+        {
+            await base.LoadAllByEmpresa();
+            MaquinasFiltradas = new ObservableCollection<Maquina>(Maquinas);
+        }
+
         public void Buscar()
         {
             if (string.IsNullOrWhiteSpace(Filtro))

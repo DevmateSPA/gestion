@@ -35,6 +35,12 @@ namespace Gestion.presentation.viewmodel
             BancosFiltrados = new ObservableCollection<Banco>(Bancos);
         }
 
+        public override async Task LoadAllByEmpresa()
+        {
+            await base.LoadAllByEmpresa();
+            BancosFiltrados = new ObservableCollection<Banco>(Bancos);
+        }
+
         public void Buscar()
         {
             if (string.IsNullOrWhiteSpace(Filtro))

@@ -43,6 +43,18 @@ public class FacturaViewModel : EntidadViewModel<Factura>, INotifyPropertyChange
         : base(facturaService, dialogService) {}
 
 
+    public override async Task LoadAll()
+    {
+        await base.LoadAll();
+        FacturasFiltradas = new ObservableCollection<Factura>(Facturas);
+    }
+
+    public override async Task LoadAllByEmpresa()
+    {
+        await base.LoadAllByEmpresa();
+        FacturasFiltradas = new ObservableCollection<Factura>(Facturas);
+    }
+
     public void Buscar()
     {
         if (string.IsNullOrWhiteSpace(Filtro))

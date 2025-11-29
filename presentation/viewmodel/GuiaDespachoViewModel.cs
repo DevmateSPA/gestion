@@ -36,6 +36,12 @@ public class GuiaDespachoViewModel : EntidadViewModel<GuiaDespacho>, INotifyProp
         GuiasDespachoFiltradas = new ObservableCollection<GuiaDespacho>(GuiasDespacho);
     }
 
+    public override async Task LoadAllByEmpresa()
+    {
+        await base.LoadAllByEmpresa();
+        GuiasDespachoFiltradas = new ObservableCollection<GuiaDespacho>(GuiasDespacho);
+    }
+
     public void Buscar()
     {
         if (string.IsNullOrWhiteSpace(Filtro))

@@ -35,6 +35,12 @@ public class NotaCreditoViewModel : EntidadViewModel<NotaCredito>, INotifyProper
         NotasCreditoFiltradas = new ObservableCollection<NotaCredito>(NotasCredito);
     }
 
+    public override async Task LoadAllByEmpresa()
+    {
+        await base.LoadAllByEmpresa();
+        NotasCreditoFiltradas = new ObservableCollection<NotaCredito>(NotasCredito);
+    }
+
     public void Buscar()
     {
         if (string.IsNullOrWhiteSpace(Filtro))

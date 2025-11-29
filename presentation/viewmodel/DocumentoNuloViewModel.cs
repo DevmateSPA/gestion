@@ -34,6 +34,12 @@ public class DocumentoNuloViewModel : EntidadViewModel<DocumentoNulo>, INotifyPr
         await base.LoadAll();
         DocumentosNulosFiltrados = new ObservableCollection<DocumentoNulo>(DocumentosNulos);
     }
+    
+    public override async Task LoadAllByEmpresa()
+    {
+        await base.LoadAllByEmpresa();
+        DocumentosNulosFiltrados = new ObservableCollection<DocumentoNulo>(DocumentosNulos);
+    }
 
     public void Buscar()
     {

@@ -35,6 +35,12 @@ namespace Gestion.presentation.viewmodel
             OperariosFiltrados = new ObservableCollection<Operario>(Operarios);
         }
 
+        public override async Task LoadAllByEmpresa()
+        {
+            await base.LoadAllByEmpresa();
+            OperariosFiltrados = new ObservableCollection<Operario>(Operarios);
+        }
+
         public void Buscar()
         {
             if (string.IsNullOrWhiteSpace(Filtro))

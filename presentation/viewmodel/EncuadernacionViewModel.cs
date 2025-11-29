@@ -36,6 +36,12 @@ namespace Gestion.presentation.viewmodel
             EncuadernacionesFiltradas = new ObservableCollection<Encuadernacion>(Encuadernaciones);
         }
 
+        public override async Task LoadAllByEmpresa()
+        {
+            await base.LoadAllByEmpresa();
+            EncuadernacionesFiltradas = new ObservableCollection<Encuadernacion>(Encuadernaciones);
+        }
+
         public void Buscar()
         {
             if (string.IsNullOrWhiteSpace(Filtro))

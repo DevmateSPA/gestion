@@ -35,6 +35,12 @@ namespace Gestion.presentation.viewmodel
             ProveedoresFiltrados = new ObservableCollection<Proveedor>(Proveedores);
         }
 
+        public override async Task LoadAllByEmpresa()
+        {
+            await base.LoadAllByEmpresa();
+            ProveedoresFiltrados = new ObservableCollection<Proveedor>(Proveedores);
+        }
+
         public void Buscar()
         {
             if (string.IsNullOrWhiteSpace(Filtro))

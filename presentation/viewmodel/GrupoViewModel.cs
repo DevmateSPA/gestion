@@ -35,6 +35,12 @@ namespace Gestion.presentation.viewmodel
             GruposFiltrados = new ObservableCollection<Grupo>(Grupos);
         }
 
+        public override async Task LoadAllByEmpresa()
+        {
+            await base.LoadAllByEmpresa();
+            GruposFiltrados = new ObservableCollection<Grupo>(Grupos);
+        }
+
         public void Buscar()
         {
             if (string.IsNullOrWhiteSpace(Filtro))

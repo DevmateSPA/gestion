@@ -36,6 +36,12 @@ namespace Gestion.presentation.viewmodel
             ImpresionesFiltradas = new ObservableCollection<Impresion>(Impresiones);
         }
 
+        public override async Task LoadAllByEmpresa()
+        {
+            await base.LoadAllByEmpresa();
+            ImpresionesFiltradas = new ObservableCollection<Impresion>(Impresiones);
+        }
+
         public void Buscar()
         {
             if (string.IsNullOrWhiteSpace(Filtro))
