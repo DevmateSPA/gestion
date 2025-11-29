@@ -180,4 +180,5 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         int affected = await cmd.ExecuteNonQueryAsync();
         return affected > 0;
     }
+    public abstract Task<List<T>> FindAllByEmpresa(long empresaId);
 }

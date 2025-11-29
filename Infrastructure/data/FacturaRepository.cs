@@ -10,7 +10,7 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
     public FacturaRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "factura") { }
 
-    public Task<List<Factura>> FindAllByEmpresa(long empresaId)
+    public override Task<List<Factura>> FindAllByEmpresa(long empresaId)
     {
         var p = new MySqlParameter("@empresa", empresaId);
 

@@ -33,4 +33,11 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
 
         return null;
     }
+
+    public override Task<List<Usuario>> FindAllByEmpresa(long empresaId)
+    {
+        var p = new MySqlParameter("@empresa", empresaId);
+
+        return FindWhereFrom("vw_usuario", "empresa = @empresa", p);
+    }
 }

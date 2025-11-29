@@ -7,4 +7,5 @@ public interface IBaseService<T>
     Task<bool> DeleteById(long id);
     Task<bool> Update(T entity);
     Task<bool> Save(T entity);
+    Task<List<T>> FindAllByEmpresa(long empresaId);
 }

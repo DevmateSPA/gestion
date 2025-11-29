@@ -10,7 +10,7 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
     public OrdenTrabajoRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "ordentrabajo") {}
 
-    public Task<List<OrdenTrabajo>> FindAllByEmpresa(long empresaId)
+    public override Task<List<OrdenTrabajo>> FindAllByEmpresa(long empresaId)
     {
          var p = new MySqlParameter("@empresa", empresaId);
 

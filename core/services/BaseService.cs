@@ -37,4 +37,9 @@ public abstract class BaseService<T> : IBaseService<T> where T : IModel
     {
         return await _baseRepository.Save(entity);
     }
+
+    public Task<List<T>> FindAllByEmpresa(long empresaid)
+    {
+        return _baseRepository.FindAllByEmpresa(empresaid);
+    }
 }
