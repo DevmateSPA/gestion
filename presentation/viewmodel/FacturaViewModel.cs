@@ -29,19 +29,19 @@ public class FacturaViewModel : EntidadViewModel<Factura>, INotifyPropertyChange
     }
 
     private bool _isLoading;
-public bool IsLoading
-{
-    get => _isLoading;
-    set
+    public bool IsLoading
     {
-        _isLoading = value;
-        OnPropertyChanged();
+        get => _isLoading;
+        set
+        {
+            _isLoading = value;
+            OnPropertyChanged();
+        }
     }
-}
 
     public FacturaViewModel(IFacturaService facturaService, IDialogService dialogService)
-        : base(facturaService, dialogService)
-    {}
+        : base(facturaService, dialogService) {}
+
 
     public void Buscar()
     {
