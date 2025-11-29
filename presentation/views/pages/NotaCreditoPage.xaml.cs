@@ -21,7 +21,7 @@ public partial class NotaCreditoPage : Page
         DataContext = _viewModel;
         Title = $"Notas de crédito";
 
-        Loaded += async (_, _) => await _viewModel.LoadAll();
+        Loaded += async (_, _) => await _viewModel.LoadAllByEmpresa();
         _dataGrid = dgNotasCredito;
         _dataGrid.ItemContainerGenerator.StatusChanged += DgNotasCredito_StatusChanged;
 

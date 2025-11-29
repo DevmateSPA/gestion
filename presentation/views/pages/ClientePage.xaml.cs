@@ -20,7 +20,7 @@ namespace Gestion.presentation.views.pages;
         DataContext = _viewModel;
         Title = $"Clientes";
 
-        Loaded += async (_, _) => await _viewModel.LoadAll();
+        Loaded += async (_, _) => await _viewModel.LoadAllByEmpresa();
         _dataGrid = dgClientes;
         _dataGrid.ItemContainerGenerator.StatusChanged += DataGrid_StatusChanged;
 

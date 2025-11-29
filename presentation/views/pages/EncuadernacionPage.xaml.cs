@@ -20,7 +20,7 @@ public partial class EncuadernacionPage : Page
         DataContext = _viewModel;
         Title = $"Encuadernacion";
 
-        Loaded += async (_, _) => await _viewModel.LoadAll();
+        Loaded += async (_, _) => await _viewModel.LoadAllByEmpresa();
         _dataGrid = dgEncuadernacion;
         _dataGrid.ItemContainerGenerator.StatusChanged += DataGrid_StatusChanged;
 

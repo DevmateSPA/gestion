@@ -41,38 +41,6 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
     public OrdenTrabajoViewModel(IOrdenTrabajoService ordenTrabajoService, IDialogService dialogService)
         : base(ordenTrabajoService, dialogService)
     {}
-
-    public override async Task LoadAll()
-    {
-        await SafeExecutor.RunAsync(async () =>
-        {
-            long empresaId = SesionApp.IdEmpresa;
-
-            var servicio = (IOrdenTrabajoService)_service;
-            var lista = await servicio.FindAllByEmpresa(empresaId);
-
-            if (!lista.Any())
-            {
-                _dialogService.ShowMessage(
-                    $"No existen Ordenes de Trabajo para la empresa: {SesionApp.NombreEmpresa}.",
-                    "Información");
-            }
-
-            var dateProp = GetDateProperty(typeof(OrdenTrabajo));
-            if (dateProp != null)
-            {
-                lista = lista.OrderByDescending(x => dateProp.GetValue(x)).ToList();
-            }
-
-            Entidades.Clear();
-            foreach (var entidad in lista)
-                addEntity(entidad);
-
-            OrdenesTrabajoFiltradas = new ObservableCollection<OrdenTrabajo>(Entidades);
-
-        }, _dialogService, "Error al cargar Ordenes de Trabajo");
-    }
-
     public void Buscar()
     {
         if (string.IsNullOrWhiteSpace(Filtro))

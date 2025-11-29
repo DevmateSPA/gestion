@@ -20,7 +20,7 @@ namespace Gestion.presentation.views.pages
             DataContext = _viewModel;
             Title = $"Encuadernacion";
 
-            Loaded += async (_, _) => await _viewModel.LoadAll();
+            Loaded += async (_, _) => await _viewModel.LoadAllByEmpresa();
             _dataGrid = dgFotomecanica;
             _dataGrid.ItemContainerGenerator.StatusChanged += DgFotomecanica_StatusChanged;  
 

@@ -20,7 +20,7 @@ namespace Gestion.presentation.views.pages
             DataContext = _viewModel;
             Title = $"Grupos";
 
-            Loaded += async (_, _) => await _viewModel.LoadAll();
+            Loaded += async (_, _) => await _viewModel.LoadAllByEmpresa();
             _dataGrid = dgOperarios;
             _dataGrid.ItemContainerGenerator.StatusChanged += DgOperarios_StatusChanged;
 

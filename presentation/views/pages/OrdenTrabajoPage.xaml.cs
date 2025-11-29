@@ -26,7 +26,7 @@ public partial class OrdenTrabajoPage : Page
         Loaded += async (_, _) =>
         {
             _viewModel.IsLoading = true;
-            await _viewModel.LoadAll();
+            await _viewModel.LoadAllByEmpresa();
             _viewModel.IsLoading = false;
         };
         _dataGrid = dgOrdenTrabajo;

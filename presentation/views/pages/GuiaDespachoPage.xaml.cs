@@ -23,7 +23,7 @@ public partial class GuiaDespachoPage : Page
 
         Loaded += async (_, _) =>
         {
-            await _viewModel.LoadAll();
+            await _viewModel.LoadAllByEmpresa();
         };
 
         _dataGrid = dgGuiasDespacho;
