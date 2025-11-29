@@ -6,6 +6,8 @@ using System.Windows;
 using System.IO;
 using System.Reflection;
 using Gestion.presentation.utils;
+using Gestion.core.session;
+using Org.BouncyCastle.Asn1.X509.Qualified;
 
 namespace Gestion.presentation.viewmodel;
 
@@ -60,6 +62,26 @@ public abstract class EntidadViewModel<T> where T : IModel
             foreach (var entidad in lista)
                 addEntity(entidad);
         }, _dialogService, $"Error al cargar {typeof(T).Name}");
+    }
+
+    public virtual async Task LoadAllByEmpresa()
+    {
+        await SafeExecutor.RunAsync(async () =>
+        {
+           var lista = await _service.FindAllByEmpresa(SesionApp.IdEmpresa);
+
+            if (!lista.Any())
+                _dialogService.ShowMessage($"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}");
+
+           var dateProp = GetDateProperty(typeof(T));
+           if (dateProp != null)
+            {
+                lista = lista.OrderByDescending(x => dateProp.GetValue(x)).ToList();
+            }
+            Entidades.Clear();
+            foreach(var entidad in lista)
+                addEntity(entidad);
+        }, _dialogService, $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}");
     }
 
     public static PropertyInfo? GetDateProperty(Type t)

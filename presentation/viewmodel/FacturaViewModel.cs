@@ -43,38 +43,6 @@ public bool IsLoading
         : base(facturaService, dialogService)
     {}
 
-    public override async Task LoadAll()
-    {
-        await SafeExecutor.RunAsync(async () =>
-        {
-            long empresaId = SesionApp.IdEmpresa;
-
-            var servicio = (IFacturaService)_service;
-            var lista = await servicio.FindAllByEmpresa(empresaId);
-
-
-            if (!lista.Any())
-            {
-                _dialogService.ShowMessage(
-                    $"No existen facturas para la empresa: {SesionApp.NombreEmpresa}.",
-                    "Información");
-            }
-
-            var dateProp = GetDateProperty(typeof(Factura));
-            if (dateProp != null)
-            {
-                lista = lista.OrderByDescending(x => dateProp.GetValue(x)).ToList();
-            }
-
-            Entidades.Clear();
-            foreach (var entidad in lista)
-                addEntity(entidad);
-
-            FacturasFiltradas = new ObservableCollection<Factura>(Entidades);
-
-        }, _dialogService, "Error al cargar facturas");
-    }
-
     public void Buscar()
     {
         if (string.IsNullOrWhiteSpace(Filtro))
