@@ -41,6 +41,18 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
     public OrdenTrabajoViewModel(IOrdenTrabajoService ordenTrabajoService, IDialogService dialogService)
         : base(ordenTrabajoService, dialogService)
     {}
+
+    public override async Task LoadAll()
+    {
+        await base.LoadAll();
+        OrdenesTrabajoFiltradas = new ObservableCollection<OrdenTrabajo>(OrdenesTrabajo);
+    }
+
+    public override async Task LoadAllByEmpresa()
+    {
+        await base.LoadAllByEmpresa();
+        OrdenesTrabajoFiltradas = new ObservableCollection<OrdenTrabajo>(OrdenesTrabajo);
+    }
     public void Buscar()
     {
         if (string.IsNullOrWhiteSpace(Filtro))

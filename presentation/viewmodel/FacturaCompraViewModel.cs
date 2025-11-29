@@ -33,6 +33,6 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
             foreach(var entidad in lista)
                 addEntity(entidad);
         }, _dialogService, $"Error al cargar las factura de compra de la empresa {SesionApp.NombreEmpresa}");
-        
+          
     }
 }
