@@ -1,12 +1,13 @@
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
+using System.Windows.Input; 
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
 using Gestion.presentation.utils;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace Gestion.presentation.views.pages;
 
@@ -15,9 +16,9 @@ public partial class OrdenTrabajoDetallePage : Window
     public OrdenTrabajoDetallePage()
     {
         InitializeComponent();
-        
+
     }
 
 
-
+ 
 }

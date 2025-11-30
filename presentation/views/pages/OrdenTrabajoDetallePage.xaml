@@ -4,46 +4,73 @@
       Title="Orden de Trabajo"
       Focusable="True">
 
+      <Window.Resources>
+    <Style TargetType="TextBlock">
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="Margin" Value="0,5,0,5"/>
+    </Style>
+    <Style TargetType="TextBox">
+        <Setter Property="FontSize" Value="20"/>
+    </Style>
+
+</Window.Resources>
+
+
 <ScrollViewer VerticalScrollBarVisibility="Auto">
     <StackPanel Margin="20" Orientation="Vertical">
 
         <!-- PRIMER PISO: Folio, Fecha, RUT -->
-        <GroupBox Header="Datos Principales" Margin="0 0 0 15">
-            <Grid Margin="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+<GroupBox Header="Datos Principales" Margin="0 0 0 15">
+    <Grid Margin="10">
 
-                <TextBlock Text="Folio" Grid.Column="0"/>
-                <TextBox Grid.Column="0" Margin="0 20 0 0"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Títulos -->
+            <RowDefinition Height="Auto"/> <!-- Inputs -->
+        </Grid.RowDefinitions>
 
-                <TextBlock Text="Fecha" Grid.Column="1"/>
-                <TextBox Grid.Column="1" Margin="0 20 0 0"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-                <TextBlock Text="RUT" Grid.Column="2"/>
-                <TextBox Grid.Column="2" Margin="0 20 0 0"/>
-            </Grid>
-        </GroupBox>
+        <!-- TITULOS (Margin=0 para evitar corrimiento por estilo global) -->
+        <TextBlock Text="Folio" Grid.Column="0" Grid.Row="0" Margin="0"/>
+        <TextBlock Text="Fecha" Grid.Column="1" Grid.Row="0" Margin="0"/>
+        <TextBlock Text="RUT" Grid.Column="2" Grid.Row="0" Margin="0"/>
+
+        <!-- INPUTS -->
+        <TextBox Grid.Column="0" Grid.Row="1" Margin="0 0 10 0" Height="35" />
+        <TextBox Grid.Column="1" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
+        <TextBox Grid.Column="2" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
+
+    </Grid>
+</GroupBox>
 
         <!-- SEGUNDO PISO: Trabajo (ocupa los 3 espacios) -->
         <GroupBox Header="Trabajo" Margin="0 0 0 15">
             <Grid Margin="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
 
-                <TextBlock Text="Trabajo" Grid.ColumnSpan="3"/>
-                <TextBox Grid.ColumnSpan="3" Margin="0 20 0 0"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/> <!-- Título -->
+                    <RowDefinition Height="Auto"/> <!-- Input -->
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Trabajo" Grid.Row="0"/>
+                <TextBox Grid.Row="1" Grid.ColumnSpan="3" Height="35"/>
             </Grid>
         </GroupBox>
+
 
         <!-- TERCER PISO: Cantidad, Total Impresiones, Folio del Cliente -->
         <GroupBox Header="Datos de Producción" Margin="0 0 0 15">
             <Grid Margin="10">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/> <!-- Títulos -->
+                    <RowDefinition Height="Auto"/> <!-- Inputs -->
+                </Grid.RowDefinitions>
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -51,44 +78,50 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Text="Cantidad" Grid.Column="0"/>
-                <TextBox Grid.Column="0" Margin="0 20 0 0"/>
+                <!-- TITULOS -->
+                <TextBlock Text="Cantidad" Grid.Column="0" Grid.Row="0"/>
+                <TextBlock Text="Total Impres." Grid.Column="1" Grid.Row="0"/>
+                <TextBlock Text="Folios del" Grid.Column="2" Grid.Row="0"/>
+                <TextBlock Text="Al" Grid.Column="3" Grid.Row="0"/>
 
-                <TextBlock Text="Total Impres." Grid.Column="1"/>
-                <TextBox Grid.Column="1" Margin="0 20 0 0"/>
+                <!-- INPUTS -->
+                <TextBox Grid.Column="0" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
+                <TextBox Grid.Column="1" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
+                <TextBox Grid.Column="2" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
+                <TextBox Grid.Column="3" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
 
-                <TextBlock Text="Folios del" Grid.Column="2"/>
-                <TextBox Grid.Column="2" Margin="0 20 0 0"/>
-                <TextBlock Text="Al" Grid.Column="3"/>
-                <TextBox Grid.Column="3" Margin="0 20 0 0"/>
             </Grid>
         </GroupBox>
 
         <!-- CUARTO PISO: Cortar tamaño, De, Por -->
+        
         <GroupBox Header="Corte" Margin="0 0 0 15">
-            <Grid Margin="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+    <Grid Margin="10">
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />  <!-- Fila de títulos -->
-                    <RowDefinition Height="Auto" />  <!-- Fila de TextBox -->
-                </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-                <!-- Títulos en una sola fila -->
-                <TextBlock Text="Cortar a tamaño" Grid.Column="0" Grid.Row="0" />
-                <TextBlock Text="De"              Grid.Column="1" Grid.Row="0" />
-                <TextBlock Text="Por"             Grid.Column="2" Grid.Row="0" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>   <!-- Row 0: Títulos -->
+            <RowDefinition Height="Auto"/>   <!-- Row 1: Inputs -->
+        </Grid.RowDefinitions>
 
-                <!-- TextBox abajo, alineados igual que arriba -->
-                <TextBox Grid.Column="0" Grid.Row="1" Margin="0 3 5 0"/>
-                <TextBox Grid.Column="1" Grid.Row="1" Margin="5 3 5 0"/>
-                <TextBox Grid.Column="2" Grid.Row="1" Margin="5 3 0 0"/>
-            </Grid>
-        </GroupBox>
+        <!-- Títulos -->
+        <TextBlock Text="Cortar a tamaño" Grid.Column="0" Grid.Row="0" FontSize="20"/>
+        <TextBlock Text="De" Grid.Column="1" Grid.Row="0"/>
+        <TextBlock Text="Por" Grid.Column="2" Grid.Row="0"/>
+
+        <!-- Inputs (fila correcta) -->
+        <TextBox Grid.Column="0" Grid.Row="1" Height="35" Margin="0,0,10,0"/>
+        <TextBox Grid.Column="1" Grid.Row="1" Height="35" Margin="0,0,10,0"/>
+        <TextBox Grid.Column="2" Grid.Row="1" Height="35" Margin="0,0,10,0"/>
+
+    </Grid>
+</GroupBox>
+
 
         <!-- QUINTO PISO: Montar, Moldes x Tamaño, Tamaño Final (ancho x alto) -->
         <GroupBox Header="Montaje y Tamaños" Margin="0 0 0 15">
@@ -125,11 +158,9 @@
                     <ColumnDefinition Width="60"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Ancho -->
                 <TextBlock Text="Ancho" Grid.Column="0" VerticalAlignment="Center"/>
                 <TextBox Grid.Column="1" Margin="5 0" />
 
-                <!-- Separador opcional -->
                 <TextBlock Text="x" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
                 <!-- Alto -->
@@ -143,60 +174,65 @@
         <!-- SEXTO PISO: Cliente proporciona -->
         <GroupBox Header="Cliente Proporciona" Margin="0 0 0 15">
             <StackPanel Margin="10">
-                <RadioButton Content="Nada"/>
-                <RadioButton Content="Películas"/>
-                <RadioButton Content="Planchas"/>
-                <RadioButton Content="Papel"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <RadioButton Content="Nada" FontSize="20" Margin="0 0 100 0"  IsChecked="True"/>
+                    <RadioButton Content="Películas" FontSize="20" Margin="0 0 100 0"/>
+                    <RadioButton Content="Planchas" FontSize="20" Margin="0 0 100 0"/>
+                    <RadioButton Content="Papel" FontSize="20"/>
+                </StackPanel>
             </StackPanel>
         </GroupBox>
 
         <!-- SÉPTIMO PISO: Tipo de impresión -->
         <GroupBox Header="Tipo de Impresión" Margin="0 0 0 15">
             <StackPanel Margin="10">
-                <RadioButton Content="Solo tiro"/>
-                <RadioButton Content="T/R M.P."/>
-                <RadioButton Content="T/R P.D."/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <RadioButton Content="Solo tiro" FontSize="20" Margin="0 0 100 0"  IsChecked="True"/>
+                    <RadioButton Content="T/R M.P." FontSize="20" Margin="0 0 100 0" />
+                    <RadioButton Content="T/R P.D." FontSize="20" Margin="0 0 100 0" />
+                </StackPanel>
             </StackPanel>
         </GroupBox>
 
         <!-- OCTAVO PISO: Máquinas -->
         <GroupBox Header="Máquinas" Margin="0 0 0 15">
     <Grid Margin="10">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>  <!-- títulos -->
-            <RowDefinition Height="Auto"/>  <!-- campos -->
+            <RowDefinition Height="Auto"/> <!-- Títulos -->
+            <RowDefinition Height="Auto"/> <!-- Inputs -->
         </Grid.RowDefinitions>
 
-        <!-- 🔹 Títulos -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- TITULOS -->
         <TextBlock Text="Máquina 1" Grid.Column="0" Grid.Row="0"/>
         <TextBlock Text="Máquina 2" Grid.Column="1" Grid.Row="0"/>
-        <TextBlock Text="Pin"        Grid.Column="2" Grid.Row="0"/>
-        <TextBlock Text="NVA"        Grid.Column="3" Grid.Row="0"/>
-        <TextBlock Text="US"         Grid.Column="4" Grid.Row="0"/>
-        <TextBlock Text="CTP NVA"    Grid.Column="5" Grid.Row="0"/>
-        <TextBlock Text="U"          Grid.Column="6" Grid.Row="0"/>
+        <TextBlock Text="Pin" Grid.Column="2" Grid.Row="0"/>
+        <TextBlock Text="NVA" Grid.Column="3" Grid.Row="0"/>
+        <TextBlock Text="US" Grid.Column="4" Grid.Row="0"/>
+        <TextBlock Text="CTP NVA" Grid.Column="5" Grid.Row="0"/>
+        <TextBlock Text="U" Grid.Column="6" Grid.Row="0"/>
 
-        <!-- 🔹 Inputs -->
-        <TextBox Grid.Column="0" Grid.Row="1" Margin="2"/>
-        <TextBox Grid.Column="1" Grid.Row="1" Margin="2"/>
-        <TextBox Grid.Column="2" Grid.Row="1" Margin="2"/>
-        <TextBox Grid.Column="3" Grid.Row="1" Margin="2"/>
-        <TextBox Grid.Column="4" Grid.Row="1" Margin="2"/>
-        <TextBox Grid.Column="5" Grid.Row="1" Margin="2"/>
-        <TextBox Grid.Column="6" Grid.Row="1" Margin="2"/>
+        <!-- INPUTS -->
+        <TextBox Grid.Column="0" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
+        <TextBox Grid.Column="1" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
+        <TextBox Grid.Column="2" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
+        <TextBox Grid.Column="3" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
+        <TextBox Grid.Column="4" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
+        <TextBox Grid.Column="5" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
+        <TextBox Grid.Column="6" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
+
     </Grid>
 </GroupBox>
-
 
         <!-- TABLA: Tipo Papel -->
         <GroupBox Header="Tipo de Papel" Margin="0 0 0 15">
@@ -211,54 +247,60 @@
             </DataGrid>
         </GroupBox>
 
-        <!-- SOBRES -->
         <GroupBox Header="Sobres" Margin="0 0 0 15">
-            <StackPanel Margin="10">
-                <RadioButton Content="Cte."/>
-                <RadioButton Content="Amer."/>
-                <RadioButton Content="Amer. Especial"/>
-                <RadioButton Content="1/2 Oficio"/>
-                <RadioButton Content="Oficio"/>
-                <RadioButton Content="Otro"/>
-            </StackPanel>
-        </GroupBox>
+    <StackPanel Margin="10" Orientation="Horizontal">
+        <RadioButton Content="Cte." FontSize="20" IsChecked="True" Margin="0 0 20 0"/>
+        <RadioButton Content="Amer." FontSize="20" Margin="0 0 20 0"/>
+        <RadioButton Content="Amer. Especial" FontSize="20" Margin="0 0 20 0"/>
+        <RadioButton Content="1/2 Oficio" FontSize="20" Margin="0 0 20 0"/>
+        <RadioButton Content="Oficio" FontSize="20" Margin="0 0 20 0"/>
+        <RadioButton Content="Otro" FontSize="20"/>
+    </StackPanel>
+</GroupBox>
+<GroupBox Header="Sacos" Margin="0 0 0 15">
+    <StackPanel Margin="10" Orientation="Horizontal">
+        <RadioButton Content="Amer." FontSize="20" IsChecked="True" Margin="0 0 20 0"/>
+        <RadioButton Content="Amer. Especial" FontSize="20" Margin="0 0 20 0"/>
+        <RadioButton Content="1/2 Oficio" FontSize="20" Margin="0 0 20 0"/>
+        <RadioButton Content="Oficio" FontSize="20" Margin="0 0 20 0"/>
+        <RadioButton Content="Otro" FontSize="20"/>
+    </StackPanel>
+</GroupBox>
+<GroupBox Header="Tintas" Margin="0 0 0 15">
+    <StackPanel Margin="10" Orientation="Vertical">
 
-        <!-- SACOS -->
-        <GroupBox Header="Sacos" Margin="0 0 0 15">
-            <StackPanel Margin="10">
-                <RadioButton Content="Amer."/>
-                <RadioButton Content="Amer. Especial"/>
-                <RadioButton Content="1/2 Oficio"/>
-                <RadioButton Content="Oficio"/>
-                <RadioButton Content="Otro"/>
-            </StackPanel>
-        </GroupBox>
+        <!-- Tinta 1 -->
+        <StackPanel Orientation="Horizontal" Margin="0 5">
+            <RadioButton Content="Tricromía" FontSize="20" IsChecked="True"/>
+            <RadioButton Content="Pantone" FontSize="20" Margin="20 0"/>
+            <RadioButton Content="S/Muestra" FontSize="20" Margin="20 0"/>
+        </StackPanel>
 
-        <!-- TINTAS 1-4 -->
-        <GroupBox Header="Tintas" Margin="0 0 0 15">
-            <StackPanel Margin="10" Orientation="Vertical">
-                <StackPanel Orientation="Horizontal" Margin="0 5">
-                    <RadioButton Content="Tricromía"/>
-                    <RadioButton Content="Pantone" Margin="20 0"/>
-                    <RadioButton Content="S/Muestra" Margin="20 0"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0 5">
-                    <RadioButton Content="Tricromía"/>
-                    <RadioButton Content="Pantone" Margin="20 0"/>
-                    <RadioButton Content="S/Muestra" Margin="20 0"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0 5">
-                    <RadioButton Content="Tricromía"/>
-                    <RadioButton Content="Pantone" Margin="20 0"/>
-                    <RadioButton Content="S/Muestra" Margin="20 0"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0 5">
-                    <RadioButton Content="Tricromía"/>
-                    <RadioButton Content="Pantone" Margin="20 0"/>
-                    <RadioButton Content="S/Muestra" Margin="20 0"/>
-                </StackPanel>
-            </StackPanel>
-        </GroupBox>
+        <!-- Tinta 2 -->
+        <StackPanel Orientation="Horizontal" Margin="0 5">
+            <RadioButton Content="Tricromía" FontSize="20" IsChecked="True"/>
+            <RadioButton Content="Pantone" FontSize="20" Margin="20 0"/>
+            <RadioButton Content="S/Muestra" FontSize="20" Margin="20 0"/>
+        </StackPanel>
+
+        <!-- Tinta 3 -->
+        <StackPanel Orientation="Horizontal" Margin="0 5">
+            <RadioButton Content="Tricromía" FontSize="20" IsChecked="True"/>
+            <RadioButton Content="Pantone" FontSize="20" Margin="20 0"/>
+            <RadioButton Content="S/Muestra" FontSize="20" Margin="20 0"/>
+        </StackPanel>
+
+        <!-- Tinta 4 -->
+        <StackPanel Orientation="Horizontal" Margin="0 5">
+            <RadioButton Content="Tricromía" FontSize="20" IsChecked="True"/>
+            <RadioButton Content="Pantone" FontSize="20" Margin="20 0"/>
+            <RadioButton Content="S/Muestra" FontSize="20" Margin="20 0"/>
+        </StackPanel>
+
+    </StackPanel>
+</GroupBox>
+
+        
 
     </StackPanel>
 </ScrollViewer>

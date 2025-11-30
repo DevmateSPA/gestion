@@ -67,7 +67,7 @@ public class FacturaViewModel : EntidadViewModel<Factura>, INotifyPropertyChange
 
         FacturasFiltradas = new ObservableCollection<Factura>(
             Facturas.Where(f =>
-                   f.Folio.ToString().Contains(lower)
+                   f.Folio.ToLower().ToString().Contains(lower)
                 || f.RutCliente.ToLower().Contains(lower)
                 || f.Fecha.ToString("dd/MM/yyyy").Contains(lower)
             )

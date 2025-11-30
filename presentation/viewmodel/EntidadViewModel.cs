@@ -69,7 +69,6 @@ public abstract class EntidadViewModel<T> where T : IModel
         await SafeExecutor.RunAsync(async () =>
         {
            var lista = await _service.FindAllByEmpresa(SesionApp.IdEmpresa);
-
             if (!lista.Any())
                 _dialogService.ShowMessage($"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}");
 
