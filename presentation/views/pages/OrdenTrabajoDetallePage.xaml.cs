@@ -13,10 +13,10 @@ namespace Gestion.presentation.views.pages;
 
 public partial class OrdenTrabajoDetallePage : Window
 {
-    public OrdenTrabajoDetallePage()
+    public OrdenTrabajoDetallePage(Page padre, OrdenTrabajo ot)
     {
         InitializeComponent();
-
+        DataContext = ot;
     }
 
 
