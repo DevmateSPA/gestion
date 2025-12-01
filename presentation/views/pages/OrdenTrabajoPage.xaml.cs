@@ -38,7 +38,7 @@ public partial class OrdenTrabajoPage : Page
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
         var ordenTrabajo = new OrdenTrabajo();
-        var ventana = new OrdenTrabajoDetallePage();
+        var ventana = new OrdenTrabajoDetallePage(this, ordenTrabajo);
 
         if (ventana.ShowDialog() != true)
             return; 
@@ -65,7 +65,7 @@ public partial class OrdenTrabajoPage : Page
         if (ordenTrabajo == null)
             return;
 
-        var ventana = App.ServiceProvider.GetRequiredService<OrdenTrabajoDetallePage>();
+        var ventana = new OrdenTrabajoDetallePage(this, ordenTrabajo);
         if (ventana.ShowDialog() != true)
         {
             //var ordenTrabajoCancelada = (OrdenTrabajo)ventana.EntidadEditada;
