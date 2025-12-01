@@ -26,9 +26,7 @@ public partial class FacturaPage : Page
 
         Loaded += async (_, _) =>
         {
-            _viewModel.IsLoading = true;
             await _viewModel.LoadAllByEmpresa();
-            _viewModel.IsLoading = false;
         };
 
         _dataGrid = dgFacturas;

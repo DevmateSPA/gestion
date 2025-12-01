@@ -2,21 +2,34 @@ using System.Collections.ObjectModel;
 using Gestion.core.interfaces.model;
 using Gestion.core.interfaces.service;
 using Gestion.helpers;
-using System.Windows;
-using System.IO;
 using System.Reflection;
-using Gestion.presentation.utils;
 using Gestion.core.session;
-using Org.BouncyCastle.Asn1.X509.Qualified;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Gestion.presentation.viewmodel;
 
-public abstract class EntidadViewModel<T> where T : IModel
+public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IModel
 {
     protected readonly IDialogService _dialogService;
     protected readonly IBaseService<T> _service;
 
     public ObservableCollection<T> Entidades { get; } = new();
+    private bool _isLoading;
+    public bool IsLoading
+    {
+        get => _isLoading;
+        set
+        {
+            _isLoading = value;
+            OnPropertyChanged();
+        }
+    }
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 
     protected EntidadViewModel(IBaseService<T> baseService, IDialogService dialogService)
     {
@@ -50,6 +63,7 @@ public abstract class EntidadViewModel<T> where T : IModel
 
     public virtual async Task LoadAll()
     {
+        this.IsLoading = true;
         await SafeExecutor.RunAsync(async () =>
         {
             var lista = await _service.FindAll();
@@ -62,10 +76,12 @@ public abstract class EntidadViewModel<T> where T : IModel
             foreach (var entidad in lista)
                 addEntity(entidad);
         }, _dialogService, $"Error al cargar {typeof(T).Name}");
+        this.IsLoading = false;
     }
 
     public virtual async Task LoadAllByEmpresa()
     {
+        this.IsLoading = true;
         await SafeExecutor.RunAsync(async () =>
         {
            var lista = await _service.FindAllByEmpresa(SesionApp.IdEmpresa);
@@ -81,6 +97,7 @@ public abstract class EntidadViewModel<T> where T : IModel
             foreach(var entidad in lista)
                 addEntity(entidad);
         }, _dialogService, $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}");
+        this.IsLoading = false;
     }
 
     public static PropertyInfo? GetDateProperty(Type t)

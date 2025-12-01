@@ -4,13 +4,10 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Gestion.presentation.views.pages"
+      xmlns:loadingOverlay="clr-namespace:Gestion.presentation.views.resources.loading"
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="500"
       Title="Facturas" >
-
-    <Page.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-    </Page.Resources>
     
     <Grid Margin="10">  
         <Grid.RowDefinitions>
@@ -25,7 +22,7 @@
             <TextBox x:Name="txtBuscar" Width="200" Height="25" />
         </StackPanel>
 
-        <!-- LOADING OVERLAY -->
+        <!-- LOADING OVERLAY
         <Grid x:Name="LoadingOverlay"
             Background="#80000000"
             Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
@@ -42,7 +39,12 @@
                         Margin="0,10,0,0"
                         HorizontalAlignment="Center"/>
             </StackPanel>
-        </Grid>
+        </Grid> -->
+        <!-- LOADING OVERLAY -->
+        <loadingOverlay:LoadingOverlay
+            IsLoading="{Binding IsLoading}"
+            Grid.RowSpan="3"
+            Panel.ZIndex="999"/>
 
         <!-- Tabla -->
         <DataGrid x:Name="dgFacturas"

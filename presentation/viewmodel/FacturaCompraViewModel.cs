@@ -17,6 +17,7 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
 
     public override async Task LoadAllByEmpresa()
     {
+        this.IsLoading = true;
         await SafeExecutor.RunAsync(async () =>
         {
            var lista = await _service.FindAll();
@@ -33,6 +34,6 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
             foreach(var entidad in lista)
                 addEntity(entidad);
         }, _dialogService, $"Error al cargar las factura de compra de la empresa {SesionApp.NombreEmpresa}");
-          
+        this.IsLoading = false;
     }
 }

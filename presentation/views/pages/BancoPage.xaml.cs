@@ -25,7 +25,10 @@ public partial class BancoPage : Page
         DataContext = _viewModel;
         Title = $"Bancos";
 
-        Loaded += async (_, _) => await _viewModel.LoadAllByEmpresa();
+        Loaded += async (_, _) =>
+        {
+            await _viewModel.LoadAllByEmpresa();
+        };
         _dataGrid = dgBancos;
         _dataGrid.ItemContainerGenerator.StatusChanged += DgBancos_StatusChanged;
 

@@ -1,0 +1,28 @@
+<UserControl x:Class="Gestion.presentation.views.resources.loading.LoadingOverlay"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </UserControl.Resources>
+
+    <Grid x:Name="Root"
+          Background="#80000000"
+          Visibility="{Binding IsLoading, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibilityConverter}}"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch">
+
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="Cargando..."
+                Foreground="White"
+                FontSize="18"
+                Margin="0,10,0,0"
+                HorizontalAlignment="Center"/>
+            <ProgressBar IsIndeterminate="True"
+                Width="180"
+                Height="10"
+                Foreground="#2196F3"
+                Background="#E0E0E0"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
