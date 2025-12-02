@@ -8,6 +8,9 @@ using Gestion.presentation.views.windows;
 using Gestion.presentation.utils;
 using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
+using Gestion.core.interfaces.service;
+using System.Collections.ObjectModel;
+using Gestion.core.model.detalles;
 
 namespace Gestion.presentation.views.pages;
 
@@ -16,10 +19,12 @@ public partial class OrdenTrabajoPage : Page
     private DataGrid _dataGrid; 
 
     private readonly OrdenTrabajoViewModel _viewModel;
-    public OrdenTrabajoPage(OrdenTrabajoViewModel viewModel)
+    private readonly IDetalleOTService _detalleOTService;
+    public OrdenTrabajoPage(OrdenTrabajoViewModel viewModel, IDetalleOTService detalleOTService)
     {
         InitializeComponent();
         _viewModel = viewModel;
+        _detalleOTService = detalleOTService;
         DataContext = _viewModel;
         Title = $"Ordenes de Trabajo";
 
@@ -64,6 +69,9 @@ public partial class OrdenTrabajoPage : Page
     {
         if (ordenTrabajo == null)
             return;
+
+        var detalles = await _detalleOTService.FindByFolio(ordenTrabajo.Folio);
+        ordenTrabajo.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(detalles);
 
         var ventana = new OrdenTrabajoDetallePage(this, ordenTrabajo);
         if (ventana.ShowDialog() != true)

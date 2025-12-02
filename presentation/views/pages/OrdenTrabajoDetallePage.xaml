@@ -210,13 +210,17 @@
             </GroupBox>
             <!-- TABLA: Tipo Papel -->
             <GroupBox Header="Tipo de Papel" Margin="0 0 0 15">
-                <DataGrid AutoGenerateColumns="False" Height="220" Margin="10">
+                <DataGrid x:Name="dgDetalleOT"
+                    AutoGenerateColumns="False" 
+                    Height="220" 
+                    Margin="10"
+                    ItemsSource="{Binding Detalles}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Tipo de Papel" Width="*" Binding="{Binding Tipo}"/>
+                        <DataGridTextColumn Header="Tipo de Papel" Width="*" Binding="{Binding TipoPapel}"/>
                         <DataGridTextColumn Header="Cantidad" Width="80" Binding="{Binding Cantidad}"/>
-                        <DataGridTextColumn Header="Sobras" Width="80" Binding="{Binding Sobras}"/>
+                        <DataGridTextColumn Header="Sobras" Width="80" Binding="{Binding Sobr}"/>
                         <DataGridTextColumn Header="Total" Width="80" Binding="{Binding Total}"/>
-                        <DataGridTextColumn Header="Tamaño C.Plie" Width="150" Binding="{Binding TamPliegos}"/>
+                        <DataGridTextColumn Header="Tamaño C.Plie" Width="150" Binding="{Binding Tamanio}"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </GroupBox>

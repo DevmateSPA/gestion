@@ -10,6 +10,7 @@ using Gestion.presentation.views.pages;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.database;
 using System.Globalization;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Gestion;
 
@@ -43,6 +44,7 @@ public partial class App : Application
         services.AddScoped<IGuiaDespachoRepository, GuiaDespachoRepository>();
         services.AddScoped<IOrdenTrabajoRepository, OrdenTrabajoRepository>();
         services.AddScoped<IEmpresaRepository, EmpresaRepository>();
+        services.AddScoped<IDetalleOTRepository, DetalleOTRepository>();
 
         // Servicios
         services.AddScoped<IAuthService, AuthService>();
@@ -64,6 +66,7 @@ public partial class App : Application
         services.AddScoped<IGuiaDespachoService, GuiaDespachoService>();
         services.AddScoped<IOrdenTrabajoService, OrdenTrabajoService>();
         services.AddScoped<IEmpresaService, EmpresaService>();
+        services.AddScoped<IDetalleOTService, DetalleOTService>();
 
         // Login
         services.AddTransient<LoginWindow>();

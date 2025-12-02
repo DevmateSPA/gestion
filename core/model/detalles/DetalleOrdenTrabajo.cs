@@ -9,7 +9,7 @@ public class DetalleOrdenTrabajo : IModel
     public string TipoPapel { get; set; } = string.Empty;
     public int Cantidad { get; set; }
     public int Sobr { get; set; }
-    public int Total { get; set; }
+    public long Total { get; set; }
     public int Tamanio { get; set; }
     public int Cplie { get; set; }
 }
