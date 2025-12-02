@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
@@ -22,9 +23,9 @@ public class OrdenTrabajo :  IModel
     public string TamanioFinalLargo { get; set; } = string.Empty;
     public string ClienteProporcionanada { get; set; } = string.Empty;
     public string ClienteProporcionaOriginal { get; set; } = string.Empty;
-    public string ClienteProporcionaPelicula { get; set; } = string.Empty;
-    public string ClienteProporcionaPlancha { get; set; } = string.Empty;
-    public string ClienteProporcionaPapel { get; set; } = string.Empty;
+    public bool ClienteProporcionaPelicula { get; set; } = false;
+    public bool ClienteProporcionaPlancha { get; set; } = false;
+    public bool ClienteProporcionaPapel { get; set; } = false;
     public string TipoImpresion { get; set; } = string.Empty;
     public string Maquina1 { get; set; } = string.Empty;
     public string Maquina2 { get; set; } = string.Empty;
@@ -35,10 +36,10 @@ public class OrdenTrabajo :  IModel
     public int U { get; set; } = 0;
     public string Sobres { get; set; } = string.Empty;
     public string Sacos { get; set; } = string.Empty;
-    public string tintas1 { get; set; } = string.Empty;
-    public string tintas2 { get; set; } = string.Empty;
-    public string tintas3 { get; set; } = string.Empty;
-    public string tintas4 { get; set; } = string.Empty;
+    public string Tintas1 { get; set; } = string.Empty;
+    public string Tintas2 { get; set; } = string.Empty;
+    public string Tintas3 { get; set; } = string.Empty;
+    public string Tintas4 { get; set; } = string.Empty;
     public string GEST14TDE1 { get; set; } = string.Empty;
     public string GEST14TDE2 { get; set; } = string.Empty;
     public string GEST14TDE3 { get; set; } = string.Empty;

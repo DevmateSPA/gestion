@@ -20,17 +20,41 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         _tableName = tableName;
     }
 
+    protected object? ConvertValue(object? value, Type targetType)
+    {
+        if (value == null || value == DBNull.Value)
+            return null;
+
+        // --- Conversión especial BIT/TINYINT → bool ---
+        if (targetType == typeof(bool))
+        {
+            return value switch
+            {
+                bool b => b,
+                byte bt => bt == 1,
+                sbyte sb => sb == 1,
+                byte[] arr when arr.Length > 0 => arr[0] == 1,
+                _ => false
+            };
+        }
+        // ------------------------------------------------
+
+        // Conversión genérica para otros tipos
+        if (targetType.IsEnum)
+            return Enum.ToObject(targetType, value);
+
+        return Convert.ChangeType(value, targetType);
+    }
+
     protected virtual T MapEntity(DbDataReader reader)
     {
         var entity = new T();
 
         foreach (PropertyInfo prop in typeof(T).GetProperties())
         {
-            // Ignorar propiedades sin setter
             if (!prop.CanWrite)
                 continue;
 
-            // Ignorar propiedades [NotMapped]
             if (Attribute.IsDefined(prop, typeof(NotMappedAttribute)))
                 continue;
 
@@ -39,11 +63,10 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
             if (!reader.HasColumn(col))
                 continue;
 
-            object? value = reader[col];
-            if (value == DBNull.Value)
-                value = null;
+            object? rawValue = reader[col];
+            object? converted = ConvertValue(rawValue, prop.PropertyType);
 
-            prop.SetValue(entity, value);
+            prop.SetValue(entity, converted);
         }
 
         return entity;

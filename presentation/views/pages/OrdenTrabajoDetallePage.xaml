@@ -1,6 +1,7 @@
 <Window x:Class="Gestion.presentation.views.pages.OrdenTrabajoDetallePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:utils="clr-namespace:Gestion.presentation.views.util"
     Title="Orden de Trabajo"
     Focusable="True">
 
@@ -12,8 +13,8 @@
         <Style TargetType="TextBox">
             <Setter Property="FontSize" Value="20"/>
         </Style>
+        <utils:RadioEqualsConverter x:Key="RadioEqualsConverter"/>
     </Window.Resources>
-
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="20" Orientation="Vertical">
@@ -32,11 +33,11 @@
                     <!-- TITULOS (Margin=0 para evitar corrimiento por estilo global) -->
                     <TextBlock Text="Folio" Grid.Column="0" Grid.Row="0" Margin="0"/>
                     <TextBlock Text="Fecha" Grid.Column="1" Grid.Row="0" Margin="0"/>
-                    <TextBlock Text="RUT" Grid.Column="2" Grid.Row="0" Margin="0"/>
+                    <TextBlock Text="Rut Cliente" Grid.Column="2" Grid.Row="0" Margin="0"/>
                     <!-- INPUTS -->
-                    <TextBox Grid.Column="0" Grid.Row="1" Margin="0 0 10 0" Height="35" />
-                    <TextBox Grid.Column="1" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
-                    <TextBox Grid.Column="2" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
+                    <TextBox Grid.Column="0" Grid.Row="1" Margin="0 0 10 0" Height="35" Text="{Binding Folio}" />
+                    <TextBox Grid.Column="1" Grid.Row="1" Margin="0 0 10 0" Height="35" Text="{Binding Fecha}" />
+                    <TextBox Grid.Column="2" Grid.Row="1" Margin="0 0 10 0" Height="35" Text="{Binding RutCliente}" />
                 </Grid>
             </GroupBox>
             <!-- SEGUNDO PISO: Trabajo (ocupa los 3 espacios) -->
@@ -47,7 +48,7 @@
                         <RowDefinition Height="Auto"/> <!-- Input -->
                     </Grid.RowDefinitions>
                     <TextBlock Text="Trabajo" Grid.Row="0"/>
-                    <TextBox Grid.Row="1" Grid.ColumnSpan="3" Height="35"/>
+                    <TextBox Grid.Row="1" Grid.ColumnSpan="3" Height="35" Text="{Binding Descripcion}" />
                 </Grid>
             </GroupBox>
             <!-- TERCER PISO: Cantidad, Total Impresiones, Folio del Cliente -->
@@ -65,14 +66,14 @@
                     </Grid.ColumnDefinitions>
                     <!-- TITULOS -->
                     <TextBlock Text="Cantidad" Grid.Column="0" Grid.Row="0"/>
-                    <TextBlock Text="Total Impres." Grid.Column="1" Grid.Row="0"/>
-                    <TextBlock Text="Folios del" Grid.Column="2" Grid.Row="0"/>
-                    <TextBlock Text="Al" Grid.Column="3" Grid.Row="0"/>
+                    <TextBlock Text="Total impresión" Grid.Column="1" Grid.Row="0"/>
+                    <TextBlock Text="Folios desde" Grid.Column="2" Grid.Row="0"/>
+                    <TextBlock Text="Folios hasta" Grid.Column="3" Grid.Row="0"/>
                     <!-- INPUTS -->
-                    <TextBox Grid.Column="0" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
-                    <TextBox Grid.Column="1" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
-                    <TextBox Grid.Column="2" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
-                    <TextBox Grid.Column="3" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
+                    <TextBox Grid.Column="0" Grid.Row="1" Margin="0 0 10 0" Height="35" Text="{Binding Cantidad}" />
+                    <TextBox Grid.Column="1" Grid.Row="1" Margin="0 0 10 0" Height="35" Text="{Binding TotalImpresion}" />
+                    <TextBox Grid.Column="2" Grid.Row="1" Margin="0 0 10 0" Height="35" Text="{Binding FolioDesde}" />
+                    <TextBox Grid.Column="3" Grid.Row="1" Margin="0 0 10 0" Height="35" Text="{Binding FolioHasta}" />
                 </Grid>
             </GroupBox>
             <!-- CUARTO PISO: Cortar tamaño, De, Por -->
@@ -88,13 +89,13 @@
                         <RowDefinition Height="Auto"/>   <!-- Row 1: Inputs -->
                     </Grid.RowDefinitions>
                     <!-- Títulos -->
-                    <TextBlock Text="Cortar a tamaño" Grid.Column="0" Grid.Row="0" FontSize="20"/>
-                    <TextBlock Text="De" Grid.Column="1" Grid.Row="0"/>
-                    <TextBlock Text="Por" Grid.Column="2" Grid.Row="0"/>
+                    <TextBlock Text="Tamaño a cortar" Grid.Column="0" Grid.Row="0" FontSize="20"/>
+                    <TextBlock Text="Cortar Tamaño N??" Grid.Column="1" Grid.Row="0"/>
+                    <TextBlock Text="Tamaño Largo" Grid.Column="2" Grid.Row="0"/>
                     <!-- Inputs (fila correcta) -->
-                    <TextBox Grid.Column="0" Grid.Row="1" Height="35" Margin="0,0,10,0"/>
-                    <TextBox Grid.Column="1" Grid.Row="1" Height="35" Margin="0,0,10,0"/>
-                    <TextBox Grid.Column="2" Grid.Row="1" Height="35" Margin="0,0,10,0"/>
+                    <TextBox Grid.Column="0" Grid.Row="1" Height="35" Margin="0,0,10,0" Text="{Binding CortarTamanio}" />
+                    <TextBox Grid.Column="1" Grid.Row="1" Height="35" Margin="0,0,10,0" Text="{Binding CortarTamanion}" />
+                    <TextBox Grid.Column="2" Grid.Row="1" Height="35" Margin="0,0,10,0" Text="{Binding CortarTamanioLargo}" />
                 </Grid>
             </GroupBox>
             <!-- QUINTO PISO: Montar, Moldes x Tamaño, Tamaño Final (ancho x alto) -->
@@ -114,9 +115,9 @@
                     <TextBlock Text="Moldes x Tam" Grid.Column="1" Grid.Row="0"/>
                     <TextBlock Text="Tamaños" Grid.Column="2" Grid.Row="0"/>
                     <!-- 🔹 Inputs columna 1 -->
-                    <TextBox Grid.Column="0" Grid.Row="1" Margin="0 4 5 0"/>
+                    <TextBox Grid.Column="0" Grid.Row="1" Margin="0 4 5 0"  Text="{Binding Montar}" />
                     <!-- 🔹 Inputs columna 2 -->
-                    <TextBox Grid.Column="1" Grid.Row="1" Margin="5 4 5 0"/>
+                    <TextBox Grid.Column="1" Grid.Row="1" Margin="5 4 5 0" Text="{Binding MoldeTamanio}" />
                     <!-- 🔹 Columna 3: Ancho / Alto bien ordenado -->
                     <Grid Grid.Column="2" Grid.Row="1">
                         <Grid.ColumnDefinitions>
@@ -127,11 +128,11 @@
                             <ColumnDefinition Width="60"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="Ancho" Grid.Column="0" VerticalAlignment="Center"/>
-                        <TextBox Grid.Column="1" Margin="5 0" />
+                        <TextBox Grid.Column="1" Margin="5 0" Text="{Binding TamanioFinalAncho}" />
                         <TextBlock Text="x" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         <!-- Alto -->
                         <TextBlock Text="Alto" Grid.Column="3" VerticalAlignment="Center" Margin="5 0"/>
-                        <TextBox Grid.Column="4" Margin="5 0"/>
+                        <TextBox Grid.Column="4" Margin="5 0" Text="{Binding TamanioFinalLargo}" />
                     </Grid>
                 </Grid>
             </GroupBox>
@@ -139,10 +140,9 @@
             <GroupBox Header="Cliente Proporciona" Margin="0 0 0 15">
                 <StackPanel Margin="10">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                        <RadioButton Content="Nada" FontSize="20" Margin="0 0 100 0"  IsChecked="True"/>
-                        <RadioButton Content="Películas" FontSize="20" Margin="0 0 100 0"/>
-                        <RadioButton Content="Planchas" FontSize="20" Margin="0 0 100 0"/>
-                        <RadioButton Content="Papel" FontSize="20"/>
+                        <CheckBox Content="Películas" FontSize="20" Margin="0 0 100 0" IsChecked="{Binding ClienteProporcionaPelicula, Mode=TwoWay}" />
+                        <CheckBox Content="Planchas" FontSize="20" Margin="0 0 100 0" IsChecked="{Binding ClienteProporcionaPlancha, Mode=TwoWay}" />
+                        <CheckBox Content="Papel" FontSize="20" IsChecked="{Binding ClienteProporcionaPapel, Mode=TwoWay}" />
                     </StackPanel>
                 </StackPanel>
             </GroupBox>
@@ -150,9 +150,27 @@
             <GroupBox Header="Tipo de Impresión" Margin="0 0 0 15">
                 <StackPanel Margin="10">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                        <RadioButton Content="Solo tiro" FontSize="20" Margin="0 0 100 0"  IsChecked="True"/>
-                        <RadioButton Content="T/R M.P." FontSize="20" Margin="0 0 100 0" />
-                        <RadioButton Content="T/R P.D." FontSize="20" Margin="0 0 100 0" />
+                        <RadioButton 
+                            Content="Solo tiro"
+                            FontSize="20"
+                            Margin="0 0 100 0"
+                            GroupName="TipoImpresion"
+                            Tag="1"
+                            IsChecked="{Binding TipoImpresion, Converter={StaticResource RadioEqualsConverter}, ConverterParameter=1}"/>
+                        <RadioButton 
+                            Content="T/R M.P."
+                            FontSize="20"
+                            Margin="0 0 100 0"
+                            GroupName="TipoImpresion"
+                            Tag="2"
+                            IsChecked="{Binding TipoImpresion, Converter={StaticResource RadioEqualsConverter}, ConverterParameter=2}"/>
+                        <RadioButton 
+                            Content="T/R P.D."
+                            FontSize="20"
+                            Margin="0 0 100 0"
+                            GroupName="TipoImpresion"
+                            Tag="3"
+                            IsChecked="{Binding TipoImpresion, Converter={StaticResource RadioEqualsConverter}, ConverterParameter=3}"/>
                     </StackPanel>
                 </StackPanel>
             </GroupBox>
@@ -181,13 +199,13 @@
                     <TextBlock Text="CTP NVA" Grid.Column="5" Grid.Row="0"/>
                     <TextBlock Text="U" Grid.Column="6" Grid.Row="0"/>
                     <!-- INPUTS -->
-                    <TextBox Grid.Column="0" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
-                    <TextBox Grid.Column="1" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
-                    <TextBox Grid.Column="2" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
-                    <TextBox Grid.Column="3" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
-                    <TextBox Grid.Column="4" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
-                    <TextBox Grid.Column="5" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
-                    <TextBox Grid.Column="6" Grid.Row="1" Margin="0 0 10 0" Height="35"/>
+                    <TextBox Grid.Column="0" Grid.Row="1" Margin="0 0 10 0" Height="35" Text="{Binding Maquina1}" />
+                    <TextBox Grid.Column="1" Grid.Row="1" Margin="0 0 10 0" Height="35" Text="{Binding Maquina2}" />
+                    <TextBox Grid.Column="2" Grid.Row="1" Margin="0 0 10 0" Height="35" Text="{Binding Pin}" />
+                    <TextBox Grid.Column="3" Grid.Row="1" Margin="0 0 10 0" Height="35" Text="{Binding Nva}" />
+                    <TextBox Grid.Column="4" Grid.Row="1" Margin="0 0 10 0" Height="35" Text="{Binding Us}" />
+                    <TextBox Grid.Column="5" Grid.Row="1" Margin="0 0 10 0" Height="35" Text="{Binding CtpNva}" />
+                    <TextBox Grid.Column="6" Grid.Row="1" Margin="0 0 10 0" Height="35" Text="{Binding U}" />
                 </Grid>
             </GroupBox>
             <!-- TABLA: Tipo Papel -->
@@ -203,49 +221,209 @@
                 </DataGrid>
             </GroupBox>
             <GroupBox Header="Sobres" Margin="0 0 0 15">
-                <StackPanel Margin="10" Orientation="Horizontal">
-                    <RadioButton Content="Cte." FontSize="20" IsChecked="True" Margin="0 0 20 0"/>
-                    <RadioButton Content="Amer." FontSize="20" Margin="0 0 20 0"/>
-                    <RadioButton Content="Amer. Especial" FontSize="20" Margin="0 0 20 0"/>
-                    <RadioButton Content="1/2 Oficio" FontSize="20" Margin="0 0 20 0"/>
-                    <RadioButton Content="Oficio" FontSize="20" Margin="0 0 20 0"/>
-                    <RadioButton Content="Otro" FontSize="20"/>
+                <StackPanel Orientation="Horizontal" Margin="10">
+                    <RadioButton Content="Cte."
+                                FontSize="20"
+                                Margin="0 0 20 0"
+                                GroupName="Sobres"
+                                Tag="1"
+                                IsChecked="{Binding Sobres,
+                                                    Converter={StaticResource RadioEqualsConverter},
+                                                    ConverterParameter=1}"/>
+                    <RadioButton Content="Amer."
+                                FontSize="20"
+                                Margin="0 0 20 0"
+                                GroupName="Sobres"
+                                Tag="2"
+                                IsChecked="{Binding Sobres,
+                                                    Converter={StaticResource RadioEqualsConverter},
+                                                    ConverterParameter=2}"/>
+                    <RadioButton Content="Amer. Especial"
+                                FontSize="20"
+                                Margin="0 0 20 0"
+                                GroupName="Sobres"
+                                Tag="3"
+                                IsChecked="{Binding Sobres,
+                                                    Converter={StaticResource RadioEqualsConverter},
+                                                    ConverterParameter=3}"/>
+                    <RadioButton Content="1/2 Oficio"
+                                FontSize="20"
+                                Margin="0 0 20 0"
+                                GroupName="Sobres"
+                                Tag="4"
+                                IsChecked="{Binding Sobres,
+                                                    Converter={StaticResource RadioEqualsConverter},
+                                                    ConverterParameter=4}"/>
+                    <RadioButton Content="Oficio"
+                                FontSize="20"
+                                Margin="0 0 20 0"
+                                GroupName="Sobres"
+                                Tag="5"
+                                IsChecked="{Binding Sobres,
+                                                    Converter={StaticResource RadioEqualsConverter},
+                                                    ConverterParameter=5}"/>
+                    <RadioButton Content="Otro"
+                                FontSize="20"
+                                GroupName="Sobres"
+                                Tag="6"
+                                IsChecked="{Binding Sobres,
+                                                    Converter={StaticResource RadioEqualsConverter},
+                                                    ConverterParameter=6}"/>
                 </StackPanel>
             </GroupBox>
             <GroupBox Header="Sacos" Margin="0 0 0 15">
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <RadioButton Content="Amer." FontSize="20" IsChecked="True" Margin="0 0 20 0"/>
-                    <RadioButton Content="Amer. Especial" FontSize="20" Margin="0 0 20 0"/>
-                    <RadioButton Content="1/2 Oficio" FontSize="20" Margin="0 0 20 0"/>
-                    <RadioButton Content="Oficio" FontSize="20" Margin="0 0 20 0"/>
-                    <RadioButton Content="Otro" FontSize="20"/>
+                    <RadioButton Content="Amer."
+                                FontSize="20"
+                                Margin="0 0 20 0"
+                                GroupName="Sacos"
+                                Tag="1"
+                                IsChecked="{Binding Sacos,
+                                                    Converter={StaticResource RadioEqualsConverter},
+                                                    ConverterParameter=1}"/>
+                    <RadioButton Content="Amer. Especial"
+                                FontSize="20"
+                                Margin="0 0 20 0"
+                                GroupName="Sacos"
+                                Tag="2"
+                                IsChecked="{Binding Sacos,
+                                                    Converter={StaticResource RadioEqualsConverter},
+                                                    ConverterParameter=2}"/>
+                    <RadioButton Content="1/2 Oficio"
+                                FontSize="20"
+                                Margin="0 0 20 0"
+                                GroupName="Sacos"
+                                Tag="3"
+                                IsChecked="{Binding Sacos,
+                                                    Converter={StaticResource RadioEqualsConverter},
+                                                    ConverterParameter=3}"/>
+                    <RadioButton Content="Oficio"
+                                FontSize="20"
+                                Margin="0 0 20 0"
+                                GroupName="Sacos"
+                                Tag="4"
+                                IsChecked="{Binding Sacos,
+                                                    Converter={StaticResource RadioEqualsConverter},
+                                                    ConverterParameter=4}"/>
+                    <RadioButton Content="Otro"
+                                FontSize="20"
+                                GroupName="Sacos"
+                                Tag="5"
+                                IsChecked="{Binding Sacos,
+                                                    Converter={StaticResource RadioEqualsConverter},
+                                                    ConverterParameter=5}"/>
+
                 </StackPanel>
             </GroupBox>
             <GroupBox Header="Tintas" Margin="0 0 0 15">
                 <StackPanel Margin="10" Orientation="Vertical">
                     <!-- Tinta 1 -->
                     <StackPanel Orientation="Horizontal" Margin="0 5">
-                        <RadioButton Content="Tricromía" FontSize="20" IsChecked="True"/>
-                        <RadioButton Content="Pantone" FontSize="20" Margin="20 0"/>
-                        <RadioButton Content="S/Muestra" FontSize="20" Margin="20 0"/>
+                        <RadioButton Content="Tricromía"
+                                    FontSize="20"
+                                    Margin="0 0 20 0"
+                                    GroupName="Tintas1"
+                                    Tag="1"
+                                    IsChecked="{Binding Tintas1,
+                                                        Converter={StaticResource RadioEqualsConverter},
+                                                        ConverterParameter=1}"/>
+                        <RadioButton Content="Pantone"
+                                    FontSize="20"
+                                    Margin="20 0"
+                                    GroupName="Tintas1"
+                                    Tag="2"
+                                    IsChecked="{Binding Tintas1,
+                                                        Converter={StaticResource RadioEqualsConverter},
+                                                        ConverterParameter=2}"/>
+                        <RadioButton Content="S/Muestra"
+                                    FontSize="20"
+                                    Margin="20 0"
+                                    GroupName="Tintas1"
+                                    Tag="3"
+                                    IsChecked="{Binding Tintas1,
+                                                        Converter={StaticResource RadioEqualsConverter},
+                                                        ConverterParameter=3}"/>
                     </StackPanel>
                     <!-- Tinta 2 -->
                     <StackPanel Orientation="Horizontal" Margin="0 5">
-                        <RadioButton Content="Tricromía" FontSize="20" IsChecked="True"/>
-                        <RadioButton Content="Pantone" FontSize="20" Margin="20 0"/>
-                        <RadioButton Content="S/Muestra" FontSize="20" Margin="20 0"/>
+                        <RadioButton Content="Tricromía"
+                                    FontSize="20"
+                                    Margin="0 0 20 0"
+                                    GroupName="Tintas2"
+                                    Tag="1"
+                                    IsChecked="{Binding Tintas2,
+                                                        Converter={StaticResource RadioEqualsConverter},
+                                                        ConverterParameter=1}"/>
+                        <RadioButton Content="Pantone"
+                                    FontSize="20"
+                                    Margin="20 0"
+                                    GroupName="Tintas2"
+                                    Tag="2"
+                                    IsChecked="{Binding Tintas2,
+                                                        Converter={StaticResource RadioEqualsConverter},
+                                                        ConverterParameter=2}"/>
+                        <RadioButton Content="S/Muestra"
+                                    FontSize="20"
+                                    Margin="20 0"
+                                    GroupName="Tintas2"
+                                    Tag="3"
+                                    IsChecked="{Binding Tintas2,
+                                                        Converter={StaticResource RadioEqualsConverter},
+                                                        ConverterParameter=3}"/>
                     </StackPanel>
                     <!-- Tinta 3 -->
                     <StackPanel Orientation="Horizontal" Margin="0 5">
-                        <RadioButton Content="Tricromía" FontSize="20" IsChecked="True"/>
-                        <RadioButton Content="Pantone" FontSize="20" Margin="20 0"/>
-                        <RadioButton Content="S/Muestra" FontSize="20" Margin="20 0"/>
+                        <RadioButton Content="Tricromía"
+                                    FontSize="20"
+                                    Margin="0 0 20 0"
+                                    GroupName="Tintas3"
+                                    Tag="1"
+                                    IsChecked="{Binding Tintas3,
+                                                        Converter={StaticResource RadioEqualsConverter},
+                                                        ConverterParameter=1}"/>
+                        <RadioButton Content="Pantone"
+                                    FontSize="20"
+                                    Margin="20 0"
+                                    GroupName="Tintas3"
+                                    Tag="2"
+                                    IsChecked="{Binding Tintas3,
+                                                        Converter={StaticResource RadioEqualsConverter},
+                                                        ConverterParameter=2}"/>
+                        <RadioButton Content="S/Muestra"
+                                    FontSize="20"
+                                    Margin="20 0"
+                                    GroupName="Tintas3"
+                                    Tag="3"
+                                    IsChecked="{Binding Tintas3,
+                                                        Converter={StaticResource RadioEqualsConverter},
+                                                        ConverterParameter=3}"/>
                     </StackPanel>
                     <!-- Tinta 4 -->
                     <StackPanel Orientation="Horizontal" Margin="0 5">
-                        <RadioButton Content="Tricromía" FontSize="20" IsChecked="True"/>
-                        <RadioButton Content="Pantone" FontSize="20" Margin="20 0"/>
-                        <RadioButton Content="S/Muestra" FontSize="20" Margin="20 0"/>
+                        <RadioButton Content="Tricromía"
+                                    FontSize="20"
+                                    Margin="0 0 20 0"
+                                    GroupName="Tintas4"
+                                    Tag="1"
+                                    IsChecked="{Binding Tintas4,
+                                                        Converter={StaticResource RadioEqualsConverter},
+                                                        ConverterParameter=1}"/>
+                        <RadioButton Content="Pantone"
+                                    FontSize="20"
+                                    Margin="20 0"
+                                    GroupName="Tintas4"
+                                    Tag="2"
+                                    IsChecked="{Binding Tintas4,
+                                                        Converter={StaticResource RadioEqualsConverter},
+                                                        ConverterParameter=2}"/>
+                        <RadioButton Content="S/Muestra"
+                                    FontSize="20"
+                                    Margin="20 0"
+                                    GroupName="Tintas4"
+                                    Tag="3"
+                                    IsChecked="{Binding Tintas4,
+                                                        Converter={StaticResource RadioEqualsConverter},
+                                                        ConverterParameter=3}"/>
                     </StackPanel>
                 </StackPanel>
             </GroupBox>
