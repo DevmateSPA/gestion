@@ -2,13 +2,81 @@ using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
-public class OrdenTrabajo : FacturaBase
+public class OrdenTrabajo :  IModel
 {
-    public string Tipo { get; set; } = string.Empty;
-    [Visible(false)]
-    public int Debe { get; set; }
-    [Visible(false)]
-    public int Habe { get; set; }
-    [Visible(false)]
-    public string Fopa { get; set; } = string.Empty;
+    public long Id { get; set; }
+    public string Folio { get; set; } = string.Empty;
+    public DateTime Fecha { get; set; } = DateTime.Now;
+    public string RutCliente { get; set; } = string.Empty;
+    public string Descripcion { get; set; } = string.Empty;
+    public int Cantidad { get; set; } = 0;
+    public int TotalImpresion { get; set; } = 0;
+    public string FolioDesde { get; set; } = string.Empty;
+    public string FolioHasta { get; set; } = string.Empty;
+    public int CortarTamanio { get; set; } = 0;
+    public string CortarTamanion { get; set; } = string.Empty;
+    public string CortarTamanioLargo { get; set; } = string.Empty;
+    public int Montar { get; set; } = 0;
+    public int MoldeTamanio { get; set; } = 0;
+    public string TamanioFinalAncho { get; set; } = string.Empty;
+    public string TamanioFinalLargo { get; set; } = string.Empty;
+    public string ClienteProporcionanada { get; set; } = string.Empty;
+    public string ClienteProporcionaOriginal { get; set; } = string.Empty;
+    public string ClienteProporcionaPelicula { get; set; } = string.Empty;
+    public string ClienteProporcionaPlancha { get; set; } = string.Empty;
+    public string ClienteProporcionaPapel { get; set; } = string.Empty;
+    public string TipoImpresion { get; set; } = string.Empty;
+    public string Maquina1 { get; set; } = string.Empty;
+    public string Maquina2 { get; set; } = string.Empty;
+    public string Pin { get; set; } = string.Empty;
+    public int Nva { get; set; } = 0;
+    public int Us { get; set; } = 0;
+    public int CtpNva { get; set; } = 0;
+    public int U { get; set; } = 0;
+    public string Sobres { get; set; } = string.Empty;
+    public string Sacos { get; set; } = string.Empty;
+    public string tintas1 { get; set; } = string.Empty;
+    public string tintas2 { get; set; } = string.Empty;
+    public string tintas3 { get; set; } = string.Empty;
+    public string tintas4 { get; set; } = string.Empty;
+    public string GEST14TDE1 { get; set; } = string.Empty;
+    public string GEST14TDE2 { get; set; } = string.Empty;
+    public string GEST14TDE3 { get; set; } = string.Empty;
+    public string GEST14TDE4 { get; set; } = string.Empty;
+    public int GEST14BLOC { get; set; } = 0;
+    public int GEST14BLAN { get; set; } = 0;
+    public int GEST14BLLA { get; set; } = 0;
+    public int GEST14TALO { get; set; } = 0;
+    public int GEST14TAAN { get; set; } = 0;
+    public int GEST14TALA { get; set; } = 0;
+    public int GEST14PAQU { get; set; } = 0;
+    public int GEST14CAPA { get; set; } = 0;
+    public int GEST14RESM { get; set; } = 0;
+    public int GEST14CARE { get; set; } = 0;
+    public int GEST14FAJA { get; set; } = 0;
+    public int GEST14CAFA { get; set; } = 0;
+    public string GEST14FETE { get; set; } = string.Empty;
+    public string GEST14FEEN { get; set; } = string.Empty;
+    public string GEST14GUDE { get; set; } = string.Empty;
+    public string GEST14GUHA { get; set; } = string.Empty;
+    public string GEST14FADE { get; set; } = string.Empty;
+    public string GEST14FAHA { get; set; } = string.Empty;
+    public string GEST14OBS1 { get; set; } = string.Empty;
+    public string GEST14OBS2 { get; set; } = string.Empty;
+    public string GEST14OBS3 { get; set; } = string.Empty;
+    public string GEST14OBS4 { get; set; } = string.Empty;
+    public string GEST14OBS5 { get; set; } = string.Empty;
+    public string GEST14OBS6 { get; set; } = string.Empty;
+    public string GEST14OBS7 { get; set; } = string.Empty;
+    public string GEST14OBS8 { get; set; } = string.Empty;
+    public string GEST14OBS9 { get; set; } = string.Empty;
+    public string GEST14OPE1 { get; set; } = string.Empty;
+    public string GEST14OPE2 { get; set; } = string.Empty;
+    public string GEST14INNO { get; set; } = string.Empty;
+    public string GEST14INRO { get; set; } = string.Empty;
+    public string GEST14FACT { get; set; } = string.Empty;
+    public string GEST14VIPT { get; set; } = string.Empty;
+    public string GEST14VIRT { get; set; } = string.Empty;
+    public string GEST14VIMO { get; set; } = string.Empty;
+    public int Empresa { get; set; } = 0;
 }
