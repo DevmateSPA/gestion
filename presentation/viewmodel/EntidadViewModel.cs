@@ -14,7 +14,19 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IMo
     protected readonly IDialogService _dialogService;
     protected readonly IBaseService<T> _service;
 
-    public ObservableCollection<T> Entidades { get; } = new();
+    private ObservableCollection<T> _entidades = new ObservableCollection<T>();
+    public ObservableCollection<T> Entidades
+    {
+        get => _entidades;
+        set
+        {
+            if (_entidades != value)
+            {
+                _entidades = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Entidades)));
+            }
+        }
+    }
     private bool _isLoading;
     public bool IsLoading
     {
