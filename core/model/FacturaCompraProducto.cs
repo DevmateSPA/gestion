@@ -16,5 +16,5 @@ public class FacturaCompraProducto : IDetalle
     public string Maquina { get; set; } = string.Empty;
     public string Operario { get; set; } = string.Empty;
     [Fecha]
-    public DateTime Fecha { get; set; }
+    public DateTime Fecha { get; set; } = DateTime.Now;
 }
