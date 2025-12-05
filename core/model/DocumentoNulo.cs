@@ -12,5 +12,5 @@ public class DocumentoNulo : IModel
     [Fecha]
     public DateTime Fecha { get; set; }
     [Visible(false)]
-    public int Empresa { get; set; }
+    public long Empresa { get; set; }
 }
