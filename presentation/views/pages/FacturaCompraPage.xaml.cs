@@ -24,7 +24,7 @@ public partial class FacturaCompraPage : Page
 
         Loaded += async (_, _) =>
         {
-            await _viewModel.LoadAllByEmpresa();
+            await _viewModel.LoadAll();
         };
         _dataGrid = dgFacturasCompra;
         _dataGrid.ItemContainerGenerator.StatusChanged += DgFacturasCompra_StatusChanged;
