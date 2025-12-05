@@ -31,7 +31,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding MaquinasFiltradas}" 
+                ItemsSource="{Binding EntidadesView}" 
                 FontSize="16" 
                 IsReadOnly="True"
                 MouseDoubleClick="dgMaquinas_MouseDoubleClick" 

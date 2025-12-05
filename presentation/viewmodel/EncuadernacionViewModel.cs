@@ -10,29 +10,7 @@ namespace Gestion.presentation.viewmodel
 {
     public class EncuadernacionViewModel : EntidadViewModel<Encuadernacion>, INotifyPropertyChanged
     {
-        public ObservableCollection<Encuadernacion> Encuadernaciones => Entidades;
-
-        private ObservableCollection<Encuadernacion> _encuadernacionesFiltradas = new();
-        public ObservableCollection<Encuadernacion> EncuadernacionesFiltradas
-        {
-            get => _encuadernacionesFiltradas;
-            set { _encuadernacionesFiltradas = value; OnPropertyChanged(); }
-        }
-
         public EncuadernacionViewModel(IEncuadernacionService encuadernacionService, IDialogService dialogService)
-            : base(encuadernacionService, dialogService)
-        {}
-
-        public override async Task LoadAll()
-        {
-            await base.LoadAll();
-            EncuadernacionesFiltradas = new ObservableCollection<Encuadernacion>(Encuadernaciones);
-        }
-
-        public override async Task LoadAllByEmpresa()
-        {
-            await base.LoadAllByEmpresa();
-            EncuadernacionesFiltradas = new ObservableCollection<Encuadernacion>(Encuadernaciones);
-        }
+            : base(encuadernacionService, dialogService) {}
     }
 }

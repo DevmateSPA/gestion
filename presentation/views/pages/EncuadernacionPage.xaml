@@ -30,7 +30,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding EncuadernacionesFiltradas}"
+                ItemsSource="{Binding EntidadesView}"
                 IsReadOnly="True"
                 Margin="0,5,0,5"
                 FontSize="16" 

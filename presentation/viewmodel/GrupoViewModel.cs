@@ -9,29 +9,7 @@ namespace Gestion.presentation.viewmodel
 {
     public class GrupoViewModel : EntidadViewModel<Grupo>, INotifyPropertyChanged
     {
-        public ObservableCollection<Grupo> Grupos => Entidades;
-
-        private ObservableCollection<Grupo> _gruposFiltrados = new();
-        public ObservableCollection<Grupo> GruposFiltrados
-        {
-            get => _gruposFiltrados;
-            set { _gruposFiltrados = value; OnPropertyChanged(); }
-        }
-
         public GrupoViewModel(IGrupoService grupoService, IDialogService dialogService)
-            : base(grupoService, dialogService)
-        {}
-
-        public override async Task LoadAll()
-        {
-            await base.LoadAll();
-            GruposFiltrados = new ObservableCollection<Grupo>(Grupos);
-        }
-
-        public override async Task LoadAllByEmpresa()
-        {
-            await base.LoadAllByEmpresa();
-            GruposFiltrados = new ObservableCollection<Grupo>(Grupos);
-        }
+            : base(grupoService, dialogService) {}
     }
 }

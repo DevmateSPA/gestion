@@ -10,29 +10,7 @@ namespace Gestion.presentation.viewmodel
 {
     public class ImpresionViewModel : EntidadViewModel<Impresion>, INotifyPropertyChanged
     {
-        public ObservableCollection<Impresion> Impresiones => Entidades;
-
-        private ObservableCollection<Impresion> _impresionesFiltradas = new();
-        public ObservableCollection<Impresion> ImpresionesFiltradas
-        {
-            get => _impresionesFiltradas;
-            set { _impresionesFiltradas = value; OnPropertyChanged(); }
-        }
-
         public ImpresionViewModel(IImpresionService impresionService, IDialogService dialogService)
-            : base(impresionService, dialogService)
-        {}
-
-        public override async Task LoadAll()
-        {
-            await base.LoadAll();
-            ImpresionesFiltradas = new ObservableCollection<Impresion>(Impresiones);
-        }
-
-        public override async Task LoadAllByEmpresa()
-        {
-            await base.LoadAllByEmpresa();
-            ImpresionesFiltradas = new ObservableCollection<Impresion>(Impresiones);
-        }
+            : base(impresionService, dialogService) {}
     }
 }

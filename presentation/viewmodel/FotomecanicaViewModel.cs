@@ -10,29 +10,7 @@ namespace Gestion.presentation.viewmodel
 {
     public class FotomecanicaViewModel : EntidadViewModel<Fotomecanica>, INotifyPropertyChanged
     {
-        public ObservableCollection<Fotomecanica> Fotomecanicas => Entidades;
-
-        private ObservableCollection<Fotomecanica> _fotomecanicasFiltradas = new();
-        public ObservableCollection<Fotomecanica> FotomecanicasFiltradas
-        {
-            get => _fotomecanicasFiltradas;
-            set { _fotomecanicasFiltradas = value; OnPropertyChanged(); }
-        }
-
         public FotomecanicaViewModel(IFotomecanicaService fotomecanicaService, IDialogService dialogService)
-            : base(fotomecanicaService, dialogService)
-        {}
-
-        public override async Task LoadAll()
-        {
-            await base.LoadAll();
-            FotomecanicasFiltradas = new ObservableCollection<Fotomecanica>(Fotomecanicas);
-        }
-
-        public override async Task LoadAllByEmpresa()
-        {
-            await base.LoadAllByEmpresa();
-            FotomecanicasFiltradas = new ObservableCollection<Fotomecanica>(Fotomecanicas);
-        }
+            : base(fotomecanicaService, dialogService) {}
     }
 }

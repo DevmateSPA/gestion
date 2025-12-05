@@ -7,28 +7,6 @@ namespace Gestion.presentation.viewmodel;
 
 public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyPropertyChanged
 {
-    public ObservableCollection<OrdenTrabajo> OrdenesTrabajo => Entidades;
-
-    private ObservableCollection<OrdenTrabajo> _ordenesTrabajosFiltradas = new();
-    public ObservableCollection<OrdenTrabajo> OrdenesTrabajoFiltradas
-    {
-        get => _ordenesTrabajosFiltradas;
-        set { _ordenesTrabajosFiltradas = value; OnPropertyChanged(); }
-    }
-
     public OrdenTrabajoViewModel(IOrdenTrabajoService ordenTrabajoService, IDialogService dialogService)
-        : base(ordenTrabajoService, dialogService)
-    {}
-
-    public override async Task LoadAll()
-    {
-        await base.LoadAll();
-        OrdenesTrabajoFiltradas = new ObservableCollection<OrdenTrabajo>(OrdenesTrabajo);
-    }
-
-    public override async Task LoadAllByEmpresa()
-    {
-        await base.LoadAllByEmpresa();
-        OrdenesTrabajoFiltradas = new ObservableCollection<OrdenTrabajo>(OrdenesTrabajo);
-    }
+        : base(ordenTrabajoService, dialogService) {}
 }
