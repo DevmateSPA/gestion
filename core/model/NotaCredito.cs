@@ -3,7 +3,7 @@ using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
-public class NotaCredito : IModel
+public class NotaCredito : IEmpresa
 {
     public long Id { get; set; }
     public string Folio { get; set; } = string.Empty;
@@ -19,5 +19,5 @@ public class NotaCredito : IModel
     [Fecha]
     public DateTime Fecha { get; set; }
     [Visible(false)]
-    public int Empresa { get; set; }
+    public long Empresa { get; set; }
 }

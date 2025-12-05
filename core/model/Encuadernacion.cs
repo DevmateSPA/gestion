@@ -3,7 +3,7 @@ using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
-public class Encuadernacion : IModel
+public class Encuadernacion : IEmpresa
 {
     public long Id { get; set; }
     [Nombre("Código")]
@@ -13,5 +13,5 @@ public class Encuadernacion : IModel
     [Nombre("Valor por mil")]
     public int Valorpormil { get; private set; } = 0;
     [Visible(false)]
-    public int Empresa { get; set; }
+    public long Empresa { get; set; }
 }

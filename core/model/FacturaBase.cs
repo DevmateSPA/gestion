@@ -1,7 +1,7 @@
 using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
 
-public abstract class FacturaBase : IModel
+public abstract class FacturaBase : IEmpresa
 {
     public long Id { get; set; }
 

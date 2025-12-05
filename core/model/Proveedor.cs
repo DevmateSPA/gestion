@@ -3,7 +3,7 @@ using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
-public class Proveedor : IModel
+public class Proveedor : IEmpresa
 {
     public long Id { get; set; }
     [Rut]
@@ -30,5 +30,5 @@ public class Proveedor : IModel
     public long Habe { get; private set; }
     public long Saldo { get; private set; }
     [Visible(false)]
-    public int Empresa { get; set; }
+    public long Empresa { get; set; }
 }

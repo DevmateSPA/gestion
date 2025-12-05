@@ -3,7 +3,7 @@ using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
-public class DocumentoNulo : IModel
+public class DocumentoNulo : IEmpresa
 {
     public long Id { get; set; }
     public string Tipo { get; set; } = string.Empty;

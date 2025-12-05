@@ -4,7 +4,7 @@ using Gestion.core.model.detalles;
 
 namespace Gestion.core.model;
 
-public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IModel
+public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
 {
     public long Id { get; set; }
     public string Folio { get; set; } = string.Empty;
@@ -82,5 +82,5 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IModel
     public string GEST14VIPT { get; set; } = string.Empty;
     public string GEST14VIRT { get; set; } = string.Empty;
     public string GEST14VIMO { get; set; } = string.Empty;
-    public int Empresa { get; set; } = 0;
+    public long Empresa { get; set; } = 0;
 }

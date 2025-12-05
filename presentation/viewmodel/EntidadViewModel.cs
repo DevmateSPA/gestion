@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 
 namespace Gestion.presentation.viewmodel;
 
-public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IModel
+public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEmpresa
 {
     protected readonly IDialogService _dialogService;
     protected readonly IBaseService<T> _service;
@@ -131,6 +131,9 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IMo
     public Task Update(T entidad) =>
         RunServiceAction(() => _service.Update(entidad), () => replaceEntity(entidad), $"Error al actualizar {typeof(T).Name}");
 
-    public Task Save(T entidad) =>
-        RunServiceAction(() => _service.Save(entidad), () => addEntity(entidad), $"Error al guardar {typeof(T).Name}");
+    public Task Save(T entidad)
+    {
+        entidad.Empresa = SesionApp.IdEmpresa;
+        return RunServiceAction(() => _service.Save(entidad), () => addEntity(entidad), $"Error al guardar {typeof(T).Name}");
+    }
 }
