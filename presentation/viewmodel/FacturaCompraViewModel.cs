@@ -14,26 +14,4 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
     public FacturaCompraViewModel(IFacturaCompraService facturaCompraService, IDialogService dialogService)
         : base(facturaCompraService, dialogService)
     {}
-
-    public override async Task LoadAllByEmpresa()
-    {
-        this.IsLoading = true;
-        await SafeExecutor.RunAsync(async () =>
-        {
-           var lista = await _service.FindAll();
-
-            if (!lista.Any())
-                _dialogService.ShowMessage($"No hay facturas de compra para la empresa {SesionApp.NombreEmpresa}");
-
-           var dateProp = GetDateProperty(typeof(FacturaCompra));
-           if (dateProp != null)
-            {
-                lista = lista.OrderByDescending(x => dateProp.GetValue(x)).ToList();
-            }
-            Entidades.Clear();
-            foreach(var entidad in lista)
-                addEntity(entidad);
-        }, _dialogService, $"Error al cargar las factura de compra de la empresa {SesionApp.NombreEmpresa}");
-        this.IsLoading = false;
-    }
 }
