@@ -16,13 +16,6 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
         set { _ordenesTrabajosFiltradas = value; OnPropertyChanged(); }
     }
 
-    private string _filtro = "";
-    public string Filtro
-    {
-        get => _filtro;
-        set { _filtro = value; OnPropertyChanged(); }
-    }
-
     public OrdenTrabajoViewModel(IOrdenTrabajoService ordenTrabajoService, IDialogService dialogService)
         : base(ordenTrabajoService, dialogService)
     {}

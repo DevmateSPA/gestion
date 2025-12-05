@@ -18,13 +18,6 @@ public class DocumentoNuloViewModel : EntidadViewModel<DocumentoNulo>, INotifyPr
         set { _documentosFiltrados = value; OnPropertyChanged(); }
     }
 
-    private string _filtro = "";
-    public string Filtro
-    {
-        get => _filtro;
-        set { _filtro = value; OnPropertyChanged(); }
-    }
-
     public DocumentoNuloViewModel(IDocumentoNuloService documentoNuloService, IDialogService dialogService)
         : base(documentoNuloService, dialogService)
     {}
@@ -55,15 +48,6 @@ public class DocumentoNuloViewModel : EntidadViewModel<DocumentoNulo>, INotifyPr
             DocumentosNulos.Where(d =>
                 (d.Folio != null && d.Folio.ToString().Contains(lower))
                 || d.Fecha.ToString("dd/MM/yyyy").Contains(lower)
-                ||(d.Glosa != null && d.Glosa.ToString().Contains(lower))
-            )
-
-);
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                ||(d.Glosa != null && d.Glosa.ToString().Contains(lower))));
     }
 }

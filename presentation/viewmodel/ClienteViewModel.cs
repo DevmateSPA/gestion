@@ -18,13 +18,6 @@ namespace Gestion.presentation.viewmodel
             set { _clientesFiltrados = value; OnPropertyChanged(); }
         }
 
-        private string _filtro = "";
-        public string Filtro
-        {
-            get => _filtro;
-            set { _filtro = value; OnPropertyChanged(); }
-        }
-
         public ClienteViewModel(IClienteService clienteService, IDialogService dialogService)
             : base(clienteService, dialogService)
         {}
@@ -58,12 +51,6 @@ namespace Gestion.presentation.viewmodel
                     || (c.Giro?.ToLower().Contains(lower) ?? false)
                 )
             );
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

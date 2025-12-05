@@ -18,13 +18,6 @@ namespace Gestion.presentation.viewmodel
             set { _proveedoresFiltrados = value; OnPropertyChanged(); }
         }
 
-        private string _filtro = "";
-        public string Filtro
-        {
-            get => _filtro;
-            set { _filtro = value; OnPropertyChanged(); }
-        }
-
         public ProveedorViewModel(IProveedorService proveedorService, IDialogService dialogService)
             : base(proveedorService, dialogService)
         {}
@@ -58,12 +51,6 @@ namespace Gestion.presentation.viewmodel
                     || (p.Giro?.ToLower().Contains(lower) ?? false)
                 )
             );
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

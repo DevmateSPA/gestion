@@ -18,13 +18,6 @@ namespace Gestion.presentation.viewmodel
             set { _maquinasFiltradas = value; OnPropertyChanged(); }
         }
 
-        private string _filtro = "";
-        public string Filtro
-        {
-            get => _filtro;
-            set { _filtro = value; OnPropertyChanged(); }
-        }
-
         public MaquinaViewModel(IMaquinaService maquinaService, IDialogService dialogService)
             : base(maquinaService, dialogService)
         {}
@@ -57,12 +50,6 @@ namespace Gestion.presentation.viewmodel
                     || m.Codigo.ToString().Contains(lower)
                 )
             );
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

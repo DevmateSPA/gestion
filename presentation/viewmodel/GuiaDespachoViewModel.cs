@@ -19,13 +19,6 @@ public class GuiaDespachoViewModel : EntidadViewModel<GuiaDespacho>, INotifyProp
         set { _guiasFiltradas = value; OnPropertyChanged(); }
     }
 
-    private string _filtro = "";
-    public string Filtro
-    {
-        get => _filtro;
-        set { _filtro = value; OnPropertyChanged(); }
-    }
-
     public GuiaDespachoViewModel(IGuiaDespachoService guiaDespachoService, IDialogService dialogService)
         : base(guiaDespachoService, dialogService)
     {}
@@ -59,11 +52,5 @@ public class GuiaDespachoViewModel : EntidadViewModel<GuiaDespacho>, INotifyProp
                 || g.Fecha.ToString("dd/MM/yyyy").Contains(lower)
             )
         );
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

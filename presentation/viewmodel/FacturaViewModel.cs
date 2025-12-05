@@ -14,13 +14,6 @@ public class FacturaViewModel : EntidadViewModel<Factura>
         set { _facturasFiltradas = value; OnPropertyChanged(); }
     }
 
-    private string _filtro = "";
-    public string Filtro
-    {
-        get => _filtro;
-        set { _filtro = value; OnPropertyChanged(); }
-    }
-
     public FacturaViewModel(IFacturaService facturaService, IDialogService dialogService)
         : base(facturaService, dialogService) {}
 

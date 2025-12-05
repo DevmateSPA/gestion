@@ -27,6 +27,12 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
             }
         }
     }
+    private string _filtro = "";
+    public string Filtro
+    {
+        get => _filtro;
+        set { _filtro = value; OnPropertyChanged(); }
+    }
     private bool _isLoading;
     public bool IsLoading
     {

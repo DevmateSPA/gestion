@@ -18,13 +18,6 @@ public class NotaCreditoViewModel : EntidadViewModel<NotaCredito>, INotifyProper
         set { _notasFiltradas = value; OnPropertyChanged(); }
     }
 
-    private string _filtro = "";
-    public string Filtro
-    {
-        get => _filtro;
-        set { _filtro = value; OnPropertyChanged(); }
-    }
-
     public NotaCreditoViewModel(INotaCreditoService notaCreditoService, IDialogService dialogService)
         : base(notaCreditoService, dialogService)
     {}
@@ -58,11 +51,5 @@ public class NotaCreditoViewModel : EntidadViewModel<NotaCredito>, INotifyProper
                 || n.Fecha.ToString("dd/MM/yyyy").Contains(lower)
             )
         );
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

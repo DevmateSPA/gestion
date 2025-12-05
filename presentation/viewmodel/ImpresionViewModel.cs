@@ -19,13 +19,6 @@ namespace Gestion.presentation.viewmodel
             set { _impresionesFiltradas = value; OnPropertyChanged(); }
         }
 
-        private string _filtro = "";
-        public string Filtro
-        {
-            get => _filtro;
-            set { _filtro = value; OnPropertyChanged(); }
-        }
-
         public ImpresionViewModel(IImpresionService impresionService, IDialogService dialogService)
             : base(impresionService, dialogService)
         {}
@@ -58,12 +51,6 @@ namespace Gestion.presentation.viewmodel
                     || i.Codigo.ToString().Contains(lower)
                 )
             );
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

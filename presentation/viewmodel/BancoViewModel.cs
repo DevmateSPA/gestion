@@ -15,13 +15,6 @@ public class BancoViewModel : EntidadViewModel<Banco>, INotifyPropertyChanged
         set { _bancosFiltrados = value; OnPropertyChanged(); }
     }
 
-    private string _filtro = "";
-    public string Filtro
-    {
-        get => _filtro;
-        set { _filtro = value; OnPropertyChanged(); }
-    }
-
     public BancoViewModel(IBancoService bancoService, IDialogService dialogService)
         : base(bancoService, dialogService) {}
 
