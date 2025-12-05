@@ -83,6 +83,7 @@ public partial class OrdenTrabajoPage : Page
         //var ordenTrabajoEditada = (OrdenTrabajo)ventana.EntidadEditada;
 
         //await _viewModel.Update(ordenTrabajoEditada);
+        ordenTrabajo.Detalles?.Clear();
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
