@@ -34,7 +34,7 @@ namespace Gestion.presentation.viewmodel
             ClientesFiltrados = new ObservableCollection<Cliente>(Clientes);
         }
 
-        public void Buscar()
+        public override void Buscar()
         {
             if (string.IsNullOrWhiteSpace(Filtro))
             {

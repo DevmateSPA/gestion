@@ -34,7 +34,7 @@ public class NotaCreditoViewModel : EntidadViewModel<NotaCredito>, INotifyProper
         NotasCreditoFiltradas = new ObservableCollection<NotaCredito>(NotasCredito);
     }
 
-    public void Buscar()
+    public override void Buscar()
     {
         if (string.IsNullOrWhiteSpace(Filtro))
         {

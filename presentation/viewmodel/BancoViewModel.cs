@@ -30,7 +30,7 @@ public class BancoViewModel : EntidadViewModel<Banco>, INotifyPropertyChanged
         BancosFiltrados = new ObservableCollection<Banco>(Bancos);
     }
 
-    public void Buscar()
+    public override void Buscar()
     {
         if (string.IsNullOrWhiteSpace(Filtro))
         {

@@ -14,4 +14,9 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
     public FacturaCompraViewModel(IFacturaCompraService facturaCompraService, IDialogService dialogService)
         : base(facturaCompraService, dialogService)
     {}
+
+    public override void Buscar()
+    {
+        throw new NotImplementedException();
+    }
 }

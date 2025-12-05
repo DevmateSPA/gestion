@@ -30,7 +30,7 @@ public class FacturaViewModel : EntidadViewModel<Factura>
         FacturasFiltradas = new ObservableCollection<Factura>(Facturas);
     }
 
-    public void Buscar()
+    public override void Buscar()
     {
         if (string.IsNullOrWhiteSpace(Filtro))
         {

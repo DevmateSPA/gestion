@@ -35,7 +35,7 @@ public class GuiaDespachoViewModel : EntidadViewModel<GuiaDespacho>, INotifyProp
         GuiasDespachoFiltradas = new ObservableCollection<GuiaDespacho>(GuiasDespacho);
     }
 
-    public void Buscar()
+    public override void Buscar()
     {
         if (string.IsNullOrWhiteSpace(Filtro))
         {

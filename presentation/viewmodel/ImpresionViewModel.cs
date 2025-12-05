@@ -35,7 +35,7 @@ namespace Gestion.presentation.viewmodel
             ImpresionesFiltradas = new ObservableCollection<Impresion>(Impresiones);
         }
 
-        public void Buscar()
+        public override void Buscar()
         {
             if (string.IsNullOrWhiteSpace(Filtro))
             {

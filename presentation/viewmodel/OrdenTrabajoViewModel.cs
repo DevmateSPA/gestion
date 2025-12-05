@@ -31,7 +31,7 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
         await base.LoadAllByEmpresa();
         OrdenesTrabajoFiltradas = new ObservableCollection<OrdenTrabajo>(OrdenesTrabajo);
     }
-    public void Buscar()
+    public override void Buscar()
     {
         if (string.IsNullOrWhiteSpace(Filtro))
         {

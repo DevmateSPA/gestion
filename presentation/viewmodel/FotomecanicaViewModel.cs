@@ -35,7 +35,7 @@ namespace Gestion.presentation.viewmodel
             FotomecanicasFiltradas = new ObservableCollection<Fotomecanica>(Fotomecanicas);
         }
 
-        public void Buscar()
+        public override void Buscar()
         {
             if (string.IsNullOrWhiteSpace(Filtro))
             {

@@ -34,7 +34,7 @@ namespace Gestion.presentation.viewmodel
             GruposFiltrados = new ObservableCollection<Grupo>(Grupos);
         }
 
-        public void Buscar()
+        public override void Buscar()
         {
             if (string.IsNullOrWhiteSpace(Filtro))
             {

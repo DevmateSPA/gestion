@@ -34,7 +34,7 @@ public class DocumentoNuloViewModel : EntidadViewModel<DocumentoNulo>, INotifyPr
         DocumentosNulosFiltrados = new ObservableCollection<DocumentoNulo>(DocumentosNulos);
     }
 
-    public void Buscar()
+    public override void Buscar()
     {
         if (string.IsNullOrWhiteSpace(Filtro))
         {

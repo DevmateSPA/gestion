@@ -34,7 +34,7 @@ namespace Gestion.presentation.viewmodel
             ProductosFiltrados = new ObservableCollection<Producto>(Productos);
         }
 
-        public void Buscar()
+        public override void Buscar()
         {
             if (string.IsNullOrWhiteSpace(Filtro))
             {

@@ -34,7 +34,7 @@ namespace Gestion.presentation.viewmodel
             OperariosFiltrados = new ObservableCollection<Operario>(Operarios);
         }
 
-        public void Buscar()
+        public override void Buscar()
         {
             if (string.IsNullOrWhiteSpace(Filtro))
             {

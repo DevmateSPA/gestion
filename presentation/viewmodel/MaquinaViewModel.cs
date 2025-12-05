@@ -34,7 +34,7 @@ namespace Gestion.presentation.viewmodel
             MaquinasFiltradas = new ObservableCollection<Maquina>(Maquinas);
         }
 
-        public void Buscar()
+        public override void Buscar()
         {
             if (string.IsNullOrWhiteSpace(Filtro))
             {

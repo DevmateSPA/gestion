@@ -14,19 +14,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
     protected readonly IDialogService _dialogService;
     protected readonly IBaseService<T> _service;
 
-    private ObservableCollection<T> _entidades = new ObservableCollection<T>();
-    public ObservableCollection<T> Entidades
-    {
-        get => _entidades;
-        set
-        {
-            if (_entidades != value)
-            {
-                _entidades = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Entidades)));
-            }
-        }
-    }
+    public ObservableCollection<T> Entidades { get; set; } = new ObservableCollection<T>();
     private string _filtro = "";
     public string Filtro
     {
@@ -54,6 +42,8 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         _dialogService = dialogService;
         _service = baseService;
     }
+
+    public abstract void Buscar();
 
     private protected void removeEntityById(long id)
     {

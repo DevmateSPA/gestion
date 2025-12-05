@@ -35,7 +35,7 @@ namespace Gestion.presentation.viewmodel
             EncuadernacionesFiltradas = new ObservableCollection<Encuadernacion>(Encuadernaciones);
         }
 
-        public void Buscar()
+        public override void Buscar()
         {
             if (string.IsNullOrWhiteSpace(Filtro))
             {
