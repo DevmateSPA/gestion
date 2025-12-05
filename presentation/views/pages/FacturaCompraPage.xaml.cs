@@ -76,6 +76,7 @@ public partial class FacturaCompraPage : Page
         var facturaEditada = (FacturaCompra)ventana.EntidadEditada;
 
         await _viewModel.Update(facturaEditada);
+        factura.Detalles?.Clear();
     }
 
     // ------------------------------------------------------ |
