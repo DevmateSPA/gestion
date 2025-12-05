@@ -33,23 +33,5 @@ namespace Gestion.presentation.viewmodel
             await base.LoadAllByEmpresa();
             MaquinasFiltradas = new ObservableCollection<Maquina>(Maquinas);
         }
-
-        public override void Buscar()
-        {
-            if (string.IsNullOrWhiteSpace(Filtro))
-            {
-                MaquinasFiltradas = new ObservableCollection<Maquina>(Maquinas);
-                return;
-            }
-
-            var lower = Filtro.ToLower();
-
-            MaquinasFiltradas = new ObservableCollection<Maquina>(
-                Maquinas.Where(m =>
-                       (m.Descripcion?.ToLower().Contains(lower) ?? false)
-                    || m.Codigo.ToString().Contains(lower)
-                )
-            );
-        }
     }
 }

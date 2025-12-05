@@ -34,23 +34,5 @@ namespace Gestion.presentation.viewmodel
             await base.LoadAllByEmpresa();
             ImpresionesFiltradas = new ObservableCollection<Impresion>(Impresiones);
         }
-
-        public override void Buscar()
-        {
-            if (string.IsNullOrWhiteSpace(Filtro))
-            {
-                ImpresionesFiltradas = new ObservableCollection<Impresion>(Impresiones);
-                return;
-            }
-
-            var lower = Filtro.ToLower();
-
-            ImpresionesFiltradas = new ObservableCollection<Impresion>(
-                Impresiones.Where(i =>
-                       (i.Descripcion?.ToLower().Contains(lower) ?? false)
-                    || i.Codigo.ToString().Contains(lower)
-                )
-            );
-        }
     }
 }

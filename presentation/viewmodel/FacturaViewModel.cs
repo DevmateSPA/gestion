@@ -29,23 +29,4 @@ public class FacturaViewModel : EntidadViewModel<Factura>
         await base.LoadAllByEmpresa();
         FacturasFiltradas = new ObservableCollection<Factura>(Facturas);
     }
-
-    public override void Buscar()
-    {
-        if (string.IsNullOrWhiteSpace(Filtro))
-        {
-            FacturasFiltradas = new ObservableCollection<Factura>(Facturas);
-            return;
-        }
-
-        var lower = Filtro.ToLower();
-
-        FacturasFiltradas = new ObservableCollection<Factura>(
-            Facturas.Where(f =>
-                   f.Folio.ToLower().ToString().Contains(lower)
-                || f.RutCliente.ToLower().Contains(lower)
-                || f.Fecha.ToString("dd/MM/yyyy").Contains(lower)
-            )
-        );
-    }
 }

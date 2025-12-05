@@ -34,23 +34,5 @@ namespace Gestion.presentation.viewmodel
             await base.LoadAllByEmpresa();
             FotomecanicasFiltradas = new ObservableCollection<Fotomecanica>(Fotomecanicas);
         }
-
-        public override void Buscar()
-        {
-            if (string.IsNullOrWhiteSpace(Filtro))
-            {
-                FotomecanicasFiltradas = new ObservableCollection<Fotomecanica>(Fotomecanicas);
-                return;
-            }
-
-            var lower = Filtro.ToLower();
-
-            FotomecanicasFiltradas = new ObservableCollection<Fotomecanica>(
-                Fotomecanicas.Where(f =>
-                       (f.Descripcion?.ToLower().Contains(lower) ?? false)
-                    || f.Codigo.ToString().Contains(lower)
-                )
-            );
-        }
     }
 }

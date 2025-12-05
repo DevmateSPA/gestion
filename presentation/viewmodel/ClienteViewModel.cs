@@ -33,24 +33,5 @@ namespace Gestion.presentation.viewmodel
             await base.LoadAllByEmpresa();
             ClientesFiltrados = new ObservableCollection<Cliente>(Clientes);
         }
-
-        public override void Buscar()
-        {
-            if (string.IsNullOrWhiteSpace(Filtro))
-            {
-                ClientesFiltrados = new ObservableCollection<Cliente>(Clientes);
-                return;
-            }
-
-            var lower = Filtro.ToLower();
-
-            ClientesFiltrados = new ObservableCollection<Cliente>(
-                Clientes.Where(c =>
-                       (c.Razon_Social?.ToLower().Contains(lower) ?? false)
-                    || (c.Rut?.ToLower().Contains(lower) ?? false)
-                    || (c.Giro?.ToLower().Contains(lower) ?? false)
-                )
-            );
-        }
     }
 }

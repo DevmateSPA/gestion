@@ -33,23 +33,5 @@ namespace Gestion.presentation.viewmodel
             await base.LoadAllByEmpresa();
             GruposFiltrados = new ObservableCollection<Grupo>(Grupos);
         }
-
-        public override void Buscar()
-        {
-            if (string.IsNullOrWhiteSpace(Filtro))
-            {
-                GruposFiltrados = new ObservableCollection<Grupo>(Grupos);
-                return;
-            }
-
-            var lower = Filtro.ToLower();
-
-            GruposFiltrados = new ObservableCollection<Grupo>(
-                Grupos.Where(g =>
-                       g.Codigo.ToString().Contains(lower)
-                    || (g.Descripcion?.ToLower().Contains(lower) ?? false)
-                )
-            );
-        }
     }
 }

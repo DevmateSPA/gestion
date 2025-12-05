@@ -31,22 +31,4 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
         await base.LoadAllByEmpresa();
         OrdenesTrabajoFiltradas = new ObservableCollection<OrdenTrabajo>(OrdenesTrabajo);
     }
-    public override void Buscar()
-    {
-        if (string.IsNullOrWhiteSpace(Filtro))
-        {
-            OrdenesTrabajoFiltradas = new ObservableCollection<OrdenTrabajo>(OrdenesTrabajo);
-            return;
-        }
-
-        var lower = Filtro.ToLower();
-
-        OrdenesTrabajoFiltradas = new ObservableCollection<OrdenTrabajo>(
-            OrdenesTrabajo.Where(f =>
-                   f.Folio.ToString().Contains(lower)
-                || f.RutCliente.ToLower().Contains(lower)
-                || f.Fecha.ToString("dd/MM/yyyy").Contains(lower)
-            )
-        );
-    }
 }

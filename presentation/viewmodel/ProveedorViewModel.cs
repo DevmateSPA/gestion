@@ -33,24 +33,5 @@ namespace Gestion.presentation.viewmodel
             await base.LoadAllByEmpresa();
             ProveedoresFiltrados = new ObservableCollection<Proveedor>(Proveedores);
         }
-
-        public override void Buscar()
-        {
-            if (string.IsNullOrWhiteSpace(Filtro))
-            {
-                ProveedoresFiltrados = new ObservableCollection<Proveedor>(Proveedores);
-                return;
-            }
-
-            var lower = Filtro.ToLower();
-
-            ProveedoresFiltrados = new ObservableCollection<Proveedor>(
-                Proveedores.Where(p =>
-                       (p.Razon_Social?.ToLower().Contains(lower) ?? false)
-                    || (p.Rut?.ToLower().Contains(lower) ?? false)
-                    || (p.Giro?.ToLower().Contains(lower) ?? false)
-                )
-            );
-        }
     }
 }

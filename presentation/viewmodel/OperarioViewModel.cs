@@ -33,23 +33,5 @@ namespace Gestion.presentation.viewmodel
             await base.LoadAllByEmpresa();
             OperariosFiltrados = new ObservableCollection<Operario>(Operarios);
         }
-
-        public override void Buscar()
-        {
-            if (string.IsNullOrWhiteSpace(Filtro))
-            {
-                OperariosFiltrados = new ObservableCollection<Operario>(Operarios);
-                return;
-            }
-
-            var lower = Filtro.ToLower();
-
-            OperariosFiltrados = new ObservableCollection<Operario>(
-                Operarios.Where(o =>
-                       (o.Nombre?.ToLower().Contains(lower) ?? false)
-                    || (o.Codigo?.ToLower().Contains(lower) ?? false)
-                )
-            );
-        }
     }
 }

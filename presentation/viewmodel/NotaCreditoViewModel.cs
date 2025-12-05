@@ -33,23 +33,4 @@ public class NotaCreditoViewModel : EntidadViewModel<NotaCredito>, INotifyProper
         await base.LoadAllByEmpresa();
         NotasCreditoFiltradas = new ObservableCollection<NotaCredito>(NotasCredito);
     }
-
-    public override void Buscar()
-    {
-        if (string.IsNullOrWhiteSpace(Filtro))
-        {
-            NotasCreditoFiltradas = new ObservableCollection<NotaCredito>(NotasCredito);
-            return;
-        }
-
-        var lower = Filtro.ToLower();
-
-        NotasCreditoFiltradas = new ObservableCollection<NotaCredito>(
-            NotasCredito.Where(n =>
-                   n.Folio.ToString().Contains(lower)
-                || (n.RutCliente?.ToLower().Contains(lower) ?? false)
-                || n.Fecha.ToString("dd/MM/yyyy").Contains(lower)
-            )
-        );
-    }
 }

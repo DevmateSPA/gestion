@@ -34,23 +34,5 @@ namespace Gestion.presentation.viewmodel
             await base.LoadAllByEmpresa();
             EncuadernacionesFiltradas = new ObservableCollection<Encuadernacion>(Encuadernaciones);
         }
-
-        public override void Buscar()
-        {
-            if (string.IsNullOrWhiteSpace(Filtro))
-            {
-                EncuadernacionesFiltradas = new ObservableCollection<Encuadernacion>(Encuadernaciones);
-                return;
-            }
-
-            var lower = Filtro.ToLower();
-
-            EncuadernacionesFiltradas = new ObservableCollection<Encuadernacion>(
-                Encuadernaciones.Where(e =>
-                       (e.Descripcion?.ToLower().Contains(lower) ?? false)
-                    || e.Codigo.ToString().Contains(lower)
-                )
-            );
-        }
     }
 }

@@ -6,6 +6,7 @@ using System.Reflection;
 using Gestion.core.session;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Data;
 
 namespace Gestion.presentation.viewmodel;
 
@@ -15,6 +16,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
     protected readonly IBaseService<T> _service;
 
     public ObservableCollection<T> Entidades { get; set; } = new ObservableCollection<T>();
+    public ICollectionView EntidadesView { get; }
     private string _filtro = "";
     public string Filtro
     {
@@ -41,9 +43,43 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
     {
         _dialogService = dialogService;
         _service = baseService;
+        EntidadesView = CollectionViewSource.GetDefaultView(Entidades);
     }
 
-    public abstract void Buscar();
+    private readonly PropertyInfo[] _stringProps =
+        typeof(T)
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(p => p.PropertyType == typeof(string))
+            .ToArray();
+
+    public virtual void Buscar(string filtro)
+    {
+        if (string.IsNullOrWhiteSpace(filtro))
+        {
+            EntidadesView.Filter = null;
+            EntidadesView.Refresh();
+            return;
+        }
+
+        var lower = filtro.ToLower();
+
+        EntidadesView.Filter = item =>
+        {
+            if (item is not T entidad) 
+                return false;
+
+            foreach (var prop in _stringProps)
+            {
+                var value = prop.GetValue(entidad) as string;
+                if (value?.ToLower().Contains(lower) == true)
+                    return true;
+            }
+
+            return false;
+        };
+
+        EntidadesView.Refresh();
+    }
 
     private protected void removeEntityById(long id)
     {

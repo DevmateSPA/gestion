@@ -34,23 +34,4 @@ public class GuiaDespachoViewModel : EntidadViewModel<GuiaDespacho>, INotifyProp
         await base.LoadAllByEmpresa();
         GuiasDespachoFiltradas = new ObservableCollection<GuiaDespacho>(GuiasDespacho);
     }
-
-    public override void Buscar()
-    {
-        if (string.IsNullOrWhiteSpace(Filtro))
-        {
-            GuiasDespachoFiltradas = new ObservableCollection<GuiaDespacho>(GuiasDespacho);
-            return;
-        }
-
-        var lower = Filtro.ToLower();
-
-        GuiasDespachoFiltradas = new ObservableCollection<GuiaDespacho>(
-            GuiasDespacho.Where(g =>
-                   g.Folio.ToString().Contains(lower)
-                || (g.RutCliente?.ToLower().Contains(lower) ?? false)
-                || g.Fecha.ToString("dd/MM/yyyy").Contains(lower)
-            )
-        );
-    }
 }

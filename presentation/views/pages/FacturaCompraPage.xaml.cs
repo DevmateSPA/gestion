@@ -99,7 +99,7 @@ public partial class FacturaCompraPage : Page
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)
     {
-        MessageBox.Show($"Buscar: {txtBuscar.Text}");
+        _viewModel.Buscar(txtBuscar.Text);
     }
 
     private void BtnImprimir_Click(object sender, RoutedEventArgs e)

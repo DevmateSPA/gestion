@@ -33,21 +33,4 @@ public class DocumentoNuloViewModel : EntidadViewModel<DocumentoNulo>, INotifyPr
         await base.LoadAllByEmpresa();
         DocumentosNulosFiltrados = new ObservableCollection<DocumentoNulo>(DocumentosNulos);
     }
-
-    public override void Buscar()
-    {
-        if (string.IsNullOrWhiteSpace(Filtro))
-        {
-            DocumentosNulosFiltrados = new ObservableCollection<DocumentoNulo>(DocumentosNulos);
-            return;
-        }
-
-        var lower = Filtro;
-
-        DocumentosNulosFiltrados = new ObservableCollection<DocumentoNulo>(
-            DocumentosNulos.Where(d =>
-                (d.Folio != null && d.Folio.ToString().Contains(lower))
-                || d.Fecha.ToString("dd/MM/yyyy").Contains(lower)
-                ||(d.Glosa != null && d.Glosa.ToString().Contains(lower))));
-    }
 }
