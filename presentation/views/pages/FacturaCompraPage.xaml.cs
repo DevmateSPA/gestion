@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -6,7 +5,8 @@ using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
 using Gestion.presentation.utils;
-using System.ComponentModel;
+using Gestion.core.interfaces.service;
+using System.Collections.ObjectModel;
 
 namespace Gestion.presentation.views.pages;
 
@@ -15,10 +15,12 @@ public partial class FacturaCompraPage : Page
     private DataGrid _dataGrid;
 
     private readonly FacturaCompraViewModel _viewModel;
-    public FacturaCompraPage(FacturaCompraViewModel viewModel)
+    private readonly IFacturaCompraProductoService _detalleService;
+    public FacturaCompraPage(FacturaCompraViewModel viewModel, IFacturaCompraProductoService detalleService)
     {
         InitializeComponent();
         _viewModel = viewModel;
+        _detalleService = detalleService;
         DataContext = _viewModel;
         Title = $"Facturas de Compra";
 
@@ -59,6 +61,9 @@ public partial class FacturaCompraPage : Page
     {
         if (factura == null)
             return;
+
+        var detalles = await _detalleService.FindByFolio(factura.Folio);
+        factura.Detalles = new ObservableCollection<FacturaCompraProducto>(detalles);
 
         var ventana = new EntidadEditorTableWindow(this, factura, factura.Detalles, titulo);
 

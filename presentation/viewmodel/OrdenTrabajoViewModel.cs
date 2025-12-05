@@ -1,11 +1,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
-using Gestion.core.session;
-using Gestion.helpers;
 
 namespace Gestion.presentation.viewmodel; 
 
@@ -25,17 +21,6 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
     {
         get => _filtro;
         set { _filtro = value; OnPropertyChanged(); }
-    }
-
-    private bool _isLoading;
-    public bool IsLoading
-    {
-        get => _isLoading;
-        set
-        {
-            _isLoading = value;
-            OnPropertyChanged();
-        }
     }
 
     public OrdenTrabajoViewModel(IOrdenTrabajoService ordenTrabajoService, IDialogService dialogService)
@@ -70,11 +55,5 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
                 || f.Fecha.ToString("dd/MM/yyyy").Contains(lower)
             )
         );
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

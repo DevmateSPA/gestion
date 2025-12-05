@@ -4,5 +4,5 @@ namespace Gestion.core.interfaces.repository;
 
 public interface IFacturaCompraProductoRepository : IBaseRepository<FacturaCompraProducto>
 {
-    
+    Task<List<FacturaCompraProducto>> FindByFolio(string folio);
 }
