@@ -7,14 +7,9 @@ namespace Gestion.core.model;
 
 public class FacturaCompra : FacturaBase, IConDetalles<FacturaCompraProducto>, INotifyPropertyChanged
 {
-    [Visible(false)]
     public string Tipo { get; set; } = string.Empty;
-    [Nombre("Proveedor")]
-    [Visible(false)]
     public int Debe { get; set; }
-    [Visible(false)]
     public int Habe { get; set; }
-    [Visible(false)]
     public string Fopa { get; set; } = string.Empty;
     [NotMapped]
     private ObservableCollection<FacturaCompraProducto> _detalles 
