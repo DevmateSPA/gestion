@@ -8,7 +8,7 @@ namespace Gestion.core.model;
 public class FacturaCompraProducto : IDetalle
 {
     [Visible(false)]
-    public long Id { get; set; }
+    public long Id { get; set; } = 0;
     public string Folio { get; set; } = string.Empty;
     public string Tipo { get; set; } = string.Empty;
     public string Producto { get; set; } = string.Empty;

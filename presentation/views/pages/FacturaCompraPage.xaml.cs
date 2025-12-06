@@ -42,8 +42,9 @@ public partial class FacturaCompraPage : Page
         if (ventana.ShowDialog() != true)
             return;
 
-        var facturaEditado = (FacturaCompra)ventana.EntidadEditada;
-        await _viewModel.Save(facturaEditado);
+        var facturaEditada = (FacturaCompra)ventana.EntidadEditada;
+        await _viewModel.Save(facturaEditada);
+        await _viewModel.SincronizarDetalles([], facturaEditada.Detalles, facturaEditada);
     }
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
@@ -75,6 +76,7 @@ public partial class FacturaCompraPage : Page
         var facturaEditada = (FacturaCompra)ventana.EntidadEditada;
 
         await _viewModel.Update(facturaEditada);
+        await _viewModel.SincronizarDetalles(detalles, facturaEditada.Detalles, facturaEditada);
     }
 
     // ------------------------------------------------------ |

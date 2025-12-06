@@ -28,7 +28,7 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
             d.operario,
             d.fecha
         FROM {_tableName} d
-        JOIN PRODUCTO p
+        LEFT JOIN PRODUCTO p
         ON d.producto = p.codigo
         WHERE folio = @folio;
         """;
