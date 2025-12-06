@@ -2,7 +2,7 @@ using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
-public class Maquina : IModel
+public class Maquina : IEmpresa
 {
     public long Id { set; get; }
     [Nombre("Código")]
@@ -10,5 +10,5 @@ public class Maquina : IModel
     [Nombre("Descripción")]
     public string Descripcion { get; private set; } = string.Empty;
     [Visible(false)]
-    public int Empresa { get; set; }
+    public long Empresa { get; set; }
 }

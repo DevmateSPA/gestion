@@ -1,13 +1,10 @@
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations.Schema;
 using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
 using Gestion.core.model.detalles;
 
 namespace Gestion.core.model;
 
-public class OrdenTrabajo :  IModel, INotifyPropertyChanged
+public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
 {
     public long Id { get; set; }
     public string Folio { get; set; } = string.Empty;
@@ -85,24 +82,5 @@ public class OrdenTrabajo :  IModel, INotifyPropertyChanged
     public string GEST14VIPT { get; set; } = string.Empty;
     public string GEST14VIRT { get; set; } = string.Empty;
     public string GEST14VIMO { get; set; } = string.Empty;
-    public int Empresa { get; set; } = 0;
-    [NotMapped]
-    private ObservableCollection<DetalleOrdenTrabajo> _detalles = new ObservableCollection<DetalleOrdenTrabajo>();
-    [NotMapped]
-    public ObservableCollection<DetalleOrdenTrabajo> Detalles
-    {
-        get => _detalles;
-        set
-        {
-            if (_detalles != value)
-            {
-                _detalles = value;
-                OnPropertyChanged(nameof(Detalles));
-            }
-        }
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged(string propertyName) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    public long Empresa { get; set; } = 0;
 }

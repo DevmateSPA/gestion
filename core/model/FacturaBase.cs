@@ -1,13 +1,7 @@
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using Gestion.core.attributes;
 using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
 
-public abstract class FacturaBase : IModel
+public abstract class FacturaBase : IEmpresa
 {
     public long Id { get; set; }
 
@@ -24,7 +18,4 @@ public abstract class FacturaBase : IModel
     public long Iva { set; get; }
     [Visible(false)]
     public long Empresa { get; set; }
-    [Visible(false)]
-    [DbIgnore]
-    public string EmpresaNombre { get; set; } = string.Empty;
 }

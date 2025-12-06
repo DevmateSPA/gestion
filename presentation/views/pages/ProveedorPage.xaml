@@ -30,7 +30,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding ProveedoresFiltrados}" 
+                ItemsSource="{Binding EntidadesView}" 
                 FontSize="16" 
                 IsReadOnly="True"
                 MouseDoubleClick="dgProveedores_MouseDoubleClick" 

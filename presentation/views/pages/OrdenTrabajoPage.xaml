@@ -38,7 +38,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding OrdenesTrabajoFiltradas}"
+                ItemsSource="{Binding EntidadesView}"
                 FontSize="16"
                 IsReadOnly="True"
                 MouseDoubleClick="dgOrdenTrabajo_MouseDoubleClick" 

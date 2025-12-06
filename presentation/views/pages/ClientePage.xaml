@@ -33,7 +33,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding ClientesFiltrados}" 
+                ItemsSource="{Binding EntidadesView}" 
                 FontSize="16" 
                 IsReadOnly="True"
                 MouseDoubleClick="dataGrid_MouseDoubleClick" 

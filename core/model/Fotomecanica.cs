@@ -2,7 +2,7 @@ using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
-public class Fotomecanica : IModel
+public class Fotomecanica : IEmpresa
 {
     public long Id { get; set; }
     [Nombre("Código")]
@@ -10,5 +10,5 @@ public class Fotomecanica : IModel
     [Nombre("Descripción")]
     public string Descripcion { get; private set; } = string.Empty;
     [Visible(false)]
-    public int Empresa { get; set; }
+    public long Empresa { get; set; }
 }

@@ -83,6 +83,7 @@ public partial class OrdenTrabajoPage : Page
         //var ordenTrabajoEditada = (OrdenTrabajo)ventana.EntidadEditada;
 
         //await _viewModel.Update(ordenTrabajoEditada);
+        ordenTrabajo.Detalles?.Clear();
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
@@ -104,7 +105,7 @@ public partial class OrdenTrabajoPage : Page
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)
     {
-        //MessageBox.Show($"Buscar: {txtBuscar.Text}");
+        _viewModel.Buscar(txtBuscar.Text);
     }
 
     private void BtnImprimir_Click(object sender, RoutedEventArgs e)

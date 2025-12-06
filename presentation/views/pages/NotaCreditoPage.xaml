@@ -34,7 +34,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding NotasCreditoFiltradas}"
+                ItemsSource="{Binding EntidadesView}"
                 FontSize="16"
                 IsReadOnly="True"
                 MouseDoubleClick="dgNotasCredito_MouseDoubleClick" 

@@ -52,7 +52,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding FacturasFiltradas}"
+                ItemsSource="{Binding EntidadesView}"
                 FontSize="16"
                 IsReadOnly="True"
                 MouseDoubleClick="dgFacturas_MouseDoubleClick" 

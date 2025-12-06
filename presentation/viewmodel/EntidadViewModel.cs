@@ -6,15 +6,23 @@ using System.Reflection;
 using Gestion.core.session;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Data;
 
 namespace Gestion.presentation.viewmodel;
 
-public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IModel
+public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEmpresa
 {
     protected readonly IDialogService _dialogService;
     protected readonly IBaseService<T> _service;
 
-    public ObservableCollection<T> Entidades { get; } = new();
+    public ObservableCollection<T> Entidades { get; set; } = new ObservableCollection<T>();
+    public ICollectionView EntidadesView { get; }
+    private string _filtro = "";
+    public string Filtro
+    {
+        get => _filtro;
+        set { _filtro = value; OnPropertyChanged(); }
+    }
     private bool _isLoading;
     public bool IsLoading
     {
@@ -35,6 +43,42 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IMo
     {
         _dialogService = dialogService;
         _service = baseService;
+        EntidadesView = CollectionViewSource.GetDefaultView(Entidades);
+    }
+
+    private readonly PropertyInfo[] _stringProps =
+        typeof(T)
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(p => p.PropertyType == typeof(string))
+            .ToArray();
+
+    public virtual void Buscar(string filtro)
+    {
+        if (string.IsNullOrWhiteSpace(filtro))
+        {
+            EntidadesView.Filter = null;
+            EntidadesView.Refresh();
+            return;
+        }
+
+        var lower = filtro.ToLower();
+
+        EntidadesView.Filter = item =>
+        {
+            if (item is not T entidad) 
+                return false;
+
+            foreach (var prop in _stringProps)
+            {
+                var value = prop.GetValue(entidad) as string;
+                if (value?.ToLower().Contains(lower) == true)
+                    return true;
+            }
+
+            return false;
+        };
+
+        EntidadesView.Refresh();
     }
 
     private protected void removeEntityById(long id)
@@ -119,6 +163,9 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IMo
     public Task Update(T entidad) =>
         RunServiceAction(() => _service.Update(entidad), () => replaceEntity(entidad), $"Error al actualizar {typeof(T).Name}");
 
-    public Task Save(T entidad) =>
-        RunServiceAction(() => _service.Save(entidad), () => addEntity(entidad), $"Error al guardar {typeof(T).Name}");
+    public Task Save(T entidad)
+    {
+        entidad.Empresa = SesionApp.IdEmpresa;
+        return RunServiceAction(() => _service.Save(entidad), () => addEntity(entidad), $"Error al guardar {typeof(T).Name}");
+    }
 }

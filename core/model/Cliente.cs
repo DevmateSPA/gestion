@@ -4,7 +4,7 @@ using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
-public class Cliente : IModel
+public class Cliente : IEmpresa
 {
     public long Id { get; set; }
     [Rut]
@@ -30,5 +30,5 @@ public class Cliente : IModel
     [Nombre("Saldo")]
     public long saldo { get; set; }
     [Visible(false)]
-    public int Empresa { get; set; }
+    public long Empresa { get; set; }
 }
