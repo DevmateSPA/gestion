@@ -39,11 +39,11 @@ public partial class FacturaCompraPage : Page
         var factura = new FacturaCompra();
         var ventana = new EntidadEditorTableWindow(this, factura, factura.Detalles, "Agregar Factura");
 
-        if (ventana.ShowDialog() == true)
-        {
-            var facturaEditado = (FacturaCompra)ventana.EntidadEditada;
-            await _viewModel.Save(facturaEditado);
-        }
+        if (ventana.ShowDialog() != true)
+            return;
+
+        var facturaEditado = (FacturaCompra)ventana.EntidadEditada;
+        await _viewModel.Save(facturaEditado);
     }
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
@@ -70,15 +70,11 @@ public partial class FacturaCompraPage : Page
         var ventana = new EntidadEditorTableWindow(this, factura, factura.Detalles, titulo);
 
         if (ventana.ShowDialog() != true)
-        {
-            var facturaCancelada = (FacturaCompra)ventana.EntidadEditada;
             return;
-        }
 
         var facturaEditada = (FacturaCompra)ventana.EntidadEditada;
 
         await _viewModel.Update(facturaEditada);
-        factura.Detalles?.Clear();
     }
 
     // ------------------------------------------------------ |

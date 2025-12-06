@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+using Gestion.core.attributes;
 using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
 
@@ -9,7 +11,6 @@ public class FacturaCompraProducto : IDetalle
     public long Id { get; set; }
     public string Folio { get; set; } = string.Empty;
     public string Tipo { get; set; } = string.Empty;
-    public string Codigo { get; set; } = string.Empty;
     public string Producto { get; set; } = string.Empty;
     public long Entrada { get; set; }
     public long Salida { get; set; }
