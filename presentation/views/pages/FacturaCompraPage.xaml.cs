@@ -85,7 +85,10 @@ public partial class FacturaCompraPage : Page
     {
         if (_dataGrid.SelectedItem is FacturaCompra seleccionado)
         {
-            if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar la factura \"{seleccionado.Id}\"?", "Confirmar eliminación"))
+            if (DialogUtils.Confirmar(
+                $"¿Deseas eliminar la factura \"{seleccionado.Id}\" del proveedor {seleccionado.RutCliente}?\n\n" +
+                "Ten en cuenta que esta acción también removerá todos sus datos relacionados.",
+                "Confirmación requerida"))
             {
                 await _viewModel.Delete(seleccionado.Id);
                 DialogUtils.MostrarInfo("Factura eliminada correctamente.", "Éxito");
