@@ -88,7 +88,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
             Entidades.Remove(entidad);
     }
 
-    private protected void replaceEntity(T entidad)
+    private protected void ReplaceEntity(T entidad)
     {
         var existing = Entidades.FirstOrDefault(e => e.Id == entidad.Id);
         if (existing != null)
@@ -149,23 +149,23 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         return t.GetProperty("Fecha", 
             BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
     }
-    private protected async Task RunServiceAction(Func<Task<bool>> serviceAction, Action onSuccess, string mensajeError)
+    private protected async Task RunServiceAction(Func<Task<bool>> serviceAction, Action? onSuccess, string mensajeError)
     {
         await SafeExecutor.RunAsync(async () =>
         {
             if (await serviceAction())
-                onSuccess();
+                onSuccess?.Invoke();
         }, _dialogService, mensajeError);
     }
-    public Task Delete(long id) =>
-        RunServiceAction(() => _service.DeleteById(id), () => removeEntityById(id), $"Error al eliminar {typeof(T).Name}");
+    public virtual async Task Delete(long id) =>
+        await RunServiceAction(async () => await _service.DeleteById(id), () => removeEntityById(id), $"Error al eliminar {typeof(T).Name}");
 
-    public Task Update(T entidad) =>
-        RunServiceAction(() => _service.Update(entidad), () => replaceEntity(entidad), $"Error al actualizar {typeof(T).Name}");
+    public async Task Update(T entidad) =>
+        await RunServiceAction(async () => await _service.Update(entidad), () => ReplaceEntity(entidad), $"Error al actualizar {typeof(T).Name}");
 
-    public Task Save(T entidad)
+    public async Task Save(T entidad)
     {
         entidad.Empresa = SesionApp.IdEmpresa;
-        return RunServiceAction(() => _service.Save(entidad), () => addEntity(entidad), $"Error al guardar {typeof(T).Name}");
+        await RunServiceAction(() => _service.Save(entidad), () => addEntity(entidad), $"Error al guardar {typeof(T).Name}");
     }
 }

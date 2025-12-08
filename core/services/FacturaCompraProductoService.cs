@@ -13,8 +13,28 @@ public class FacturaCompraProductoService : BaseService<FacturaCompraProducto>, 
         _facturaCompraProductoRepository = facturaCompraProductoRepository;
     }
 
+    public Task<bool> DeleteByFolio(string folio)
+    {
+        return _facturaCompraProductoRepository.DeleteByFolio(folio);
+    }
+
+    public async Task<bool> DeleteByIds(IList<long> ids)
+    {
+        return await _facturaCompraProductoRepository.DeleteByIds(ids);
+    }
+
     public async Task<List<FacturaCompraProducto>> FindByFolio(string folio)
     {
         return await _facturaCompraProductoRepository.FindByFolio(folio);
+    }
+
+    public async Task<bool> SaveAll(List<FacturaCompraProducto> detalles)
+    {
+        return await _facturaCompraProductoRepository.SaveAll(detalles);
+    }
+
+    public async Task<bool> UpdateAll(IList<FacturaCompraProducto> detalles)
+    {
+        return await _facturaCompraProductoRepository.UpdateAll(detalles);
     }
 }
