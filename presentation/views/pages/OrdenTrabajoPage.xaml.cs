@@ -48,9 +48,9 @@ public partial class OrdenTrabajoPage : Page
         if (ventana.ShowDialog() != true)
             return; 
 
-        //var ordenTrabajoEditado = (OrdenTrabajo)ventana.EntidadEditada;
+        var ordenTrabajoEditado = (OrdenTrabajo)ventana.EntidadEditada;
 
-        //await _viewModel.Save(ordenTrabajoEditado);
+        await _viewModel.Save(ordenTrabajoEditado);
     }
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
