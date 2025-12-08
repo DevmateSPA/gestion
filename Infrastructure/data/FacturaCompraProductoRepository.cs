@@ -20,16 +20,13 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
             d.id,
             d.tipo,
             d.folio,
-            d.producto as codigo,
-            p.descripcion as producto,
+            d.producto,
             d.entrada,
             d.salida,
             d.maquina,
             d.operario,
             d.fecha
         FROM {_tableName} d
-        LEFT JOIN PRODUCTO p
-        ON d.producto = p.codigo
         WHERE folio = @folio;
         """;
 
