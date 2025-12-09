@@ -24,13 +24,14 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
             d.tipo,
             d.folio,
             d.producto,
+            d.productonombre,
             d.entrada,
             d.salida,
             d.maquina,
             d.operario,
             d.fecha
         FROM {_tableName} d
-        WHERE folio = @folio;
+        WHERE folio = @folio AND tipo = 'FA';
         """;
 
         var param = cmd.CreateParameter();

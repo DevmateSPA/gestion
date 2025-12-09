@@ -8,6 +8,7 @@ public class Detalle : IDetalle
     public long Id { get; set; }
     [Visible(false)]
     public string Folio { get; set; } = string.Empty;
+    [Visible(false)]
     public string Tipo { get; set; } = string.Empty;
     public string Codigo { get; set; } = string.Empty;
     public string Producto { get; set; } = string.Empty;

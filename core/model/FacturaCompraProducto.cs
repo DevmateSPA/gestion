@@ -12,10 +12,13 @@ public class FacturaCompraProducto : IDetalle
     public string Folio { get; set; } = string.Empty;
     public string Tipo { get; set; } = string.Empty;
     public string Producto { get; set; } = string.Empty;
+    public string Productonombre { get; set; } = string.Empty;
     public long Entrada { get; set; }
+    [Visible(false)]
     public long Salida { get; set; }
     public string Maquina { get; set; } = string.Empty;
     public string Operario { get; set; } = string.Empty;
     [Fecha]
+    [Visible(false)]
     public DateTime Fecha { get; set; } = DateTime.Now;
 }
