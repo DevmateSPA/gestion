@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Gestion.core.interfaces.model;
 
@@ -7,14 +8,13 @@ namespace Gestion.core.model;
 
 public class FacturaCompra : FacturaBase, IConDetalles<FacturaCompraProducto>, INotifyPropertyChanged
 {
+    [Required]
     public string Tipo { get; set; } = "FA";
     public int Debe { get; set; }
     public int Habe { get; set; }
     public string Fopa { get; set; } = string.Empty;
     [NotMapped]
-    private ObservableCollection<FacturaCompraProducto> _detalles 
-        = new ObservableCollection<FacturaCompraProducto>();
-
+    private ObservableCollection<FacturaCompraProducto> _detalles = [];
     [NotMapped]
     public ObservableCollection<FacturaCompraProducto> Detalles
     {

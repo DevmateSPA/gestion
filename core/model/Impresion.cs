@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Gestion.core.interfaces.model;
 
@@ -7,6 +8,7 @@ public class Impresion : IEmpresa
 {
     public long Id { get; set; }
     [Nombre("Código")]
+    [Required]
     public string Codigo { get; set; } = string.Empty;
     [Nombre("Descripción")]
     public string Descripcion { get; set; } = string.Empty;

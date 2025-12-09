@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
@@ -6,6 +7,7 @@ public class Producto : IEmpresa
 {
     public long Id { get; set; }
     [Nombre("Código")]
+    [Required]
     public string Codigo { get; set; } = string.Empty;
     public string Descripcion { get; set; } = string.Empty;
     public int Grupo { get; set; }

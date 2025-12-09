@@ -1,4 +1,5 @@
-    using Gestion.core.interfaces.model;
+using System.ComponentModel.DataAnnotations;
+using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
@@ -6,6 +7,7 @@ public class Operario : IEmpresa
 {
     public long Id { get; set; }
     [Nombre("Código")]
+    [Required]
     public string Codigo { get; set; } = string.Empty;
     public string Nombre { get; set; } = string.Empty;
     [Visible(false)]

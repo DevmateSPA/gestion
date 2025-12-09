@@ -59,7 +59,7 @@ public class Factura : FacturaBase
     [Visible(false)]
     public string Op05 { get; set; } = string.Empty;
     [Visible(false)]
-    public string peli { get; set; } = string.Empty;
+    public string Peli { get; set; } = string.Empty;
     [Visible(false)]
-    public string plan { get; set; } = string.Empty;
+    public string Plan { get; set; } = string.Empty;
 }

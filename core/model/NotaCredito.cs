@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
 
@@ -6,6 +7,7 @@ namespace Gestion.core.model;
 public class NotaCredito : IEmpresa
 {
     public long Id { get; set; }
+    [Required]
     public string Folio { get; set; } = string.Empty;
     [Nombre("Rut Cliente")]
     [Rut]
