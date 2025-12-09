@@ -7,11 +7,11 @@ public class Encuadernacion : IEmpresa
 {
     public long Id { get; set; }
     [Nombre("Código")]
-    public string Codigo { get; private set; } = string.Empty;
+    public string Codigo { get; set; } = string.Empty;
     [Nombre("Descripción")]
-    public string Descripcion { get; private set; } = string.Empty;
+    public string Descripcion { get; set; } = string.Empty;
     [Nombre("Valor por mil")]
-    public int Valorpormil { get; private set; } = 0;
+    public int Valorpormil { get; set; } = 0;
     [Visible(false)]
     public long Empresa { get; set; }
 }

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
 
@@ -10,6 +11,7 @@ public abstract class FacturaBase : IEmpresa
     [Rut]
     public string RutCliente { get; set; } = string.Empty;
     [Orden(1)]
+    [Required]
     public string Folio { get; set; } = string.Empty;
     [Orden(2)]
     [Fecha]

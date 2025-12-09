@@ -6,26 +6,26 @@ public class Producto : IEmpresa
 {
     public long Id { get; set; }
     [Nombre("Código")]
-    public string Codigo { get; private set; } = string.Empty;
-    public string Descripcion { get; private set; } = string.Empty;
-    public int Grupo { get; private set; }
+    public string Codigo { get; set; } = string.Empty;
+    public string Descripcion { get; set; } = string.Empty;
+    public int Grupo { get; set; }
     [Nombre("Stock minimo")]
-    public int Stmi { get; private set; }
-    public int Papel { get; private set; }
+    public int Stmi { get; set; }
+    public int Papel { get; set; }
     [Nombre("Dimensiones")]
-    public int Dime { get; private set; }
+    public int Dime { get; set; }
     [Visible(false)]
-    public int Enin { get; private set; }
+    public int Enin { get; set; }
     [Visible(false)]
-    public int Punp { get; private set; }
+    public int Punp { get; set; }
     [Visible(false)]
-    public int Sain { get; private set; }
+    public int Sain { get; set; }
     [Visible(false)]
-    public int Saldo { get; private set; }
+    public int Saldo { get; set; }
     [Visible(false)]
-    public int Salida { get; private set; }
+    public int Salida { get; set; }
     [Visible(false)]
-    public int Entrada { get; private set; }
+    public int Entrada { get; set; }
     [Visible(false)]
     public long Empresa { get; set; }
 }
