@@ -55,8 +55,7 @@ namespace Gestion.presentation.views.pages;
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)
     {
-        _viewModel.Filtro = txtBuscar.Text;
-        _viewModel.Buscar(); 
+        _viewModel.Buscar(txtBuscar.Text); 
     }
 
     private void DataGrid_StatusChanged(object? sender, EventArgs e)

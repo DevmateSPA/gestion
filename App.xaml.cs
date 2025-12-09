@@ -121,7 +121,9 @@ public partial class App : Application
         services.AddTransient<OrdenTrabajoViewModel>();
         services.AddTransient<OrdenTrabajoPage>();
         // OrdenTrabajoPrueba
-        services.AddTransient<OrdenTrabajoDetallePage>();      
+        services.AddTransient<OrdenTrabajoDetallePage>();
+        // CuentaCorrienteCliente
+        services.AddTransient<CuentaCorrienteClientePage>();      
 
         // Ventanas modales
         services.AddTransient<AgregarBancoWindow>();

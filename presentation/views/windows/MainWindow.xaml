@@ -83,7 +83,7 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="Salidas">
-                <MenuItem Header="Consulta/Informe de Ctas. Ctes (Clientes)"/>
+                <MenuItem Header="Consulta/Informe de Ctas. Ctes (Clientes)" Click="MenuItemSalida_Click"/>
                 <!--<MenuItem Header="Consulta/Informe de Ctas. Ctes (Proveedores)"/>
                 <MenuItem Header="Consulta/Informe de Existencias"/>-->
             </MenuItem>
@@ -96,8 +96,8 @@
                 <MenuItem Header="O.T. Impagas por Cliente (Pel)"/>
                 <MenuItem Header="Correlativos O.T."/>
                 <MenuItem Header="Correlativos O.T. (Pel)"/>-->
-                <MenuItem Header="Pendientes de Producción"/>
-                <MenuItem Header="Pendientes por Maquina"/>
+                <MenuItem Header="Pendientes de Producción" Click="MenuItemReportes_Click" Tag="ModuloProduccion"/>
+                <MenuItem Header="Pendientes por Maquina" Click="MenuItemReportes_Click" Tag="ModuloMaquina"/>
             </MenuItem>
             <MenuItem Header="Procesos"/>
             <MenuItem Header="Salir" Click="BtnSalir_Click"/>

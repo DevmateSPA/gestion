@@ -158,6 +158,34 @@ namespace Gestion.presentation.views.windows
             }
         }
 
+        private void MenuItemSalida_Click(object sender, RoutedEventArgs e)
+        {
+            Page? page = App.ServiceProvider.GetRequiredService<CuentaCorrienteClientePage>();
+            MainFrame.Navigate(page);
+        }
+
+        private void MenuItemReportes_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem item)
+            {
+                Page? page = item.Tag switch
+                {
+                    "ModuloProduccion" => App.ServiceProvider.GetRequiredService<OrdenTrabajoPage>(),
+                    "ModuloMaquina" => App.ServiceProvider.GetRequiredService<OrdenTrabajoPage>(),
+                    _ => null
+                };
+
+                if (page != null)
+                {
+                    MainFrame.Navigate(page);
+                }
+                else
+                {
+                    MessageBox.Show("Módulo no reconocido.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+        }
+
         private void BtnSalir_Click(object sender, RoutedEventArgs e)
         {
             var login = App.ServiceProvider.GetRequiredService<LoginWindow>();

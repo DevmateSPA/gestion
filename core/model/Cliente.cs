@@ -24,9 +24,9 @@ public class Cliente : IEmpresa
     [Nombre("Debe Inicial")]
     public int habi { get; set; }
     [Nombre("Haber Inicial")]
-    public long debe { get; set; }
+    public long Debe { get; set; }
     [Nombre("Haber")]
-    public long habe { get; set; }
+    public long Habe { get; set; }
     [Nombre("Saldo")]
     public long saldo { get; set; }
     [Visible(false)]

@@ -33,7 +33,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding cuentasCorrientesClienteFiltrados}" 
+                ItemsSource="{Binding EntidadesView}" 
                 FontSize="16" 
                 IsReadOnly="True"
                 MouseDoubleClick="dataGrid_MouseDoubleClick" 
@@ -41,8 +41,8 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Rut" Binding="{Binding Rut}" Width="*" />
                     <DataGridTextColumn Header="Razón Social" Binding="{Binding Razon_Social}" Width="*" />
-                    <DataGridTextColumn Header="Debe" Binding="{Binding Debe}" Width="*" />
-                    <DataGridTextColumn Header="Haber" Binding="{Binding Haber}" Width="*" />
+                    <DataGridTextColumn Header="Debe" Binding="{Binding Debe, StringFormat={}{0:C0}}" Width="*" />
+                    <DataGridTextColumn Header="Haber" Binding="{Binding Habe, StringFormat={}{0:C0}}" Width="*" />
                 </DataGrid.Columns>
                 </DataGrid>
 
