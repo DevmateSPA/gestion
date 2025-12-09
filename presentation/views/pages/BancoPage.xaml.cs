@@ -49,16 +49,16 @@ public partial class BancoPage : Page
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
         if (dgBancos.SelectedItem is Banco bancoSeleccionado)
-            editar(bancoSeleccionado, "Editar Banco");
+            await editar(bancoSeleccionado, "Editar Banco");
     }
 
     private async void dgBancos_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (dgBancos.SelectedItem is Banco bancoSeleccionado)
-            editar(bancoSeleccionado, "Editar Banco");
+            await editar(bancoSeleccionado, "Editar Banco");
     }
 
-    private async void editar(Banco banco, string titulo)
+    private async Task editar(Banco banco, string titulo)
     {
         var ventana = new EntidadEditorWindow(this,banco, titulo);
 

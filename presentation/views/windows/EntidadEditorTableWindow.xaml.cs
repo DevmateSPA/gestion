@@ -9,11 +9,10 @@ public partial class EntidadEditorTableWindow : Window
 {
     private readonly object _entidadOriginal;
     private readonly Dictionary<PropertyInfo, TextBox> _controles = new();
-    private readonly IEnumerable<object>? _detalles; // ✅ corregido
-
+    private readonly IEnumerable<object>? _detalles;
     public object EntidadEditada { get; private set; }
 
-    public EntidadEditorTableWindow(Page padre, object entidad, IEnumerable<object>? detalles, string titulo = "Ventana con tabla") // ✅ corregido
+    public EntidadEditorTableWindow(Page padre, object entidad, IEnumerable<object>? detalles, string titulo = "Ventana con tabla")
     {
         InitializeComponent();
         this.Owner = Window.GetWindow(padre);
@@ -45,7 +44,6 @@ public partial class EntidadEditorTableWindow : Window
         };
     }
 
-
     private void GenerarCampos(object entidad)
     {
 
@@ -64,7 +62,7 @@ public partial class EntidadEditorTableWindow : Window
         spCampos.Children.Clear();
 
         int maxPorFila = 3;
-        StackPanel filaActual = null;
+        StackPanel? filaActual = null;
 
         for (int i = 0; i < propiedades.Count; i++)
         {
@@ -108,21 +106,15 @@ public partial class EntidadEditorTableWindow : Window
                 spCampos.Children.Add(filaActual);
             }
 
-            filaActual.Children.Add(bloque);
+            filaActual?.Children.Add(bloque);
         }
     }
 
+
     private void CargarTabla()
     {
-        try
-        {
-            if (_detalles == null) return;
-            dgDetalles.ItemsSource = _detalles;
-        } catch(Exception e)
-        {
-            MessageBox.Show(e.Message);
-        }
-
+        if (_detalles == null) return;
+        dgDetalles.ItemsSource = _detalles;
     }
 
     private void BtnGuardar_Click(object sender, RoutedEventArgs e)

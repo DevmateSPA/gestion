@@ -37,29 +37,30 @@ public partial class FacturaCompraPage : Page
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
         var factura = new FacturaCompra();
-        var ventana = new EntidadEditorTableWindow(this, factura, factura.Detalles, "Agregar Factura");
+        var ventana = new EntidadEditorTableWindow(this, factura, [], "Agregar Factura");
 
-        if (ventana.ShowDialog() == true)
-        {
-            var facturaEditado = (FacturaCompra)ventana.EntidadEditada;
-            await _viewModel.Save(facturaEditado);
-        }
+        if (ventana.ShowDialog() != true)
+            return;
+
+        var facturaEditada = (FacturaCompra)ventana.EntidadEditada;
+        await _viewModel.Save(facturaEditada);
+        await _viewModel.SincronizarDetalles([], facturaEditada.Detalles, facturaEditada);
     }
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
         if (_dataGrid.SelectedItem is FacturaCompra facturaCompraSeleccionado)
-            editar(facturaCompraSeleccionado, "Editar Facturas de Compra");
+            await editar(facturaCompraSeleccionado);
     }
 
     private async void dgFacturasCompra_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (_dataGrid.SelectedItem is FacturaCompra facturaCompraSeleccionado)
-            editar(facturaCompraSeleccionado, "Editar Facturas de Compra");
+            await editar(facturaCompraSeleccionado);
     }
 
     // Metodo Editar -------------------------------------------- |
-    private async void editar(FacturaCompra factura, string titulo)
+    private async Task editar(FacturaCompra factura, string titulo = "Editar Facturas de Compra")
     {
         if (factura == null)
             return;
@@ -70,15 +71,12 @@ public partial class FacturaCompraPage : Page
         var ventana = new EntidadEditorTableWindow(this, factura, factura.Detalles, titulo);
 
         if (ventana.ShowDialog() != true)
-        {
-            var facturaCancelada = (FacturaCompra)ventana.EntidadEditada;
             return;
-        }
 
         var facturaEditada = (FacturaCompra)ventana.EntidadEditada;
 
         await _viewModel.Update(facturaEditada);
-        factura.Detalles?.Clear();
+        await _viewModel.SincronizarDetalles(detalles, facturaEditada.Detalles, facturaEditada);
     }
 
     // ------------------------------------------------------ |
@@ -87,7 +85,10 @@ public partial class FacturaCompraPage : Page
     {
         if (_dataGrid.SelectedItem is FacturaCompra seleccionado)
         {
-            if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar la factura \"{seleccionado.Id}\"?", "Confirmar eliminación"))
+            if (DialogUtils.Confirmar(
+                $"¿Deseas eliminar la factura \"{seleccionado.Id}\" del proveedor {seleccionado.RutCliente}?\n\n" +
+                "Ten en cuenta que esta acción también removerá todos sus datos relacionados.",
+                "Confirmación requerida"))
             {
                 await _viewModel.Delete(seleccionado.Id);
                 DialogUtils.MostrarInfo("Factura eliminada correctamente.", "Éxito");
