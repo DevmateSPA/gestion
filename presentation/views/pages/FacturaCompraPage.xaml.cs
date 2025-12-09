@@ -37,7 +37,7 @@ public partial class FacturaCompraPage : Page
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
         var factura = new FacturaCompra();
-        var ventana = new EntidadEditorTableWindow(this, factura, [], "Agregar Factura");
+        var ventana = new EntidadEditorTableWindow(this, factura, factura.Detalles, "Agregar Factura");
 
         if (ventana.ShowDialog() != true)
             return;
