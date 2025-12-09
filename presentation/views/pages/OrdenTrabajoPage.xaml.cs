@@ -53,6 +53,7 @@ public partial class OrdenTrabajoPage : Page
         var ordenTrabajoEditado = (OrdenTrabajo)ventana.EntidadEditada;
 
         await _viewModel.Save(ordenTrabajoEditado);
+        await _viewModel.SincronizarDetalles([], ordenTrabajoEditado.Detalles, ordenTrabajoEditado);
     }
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
@@ -84,13 +85,31 @@ public partial class OrdenTrabajoPage : Page
         var ordenTrabajoEditada = (OrdenTrabajo)ventana.EntidadEditada;
 
         await _viewModel.Update(ordenTrabajoEditada);
+        await _viewModel.SincronizarDetalles(detalles, ordenTrabajoEditada.Detalles, ordenTrabajoEditada);
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
         if (_dataGrid.SelectedItem is OrdenTrabajo seleccionado)
         {
-            if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar la orden de trabajo \"{seleccionado.Folio}\"?", "Confirmar eliminación"))
+            string cliente = string.IsNullOrWhiteSpace(seleccionado.RutCliente)
+                ? "(sin cliente)"
+                : seleccionado.RutCliente;
+
+            string fecha = seleccionado.Fecha != default
+                ? seleccionado.Fecha.ToString("dd-MM-yyyy")
+                : "(sin fecha)";
+
+            string mensaje =
+                $"¿Deseas eliminar la orden de trabajo:\n\n" +
+                $"• Folio: {seleccionado.Folio}\n" +
+                $"• Cliente: {cliente}\n" +
+                $"• Fecha: {fecha}\n" +
+                "Esta acción eliminará también todos sus detalles asociados, " +
+                "incluyendo papeles, tintas, sacos, sobres y cualquier otra información relacionada.\n\n" +
+                "Esta acción no se puede deshacer.";
+
+            if (DialogUtils.Confirmar(mensaje, "Confirmación requerida"))
             {
                 await _viewModel.Delete(seleccionado.Id);
                 DialogUtils.MostrarInfo("Orden de trabajo eliminada correctamente.", "Éxito");
@@ -100,7 +119,6 @@ public partial class OrdenTrabajoPage : Page
         {
             DialogUtils.MostrarAdvertencia("Selecciona una orden de trabajo antes de eliminar.", "Aviso");
         }
-        
     }
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)

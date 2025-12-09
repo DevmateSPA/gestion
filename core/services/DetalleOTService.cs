@@ -18,4 +18,24 @@ public class DetalleOTService : BaseService<DetalleOrdenTrabajo>, IDetalleOTServ
     {
         return await _detalleOTRepository.FindByFolio(folio);
     }
+
+    public Task<bool> DeleteByFolio(string folio)
+    {
+        return _detalleOTRepository.DeleteByFolio(folio);
+    }
+
+    public async Task<bool> DeleteByIds(IList<long> ids)
+    {
+        return await _detalleOTRepository.DeleteByIds(ids);
+    }
+
+    public async Task<bool> SaveAll(List<DetalleOrdenTrabajo> detalles)
+    {
+        return await _detalleOTRepository.SaveAll(detalles);
+    }
+
+    public async Task<bool> UpdateAll(IList<DetalleOrdenTrabajo> detalles)
+    {
+        return await _detalleOTRepository.UpdateAll(detalles);
+    }
 }

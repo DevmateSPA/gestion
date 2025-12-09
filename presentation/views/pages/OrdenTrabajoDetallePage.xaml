@@ -250,7 +250,6 @@
 
                         <DataGrid.Columns>
 
-                            <DataGridTextColumn Header="Tipo Papel" Width="*" Binding="{Binding Tipo}"/>
                             <DataGridTextColumn Header="Tipo Papel" Width="*" Binding="{Binding TipoPapel}"/>
                             <DataGridTextColumn Header="Cantidad" Width="80" Binding="{Binding Cantidad}"/>
                             <DataGridTextColumn Header="Sobras" Width="80" Binding="{Binding Sobras}"/>
