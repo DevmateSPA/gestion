@@ -7,7 +7,7 @@ namespace Gestion.core.model;
 
 public class FacturaCompra : FacturaBase, IConDetalles<FacturaCompraProducto>, INotifyPropertyChanged
 {
-    public string Tipo { get; set; } = string.Empty;
+    public string Tipo { get; set; } = "FA";
     public int Debe { get; set; }
     public int Habe { get; set; }
     public string Fopa { get; set; } = string.Empty;

@@ -18,6 +18,6 @@ public class FacturaCompraRepository : BaseRepository<FacturaCompra>, IFacturaCo
     {
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return FindWhereFrom("vw_facturacompra", "empresa = @empresa", p);
+        return FindWhereFrom("vw_facturacompra", "empresa = @empresa AND tipo = 'FA'", p);
     }
 }
