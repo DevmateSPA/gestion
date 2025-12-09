@@ -12,9 +12,4 @@ public class FacturaService : BaseService<Factura>, IFacturaService
     {
         _facturaRepository = facturaRepository;
     }
-
-    public Task<List<Factura>> FindAllByEmpresa(long empresaId)
-    {
-        return _facturaRepository.FindAllByEmpresa(empresaId);
-    }
 }

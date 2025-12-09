@@ -41,16 +41,16 @@ public partial class EncuadernacionPage : Page
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
         if (_dataGrid.SelectedItem is Encuadernacion seleccionado)
-            editar(seleccionado, "Editar Encuadernación");
+            await editar(seleccionado, "Editar Encuadernación");
     }
 
     private async void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (_dataGrid.SelectedItem is Encuadernacion seleccionado)
-            editar(seleccionado, "Editar Encuadernación");
+            await editar(seleccionado, "Editar Encuadernación");
     }
 
-    private async void editar(Encuadernacion encuadernacion, string titulo)
+    private async Task editar(Encuadernacion encuadernacion, string titulo)
     {
         var ventana = new EntidadEditorWindow(this, encuadernacion, titulo);
 

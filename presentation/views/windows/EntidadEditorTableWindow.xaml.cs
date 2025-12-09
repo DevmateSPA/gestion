@@ -10,7 +10,6 @@ public partial class EntidadEditorTableWindow : Window
     private readonly object _entidadOriginal;
     private readonly Dictionary<PropertyInfo, TextBox> _controles = new();
     private readonly IEnumerable<object>? _detalles;
-
     public object EntidadEditada { get; private set; }
 
     public EntidadEditorTableWindow(Page padre, object entidad, IEnumerable<object>? detalles, string titulo = "Ventana con tabla")
@@ -63,7 +62,7 @@ public partial class EntidadEditorTableWindow : Window
         spCampos.Children.Clear();
 
         int maxPorFila = 3;
-        StackPanel filaActual = null;
+        StackPanel? filaActual = null;
 
         for (int i = 0; i < propiedades.Count; i++)
         {
@@ -107,7 +106,7 @@ public partial class EntidadEditorTableWindow : Window
                 spCampos.Children.Add(filaActual);
             }
 
-            filaActual.Children.Add(bloque);
+            filaActual?.Children.Add(bloque);
         }
     }
 

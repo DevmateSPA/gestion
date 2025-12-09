@@ -41,16 +41,16 @@ namespace Gestion.presentation.views.pages;
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
         if (_dataGrid.SelectedItem is Cliente seleccionado)
-            editar(seleccionado, "Editar Cliente");
+            await editar(seleccionado, "Editar Cliente");
     }
 
     private async void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (_dataGrid.SelectedItem is Cliente seleccionado)
-            editar(seleccionado, "Editar Cliente");
+            await editar(seleccionado, "Editar Cliente");
     }
 
-    private async void editar(Cliente cliente, string titulo)
+    private async Task editar(Cliente cliente, string titulo)
     {
         var ventana = new EntidadEditorWindow(this, cliente, titulo);
 

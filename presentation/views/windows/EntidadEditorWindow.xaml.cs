@@ -88,7 +88,7 @@ public partial class EntidadEditorWindow : Window
         _controles.Clear();
 
         int maxPorFila = 3;
-        StackPanel filaActual = null;
+        StackPanel? filaActual = null;
 
         for (int i = 0; i < propiedades.Count; i++)
         {
@@ -147,7 +147,7 @@ public partial class EntidadEditorWindow : Window
                 spCampos.Children.Add(filaActual);
             }
 
-            filaActual.Children.Add(bloque);
+            filaActual?.Children.Add(bloque);
         }
     }
 

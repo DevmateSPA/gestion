@@ -42,16 +42,16 @@ public partial class NotaCreditoPage : Page
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
         if (_dataGrid.SelectedItem is NotaCredito notaCreditoSeleccionado)
-            editar(notaCreditoSeleccionado, "Editar Nota credito");
+            await editar(notaCreditoSeleccionado, "Editar Nota credito");
     }
 
     private async void dgNotasCredito_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (_dataGrid.SelectedItem is NotaCredito notaCreditoSeleccionado)
-            editar(notaCreditoSeleccionado, "Editar Nota credito");
+            await editar(notaCreditoSeleccionado, "Editar Nota credito");
     }
 
-    private async void editar(NotaCredito notaCredito, string titulo) 
+    private async Task editar(NotaCredito notaCredito, string titulo) 
     {
         var ventana = new EntidadEditorWindow(this, notaCredito, titulo);
 

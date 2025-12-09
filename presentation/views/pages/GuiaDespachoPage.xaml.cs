@@ -48,16 +48,16 @@ public partial class GuiaDespachoPage : Page
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
         if (dgGuiasDespacho.SelectedItem is GuiaDespacho guiaDespachoSeleccionado)
-            editar(guiaDespachoSeleccionado, "Editar Guias de Despacho");
+            await editar(guiaDespachoSeleccionado, "Editar Guias de Despacho");
     }
 
     private async void dgGuiasDespacho_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (dgGuiasDespacho.SelectedItem is GuiaDespacho guiaDespachoSeleccionado)
-            editar(guiaDespachoSeleccionado, "Editar Guias de Despacho");
+            await editar(guiaDespachoSeleccionado, "Editar Guias de Despacho");
     }
 
-    private async void editar(GuiaDespacho guiaDespacho, string titulo)
+    private async Task editar(GuiaDespacho guiaDespacho, string titulo)
     {
         if (guiaDespacho == null)
             return;

@@ -42,16 +42,16 @@ public partial class DocumentoNuloPage : Page
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
         if (_dataGrid.SelectedItem is DocumentoNulo documentoNuloSeleccionado)
-            editar(documentoNuloSeleccionado, "Editar Nota credito");
+            await editar(documentoNuloSeleccionado, "Editar Nota credito");
     }
 
     private async void dgDocumentosNulos_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (_dataGrid.SelectedItem is DocumentoNulo documentoNuloSeleccionado)
-            editar(documentoNuloSeleccionado, "Editar Nota credito");
+            await editar(documentoNuloSeleccionado, "Editar Nota credito");
     }
 
-    private async void editar(DocumentoNulo documentoNulo, string titulo)
+    private async Task editar(DocumentoNulo documentoNulo, string titulo)
     {
         var ventana = new EntidadEditorWindow(this, documentoNulo, titulo);
 

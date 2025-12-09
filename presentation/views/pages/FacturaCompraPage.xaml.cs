@@ -50,17 +50,17 @@ public partial class FacturaCompraPage : Page
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
         if (_dataGrid.SelectedItem is FacturaCompra facturaCompraSeleccionado)
-            editar(facturaCompraSeleccionado);
+            await editar(facturaCompraSeleccionado);
     }
 
     private async void dgFacturasCompra_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (_dataGrid.SelectedItem is FacturaCompra facturaCompraSeleccionado)
-            editar(facturaCompraSeleccionado);
+            await editar(facturaCompraSeleccionado);
     }
 
     // Metodo Editar -------------------------------------------- |
-    private async void editar(FacturaCompra factura, string titulo = "Editar Facturas de Compra")
+    private async Task editar(FacturaCompra factura, string titulo = "Editar Facturas de Compra")
     {
         if (factura == null)
             return;

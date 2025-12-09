@@ -12,9 +12,4 @@ public class OrdenTrabajoService : BaseService<OrdenTrabajo>, IOrdenTrabajoServi
     {
         _ordenTrabajoRepository = ordenTrabajoRepository;
     }
-
-    public Task<List<OrdenTrabajo>> FindAllByEmpresa(long empresaId)
-    {
-       return _ordenTrabajoRepository.FindAllByEmpresa(empresaId);
-    }
 }
