@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Markup;
 using Gestion.core.attributes.validation;
 using DAValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
 using WPFValidationResult = System.Windows.Controls.ValidationResult;
@@ -38,14 +39,12 @@ public partial class EntidadEditorTableWindow : Window
         GenerarCampos();
         CargarTabla();
 
-        // Focus al primer campo
-        if (spCampos.Children.OfType<StackPanel>()
+        // Focus al primer campo (TextBox o DatePicker)
+        var primerControl = spCampos.Children.OfType<StackPanel>()
                 .SelectMany(x => x.Children.OfType<StackPanel>())
-                .SelectMany(x => x.Children.OfType<TextBox>())
-                .FirstOrDefault() is TextBox primerCampo)
-        {
-            primerCampo.Focus();
-        }
+                .SelectMany(x => x.Children.OfType<Control>().Where(c => c is TextBox || c is DatePicker))
+                .FirstOrDefault();
+        primerControl?.Focus();
 
         this.PreviewKeyDown += (s, e) =>
         {
@@ -91,46 +90,89 @@ public partial class EntidadEditorTableWindow : Window
                 Margin = new Thickness(0, 4, 0, 2)
             };
 
-            // TextBox con binding
-            var textBox = new TextBox
-            {
-                FontSize = 20,
-                Height = 30,
-                Width = 300,
-                Margin = new Thickness(5, 0, 5, 10)
-            };
-
-            // --- BINDING ---
-            var binding = new Binding(prop.Name)
-            {
-                Source = EntidadEditada,
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
-                Mode = BindingMode.TwoWay,
-                ValidatesOnExceptions = true,
-                ValidatesOnDataErrors = true
-            };
-
-            // Formato de fecha si tiene atributo Fecha
+            // Determinar si es fecha
             var fechaAttr = prop.GetCustomAttribute<FechaAttribute>();
-            if (fechaAttr != null && prop.PropertyType == typeof(DateTime))
+            bool esDateTime = prop.PropertyType == typeof(DateTime);
+
+            // Controles por defecto
+            Control controlCampo;
+
+            if (esDateTime)
             {
-                binding.StringFormat = fechaAttr.Formato;
+                // DatePicker para DateTime, forzando formato dd/MM/yyyy
+                var datePicker = new DatePicker
+                {
+                    FontSize = 20,
+                    Height = 30,
+                    Width = 300,
+                    Margin = new Thickness(5, 0, 5, 10),
+                    SelectedDateFormat = DatePickerFormat.Short,
+                    Language = XmlLanguage.GetLanguage("es-ES")
+                };
+
+                // --- BINDING sobre SelectedDate ---
+                var binding = new Binding(prop.Name)
+                {
+                    Source = EntidadEditada,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    Mode = BindingMode.TwoWay,
+                    ValidatesOnExceptions = true,
+                    ValidatesOnDataErrors = true,
+                    StringFormat = "dd/MM/yyyy" // formato requerido
+                };
+
+                // Validación por DataAnnotations
+                var rule = new DataAnnotationValidationRule(prop, EntidadEditada)
+                {
+                    ValidationStep = ValidationStep.ConvertedProposedValue
+                };
+                binding.ValidationRules.Add(rule);
+
+                datePicker.SetBinding(DatePicker.SelectedDateProperty, binding);
+                controlCampo = datePicker;
             }
-
-            // Validación por DataAnnotations
-            var rule = new DataAnnotationValidationRule(prop, EntidadEditada)
+            else
             {
-                // Validar después de que el binding convierta la cadena al tipo de la propiedad
-                ValidationStep = ValidationStep.ConvertedProposedValue
-            };
-            binding.ValidationRules.Add(rule);
+                // TextBox para el resto
+                var textBox = new TextBox
+                {
+                    FontSize = 20,
+                    Height = 30,
+                    Width = 300,
+                    Margin = new Thickness(5, 0, 5, 10)
+                };
 
-            textBox.SetBinding(TextBox.TextProperty, binding);
+                // --- BINDING ---
+                var binding = new Binding(prop.Name)
+                {
+                    Source = EntidadEditada,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    Mode = BindingMode.TwoWay,
+                    ValidatesOnExceptions = true,
+                    ValidatesOnDataErrors = true
+                };
+
+                // Si existe FechaAttribute pero no es DateTime (caso raro), no aplicamos.
+                if (fechaAttr != null && prop.PropertyType == typeof(DateTime))
+                {
+                    binding.StringFormat = fechaAttr.Formato;
+                }
+
+                // Validación por DataAnnotations
+                var rule = new DataAnnotationValidationRule(prop, EntidadEditada)
+                {
+                    ValidationStep = ValidationStep.ConvertedProposedValue
+                };
+                binding.ValidationRules.Add(rule);
+
+                textBox.SetBinding(TextBox.TextProperty, binding);
+                controlCampo = textBox;
+            }
 
             // Bloque del campo
             var bloque = new StackPanel { Orientation = Orientation.Vertical, Width = 310 };
             bloque.Children.Add(label);
-            bloque.Children.Add(textBox);
+            bloque.Children.Add(controlCampo);
 
             if (i % maxPorFila == 0)
             {
@@ -141,13 +183,16 @@ public partial class EntidadEditorTableWindow : Window
             filaActual?.Children.Add(bloque);
         }
 
-        // Forzar validación inicial en todos los TextBox
-        foreach (var tb in spCampos
+        // Forzar validación inicial en todos los controles generados (TextBox y DatePicker)
+        foreach (var ctrl in spCampos
             .Children.OfType<StackPanel>()
             .SelectMany(f => f.Children.OfType<StackPanel>())
-            .SelectMany(c => c.Children.OfType<TextBox>()))
+            .SelectMany(c => c.Children.OfType<Control>().Where(c => c is TextBox || c is DatePicker)))
         {
-            tb.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
+            if (ctrl is TextBox tb)
+                tb.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
+            else if (ctrl is DatePicker dp)
+                dp.GetBindingExpression(DatePicker.SelectedDateProperty)?.UpdateSource();
         }
     }
 
@@ -163,12 +208,12 @@ public partial class EntidadEditorTableWindow : Window
 
     private void BtnGuardar_Click(object sender, RoutedEventArgs e)
     {
-        // Buscar errores en todos los TextBox generados
+        // Buscar errores en todos los controles generados (TextBox y DatePicker)
         bool hayErrores = spCampos
             .Children
             .OfType<StackPanel>()
             .SelectMany(f => f.Children.OfType<StackPanel>())
-            .SelectMany(c => c.Children.OfType<TextBox>())
+            .SelectMany(c => c.Children.OfType<Control>().Where(c => c is TextBox || c is DatePicker))
             .Any(t => Validation.GetHasError(t));
 
         if (hayErrores)
@@ -229,20 +274,25 @@ public class DataAnnotationValidationRule : ValidationRule
                 {
                     // Si hay un FechaAttribute, usar su formato para TryParseExact
                     var fechaAttrLocal = _prop.GetCustomAttribute<FechaAttribute>();
+                    var formatoRequerido = "dd/MM/yyyy";
+
                     if (fechaAttrLocal != null)
                     {
-                        if (DateTime.TryParseExact(s, fechaAttrLocal.Formato, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dtExact))
-                            valorConvertido = dtExact;
+                        // preferir formato del atributo si existe
+                        if (DateTime.TryParseExact(s, fechaAttrLocal.Formato, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dtExactAttr))
+                            valorConvertido = dtExactAttr;
                         else
                             return new WPFValidationResult(false, $"{_prop.Name} debe tener el formato {fechaAttrLocal.Formato}.");
                     }
                     else
                     {
-                        // Sin atributo, intento parse flexible según cultureInfo
-                        if (DateTime.TryParse(s, cultureInfo, DateTimeStyles.None, out var dt))
+                        // aceptar explícitamente dd/MM/yyyy primero, luego parse flexible según cultureInfo
+                        if (DateTime.TryParseExact(s, formatoRequerido, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dtExact))
+                            valorConvertido = dtExact;
+                        else if (DateTime.TryParse(s, cultureInfo, DateTimeStyles.None, out var dt))
                             valorConvertido = dt;
                         else
-                            return new WPFValidationResult(false, $"{_prop.Name} tiene un formato inválido.");
+                            return new WPFValidationResult(false, $"{_prop.Name} debe tener el formato {formatoRequerido}.");
                     }
                 }
                 else if (tipoSubyacente.IsEnum)

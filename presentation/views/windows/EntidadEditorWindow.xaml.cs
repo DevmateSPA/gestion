@@ -1,8 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Markup;
 using Gestion.core.attributes.validation;
 using Gestion.presentation.utils;
 
@@ -11,7 +14,8 @@ namespace Gestion.presentation.views.windows;
 public partial class EntidadEditorWindow : Window
 {
     private readonly object _entidadOriginal;
-    private readonly Dictionary<PropertyInfo, TextBox> _controles = new();
+    // Cambiado para almacenar TextBox o DatePicker
+    private readonly Dictionary<PropertyInfo, Control> _controles = new();
 
     public object EntidadEditada { get; private set; }
 
@@ -52,11 +56,9 @@ public partial class EntidadEditorWindow : Window
                 break;
         }
 
-        // Focus
-        if (_controles.Values.FirstOrDefault() is TextBox primerCampo)
-        {
-            primerCampo.Focus();
-        }
+        // Focus al primer control (TextBox o DatePicker)
+        var primerControl = _controles.Values.FirstOrDefault();
+        primerControl?.Focus();
 
         // ESC para cerrar
         this.PreviewKeyDown += (s, e) =>
@@ -104,33 +106,93 @@ public partial class EntidadEditorWindow : Window
             };
 
             var valor = prop.GetValue(entidad);
-            string valorTexto = "";
 
             var fechaAttr = prop.GetCustomAttribute<FechaAttribute>();
 
-            if (fechaAttr != null && valor != null)
+            // Detectar DateTime o DateTime?
+            var tipoSubyacente = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+            bool esDateTime = tipoSubyacente == typeof(DateTime);
+
+            Control control;
+
+            if (esDateTime)
             {
-                if (valor is DateTime fecha)
+                // DatePicker para DateTime
+                var dp = new DatePicker
                 {
-                    valorTexto = fecha.ToString(fechaAttr.Formato);
-                }
+                    FontSize = 20,
+                    Height = 30,
+                    Width = 300,
+                    Margin = new Thickness(5, 0, 5, 10),
+                    SelectedDateFormat = DatePickerFormat.Short,
+                    Language = XmlLanguage.GetLanguage("es-ES")
+                };
+
+                // --- BINDING al SelectedDate ---
+                var formato = fechaAttr?.Formato ?? "dd/MM/yyyy";
+
+                var binding = new Binding(prop.Name)
+                {
+                    Source = EntidadEditada,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    Mode = BindingMode.TwoWay,
+                    ValidatesOnExceptions = true,
+                    ValidatesOnDataErrors = true,
+                    StringFormat = formato,
+                    ConverterCulture = CultureInfo.GetCultureInfo("es-ES")
+                };
+
+                var rule = new DataAnnotationValidationRule(prop, EntidadEditada)
+                {
+                    ValidationStep = ValidationStep.ConvertedProposedValue
+                };
+                binding.ValidationRules.Add(rule);
+
+                dp.SetBinding(DatePicker.SelectedDateProperty, binding);
+
+                control = dp;
             }
             else
             {
-                valorTexto = valor?.ToString() ?? "";
+                string valorTexto = valor?.ToString() ?? "";
+
+                if (fechaAttr != null && valor != null && valor is DateTime fecha)
+                {
+                    valorTexto = fecha.ToString(fechaAttr.Formato);
+                }
+
+                var textBox = new TextBox
+                {
+                    Text = valorTexto,
+                    FontSize = 20,
+                    Height = 30,
+                    Width = 300,
+                    Margin = new Thickness(5, 0, 5, 10)
+                };
+
+                // --- BINDING al Text ---
+                var binding = new Binding(prop.Name)
+                {
+                    Source = EntidadEditada,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    Mode = BindingMode.TwoWay,
+                    ValidatesOnExceptions = true,
+                    ValidatesOnDataErrors = true,
+                    ConverterCulture = CultureInfo.GetCultureInfo("es-ES")
+                };
+
+                var rule = new DataAnnotationValidationRule(prop, EntidadEditada)
+                {
+                    ValidationStep = ValidationStep.ConvertedProposedValue
+                };
+                binding.ValidationRules.Add(rule);
+
+                textBox.SetBinding(TextBox.TextProperty, binding);
+
+                control = textBox;
             }
 
-            var textBox = new TextBox
-            {
-                Text = valorTexto,
-                FontSize = 20,
-                Height = 30,
-                Width = 300,
-                Margin = new Thickness(5, 0, 5, 10),
-                Tag = prop
-            };
-
-            _controles[prop] = textBox;
+            _controles[prop] = control;
 
             var bloque = new StackPanel
             {
@@ -139,7 +201,7 @@ public partial class EntidadEditorWindow : Window
             };
 
             bloque.Children.Add(label);
-            bloque.Children.Add(textBox);
+            bloque.Children.Add(control);
 
             if (i % maxPorFila == 0)
             {
@@ -149,49 +211,42 @@ public partial class EntidadEditorWindow : Window
 
             filaActual?.Children.Add(bloque);
         }
+
+        // Forzar validación inicial en todos los controles generados (TextBox y DatePicker)
+        foreach (var ctrl in spCampos
+            .Children.OfType<StackPanel>()
+            .SelectMany(f => f.Children.OfType<StackPanel>())
+            .SelectMany(c => c.Children.OfType<Control>().Where(c => c is TextBox || c is DatePicker)))
+        {
+            if (ctrl is TextBox tb)
+                tb.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
+            else if (ctrl is DatePicker dp)
+                dp.GetBindingExpression(DatePicker.SelectedDateProperty)?.UpdateSource();
+        }
     }
 
     private void BtnGuardar_Click(object sender, RoutedEventArgs e)
     {
-        // Guardar propiedades normales
-        foreach (var kvp in _controles)
+        // Buscar errores en todos los controles generados (TextBox y DatePicker)
+        bool hayErrores = spCampos
+            .Children
+            .OfType<StackPanel>()
+            .SelectMany(f => f.Children.OfType<StackPanel>())
+            .SelectMany(c => c.Children.OfType<Control>().Where(c => c is TextBox || c is DatePicker))
+            .Any(t => Validation.GetHasError(t));
+
+        if (hayErrores)
         {
-            var prop = kvp.Key;
-            var textBox = kvp.Value;
-            var texto = textBox.Text;
-
-            try
-            {
-                // Valida la propiedad segun los metadatos de la entidad
-                // Podía usar el DialogService para mostrar este cuadro
-                if (!ValidatorProperties.Validar(prop, texto, out var mensaje))
-                {
-                    MessageBox.Show(mensaje);
-                    textBox.Focus();
-                    return;
-                }
-
-                object valorConvertido = texto;
-
-                if (prop.PropertyType != typeof(string))
-                    valorConvertido = Convert.ChangeType(texto, prop.PropertyType);
-
-                prop.SetValue(EntidadEditada, valorConvertido);
-            }
-            catch
-            {
-                MessageBox.Show($"El valor ingresado para {prop.Name} no es válido.");
-                return;
-            }
+            MessageBox.Show(
+                "Hay errores en el formulario. Corrígelos antes de guardar.",
+                "Error",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning
+            );
+            return;
         }
 
-        // Guardar MEMO
-        var memoProp = EntidadEditada.GetType().GetProperty("Memo");
-        if (memoProp != null)
-        {
-            memoProp.SetValue(EntidadEditada, txtMemo.Text);
-        }
-
+        // Al usar binding TwoWay con Source=EntidadEditada, los valores ya están actualizados.
         DialogResult = true;
         Close();
     }
