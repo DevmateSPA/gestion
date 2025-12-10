@@ -10,7 +10,8 @@ static DatabaseConfig()
     try
     {
         string projectRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..");
-        string envPath = Path.GetFullPath(Path.Combine(projectRoot, ".env"));
+//        string envPath = Path.GetFullPath(Path.Combine(projectRoot, ".env"));
+        string envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
 
         if (File.Exists(envPath))
         {

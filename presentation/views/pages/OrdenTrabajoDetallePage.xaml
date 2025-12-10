@@ -35,6 +35,10 @@
                     Width="140" Height="40"
                     Margin="0 0 10 0"
                     Click="BtnGuardar_Click" />
+            <Button Content="Imprimir"
+                    Width="140" Height="40"
+                    Margin="0 0 10 0"
+                    Click="BtnImprimir_Click" />
             <Button Content="Cancelar"
                     Width="140" Height="40"
                     Click="BtnCancelar_Click" />

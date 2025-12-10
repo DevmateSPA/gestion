@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -57,9 +59,18 @@ public partial class OrdenTrabajoDetallePage : Window
         this.DialogResult = false;
     }
 
-    public static void GenerarOrdenTrabajoPdf(OrdenTrabajo ot, string outputPath)
+    private void BtnImprimir_Click(object sender, RoutedEventArgs e)
     {
-        var writer = new PdfWriter(outputPath);
+        GenerarOrdenTrabajoPdf((OrdenTrabajo)_entidadOriginal);
+        ImprimirPDF();
+    }
+
+    public static void GenerarOrdenTrabajoPdf(OrdenTrabajo ot)
+    {
+        string path = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+            "orden_trabajo.pdf");
+        var writer = new PdfWriter(path);
         var pdf = new PdfDocument(writer);
         var doc = new Document(pdf);
 
@@ -124,5 +135,47 @@ public partial class OrdenTrabajoDetallePage : Window
         doc.Add(new Paragraph("Impresión               $____________"));
 
         doc.Close();
+    }
+
+    public static void ImprimirPDF(string impresora = "Microsoft Print to PDF")
+    {
+        try
+        {
+            string path = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "orden_trabajo.pdf");
+            string appFolder = AppDomain.CurrentDomain.BaseDirectory;
+
+            string sumatraPath = Path.Combine(appFolder, "SumatraPDF.exe");
+
+            if (!File.Exists(sumatraPath))
+            {
+                MessageBox.Show("No se encontró SumatraPDF.exe en la carpeta del programa.",
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (!File.Exists(path))
+            {
+                MessageBox.Show("No se encontró el archivo PDF a imprimir.",
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            Process p = new Process();
+            p.StartInfo.FileName = sumatraPath;
+            p.StartInfo.Arguments = $"-print-to \"{impresora}\" \"{path}\"";
+            p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+            p.Start();
+            p.WaitForExit();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Error al imprimir PDF: " + ex.Message,
+                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 }
