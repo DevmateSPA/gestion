@@ -204,7 +204,7 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
 
         int affected = await cmd.ExecuteNonQueryAsync();
 
-        return affected > 0;
+        return true;
     }
 
     public override Task<List<FacturaCompraProducto>> FindAllByEmpresa(long empresaId)

@@ -196,6 +196,6 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
 
         int affected = await cmd.ExecuteNonQueryAsync();
 
-        return affected > 0;
+        return true;
     }
 }

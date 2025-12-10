@@ -81,7 +81,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         EntidadesView.Refresh();
     }
 
-    private protected void removeEntityById(long id)
+    private protected void RemoveEntityById(long id)
     {
         var entidad = Entidades.FirstOrDefault(e => e.Id == id);
         if (entidad != null)
@@ -99,7 +99,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         }
     }
 
-    private protected void addEntity(T entidad)
+    private protected void AddEntity(T entidad)
     {
         if (entidad != null)
             Entidades.Add(entidad);
@@ -118,7 +118,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
             }
             Entidades.Clear();
             foreach (var entidad in lista)
-                addEntity(entidad);
+                AddEntity(entidad);
         }, _dialogService, $"Error al cargar {typeof(T).Name}");
         this.IsLoading = false;
     }
@@ -139,7 +139,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
             }
             Entidades.Clear();
             foreach(var entidad in lista)
-                addEntity(entidad);
+                AddEntity(entidad);
         }, _dialogService, $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}");
         this.IsLoading = false;
     }
@@ -158,7 +158,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         }, _dialogService, mensajeError);
     }
     public virtual async Task Delete(long id) =>
-        await RunServiceAction(async () => await _service.DeleteById(id), () => removeEntityById(id), $"Error al eliminar {typeof(T).Name}");
+        await RunServiceAction(async () => await _service.DeleteById(id), () => RemoveEntityById(id), $"Error al eliminar {typeof(T).Name}");
 
     public async Task Update(T entidad) =>
         await RunServiceAction(async () => await _service.Update(entidad), () => ReplaceEntity(entidad), $"Error al actualizar {typeof(T).Name}");
@@ -166,6 +166,6 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
     public async Task Save(T entidad)
     {
         entidad.Empresa = SesionApp.IdEmpresa;
-        await RunServiceAction(() => _service.Save(entidad), () => addEntity(entidad), $"Error al guardar {typeof(T).Name}");
+        await RunServiceAction(() => _service.Save(entidad), () => AddEntity(entidad), $"Error al guardar {typeof(T).Name}");
     }
 }
