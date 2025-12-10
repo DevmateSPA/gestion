@@ -30,7 +30,7 @@ namespace Gestion.presentation.views.pages
 
         private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            var ventana = new EntidadEditorWindow(this,new Banco(), "Ingresar Grupo");
+            var ventana = new EntidadEditorWindow(this,new Grupo(), "Ingresar Grupo");
 
             if (ventana.ShowDialog() == true)
             {

@@ -29,7 +29,7 @@ namespace Gestion.presentation.views.pages
 
         private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            var ventana = new EntidadEditorWindow(this,new Banco(), "Ingresar Operario");
+            var ventana = new EntidadEditorWindow(this,new Operario(), "Ingresar Operario");
 
             if (ventana.ShowDialog() == true)
             {
