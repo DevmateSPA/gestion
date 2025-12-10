@@ -182,7 +182,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         using var cmd = (DbCommand)conn.CreateCommand();
 
         var props = typeof(T).GetProperties()
-            .Where(p => p.Name != "Id" 
+            .Where(p => p.Name != "Id"
             && Attribute.IsDefined(p, typeof(NotMappedAttribute)) == false
             && !Attribute.IsDefined(p, typeof(DbIgnoreAttribute)))
             .ToList();
@@ -190,7 +190,10 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         var columns = string.Join(", ", props.Select(p => p.Name.ToLower()));
         var parameters = string.Join(", ", props.Select(p => $"@{p.Name.ToLower()}"));
 
-        cmd.CommandText = $"INSERT INTO {_tableName} ({columns}) VALUES ({parameters})";
+        cmd.CommandText = $@"
+            INSERT INTO {_tableName} ({columns}) VALUES ({parameters});
+            SELECT LAST_INSERT_ID();
+        ";
 
         foreach (var prop in props)
         {
@@ -200,8 +203,20 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
             cmd.Parameters.Add(param);
         }
 
-        int affected = await cmd.ExecuteNonQueryAsync();
-        return affected > 0;
+        var result = await cmd.ExecuteScalarAsync();
+
+        if (result == null || result == DBNull.Value)
+            return false;
+
+        // Asignar el ID al objeto
+        long id = Convert.ToInt64(result);
+
+        var propId = typeof(T).GetProperty("Id");
+        if (propId != null && propId.CanWrite)
+            propId.SetValue(entity, id);
+
+        return true;
     }
+
     public abstract Task<List<T>> FindAllByEmpresa(long empresaId);
 }
