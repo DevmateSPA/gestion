@@ -123,10 +123,16 @@ public partial class App : Application
         // OrdenTrabajoPrueba
         services.AddTransient<OrdenTrabajoDetallePage>();
         // CuentaCorrienteCliente
-        services.AddTransient<CuentaCorrienteClientePage>();      
+        services.AddTransient<CuentaCorrienteClientePage>();   
+        // PendientesProduccion
+        services.AddTransient<PendienteProduccionPage>();   
+        // PendientesMaquina
+        services.AddTransient<PendienteMaquinaPage>();      
 
         // Ventanas modales
         services.AddTransient<AgregarBancoWindow>();
+        services.AddTransient<ClienteCartolaWindow>();
+        services.AddTransient<ClienteOTWindow>();
        
         ServiceProvider = services.BuildServiceProvider();
 

@@ -7,21 +7,21 @@ using Gestion.presentation.views.windows;
 using Gestion.presentation.utils;
 
 namespace Gestion.presentation.views.pages;
-    public partial class CuentaCorrienteClientePage : Page
+    public partial class PendienteMaquinaPage : Page
     {
-    private readonly ClienteViewModel _viewModel;
+    private readonly OrdenTrabajoViewModel _viewModel;
     
     private DataGrid _dataGrid;
     
-    public CuentaCorrienteClientePage(ClienteViewModel clienteViewModel)
+    public PendienteMaquinaPage(OrdenTrabajoViewModel ordenTrabajoViewModel)
     {
         InitializeComponent();
-        _viewModel = clienteViewModel;
+        _viewModel = ordenTrabajoViewModel;
         DataContext = _viewModel;
-        Title = $"Clientes";
+        Title = $"Pendientes Maquina";
 
         Loaded += async (_, _) => await _viewModel.LoadAllByEmpresa();
-        _dataGrid = dgClientes;
+        _dataGrid = dgOrdenesTrabajo;
         _dataGrid.ItemContainerGenerator.StatusChanged += DataGrid_StatusChanged;
 
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
@@ -34,8 +34,7 @@ namespace Gestion.presentation.views.pages;
 
     private async void BtnCartola_Click(object sender, RoutedEventArgs e)
     {
-        var modal = new ClienteCartolaWindow();
-        modal.ShowDialog();
+
 
     }
 
@@ -51,8 +50,7 @@ namespace Gestion.presentation.views.pages;
 
     private async void BtnOT_Click(object sender, RoutedEventArgs e)
     {
-        var modal = new ClienteOTWindow();
-        modal.ShowDialog();
+        
     }
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)

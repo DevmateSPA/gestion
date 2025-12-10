@@ -53,7 +53,7 @@
             <Button Width="150" Height="50"  Content="Eliminar (Del)" Click="BtnEliminar_Click" Margin="5"/>
             <Button Width="150" Height="50"  Content="Editar (Enter)" Click="BtnEditar_Click" Margin="5"/>
             <Button Width="150" Height="50"  Content="Buscar (F2)" Click="BtnBuscar_Click" Margin="5"/>
-            <Button Width="150" Height="50"  Content="Imprimir (F4)" Click="BtnImprimir_Click" Margin="5"/>
+            <!--<Button Width="150" Height="50"  Content="Imprimir (F4)" Click="BtnImprimir_Click" Margin="5"/>-->
         </StackPanel>
     </Grid>
 </Page>

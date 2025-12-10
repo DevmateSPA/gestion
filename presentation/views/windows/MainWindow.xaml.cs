@@ -32,6 +32,24 @@ namespace Gestion.presentation.views.windows
             {
                 if (sender is MenuItem item)
                 {
+                    string tituloVentana = item.Tag switch
+                    {
+                        "ModuloBanco" => "Bancos",
+                        "ModuloCliente" => "Clientes",
+                        "ModuloProveedor" => "Proveedores",
+                        "ModuloGrupo" => "Grupos",
+                        "ModuloProducto" => "Productos",
+                        "ModuloMaquina" => "Máquinas",
+                        "ModuloOperador" => "Operadores",
+                        _ => "Módulo desconocido"
+                    };
+
+                    var window = Window.GetWindow(this);
+
+                    if (window != null)
+                    {
+                        window.Title = "Gestión — " + tituloVentana;
+                    }
                     Page? page = item.Tag switch
                     {
                         "ModuloBanco" => App.ServiceProvider.GetRequiredService<BancoPage>(),
@@ -63,6 +81,19 @@ namespace Gestion.presentation.views.windows
         {
             if (sender is MenuItem item)
             {
+                string tituloVentana = item.Tag switch
+                {
+                    "ModuloImp" => "Impresiones",
+                    "ModuloEnc" => "Encuadernaciones",
+                    "ModuloFot" => "Fotomecanica",
+                    _ => "Módulo desconocido"
+                };
+                var window = Window.GetWindow(this);
+
+                if (window != null)
+                {
+                    window.Title = "Gestión — " + tituloVentana;
+                }
                 Page? page = item.Tag switch
                 {
                     "ModuloImp" =>  App.ServiceProvider.GetRequiredService<ImpresionPage>(),
@@ -86,6 +117,21 @@ namespace Gestion.presentation.views.windows
         {
             if (sender is MenuItem item)
             {
+                string tituloVentana = item.Tag switch
+                {
+                    "ModuloGuia" => "Guías de Despacho",
+                    "ModuloFactura" => "Facturas",
+                    "ModuloNotaCredito" => "Notas de Crédito",
+                    "ModuloDocNulo" => "documentos Nulos",
+                    _ => "Módulo desconocido"
+                };
+
+                var window = Window.GetWindow(this);
+
+                if (window != null)
+                {
+                    window.Title = "Gestión — " + tituloVentana;
+                }
                 Page? page = item.Tag switch
                 {
                     "ModuloGuia" =>  App.ServiceProvider.GetRequiredService<GuiaDespachoPage>(),
@@ -112,6 +158,18 @@ namespace Gestion.presentation.views.windows
         {
             if (sender is MenuItem item)
             {
+                string tituloVentana = item.Tag switch
+                {
+                    "ModuloFactura" => "Facturas de Compra",
+                    _ => "Módulo desconocido"
+                };
+
+                var window = Window.GetWindow(this);
+
+                if (window != null)
+                {
+                    window.Title = "Gestión — " + tituloVentana;
+                }
                 Page? page = item.Tag switch
                 {
                     "ModuloFactura" =>  App.ServiceProvider.GetRequiredService<FacturaCompraPage>(),
@@ -136,6 +194,18 @@ namespace Gestion.presentation.views.windows
         {
             if (sender is MenuItem item)
             {
+                string tituloVentana = item.Tag switch
+                {
+                    "ModuloOrden" => "Ordenes de Trabajo",
+                    _ => "Módulo desconocido"
+                };
+
+                var window = Window.GetWindow(this);
+
+                if (window != null)
+                {
+                    window.Title = "Gestión — " + tituloVentana;
+                }
                 Page? page = item.Tag switch
                 {
                     "ModuloOrden" => App.ServiceProvider.GetRequiredService<OrdenTrabajoPage>(),
@@ -160,6 +230,11 @@ namespace Gestion.presentation.views.windows
 
         private void MenuItemSalida_Click(object sender, RoutedEventArgs e)
         {
+            var window = Window.GetWindow(this);
+            if (window != null)
+                {
+                    window.Title = "Gestión — Cuentas Corrientes Clientes";
+                }
             Page? page = App.ServiceProvider.GetRequiredService<CuentaCorrienteClientePage>();
             MainFrame.Navigate(page);
         }
@@ -168,10 +243,23 @@ namespace Gestion.presentation.views.windows
         {
             if (sender is MenuItem item)
             {
+                string tituloVentana = item.Tag switch
+                {
+                    "ModuloProduccion" => "Pendientes Producción",
+                    "ModuloMaquina" => "Pendientes por Maquina",
+                    _ => "Módulo desconocido"
+                };
+
+                var window = Window.GetWindow(this);
+
+                if (window != null)
+                {
+                    window.Title = "Gestión — " + tituloVentana;
+                }
                 Page? page = item.Tag switch
                 {
-                    "ModuloProduccion" => App.ServiceProvider.GetRequiredService<OrdenTrabajoPage>(),
-                    "ModuloMaquina" => App.ServiceProvider.GetRequiredService<OrdenTrabajoPage>(),
+                    "ModuloProduccion" => App.ServiceProvider.GetRequiredService<PendienteProduccionPage>(),
+                    "ModuloMaquina" => App.ServiceProvider.GetRequiredService<PendienteMaquinaPage>(),
                     _ => null
                 };
 
