@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
 
@@ -6,7 +7,9 @@ namespace Gestion.core.model;
 public class DocumentoNulo : IEmpresa
 {
     public long Id { get; set; }
+    [Required]
     public string Tipo { get; set; } = string.Empty;
+    [Required]
     public string Folio { get; set; } = string.Empty;
     public string Glosa { get; set; } = string.Empty;
     [Fecha]

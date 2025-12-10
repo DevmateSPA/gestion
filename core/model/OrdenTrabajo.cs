@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
 using Gestion.core.model.detalles;
@@ -7,6 +8,7 @@ namespace Gestion.core.model;
 public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
 {
     public long Id { get; set; }
+    [Required]
     public string Folio { get; set; } = string.Empty;
     [Fecha]
     public DateTime Fecha { get; set; } = DateTime.Now;

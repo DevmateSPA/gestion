@@ -61,7 +61,7 @@
                         <TextBlock Text="Rut Cliente" Grid.Column="2"/>
 
                         <TextBox Text="{Binding Folio}" Grid.Row="1"/>
-                        <TextBox Text="{Binding Fecha}" Grid.Row="1" Grid.Column="1"/>
+                        <TextBox Text="{Binding Fecha, StringFormat={}{0:dd/MM/yyyy}}" Grid.Row="1" Grid.Column="1"/>
                         <TextBox Text="{Binding RutCliente}" Grid.Row="1" Grid.Column="2"/>
                     </Grid>
                 </GroupBox>

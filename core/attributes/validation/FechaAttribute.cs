@@ -13,16 +13,18 @@ public class FechaAttribute : ValidationAttribute
 
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
-        string? texto = value?.ToString();
+        // Si ya es DateTime (o Nullable<DateTime> con valor), es válido
+        if (value is DateTime)
+            return ValidationResult.Success;
 
-        // Permitir vacío (deja que [Required] controle eso)
+        // Permitir vacío (deja que [Required] lo gestione)
+        string? texto = value?.ToString();
         if (string.IsNullOrWhiteSpace(texto))
             return ValidationResult.Success;
 
         if (!EsFechaValida(texto))
         {
             string nombreCampo = validationContext.MemberName ?? "Este campo";
-
             return new ValidationResult(ErrorMessage ?? $"{nombreCampo} debe tener el formato {Formato}.");
         }
 

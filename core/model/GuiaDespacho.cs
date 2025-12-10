@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;

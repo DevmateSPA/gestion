@@ -25,7 +25,7 @@ public class Factura : FacturaBase
     [Nombre("Fecha de vencimiento")]
     [Orden(4)]
     [Fecha]
-    public DateTime FechaVencimiento { get; set; }
+    public DateTime FechaVencimiento { get; set; } = DateTime.Now;
     [Nombre("Crédito")]
     [Orden(5)]
     public long TipoCredito { get; set; }
@@ -59,7 +59,7 @@ public class Factura : FacturaBase
     [Visible(false)]
     public string Op05 { get; set; } = string.Empty;
     [Visible(false)]
-    public string peli { get; set; } = string.Empty;
+    public string Peli { get; set; } = string.Empty;
     [Visible(false)]
-    public string plan { get; set; } = string.Empty;
+    public string Plan { get; set; } = string.Empty;
 }
