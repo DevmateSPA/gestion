@@ -62,7 +62,7 @@ public partial class PaginationControls : UserControl
         {
             if (int.TryParse(txtPage.Text, out int p))
                 NavigateTo(p);
-
+                
             e.Handled = true;
         }
     }
@@ -76,6 +76,7 @@ public partial class PaginationControls : UserControl
                 if (size < 0) size = 1;
 
                 PageSizeChanged?.Invoke(size);
+                CurrentPage = 1;
             }
 
             e.Handled = true;
