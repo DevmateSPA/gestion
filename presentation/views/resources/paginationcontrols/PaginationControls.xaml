@@ -1,0 +1,19 @@
+<UserControl x:Class="Gestion.presentation.views.resources.paginationcontrols.PaginationControls"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Height="50">
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
+        
+        <Button Content="⏮" Width="40" Margin="5" Click="FirstPage_Click"/>
+        <Button Content="◀" Width="40" Margin="5" Click="PrevPage_Click"/>
+
+        <TextBlock Text="Página:" VerticalAlignment="Center" Margin="5,0"/>
+        <TextBox x:Name="txtPage" Width="40" HorizontalContentAlignment="Center" KeyDown="txtPage_KeyDown"/>
+
+        <TextBlock Text="/" VerticalAlignment="Center" Margin="5,0"/>
+        <TextBlock x:Name="lblTotalPages" VerticalAlignment="Center"/>
+
+        <Button Content="▶" Width="40" Margin="5" Click="NextPage_Click"/>
+        <Button Content="⏭" Width="40" Margin="5" Click="LastPage_Click"/>
+    </StackPanel>
+</UserControl>
