@@ -27,28 +27,28 @@ namespace Gestion.presentation.views.pages;
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
     
-    private async void BtnSaldos_Click(object sender, RoutedEventArgs e)
+    private void BtnSaldos_Click(object sender, RoutedEventArgs e)
     {
         
     }
 
-    private async void BtnCartola_Click(object sender, RoutedEventArgs e)
+    private void BtnCartola_Click(object sender, RoutedEventArgs e)
     {
 
 
     }
 
-    private async void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-    {
-        
-    }
-
-    private async void BtnCancelar_Click(object sender, RoutedEventArgs e)
+    private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         
     }
 
-    private async void BtnOT_Click(object sender, RoutedEventArgs e)
+    private void BtnCancelar_Click(object sender, RoutedEventArgs e)
+    {
+        
+    }
+
+    private void BtnOT_Click(object sender, RoutedEventArgs e)
     {
         
     }

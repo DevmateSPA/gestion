@@ -12,7 +12,7 @@ namespace Gestion.Infrastructure.data;
 public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabajoRepository
 {
     public OrdenTrabajoRepository(IDbConnectionFactory connectionFactory)
-        : base(connectionFactory, "otprueba") {}
+        : base(connectionFactory, "ordentrabajo") {}
 
     public override async Task<List<OrdenTrabajo>> FindAllByEmpresa(long empresaId)
     {
@@ -53,7 +53,8 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
                 f.tintas1,
                 f.tintas2,
                 f.tintas3,
-                f.tintas4
+                f.tintas4,
+                f.fechaentrega
             FROM {_tableName} f
             WHERE
                 f.empresa = {SesionApp.IdEmpresa}";
@@ -76,4 +77,13 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
 
         return ots.Values.ToList();
     }
+
+    public Task<List<OrdenTrabajo>> FindWhereFrom(long empresaId)
+    {
+        var p = new MySqlParameter("@empresa", empresaId);
+
+        return FindWhereFrom("ordentrabajo", "empresa = @empresa AND f.fechaentrega IS NULL", p);
+    }
+
+  
 }

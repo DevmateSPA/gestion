@@ -79,7 +79,9 @@ public partial class OrdenTrabajoDetallePage : Window
         doc.SetFont(font).SetFontSize(10);
 
         // Función para evitar nulls
-        string T(object? v) => string.IsNullOrWhiteSpace(v?.ToString()) ? "---" : v.ToString();
+        string T(object? v) => string.IsNullOrWhiteSpace(v?.ToString()) 
+        ? "---" 
+        : v!.ToString()!;
 
         // CABECERA
         doc.Add(new Paragraph("IMPRENTA MORIS").SetTextAlignment((iText.Layout.Properties.TextAlignment?)TextAlignment.Left));

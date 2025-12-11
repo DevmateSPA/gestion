@@ -1,6 +1,7 @@
 using Gestion.core.interfaces.model;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
+using MySql.Data.MySqlClient;
 
 namespace Gestion.core.services;
 
@@ -41,5 +42,10 @@ public abstract class BaseService<T> : IBaseService<T> where T : IModel
     public Task<List<T>> FindAllByEmpresa(long empresaid)
     {
         return _baseRepository.FindAllByEmpresa(empresaid);
+    }
+    public Task<List<T>> FindAllByParam(String tableOrView,MySqlParameter p,String where)
+    {
+
+        return _baseRepository.FindWhereFrom(tableOrView,where,p);
     }
 }

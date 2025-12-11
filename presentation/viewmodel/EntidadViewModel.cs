@@ -7,6 +7,7 @@ using Gestion.core.session;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
+using MySql.Data.MySqlClient;
 
 namespace Gestion.presentation.viewmodel;
 
@@ -129,6 +130,29 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         await SafeExecutor.RunAsync(async () =>
         {
            var lista = await _service.FindAllByEmpresa(SesionApp.IdEmpresa);
+            if (!lista.Any())
+                _dialogService.ShowMessage($"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}");
+
+           var dateProp = GetDateProperty(typeof(T));
+           if (dateProp != null)
+            {
+                lista = lista.OrderByDescending(x => dateProp.GetValue(x)).ToList();
+            }
+            Entidades.Clear();
+            foreach(var entidad in lista)
+                addEntity(entidad);
+        }, _dialogService, $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}");
+        this.IsLoading = false;
+    }
+
+    public virtual async Task LoadAllByEntrega()
+    {
+        this.IsLoading = true;
+        await SafeExecutor.RunAsync(async () =>
+        {
+            var p = new MySqlParameter("@empresa", SesionApp.IdEmpresa);
+            var where = "empresa = @empresa AND fechaentrega IS NULL";
+            var lista = await _service.FindAllByParam("vw_ordentrabajo",p,where);
             if (!lista.Any())
                 _dialogService.ShowMessage($"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}");
 

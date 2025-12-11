@@ -204,4 +204,5 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return affected > 0;
     }
     public abstract Task<List<T>> FindAllByEmpresa(long empresaId);
+
 }

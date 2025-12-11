@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Gestion.presentation.views.windows"
         mc:Ignorable="d"
-        Title="ClienteOTWindow" Height="450" Width="800" Loaded="ClienteOTWindow_Loaded">
+        WindowStartupLocation="CenterOwner"
+        Title="Orden de Trabajo" Height="600" Width="1000" Loaded="ClienteOTWindow_Loaded" KeyDown="Window_KeyDown">
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>   <!-- Título -->
@@ -14,9 +15,9 @@
         </Grid.RowDefinitions>
 
         <!-- TÍTULO -->
-        <TextBlock Text="Cartola"
-                   FontSize="28"
-                   FontWeight="Bold"
+        <TextBlock x:Name="TxtOT"
+                   Text="OT"
+                   FontSize="20"
                    Margin="0 0 0 15"
                    />
 
@@ -36,13 +37,25 @@
 
         </DataGrid>
 
-        <!-- BOTÓN CERRAR -->
-        <Button Grid.Row="2"
-                Content="Cerrar"
-                Width="120"
-                Height="40"
-                HorizontalAlignment="Right"
-                Margin="0 15 0 0"
-                Click="BtnCancelar_Click" />
+        <StackPanel Orientation="Horizontal"
+            Grid.Row="2"
+            HorizontalAlignment="Right"
+            Margin="0 15 0 0">
+
+            <Button Content="Imprimir (F4)"
+                    Width="130" Height="40"
+                    Margin="0 0 15 0"
+                    Click="BtnImprimir_Click"/>
+
+            <Button Content="Ver Documento (ENTER)"
+                    Width="130" Height="40"
+                    Margin="0 0 15 0"
+                    Click="BtnDocumento_Click"/>
+
+            <Button Content="Cerrar"
+                    Width="120" Height="40"
+                    Click="BtnCancelar_Click"/>
+        </StackPanel>
+        
     </Grid>
 </Window>

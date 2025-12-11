@@ -14,6 +14,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     public DateTime Fecha { get; set; } = DateTime.Now;
     [Rut]
     public string RutCliente { get; set; } = string.Empty;
+    public string Razon_social { get; set; } = string.Empty;
     public string Descripcion { get; set; } = string.Empty;
     public int Cantidad { get; set; } = 0;
     public int TotalImpresion { get; set; } = 0;

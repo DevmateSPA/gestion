@@ -6,7 +6,7 @@
       xmlns:loadingOverlay="clr-namespace:Gestion.presentation.views.resources.loading"
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="600"
-      Title="Cuenta Corriente Clientes">
+      Title="Cuenta Corriente Clientes" KeyDown="Page_KeyDown">
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -51,7 +51,6 @@
             <Button Width="150" Height="50"  Content="Buscar (F2)" Click="BtnBuscar_Click" Margin="5"/>
             <Button Width="150" Height="50"  Content="Saldos (F3)" Click="BtnSaldos_Click" Margin="5"/>
             <Button Width="150" Height="50"  Content="Cartola (ENTER)" Click="BtnCartola_Click" Margin="5"/>
-            <Button Width="150" Height="50"  Content="Cancelar (ESC)" Click="BtnCancelar_Click" Margin="5"/>
             <Button Width="150" Height="50"  Content="O.T. (F7)" Click="BtnOT_Click" Margin="5"/>
         </StackPanel>
     </Grid>

@@ -20,35 +20,19 @@ namespace Gestion.presentation.views.pages;
         DataContext = _viewModel;
         Title = $"Pendientes Producción";
 
-        Loaded += async (_, _) => await _viewModel.LoadAllByEmpresa();
+        Loaded += async (_, _) => await _viewModel.LoadAllByEntrega();
         _dataGrid = dgOrdenesTrabajo;
         _dataGrid.ItemContainerGenerator.StatusChanged += DataGrid_StatusChanged;
 
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
     
-    private async void BtnSaldos_Click(object sender, RoutedEventArgs e)
+    private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         
     }
 
-    private async void BtnCartola_Click(object sender, RoutedEventArgs e)
-    {
-
-
-    }
-
-    private async void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-    {
-        
-    }
-
-    private async void BtnCancelar_Click(object sender, RoutedEventArgs e)
-    {
-        
-    }
-
-    private async void BtnOT_Click(object sender, RoutedEventArgs e)
+    private void BtnImprimir_Click(object sender, RoutedEventArgs e)
     {
         
     }
@@ -93,21 +77,8 @@ namespace Gestion.presentation.views.pages;
 
         switch (e.Key)
         {
-            case Key.Enter:
-                BtnCartola_Click(sender, e);
-                break;
-
-            case Key.F2:
-                BtnBuscar_Click(sender, e);
-                break;
-            case Key.F3:
-                BtnSaldos_Click(sender, e);
-                break;
-            case Key.F7:
-                BtnOT_Click(sender, e);
-                break;
-            case Key.Escape:
-                BtnCancelar_Click(sender, e);
+            case Key.F4:
+                BtnImprimir_Click(sender, e);
                 break;
         }
     }

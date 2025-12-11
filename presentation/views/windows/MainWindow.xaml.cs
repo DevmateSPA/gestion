@@ -245,8 +245,8 @@ namespace Gestion.presentation.views.windows
             {
                 string tituloVentana = item.Tag switch
                 {
-                    "ModuloProduccion" => "Pendientes Producción",
-                    "ModuloMaquina" => "Pendientes por Maquina",
+                    "ModuloProduccion" => "O.T. Pendientes Producción",
+                    "ModuloMaquina" => "O.T. Pendientes por Maquina",
                     _ => "Módulo desconocido"
                 };
 

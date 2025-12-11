@@ -27,31 +27,63 @@ namespace Gestion.presentation.views.pages;
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
     
-    private async void BtnSaldos_Click(object sender, RoutedEventArgs e)
+    private void BtnSaldos_Click(object sender, RoutedEventArgs e)
     {
         
     }
 
-    private async void BtnCartola_Click(object sender, RoutedEventArgs e)
+    private void BtnCartola_Click(object sender, RoutedEventArgs e)
     {
-        var modal = new ClienteCartolaWindow();
-        modal.ShowDialog();
+        var parentWindow = Window.GetWindow(this);
+        var cliente = dgClientes.SelectedItem as Cliente;  
+        if (cliente == null) return;
+        
+        var modalFecha = new FechaModal(titulo: "Seleccione rango de fechas");
+            modalFecha.Owner = parentWindow;
+
+        bool? ok = modalFecha.ShowDialog();
+
+        if (ok == true)
+        {
+            var desde = modalFecha.FechaDesde;
+            var hasta = modalFecha.FechaHasta;
+            if (desde == null || hasta == null)
+            {
+                MessageBox.Show("Debe seleccionar ambas fechas.");
+                return;
+            }
+            var modal = new ClienteCartolaWindow(cliente, desde.Value, hasta.Value);
+            modal.Owner = parentWindow;
+            modal.ShowDialog();
+        }
 
     }
 
-    private async void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+
+    private void BtnCancelar_Click(object sender, RoutedEventArgs e)
     {
         
     }
 
-    private async void BtnCancelar_Click(object sender, RoutedEventArgs e)
+    private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        
+        BtnCartola_Click(sender,e);
+            
     }
 
-    private async void BtnOT_Click(object sender, RoutedEventArgs e)
+    private void BtnOT_Click(object sender, RoutedEventArgs e)
     {
-        var modal = new ClienteOTWindow();
+        var cliente = dgClientes.SelectedItem as Cliente;  
+        if (cliente == null)
+        {
+            MessageBox.Show("Seleccione alguna fila");
+            return;
+        }
+        
+        
+        var modal = new ClienteOTWindow(cliente,"","");
+        var parentWindow = Window.GetWindow(this);
+        modal.Owner = parentWindow;
         modal.ShowDialog();
     }
 
@@ -122,4 +154,30 @@ namespace Gestion.presentation.views.pages;
             e.Handled = true;
         }
     }
+
+    private void Page_KeyDown(object sender, KeyEventArgs e)
+{
+    switch (e.Key)
+    {
+        case Key.F2:
+            BtnBuscar_Click(sender, e);
+            e.Handled = true;
+            break;
+
+        case Key.F3:
+            BtnSaldos_Click(sender, e);
+            e.Handled = true;
+            break;
+
+        case Key.Enter:
+            BtnCartola_Click(sender, e);
+            e.Handled = true;
+            break;
+
+        case Key.F7:
+            BtnOT_Click(sender, e);
+            e.Handled = true;
+            break;
+    }
+}
 }
