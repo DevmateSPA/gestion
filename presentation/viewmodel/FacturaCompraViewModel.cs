@@ -23,14 +23,16 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
 
         await RunServiceAction(async () =>
         {
-            bool deletedFactura = await _facturaCompraService.DeleteById(id);
+            bool eliminoFactura = await _facturaCompraService.DeleteById(id);
+            bool detalles = false;
 
-            if (!deletedFactura)
-                return false;
+            if (eliminoFactura)
+                detalles = await _detalleService.DeleteByFolio(factura.Folio);
 
-            return await _detalleService.DeleteByFolio(factura.Folio);
+            return eliminoFactura;
         },
-        () => removeEntityById(id), $"Error al eliminar la factura de compra");
+        () => RemoveEntityById(id),
+        "Error al eliminar la factura de compra");
     }
 
     public async Task SincronizarDetalles(

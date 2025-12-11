@@ -8,12 +8,5 @@ namespace Gestion.Infrastructure.data;
 public class EncuadernacionRepository : BaseRepository<Encuadernacion>, IEncuadernacionRepository
 {
     public EncuadernacionRepository(IDbConnectionFactory connectionFactory)
-        : base(connectionFactory, "encuadernacion") {}
-
-    public override Task<List<Encuadernacion>> FindAllByEmpresa(long empresaId)
-    {
-        var p = new MySqlParameter("@empresa", empresaId);
-
-        return FindWhereFrom("vw_encuadernacion", "empresa = @empresa", p);
-    }
+        : base(connectionFactory, "encuadernacion", "vw_encuadernacion") {}
 }

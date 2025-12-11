@@ -8,12 +8,5 @@ namespace Gestion.Infrastructure.data;
 public class OperarioRepository : BaseRepository<Operario>, IOperarioRepository
 {
     public OperarioRepository(IDbConnectionFactory connectionFactory)
-        : base(connectionFactory, "operario") {}
-
-    public override Task<List<Operario>> FindAllByEmpresa(long empresaId)
-    {
-        var p = new MySqlParameter("@empresa", empresaId);
-
-        return FindWhereFrom("vw_operario", "empresa = @empresa", p);
-    }
+        : base(connectionFactory, "operario", "vw_operario") {}
 }

@@ -18,9 +18,9 @@ public class Proveedor : IEmpresa
     public string Telefono { get; set; } = string.Empty;
     public string Fax { get; set; } = string.Empty;
     [Nombre("Observaciones")]
-    public string Obs1 { get; set; } = string.Empty;
+    public string Observacion1 { get; set; } = string.Empty;
     [Visible(false)]
-    public string Obs2 { get; set; } = string.Empty;
+    public string Observacion2 { get; set; } = string.Empty;
     [Nombre("Debe inicial")]
     public int Debi { get; set; }
     [Nombre("Haber inicial")]

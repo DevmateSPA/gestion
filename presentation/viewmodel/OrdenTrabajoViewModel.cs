@@ -25,14 +25,16 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
 
         await RunServiceAction(async () =>
         {
-            bool deletedFactura = await _ordenTrabajoService.DeleteById(id);
+            bool ot = await _ordenTrabajoService.DeleteById(id);
+            bool detalles = false;
 
-            if (!deletedFactura)
-                return false;
+            if (ot)
+                detalles = await _detalleOTService.DeleteByFolio(ordenTrabajo.Folio);
 
-            return await _detalleOTService.DeleteByFolio(ordenTrabajo.Folio);
+            return ot; 
         },
-        () => removeEntityById(id), $"Error al eliminar la orden de trabajo");
+        () => RemoveEntityById(id),
+        "Error al eliminar la orden de trabajo");
     }
 
     public async Task SincronizarDetalles(

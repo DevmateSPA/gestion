@@ -8,12 +8,5 @@ namespace Gestion.Infrastructure.data;
 public class FotomecanicaRepository : BaseRepository<Fotomecanica>, IFotomecanicaRepository
 {
     public FotomecanicaRepository(IDbConnectionFactory connectionFactory)
-        : base(connectionFactory, "fotomecanica") {}
-
-    public override Task<List<Fotomecanica>> FindAllByEmpresa(long empresaId)
-    {
-        var p = new MySqlParameter("@empresa", empresaId);
-
-        return FindWhereFrom("vw_fotomecanica", "empresa = @empresa", p);
-    }
+        : base(connectionFactory, "fotomecanica", "vw_fotomecanica") {}
 }

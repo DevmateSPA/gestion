@@ -8,12 +8,5 @@ namespace Gestion.Infrastructure.data;
 public class GuiaDespachoRepository : BaseRepository<GuiaDespacho>, IGuiaDespachoRepository
 {
     public GuiaDespachoRepository(IDbConnectionFactory connectionFactory)
-        : base(connectionFactory, "guiadespacho") {}
-
-    public override Task<List<GuiaDespacho>> FindAllByEmpresa(long empresaId)
-    {
-        var p = new MySqlParameter("@empresa", empresaId);
-
-        return FindWhereFrom("vw_guiadespacho", "empresa = @empresa", p);
-    }
+        : base(connectionFactory, "guiadespacho", "vw_guiadespacho") {}
 }
