@@ -6,8 +6,8 @@ namespace Gestion.presentation.views.resources.paginationcontrols;
 
 public partial class PaginationControls : UserControl
 {
-    public event Action<int> PageChanged;
-    public event Action<int> PageSizeChanged;
+    public event Action<int>? PageChanged;
+    public event Action<int>? PageSizeChanged;
 
     public int CurrentPage { get; private set; } = 1;
     public int CurrentPageSize

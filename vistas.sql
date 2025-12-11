@@ -135,49 +135,50 @@ CREATE OR REPLACE VIEW vw_proveedor AS
 
 -- Para ORDEN de trabajo
 CREATE OR REPLACE
-    ALGORITHM = UNDEFINED 
-    DEFINER = root@localhost 
-    SQL SECURITY DEFINER
-    
+ALGORITHM = UNDEFINED
+DEFINER = `root`@`localhost`
+SQL SECURITY DEFINER
 VIEW vw_ordentrabajo AS
-    SELECT 
-        t.id AS id,
-        t.folio AS folio,
-        t.rutcliente AS rutcliente,
-        t.fecha AS fecha,
-        t.descripcion AS descripcion,
-        t.cantidad AS cantidad,
-        t.totalimpresion AS totalimpresion,
-        t.foliodesde AS foliodesde,
-        t.foliohasta AS foliohasta,
-        t.cortartamanio AS cortartamanio,
-        t.cortartamanion AS cortartamanion,
-        t.cortartamaniolargo AS cortartamaniolargo,
-        t.montar AS montar,
-        t.moldetamanio AS moldetamanio,
-        t.tamaniofinalancho AS tamaniofinalancho,
-        t.tamaniofinallargo AS tamaniofinallargo,
-        t.clienteproporcionanada AS clienteproporcionanada,
-        t.clienteproporcionaoriginal AS clienteproporcionaoriginal,
-        t.clienteproporcionapelicula AS clienteproporcionapelicula,
-        t.clienteproporcionaplancha AS clienteproporcionaplancha,
-        t.clienteproporcionapapel AS clienteproporcionapapel,
-        t.tipoimpresion AS tipoimpresion,
-        t.maquina1 AS maquina1,
-        t.maquina2 AS maquina2,
-        t.pin AS pin,
-        t.nva AS nva,
-        t.us AS us,
-        t.ctpnva AS ctpnva,
-        t.u AS u,
-        t.sobres AS sobres,
-        t.sacos AS sacos,
-        t.tintas1 AS tintas1,
-        t.tintas2 AS tintas2,
-        t.tintas3 AS tintas3,
-        t.tintas4 AS tintas4,
-        t.empresa AS empresa,
-        e.nombre AS EmpresaNombre
-    FROM
-        (ordentrabajo t
-        JOIN empresa e ON ((t.empresa = e.id)))
+SELECT 
+    t.id AS id,
+    t.folio AS folio,
+    t.rutcliente AS rutcliente,
+    t.fecha AS fecha,
+    t.descripcion AS descripcion,
+    t.cantidad AS cantidad,
+    t.totalimpresion AS totalimpresion,
+    t.foliodesde AS foliodesde,
+    t.foliohasta AS foliohasta,
+    t.cortartamanio AS cortartamanio,
+    t.cortartamanion AS cortartamanion,
+    t.cortartamaniolargo AS cortartamaniolargo,
+    t.montar AS montar,
+    t.moldetamanio AS moldetamanio,
+    t.tamaniofinalancho AS tamaniofinalancho,
+    t.tamaniofinallargo AS tamaniofinallargo,
+    t.clienteproporcionanada AS clienteproporcionanada,
+    t.clienteproporcionaoriginal AS clienteproporcionaoriginal,
+    t.clienteproporcionapelicula AS clienteproporcionapelicula,
+    t.clienteproporcionaplancha AS clienteproporcionaplancha,
+    t.clienteproporcionapapel AS clienteproporcionapapel,
+    t.tipoimpresion AS tipoimpresion,
+    t.maquina1 AS maquina1,
+    t.maquina2 AS maquina2,
+    t.pin AS pin,
+    t.nva AS nva,
+    t.us AS us,
+    t.ctpnva AS ctpnva,
+    t.u AS u,
+    t.sobres AS sobres,
+    t.sacos AS sacos,
+    t.tintas1 AS tintas1,
+    t.tintas2 AS tintas2,
+    t.tintas3 AS tintas3,
+    t.tintas4 AS tintas4,
+    t.fechaentrega AS fechaentrega,
+    t.empresa AS empresa,
+    e.nombre AS EmpresaNombre,
+    c.razon_social AS razon_social
+FROM ordentrabajo t
+JOIN empresa e ON t.empresa = e.id
+JOIN cliente c ON t.rutcliente = c.rut;
