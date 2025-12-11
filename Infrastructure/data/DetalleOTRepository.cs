@@ -13,12 +13,7 @@ namespace Gestion.Infrastructure.data;
 public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalleOTRepository
 {
     public DetalleOTRepository(IDbConnectionFactory connectionFactory)
-        : base(connectionFactory, "ordentrabajodetalle") {}
-
-    public override Task<List<DetalleOrdenTrabajo>> FindAllByEmpresa(long empresaId)
-    {
-        throw new NotImplementedException();
-    }
+        : base(connectionFactory, "ordentrabajodetalle", null) {}
 
     public async Task<List<DetalleOrdenTrabajo>> FindByFolio(string folio)
     {

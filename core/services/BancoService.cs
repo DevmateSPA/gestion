@@ -6,6 +6,10 @@ namespace Gestion.core.services;
 
 public class BancoService : BaseService<Banco>, IBancoService
 {
+    private readonly IBancoRepository _bancoRepository;
     public BancoService(IBancoRepository bancoRepository)
-        :base(bancoRepository) { }
+        :base(bancoRepository)
+    {
+        _bancoRepository = bancoRepository;
+    }
 }

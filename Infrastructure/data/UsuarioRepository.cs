@@ -8,7 +8,7 @@ namespace Gestion.Infrastructure.data;
 public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
 {
     public UsuarioRepository(IDbConnectionFactory connectionFactory)
-        : base(connectionFactory, "usuario_pruebas") {}
+        : base(connectionFactory, "usuario_pruebas", null) {}
 
     public async Task<Usuario?> GetByNombre(string nombreUsuario)
     {
@@ -32,12 +32,5 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
         }
 
         return null;
-    }
-
-    public override Task<List<Usuario>> FindAllByEmpresa(long empresaId)
-    {
-        var p = new MySqlParameter("@empresa", empresaId);
-
-        return FindWhereFrom("vw_usuario", "empresa = @empresa", null, null, p);
     }
 }

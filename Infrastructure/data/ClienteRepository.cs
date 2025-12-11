@@ -8,12 +8,5 @@ namespace Gestion.Infrastructure.data;
 public class ClienteRepository : BaseRepository<Cliente>, IClienteRepository
 {
     public ClienteRepository(IDbConnectionFactory connectionFactory)
-        : base(connectionFactory, "cliente") {}
-
-    public override Task<List<Cliente>> FindAllByEmpresa(long empresaId)
-    {
-        var p = new MySqlParameter("@empresa", empresaId);
-
-        return FindWhereFrom("vw_cliente", "empresa = @empresa", null, null, p);
-    }
+        : base(connectionFactory, "cliente", "vw_cliente") {}
 }

@@ -16,5 +16,6 @@ public interface IBaseRepository<T> where T : IModel
     Task<bool> Update(T entity); // Actualiza
     Task<bool> Save(T entity);   // Crea
     Task<List<T>> FindAllByEmpresa(long empresaId);
+    Task<List<T>> FindPageByEmpresa(long empresaId, int pageNumber, int pageSize);
     Task<long> CountWhere(string where, params DbParameter[] parameters);
 }

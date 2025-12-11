@@ -7,18 +7,21 @@ using Gestion.core.interfaces.database;
 using System.ComponentModel.DataAnnotations.Schema;
 using Gestion.core.attributes;
 using System.Text;
+using MySql.Data.MySqlClient;
 
 namespace Gestion.Infrastructure.data;
 
 public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, new()
 {
     protected readonly IDbConnectionFactory _connectionFactory;
-    protected readonly string _tableName; 
+    protected readonly string _tableName;
+    protected readonly string? _viewName;
 
-    protected BaseRepository(IDbConnectionFactory connectionFactory, string tableName)
+    protected BaseRepository(IDbConnectionFactory connectionFactory, string tableName, string? viewName)
     {
         _connectionFactory = connectionFactory;
         _tableName = tableName;
+        _viewName = viewName;
     }
 
     protected object? ConvertValue(object? value, Type targetType)
@@ -261,5 +264,17 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return Convert.ToInt64(result);
     }
 
-    public abstract Task<List<T>> FindAllByEmpresa(long empresaId);
+    public virtual Task<List<T>> FindAllByEmpresa(long empresaId)
+    {
+        if (_viewName == null)
+            throw new ArgumentNullException("La vista no esta asignada para este repositorio.");
+
+        var p = new MySqlParameter("@empresa", empresaId);
+
+        return FindWhereFrom(_viewName, "empresa = @empresa", null, null, p);
+    }
+    public virtual Task<List<T>> FindPageByEmpresa(long empresaId, int pageNumber, int pageSize)
+    {
+        throw new NotImplementedException();
+    }
 }

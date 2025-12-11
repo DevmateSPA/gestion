@@ -12,7 +12,7 @@ namespace Gestion.Infrastructure.data;
 public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProducto>, IFacturaCompraProductoRepository
 {
     public FacturaCompraProductoRepository(IDbConnectionFactory connectionFactory)
-        : base(connectionFactory, "facturacompraproducto") {}
+        : base(connectionFactory, "facturacompraproducto", "vw_facturacompraproducto") {}
 
     public async Task<List<FacturaCompraProducto>> FindByFolio(string folio)
     {
@@ -205,12 +205,5 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
         int affected = await cmd.ExecuteNonQueryAsync();
 
         return true;
-    }
-
-    public override Task<List<FacturaCompraProducto>> FindAllByEmpresa(long empresaId)
-    {
-        var p = new MySqlParameter("@empresa", empresaId);
-
-        return FindWhereFrom("vw_facturacompraproducto", "empresa = @empresa", null, null, p);
     }
 }
