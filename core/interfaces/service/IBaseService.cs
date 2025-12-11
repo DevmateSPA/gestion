@@ -8,4 +8,5 @@ public interface IBaseService<T>
     Task<bool> Update(T entity);
     Task<bool> Save(T entity);
     Task<List<T>> FindAllByEmpresa(long empresaId);
+    Task<long> ContarPorEmpresa(long empresaId);
 }

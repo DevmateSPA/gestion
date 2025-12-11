@@ -246,5 +246,20 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return true;
     }
 
+    public async Task<long> CountWhere(string where, params DbParameter[] parameters)
+    {
+        using var conn = await _connectionFactory.CreateConnection();
+        using var cmd = (DbCommand)conn.CreateCommand();
+
+        cmd.CommandText = $"SELECT COUNT(1) FROM {_tableName} WHERE {where}";
+
+        foreach (var p in parameters)
+            cmd.Parameters.Add(p);
+
+        var result = await cmd.ExecuteScalarAsync();
+
+        return Convert.ToInt64(result);
+    }
+
     public abstract Task<List<T>> FindAllByEmpresa(long empresaId);
 }
