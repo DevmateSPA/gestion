@@ -3,6 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Height="50">
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
+
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
+
+            <TextBlock Text="Tamaño:" Margin="10,0,4,0"/>
+
+            <TextBox x:Name="txtPageSize"
+                    Width="50"
+                    Text="20"
+                    VerticalContentAlignment="Center"
+                    KeyDown="txtPageSize_KeyDown"/>
+        </StackPanel>
         
         <Button Content="⏮" Width="40" Margin="5" Click="FirstPage_Click"/>
         <Button Content="◀" Width="40" Margin="5" Click="PrevPage_Click"/>

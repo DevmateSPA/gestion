@@ -39,6 +39,41 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
+    // Atributos para paginacion
+    private int _pageNumber = 1;
+    public int PageNumber
+    {
+        get => _pageNumber;
+        set
+        {
+            _pageNumber = value;
+            OnPropertyChanged(nameof(PageNumber));
+        }
+    }
+    private int _pageSize = 20;
+    public int PageSize
+    {
+        get => _pageSize;
+        set
+        {
+            _pageSize = value;
+            OnPropertyChanged(nameof(PageSize));
+        }
+    }
+
+    private int _totalRegistros;
+    public int TotalRegistros
+    {
+        get => _totalRegistros;
+        set
+        {
+            _totalRegistros = value;
+            OnPropertyChanged(nameof(TotalRegistros));
+        }
+    }
+
+    // Constructor
+
     protected EntidadViewModel(IBaseService<T> baseService, IDialogService dialogService)
     {
         _dialogService = dialogService;
@@ -111,6 +146,8 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         await SafeExecutor.RunAsync(async () =>
         {
             var lista = await _service.FindAll();
+            if (lista.Count == 0)
+                _dialogService.ShowMessage($"No hay {typeof(T).Name} cargadas.");
             var dateProp = GetDateProperty(typeof(T));
             if (dateProp != null)
             {
@@ -129,7 +166,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         await SafeExecutor.RunAsync(async () =>
         {
            var lista = await _service.FindAllByEmpresa(SesionApp.IdEmpresa);
-            if (!lista.Any())
+            if (lista.Count == 0)
                 _dialogService.ShowMessage($"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}");
 
            var dateProp = GetDateProperty(typeof(T));
@@ -141,6 +178,40 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
             foreach(var entidad in lista)
                 AddEntity(entidad);
         }, _dialogService, $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}");
+        this.IsLoading = false;
+    }
+
+    public virtual async Task LoadPageByEmpresa(int page)
+    {
+        if (PageSize == 0)
+        {
+            await LoadAllByEmpresa();
+            PageNumber = 1;
+            TotalRegistros = 1; // solo 1 página
+            return;
+        }
+
+        PageNumber = page;
+
+        long total = await _service.ContarPorEmpresa(SesionApp.IdEmpresa);
+        TotalRegistros = (int)Math.Ceiling(total / (double)PageSize);
+
+        this.IsLoading = true;
+
+        await SafeExecutor.RunAsync(async () =>
+        {
+            var lista = await _service.FindPageByEmpresa(SesionApp.IdEmpresa, PageNumber, PageSize);
+
+            var dateProp = GetDateProperty(typeof(T));
+            if (dateProp != null)
+                lista = [.. lista.OrderByDescending(x => dateProp.GetValue(x))];
+
+            Entidades.Clear();
+            foreach (var entidad in lista)
+                AddEntity(entidad);
+
+        }, _dialogService, $"Error al cargar {typeof(T).Name}");
+
         this.IsLoading = false;
     }
 

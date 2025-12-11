@@ -49,8 +49,8 @@ public abstract class BaseService<T> : IBaseService<T> where T : IModel
         var p = new MySql.Data.MySqlClient.MySqlParameter("@empresa", empresaId);
         return await _baseRepository.CountWhere(where, p);
     }
-    public virtual Task<List<T>> FindPageByEmpresa(long empresaId, int pageNumber, int pageSize)
+    public virtual async Task<List<T>> FindPageByEmpresa(long empresaId, int pageNumber, int pageSize)
     {
-        throw new NotImplementedException();
+        return await _baseRepository.FindPageByEmpresa(empresaId, pageNumber, pageSize);
     }
 }

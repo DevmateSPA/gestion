@@ -264,17 +264,29 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return Convert.ToInt64(result);
     }
 
-    public virtual Task<List<T>> FindAllByEmpresa(long empresaId)
+    public virtual async Task<List<T>> FindAllByEmpresa(long empresaId)
     {
         if (_viewName == null)
-            throw new ArgumentNullException("La vista no esta asignada para este repositorio.");
+            throw new InvalidOperationException("La vista no está asignada para este repositorio.");
 
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return FindWhereFrom(_viewName, "empresa = @empresa", null, null, p);
+        return await FindWhereFrom(_viewName, "empresa = @empresa", null, null, p);
     }
-    public virtual Task<List<T>> FindPageByEmpresa(long empresaId, int pageNumber, int pageSize)
+    public virtual async Task<List<T>> FindPageByEmpresa(long empresaId, int pageNumber, int pageSize)
     {
-        throw new NotImplementedException();
+        if (_viewName == null)
+            throw new InvalidOperationException("La vista no está asignada para este repositorio.");
+
+        var p = new MySqlParameter("@empresa", empresaId);
+
+        int offset = (pageNumber - 1) * pageSize;
+
+        return await FindWhereFrom(
+            tableOrView: _viewName,
+            where: "empresa = @empresa",
+            limit: pageSize,
+            offset: offset,
+            parameters: p);
     }
 }
