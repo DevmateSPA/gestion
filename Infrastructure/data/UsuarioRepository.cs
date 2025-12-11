@@ -38,6 +38,6 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
     {
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return FindWhereFrom("vw_usuario", "empresa = @empresa", p);
+        return FindWhereFrom("vw_usuario", "empresa = @empresa", null, null, p);
     }
 }

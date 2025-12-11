@@ -74,6 +74,6 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
             }
         }
 
-        return ots.Values.ToList();
+        return [.. ots.Values];
     }
 }

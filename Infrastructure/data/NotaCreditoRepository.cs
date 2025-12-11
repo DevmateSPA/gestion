@@ -14,6 +14,6 @@ public class NotaCreditoRepository : BaseRepository<NotaCredito>, INotaCreditoRe
     {
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return FindWhereFrom("vw_notacredito", "empresa = @empresa", p);
+        return FindWhereFrom("vw_notacredito", "empresa = @empresa", null, null, p);
     }
 }

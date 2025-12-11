@@ -14,6 +14,6 @@ public class GuiaDespachoRepository : BaseRepository<GuiaDespacho>, IGuiaDespach
     {
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return FindWhereFrom("vw_guiadespacho", "empresa = @empresa", p);
+        return FindWhereFrom("vw_guiadespacho", "empresa = @empresa", null, null, p);
     }
 }

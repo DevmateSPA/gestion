@@ -14,6 +14,6 @@ public class EncuadernacionRepository : BaseRepository<Encuadernacion>, IEncuade
     {
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return FindWhereFrom("vw_encuadernacion", "empresa = @empresa", p);
+        return FindWhereFrom("vw_encuadernacion", "empresa = @empresa", null, null, p);
     }
 }

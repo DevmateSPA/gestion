@@ -14,6 +14,6 @@ public class ClienteRepository : BaseRepository<Cliente>, IClienteRepository
     {
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return FindWhereFrom("vw_cliente", "empresa = @empresa", p);
+        return FindWhereFrom("vw_cliente", "empresa = @empresa", null, null, p);
     }
 }

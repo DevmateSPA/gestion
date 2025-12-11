@@ -211,6 +211,6 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
     {
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return FindWhereFrom("vw_facturacompraproducto", "empresa = @empresa", p);
+        return FindWhereFrom("vw_facturacompraproducto", "empresa = @empresa", null, null, p);
     }
 }

@@ -14,6 +14,6 @@ public class MaquinaRepository : BaseRepository<Maquina>, IMaquinaRepository
     {
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return FindWhereFrom("vw_maquina", "empresa = @empresa", p);
+        return FindWhereFrom("vw_maquina", "empresa = @empresa", null, null, p);
     }
 }

@@ -14,6 +14,6 @@ public class DocumentoNuloRepository : BaseRepository<DocumentoNulo>, IDocumento
     {
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return FindWhereFrom("vw_documentonulo", "empresa = @empresa", p);
+        return FindWhereFrom("vw_documentonulo", "empresa = @empresa", null, null, p);
     }
 }

@@ -14,6 +14,6 @@ public class ImpresionRepository : BaseRepository<Impresion>, IImpresionReposito
     {
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return FindWhereFrom("vw_impresion", "empresa = @empresa", p);
+        return FindWhereFrom("vw_impresion", "empresa = @empresa", null, null, p);
     }
 }

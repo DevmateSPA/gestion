@@ -14,6 +14,6 @@ public class BancoRepository : BaseRepository<Banco>, IBancoRepository
     {
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return FindWhereFrom("vw_banco", "empresa = @empresa", p);
+        return FindWhereFrom("vw_banco", "empresa = @empresa", null, null, p);
     }
 }

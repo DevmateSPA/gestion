@@ -14,6 +14,6 @@ public class OperarioRepository : BaseRepository<Operario>, IOperarioRepository
     {
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return FindWhereFrom("vw_operario", "empresa = @empresa", p);
+        return FindWhereFrom("vw_operario", "empresa = @empresa", null, null, p);
     }
 }

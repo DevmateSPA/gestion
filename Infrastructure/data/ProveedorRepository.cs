@@ -13,6 +13,6 @@ public class ProveedorRepository : BaseRepository<Proveedor>, IProveedorReposito
     {
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return FindWhereFrom("vw_proveedor", "empresa = @empresa", p);
+        return FindWhereFrom("vw_proveedor", "empresa = @empresa", null, null, p);
     }
 }

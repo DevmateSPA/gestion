@@ -6,6 +6,7 @@ using Gestion.Infrastructure.Services;
 using Gestion.core.interfaces.database;
 using System.ComponentModel.DataAnnotations.Schema;
 using Gestion.core.attributes;
+using System.Text;
 
 namespace Gestion.Infrastructure.data;
 
@@ -110,13 +111,39 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
     public async Task<List<T>> FindWhereFrom(
         string tableOrView,
         string where,
+        int? limit = null,
+        int? offset = null,
         params DbParameter[] parameters)
     {
         using var conn = await _connectionFactory.CreateConnection();
         using var cmd = (DbCommand)conn.CreateCommand();
 
-        cmd.CommandText = $"SELECT * FROM {tableOrView} WHERE {where}";
+        var sql = new StringBuilder($"SELECT * FROM {tableOrView} WHERE {where}");
 
+        // Agregar LIMIT y OFFSET si existen
+        if (limit.HasValue)
+        {
+            sql.Append(" LIMIT @limit");
+
+            var limitParam = cmd.CreateParameter();
+            limitParam.ParameterName = "@limit";
+            limitParam.Value = limit.Value;
+            cmd.Parameters.Add(limitParam);
+
+            if (offset.HasValue)
+            {
+                sql.Append(" OFFSET @offset");
+
+                var offsetParam = cmd.CreateParameter();
+                offsetParam.ParameterName = "@offset";
+                offsetParam.Value = offset.Value;
+                cmd.Parameters.Add(offsetParam);
+            }
+        }
+
+        cmd.CommandText = sql.ToString();
+
+        // Agregar los parámetros del WHERE
         foreach (var p in parameters)
             cmd.Parameters.Add(p);
 
@@ -128,6 +155,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
 
         return list;
     }
+
 
     public async Task<bool> DeleteById(long id)
     {

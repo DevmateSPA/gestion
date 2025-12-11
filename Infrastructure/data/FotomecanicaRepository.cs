@@ -14,6 +14,6 @@ public class FotomecanicaRepository : BaseRepository<Fotomecanica>, IFotomecanic
     {
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return FindWhereFrom("vw_fotomecanica", "empresa = @empresa", p);
+        return FindWhereFrom("vw_fotomecanica", "empresa = @empresa", null, null, p);
     }
 }

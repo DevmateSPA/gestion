@@ -14,6 +14,6 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
     {
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return FindWhereFrom("vw_factura", "empresa = @empresa", p);
+        return FindWhereFrom("vw_factura", "empresa = @empresa", null, null, p);
     }
 }

@@ -14,6 +14,6 @@ public class ProductoRepository : BaseRepository<Producto>, IProductoRepository
     {
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return FindWhereFrom("vw_producto", "empresa = @empresa", p);
+        return FindWhereFrom("vw_producto", "empresa = @empresa", null, null, p);
     }
 }
