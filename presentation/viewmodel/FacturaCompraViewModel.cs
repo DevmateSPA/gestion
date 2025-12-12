@@ -1,5 +1,6 @@
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.helpers;
 
 namespace Gestion.presentation.viewmodel;
 
@@ -12,6 +13,18 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
     {
         _facturaCompraService = facturaCompraService;
         _detalleService = detalleService;
+    }
+
+    public virtual async Task<List<FacturaCompraProducto>> LoadDetailsByFolio(string folio)
+    {
+        List<FacturaCompraProducto>? detalles = null;
+
+        await SafeExecutor.RunAsync(
+            async () => detalles = await _detalleService.FindByFolio(folio),
+            _dialogService,
+            $"Error al cargar los detalles de la factura con folio: {folio}");
+            
+        return detalles ?? [];
     }
 
     public override async Task Delete(long id)

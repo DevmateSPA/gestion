@@ -84,8 +84,8 @@ public partial class FacturaCompraPage : Page
         if (factura == null)
             return;
 
-        var detalles = await _detalleService.FindByFolio(factura.Folio);
-        factura.Detalles = new ObservableCollection<FacturaCompraProducto>(detalles);
+        factura.Detalles = new ObservableCollection<FacturaCompraProducto>(
+            await _viewModel.LoadDetailsByFolio(factura.Folio));
 
         var ventana = new EntidadEditorTableWindow(this, factura, factura.Detalles, titulo);
 
@@ -95,7 +95,7 @@ public partial class FacturaCompraPage : Page
         var facturaEditada = (FacturaCompra)ventana.EntidadEditada;
 
         await _viewModel.Update(facturaEditada);
-        await _viewModel.SincronizarDetalles(detalles, facturaEditada.Detalles, facturaEditada);
+        await _viewModel.SincronizarDetalles(factura.Detalles, facturaEditada.Detalles, facturaEditada);
     }
 
     // ------------------------------------------------------ |

@@ -90,8 +90,8 @@ public partial class OrdenTrabajoPage : Page
         if (ordenTrabajo == null)
             return;
 
-        var detalles = await _detalleOTService.FindByFolio(ordenTrabajo.Folio);
-        ordenTrabajo.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(detalles);
+        ordenTrabajo.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(
+            await _viewModel.LoadDetailsByFolio(ordenTrabajo.Folio));
 
         var ventana = new OrdenTrabajoDetallePage(this, ordenTrabajo);
         if (ventana.ShowDialog() != true)
@@ -102,7 +102,7 @@ public partial class OrdenTrabajoPage : Page
         var ordenTrabajoEditada = (OrdenTrabajo)ventana.EntidadEditada;
 
         await _viewModel.Update(ordenTrabajoEditada);
-        await _viewModel.SincronizarDetalles(detalles, ordenTrabajoEditada.Detalles, ordenTrabajoEditada);
+        await _viewModel.SincronizarDetalles(ordenTrabajo.Detalles, ordenTrabajoEditada.Detalles, ordenTrabajoEditada);
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
