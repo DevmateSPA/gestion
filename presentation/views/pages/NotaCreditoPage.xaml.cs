@@ -104,9 +104,34 @@ public partial class NotaCreditoPage : Page
         }
     }
 
-    private void BtnBuscar_Click(object sender, RoutedEventArgs e)
+    private async void BtnBuscar_Click(object sender, RoutedEventArgs e)
     {
-        _viewModel.Buscar(txtBuscar.Text); 
+        string? filtro = txtBuscar.Text?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(filtro))
+        {
+            // Si hay texto, cargar TODO antes de filtrar
+            _viewModel.PageSize = 0;
+            await _viewModel.LoadAllByEmpresa();
+
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        }
+        else
+        {
+            // Si está vacío, volver a paginación normal
+            if (_viewModel.PageSize == 0)
+            {
+                _viewModel.PageSize = paginacion.CurrentPageSize; // el valor del TextBox de paginación
+            }
+
+            await _viewModel.LoadPageByEmpresa(1);
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        }
+
+        if (filtro == null)
+            return;
+
+        _viewModel.Buscar(filtro);
     }
 
     private void BtnImprimir_Click(object sender, RoutedEventArgs e)
