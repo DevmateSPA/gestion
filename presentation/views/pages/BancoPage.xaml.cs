@@ -107,7 +107,7 @@ public partial class BancoPage : Page
 
     private async void BtnBuscar_Click(object sender, RoutedEventArgs e)
     {
-        string filtro = txtBuscar.Text?.Trim();
+        string? filtro = txtBuscar.Text?.Trim();
 
         if (!string.IsNullOrWhiteSpace(filtro))
         {
@@ -128,6 +128,9 @@ public partial class BancoPage : Page
             await _viewModel.LoadPageByEmpresa(1);
             paginacion.SetTotalPages(_viewModel.TotalRegistros);
         }
+
+        if (filtro == null)
+            return;
 
         _viewModel.Buscar(filtro);
     }

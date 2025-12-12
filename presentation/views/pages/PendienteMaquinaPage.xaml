@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:loadingOverlay="clr-namespace:Gestion.presentation.views.resources.loading"
+      xmlns:localControls="clr-namespace:Gestion.presentation.views.resources.paginationcontrols"
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="600"
       Title="Pendientes por Maquina">
@@ -12,6 +13,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- Input búsqueda -->
             <RowDefinition Height="*"/>    <!-- Tabla -->
+            <RowDefinition Height="Auto"/> <!-- Paginación -->
             <RowDefinition Height="Auto"/> <!-- Botones -->
         </Grid.RowDefinitions>
 
@@ -24,7 +26,7 @@
         <!-- LOADING OVERLAY -->
         <loadingOverlay:LoadingOverlay
             IsLoading="{Binding IsLoading}"
-            Grid.RowSpan="3"
+            Grid.RowSpan="4"
             Panel.ZIndex="999"/>
 
         <!-- Tabla -->
@@ -46,8 +48,13 @@
                 </DataGrid.Columns>
                 </DataGrid>
 
+        <localControls:PaginationControls
+            x:Name="paginacion"
+            Grid.Row="2"
+            Margin="0,10,0,10"/>
+
         <!-- Botones -->
-        <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Margin="0,5,0,0">
+        <StackPanel Orientation="Horizontal" Grid.Row="3" HorizontalAlignment="Center" Margin="0,5,0,0">
             <Button Width="150" Height="50"  Content="Buscar (F2)" Click="BtnBuscar_Click" Margin="5"/>
             <Button Width="150" Height="50"  Content="Saldos (F3)" Click="BtnSaldos_Click" Margin="5"/>
             <Button Width="150" Height="50"  Content="Cartola (ENTER)" Click="BtnCartola_Click" Margin="5"/>

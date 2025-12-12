@@ -32,9 +32,26 @@ public partial class OrdenTrabajoPage : Page
 
         Loaded += async (_, _) =>
         {
-            _viewModel.IsLoading = true;
-            await _viewModel.LoadAllByEmpresa();
-            _viewModel.IsLoading = false;
+            await _viewModel.LoadPageByEmpresa(1);
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        };
+
+        paginacion.PageChanged += async (nuevaPagina) =>
+        {
+            await _viewModel.LoadPageByEmpresa(nuevaPagina);
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        };
+
+        paginacion.PageSizeChanged += async (size) =>
+        {
+            _viewModel.PageSize = size;
+
+            if (size == 0)
+                await _viewModel.LoadAllByEmpresa(); // sin paginar
+            else
+                await _viewModel.LoadPageByEmpresa(1); // resetear a página 1
+
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
         };
         _dataGrid = dgOrdenTrabajo;
         _dataGrid.ItemContainerGenerator.StatusChanged += DgOrdenTrabajo_StatusChanged;
@@ -122,9 +139,34 @@ public partial class OrdenTrabajoPage : Page
         }
     }
 
-    private void BtnBuscar_Click(object sender, RoutedEventArgs e)
+    private async void BtnBuscar_Click(object sender, RoutedEventArgs e)
     {
-        _viewModel.Buscar(txtBuscar.Text);
+        string? filtro = txtBuscar.Text?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(filtro))
+        {
+            // Si hay texto, cargar TODO antes de filtrar
+            _viewModel.PageSize = 0;
+            await _viewModel.LoadAllByEmpresa();
+
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        }
+        else
+        {
+            // Si está vacío, volver a paginación normal
+            if (_viewModel.PageSize == 0)
+            {
+                _viewModel.PageSize = paginacion.CurrentPageSize; // el valor del TextBox de paginación
+            }
+
+            await _viewModel.LoadPageByEmpresa(1);
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        }
+
+        if (filtro == null)
+            return;
+
+        _viewModel.Buscar(filtro);
     }
 
     private void BtnImprimir_Click(object sender, RoutedEventArgs e)

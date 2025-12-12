@@ -10,7 +10,7 @@
 
             <TextBox x:Name="txtPageSize"
                     Width="50"
-                    Text="20"
+                    Text="{Binding PageSize}"
                     VerticalContentAlignment="Center"
                     KeyDown="txtPageSize_KeyDown"/>
         </StackPanel>

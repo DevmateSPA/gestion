@@ -6,8 +6,8 @@ namespace Gestion.presentation.views.resources.paginationcontrols;
 
 public partial class PaginationControls : UserControl
 {
-    public event Action<int> PageChanged;
-    public event Action<int> PageSizeChanged;
+    public event Action<int>? PageChanged;
+    public event Action<int>? PageSizeChanged;
 
     public int CurrentPage { get; private set; } = 1;
     public int CurrentPageSize
@@ -17,7 +17,7 @@ public partial class PaginationControls : UserControl
             if (int.TryParse(txtPageSize.Text, out int size))
                 return size;
 
-            return 20; // valor por defecto
+            return 29; // valor por defecto
         }
     }
     public int TotalPages { get; private set; } = 1;
@@ -62,7 +62,7 @@ public partial class PaginationControls : UserControl
         {
             if (int.TryParse(txtPage.Text, out int p))
                 NavigateTo(p);
-
+                
             e.Handled = true;
         }
     }
@@ -76,6 +76,7 @@ public partial class PaginationControls : UserControl
                 if (size < 0) size = 1;
 
                 PageSizeChanged?.Invoke(size);
+                CurrentPage = 1;
             }
 
             e.Handled = true;
