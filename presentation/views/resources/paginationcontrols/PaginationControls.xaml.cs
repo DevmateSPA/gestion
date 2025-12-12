@@ -17,7 +17,7 @@ public partial class PaginationControls : UserControl
             if (int.TryParse(txtPageSize.Text, out int size))
                 return size;
 
-            return 20; // valor por defecto
+            return 29; // valor por defecto
         }
     }
     public int TotalPages { get; private set; } = 1;
