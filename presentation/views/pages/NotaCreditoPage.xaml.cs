@@ -21,7 +21,29 @@ public partial class NotaCreditoPage : Page
         DataContext = _viewModel;
         Title = $"Notas de crédito";
 
-        Loaded += async (_, _) => await _viewModel.LoadAllByEmpresa();
+        Loaded += async (_, _) =>
+        {
+            await _viewModel.LoadPageByEmpresa(1);
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        };
+
+        paginacion.PageChanged += async (nuevaPagina) =>
+        {
+            await _viewModel.LoadPageByEmpresa(nuevaPagina);
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        };
+
+        paginacion.PageSizeChanged += async (size) =>
+        {
+            _viewModel.PageSize = size;
+
+            if (size == 0)
+                await _viewModel.LoadAllByEmpresa(); // sin paginar
+            else
+                await _viewModel.LoadPageByEmpresa(1); // resetear a página 1
+
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        };
         _dataGrid = dgNotasCredito;
         _dataGrid.ItemContainerGenerator.StatusChanged += DgNotasCredito_StatusChanged;
 
