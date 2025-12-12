@@ -12,7 +12,7 @@ namespace Gestion.Infrastructure.data;
 public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabajoRepository
 {
     public OrdenTrabajoRepository(IDbConnectionFactory connectionFactory)
-        : base(connectionFactory, "otprueba", "vw_ordentrabajo") {}
+        : base(connectionFactory, "ordentrabajo", "vw_ordentrabajo") {}
 
     public override async Task<List<OrdenTrabajo>> FindAllByEmpresa(long empresaId)
     {

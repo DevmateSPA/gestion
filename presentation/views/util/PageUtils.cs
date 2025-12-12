@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Gestion.presentation.utils
+namespace Gestion.presentation.util
 {
     public static class PageUtils
     {

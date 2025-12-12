@@ -5,6 +5,7 @@ using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
 using Gestion.presentation.utils;
+using System.IO;
 
 namespace Gestion.presentation.views.pages;
     public partial class PendienteProduccionPage : Page
@@ -34,7 +35,20 @@ namespace Gestion.presentation.views.pages;
 
     private void BtnImprimir_Click(object sender, RoutedEventArgs e)
     {
-        
+        var modal = new ImpresoraModal
+        {
+            //Owner = this 
+        };
+
+        if (modal.ShowDialog() == true)
+        {
+            string impresora = modal.ImpresoraSeleccionada;
+            MessageBox.Show("Impresora seleccionada: " + impresora);
+            string pdfPath = PrintUtils.GenerarListadoOTPendientes(_viewModel.Entidades.ToList());
+            string sumatra = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SumatraPDF.exe");
+            PrintUtils.PrintFile(pdfPath, impresora, sumatra);
+        }
+       
     }
 
     private void BtnBuscar_Click(object sender, RoutedEventArgs e)

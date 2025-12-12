@@ -34,6 +34,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     public bool ClienteProporcionaPapel { get; set; } = false;
     public string TipoImpresion { get; set; } = string.Empty;
     public string Maquina1 { get; set; } = string.Empty;
+    public string Maquina1descripcion { get; set; } = string.Empty;
     public string Maquina2 { get; set; } = string.Empty;
     public string Pin { get; set; } = string.Empty;
     public int Nva { get; set; } = 0;
