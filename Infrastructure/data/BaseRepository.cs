@@ -121,7 +121,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         using var conn = await _connectionFactory.CreateConnection();
         using var cmd = (DbCommand)conn.CreateCommand();
 
-        var sql = new StringBuilder($"SELECT * FROM {tableOrView} WHERE {where}");
+        var sql = new StringBuilder($"SELECT * FROM {tableOrView} WHERE {where} ORDER BY fecha DESC");
 
         // Agregar LIMIT y OFFSET si existen
         if (limit.HasValue)
@@ -271,7 +271,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
 
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return await FindWhereFrom(_viewName, "empresa = @empresa", null, null, p);
+        return await FindWhereFrom(_viewName, "empresa = @empresa", null, null ,p);
     }
     public virtual async Task<List<T>> FindPageByEmpresa(long empresaId, int pageNumber, int pageSize)
     {

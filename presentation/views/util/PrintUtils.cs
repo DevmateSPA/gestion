@@ -48,65 +48,104 @@ namespace Gestion.presentation.utils
 
         public static string GenerarOrdenTrabajoPrint(OrdenTrabajo ot)
         {
-            return GeneratePdf("orden_trabajo_"+ot.Folio+".pdf", doc =>
+           return GeneratePdf("orden_trabajo_"+ot.Folio+".pdf", doc =>
             {
-                var font = PdfFontFactory.CreateFont(StandardFonts.COURIER_BOLD);
+                var font = PdfFontFactory.CreateFont(StandardFonts.COURIER);
+                var boldFont = PdfFontFactory.CreateFont(StandardFonts.COURIER_BOLD);
                 doc.SetFont(font).SetFontSize(10);
 
                 string T(object? v) =>
                     string.IsNullOrWhiteSpace(v?.ToString()) ? "---" : v!.ToString();
 
-                doc.Add(new Paragraph("IMPRENTA MORIS").SetTextAlignment((iText.Layout.Properties.TextAlignment?)TextAlignment.Left));
-                doc.Add(new Paragraph("ADMINISTRADOR DE SERVICIOS V1.0"));
-                doc.Add(new Paragraph($"Emitido : {DateTime.Now:dd/MM/yyyy}                Pagina : 1"));
-                doc.Add(new Paragraph("\nORDEN DE TRABAJO\n===============")
+                // ENCABEZADO
+                doc.Add(new Paragraph("IMPRENTA MORIS")
+                    .SetTextAlignment((iText.Layout.Properties.TextAlignment?)TextAlignment.Center)
+                    .SetFont(boldFont)
+                    .SetFontSize(12));
+
+                doc.Add(new Paragraph("ADMINISTRADOR DE SERVICIOS  V1.0")
+                    .SetTextAlignment((iText.Layout.Properties.TextAlignment?)TextAlignment.Center)
+                    .SetFontSize(10));
+
+                doc.Add(new Paragraph($"Emitido : {DateTime.Now:dd/MM/yyyy}       Página : 1")
                     .SetTextAlignment((iText.Layout.Properties.TextAlignment?)TextAlignment.Center));
 
+                doc.Add(new Paragraph("\nORDEN DE TRABAJO")
+                    .SetTextAlignment((iText.Layout.Properties.TextAlignment?)TextAlignment.Center)
+                    .SetFont(boldFont));
+
+                doc.Add(new Paragraph("============================================")
+                    .SetTextAlignment((iText.Layout.Properties.TextAlignment?)TextAlignment.Center));
+
+                // DATOS GENERALES
                 doc.Add(new Paragraph(
-                    $"Folio O.T. [{T(ot.Folio)}]                                          Cliente [{T(ot.RutCliente)}] {T(ot.Descripcion)}"
+                    $"Folio O.T.: [{T(ot.Folio)}]     Cliente: [{T(ot.RutCliente)}]\n" +
+                    $"Nombre Cliente: {T(ot.Descripcion)}"
                 ));
 
-                doc.Add(new Paragraph($"Fecha [{ot.Fecha:dd/MM/yyyy}]"));
-                doc.Add(new Paragraph(new string('-', 120)));
+                doc.Add(new Paragraph($"Fecha: [{ot.Fecha:dd/MM/yyyy}]"));
+                doc.Add(new Paragraph(new string('-', 80)));
 
-                // SECCIÓN TRABAJO
-                doc.Add(new Paragraph($"Trabajo           [{T(ot.Descripcion)}]"));
-                doc.Add(new Paragraph($"Cantidad          [{ot.Cantidad}]"));
-                doc.Add(new Paragraph($"Total impresiones [{ot.TotalImpresion}]"));
-                doc.Add(new Paragraph($"Folio del         [{T(ot.FolioDesde)}]  al [{T(ot.FolioHasta)}]"));
-                doc.Add(new Paragraph($"Cortar a tamaño   [{ot.CortarTamanio}]  [{T(ot.CortarTamanioLargo)}] x [{T(ot.CortarTamanion)}] cms"));
-                doc.Add(new Paragraph($"Montar            [{ot.Montar}]"));
-                doc.Add(new Paragraph($"Molde x tamaño    [{ot.MoldeTamanio}]"));
-                doc.Add(new Paragraph($"Tamaño final      [{T(ot.TamanioFinalAncho)}] x [{T(ot.TamanioFinalLargo)}] cms"));
+                // TRABAJO
+                doc.Add(new Paragraph("► DETALLE DEL TRABAJO").SetFont(boldFont));
+                doc.Add(new Paragraph(
+                    $"Trabajo:            [{T(ot.Descripcion)}]\n" +
+                    $"Cantidad:           [{ot.Cantidad}]\n" +
+                    $"Total impresiones:  [{ot.TotalImpresion}]\n" +
+                    $"Folio del:          [{T(ot.FolioDesde)}]   al [{T(ot.FolioHasta)}]\n" +
+                    $"Cortar a tamaño:    [{ot.CortarTamanio}]  {T(ot.CortarTamanioLargo)} x {T(ot.CortarTamanion)} cms\n" +
+                    $"Montar:             [{ot.Montar}]\n" +
+                    $"Molde x tamaño:     [{T(ot.MoldeTamanio)}]\n" +
+                    $"Tamaño final:       {T(ot.TamanioFinalAncho)} x {T(ot.TamanioFinalLargo)} cms"
+                ));
 
-                doc.Add(new Paragraph(new string('-', 120)));
+                doc.Add(new Paragraph(new string('-', 80)));
 
                 // CLIENTE PROPORCIONA
+                doc.Add(new Paragraph("► CLIENTE PROPORCIONA").SetFont(boldFont));
                 doc.Add(new Paragraph(
-                    $"Cliente Proporciona:   Nada [{T(ot.ClienteProporcionanada)}]  Original [{T(ot.ClienteProporcionaOriginal)}]  Películas [{(ot.ClienteProporcionaPelicula ? "X" : " ")}]  Planchas [{(ot.ClienteProporcionaPlancha ? "X" : " ")}]  Papel [{(ot.ClienteProporcionaPapel ? "X" : " ")}]"
+                    $"Nada [{T(ot.ClienteProporcionanada)}]    " +
+                    $"Original [{T(ot.ClienteProporcionaOriginal)}]    " +
+                    $"Películas [{(ot.ClienteProporcionaPelicula ? "X" : " ")}]    " +
+                    $"Planchas [{(ot.ClienteProporcionaPlancha ? "X" : " ")}]    " +
+                    $"Papel [{(ot.ClienteProporcionaPapel ? "X" : " ")}]"
                 ));
 
-                // IMPRESIÓN Y MÁQUINAS
-                doc.Add(new Paragraph($"Tipo impresión   [{T(ot.TipoImpresion)}]"));
-                doc.Add(new Paragraph($"Máquina 1        [{T(ot.Maquina1)}]"));
-                doc.Add(new Paragraph($"Máquina 2        [{T(ot.Maquina2)}]"));
-                doc.Add(new Paragraph($"Pinza           [{T(ot.Pin)}]"));
-                doc.Add(new Paragraph($"P.Nueva         [{ot.Nva}]   Usada [{ot.Us}]"));
-                doc.Add(new Paragraph($"P.Nueva CTP     [{ot.CtpNva}]   Usada CTP [{ot.U}]"));
+                doc.Add(new Paragraph(new string('-', 80)));
 
-                doc.Add(new Paragraph(new string('-', 120)));
+                // IMPRESIÓN Y MÁQUINAS
+                doc.Add(new Paragraph("► IMPRESIÓN Y MÁQUINAS").SetFont(boldFont));
+                doc.Add(new Paragraph(
+                    $"Tipo impresión:     [{T(ot.TipoImpresion)}]\n" +
+                    $"Máquina 1:          [{T(ot.Maquina1)}]\n" +
+                    $"Máquina 2:          [{T(ot.Maquina2)}]\n" +
+                    $"Pinza:              [{T(ot.Pin)}]\n" +
+                    $"Planchas nuevas:    [{ot.Nva}]     Usadas: [{ot.Us}]\n" +
+                    $"Planchas CTP nuevas:[{ot.CtpNva}]   Usadas CTP: [{ot.U}]"
+                ));
+
+                doc.Add(new Paragraph(new string('-', 80)));
 
                 // TINTAS
-                doc.Add(new Paragraph($"Tintas:   1[{T(ot.Tintas1)}]   2[{T(ot.Tintas2)}]   3[{T(ot.Tintas3)}]   4[{T(ot.Tintas4)}]"));
+                doc.Add(new Paragraph("► TINTAS").SetFont(boldFont));
+                doc.Add(new Paragraph(
+                    $"1[{T(ot.Tintas1)}]   2[{T(ot.Tintas2)}]   3[{T(ot.Tintas3)}]   4[{T(ot.Tintas4)}]"
+                ));
+
+                doc.Add(new Paragraph(new string('-', 80)));
 
                 // MATERIALES
-                doc.Add(new Paragraph($"Sobres: [{T(ot.Sobres)}]"));
-                doc.Add(new Paragraph($"Sacos:   [{T(ot.Sacos)}]"));
+                doc.Add(new Paragraph("► MATERIALES").SetFont(boldFont));
+                doc.Add(new Paragraph(
+                    $"Sobres: [{T(ot.Sobres)}]\n" +
+                    $"Sacos:  [{T(ot.Sacos)}]"
+                ));
 
-                doc.Add(new Paragraph(new string('-', 120)));
+                doc.Add(new Paragraph(new string('-', 80)));
 
-                doc.Add(new Paragraph("Películas y Planchas   $____________"));
-                doc.Add(new Paragraph("Impresión               $____________"));
+                // TOTALES
+                doc.Add(new Paragraph("Películas y Planchas:     $____________"));
+                doc.Add(new Paragraph("Impresión:                 $____________"));
             });
         }
     

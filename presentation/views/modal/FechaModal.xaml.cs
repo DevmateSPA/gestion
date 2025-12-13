@@ -32,6 +32,10 @@ namespace Gestion.presentation.views.windows
             txtHasta.Text = hoy;
         }
 
+        public FechaModal()
+        {
+        }
+
         private void FechaMask(object sender, TextCompositionEventArgs e)
         {
             if (!char.IsDigit(e.Text[0]))
