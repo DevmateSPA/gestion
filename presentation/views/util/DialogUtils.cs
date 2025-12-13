@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace Gestion.presentation.utils
+namespace Gestion.presentation.views.util
 {
     public static class DialogUtils
     {

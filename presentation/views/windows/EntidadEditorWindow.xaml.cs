@@ -7,7 +7,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Markup;
 using Gestion.core.attributes.validation;
-using Gestion.presentation.utils;
+using Gestion.presentation.views.util;
 
 namespace Gestion.presentation.views.windows;
 

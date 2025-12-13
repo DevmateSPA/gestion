@@ -6,7 +6,7 @@ using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
 using Microsoft.Extensions.DependencyInjection;
-using Gestion.presentation.utils;
+using Gestion.presentation.views.util;
 using System.Drawing.Printing;
 using System.Windows.Documents;
 using System.Printing;

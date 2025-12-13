@@ -4,7 +4,7 @@ using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
-using Gestion.presentation.utils;
+using Gestion.presentation.views.util;
 
 namespace Gestion.presentation.views.pages;
     public partial class PendienteProduccionPage : Page

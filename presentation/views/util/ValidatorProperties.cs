@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace Gestion.presentation.utils;
+namespace Gestion.presentation.views.util;
 
 public static class ValidatorProperties
 {
