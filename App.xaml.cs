@@ -19,6 +19,29 @@ public partial class App : Application
 
     private void Application_Startup(object sender, StartupEventArgs e)
     {
+        DispatcherUnhandledException += (s, ex) =>
+        {
+            var dialog = ServiceProvider?
+                .GetService<IDialogService>();
+
+            if (dialog != null)
+            {
+                dialog.ShowError(
+                    ex.Exception.Message,
+                    "Error inesperado");
+            }
+            else
+            {
+                MessageBox.Show(
+                    ex.Exception.Message,
+                    "Error inesperado",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+
+            ex.Handled = true; // evita que WPF cierre la app
+        };
+
         var services = new ServiceCollection();
         services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
         services.AddSingleton<IDialogService, DialogService>();

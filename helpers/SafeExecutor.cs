@@ -1,10 +1,14 @@
+using System.Windows;
 using Gestion.core.interfaces.service;
 
 namespace Gestion.helpers;
 
 public static class SafeExecutor
 {
-    public static async Task RunAsync(Func<Task> action, IDialogService dialogService, string mensajeError)
+    public static async Task RunAsync(
+        Func<Task> action,
+        IDialogService dialogService,
+        string mensajeError)
     {
         try
         {
@@ -12,7 +16,10 @@ public static class SafeExecutor
         }
         catch (Exception ex)
         {
-            dialogService.ShowError($"{mensajeError}: {ex.Message}");
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                dialogService.ShowError($"{mensajeError}:\n{ex.Message}");
+            });
         }
     }
 }
