@@ -9,8 +9,7 @@ using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.pages;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.database;
-using System.Globalization;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Gestion.presentation.views.util;
 
 namespace Gestion;
 
@@ -20,6 +19,29 @@ public partial class App : Application
 
     private void Application_Startup(object sender, StartupEventArgs e)
     {
+        DispatcherUnhandledException += (s, ex) =>
+        {
+            var dialog = ServiceProvider?
+                .GetService<IDialogService>();
+
+            if (dialog != null)
+            {
+                dialog.ShowError(
+                    ex.Exception.Message,
+                    "Error inesperado");
+            }
+            else
+            {
+                MessageBox.Show(
+                    ex.Exception.Message,
+                    "Error inesperado",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+
+            ex.Handled = true; // evita que WPF cierre la app
+        };
+
         var services = new ServiceCollection();
         services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
         services.AddSingleton<IDialogService, DialogService>();
@@ -135,6 +157,8 @@ public partial class App : Application
         services.AddTransient<ClienteOTWindow>();
        
         ServiceProvider = services.BuildServiceProvider();
+
+        DialogUtils.Init(ServiceProvider.GetRequiredService<IDialogService>());
 
         var login = ServiceProvider.GetRequiredService<LoginWindow>();
         login.Show();

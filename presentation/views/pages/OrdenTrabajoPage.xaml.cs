@@ -5,7 +5,7 @@ using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
-using Gestion.presentation.utils;
+using Gestion.presentation.views.util;
 using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using Gestion.core.interfaces.service;
@@ -91,8 +91,8 @@ public partial class OrdenTrabajoPage : Page
         if (ordenTrabajo == null)
             return;
 
-        var detalles = await _detalleOTService.FindByFolio(ordenTrabajo.Folio);
-        ordenTrabajo.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(detalles);
+        ordenTrabajo.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(
+            await _viewModel.LoadDetailsByFolio(ordenTrabajo.Folio));
 
         var ventana = new OrdenTrabajoDetallePage(this, ordenTrabajo);
         if (ventana.ShowDialog() != true)
@@ -103,7 +103,7 @@ public partial class OrdenTrabajoPage : Page
         var ordenTrabajoEditada = (OrdenTrabajo)ventana.EntidadEditada;
 
         await _viewModel.Update(ordenTrabajoEditada);
-        await _viewModel.SincronizarDetalles(detalles, ordenTrabajoEditada.Detalles, ordenTrabajoEditada);
+        await _viewModel.SincronizarDetalles(ordenTrabajo.Detalles, ordenTrabajoEditada.Detalles, ordenTrabajoEditada);
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)

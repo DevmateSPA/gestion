@@ -2,6 +2,7 @@ using System.ComponentModel;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
 using Gestion.core.model.detalles;
+using Gestion.helpers;
 
 namespace Gestion.presentation.viewmodel; 
 
@@ -14,6 +15,18 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
     {
         _ordenTrabajoService = ordenTrabajoService;
         _detalleOTService = detalleOTService;
+    }
+
+    public virtual async Task<List<DetalleOrdenTrabajo>> LoadDetailsByFolio(string folio)
+    {
+        List<DetalleOrdenTrabajo>? detalles = null;
+
+        await SafeExecutor.RunAsync(
+            async () => detalles = await _detalleOTService.FindByFolio(folio),
+            _dialogService,
+            $"Error al cargar los detalles de la orden de trabajo con folio: {folio}");
+            
+        return detalles ?? [];
     }
 
     public override async Task Delete(long id)

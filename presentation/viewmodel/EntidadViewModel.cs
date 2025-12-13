@@ -138,7 +138,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
     private protected void AddEntity(T entidad)
     {
         if (entidad != null)
-            Entidades.Add(entidad);
+            Entidades.Insert(0, entidad);
     }
 
     public virtual async Task LoadAll()

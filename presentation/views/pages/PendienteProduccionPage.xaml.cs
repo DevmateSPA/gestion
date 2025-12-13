@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
+using Gestion.presentation.views.util;
 using Gestion.presentation.utils;
 using System.IO;
 

@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,8 +5,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Markup;
 using Gestion.core.attributes.validation;
-using DAValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
-using WPFValidationResult = System.Windows.Controls.ValidationResult;
+using Gestion.presentation.views.util;
 
 namespace Gestion.presentation.views.windows;
 
@@ -111,22 +108,7 @@ public partial class EntidadEditorTableWindow : Window
                 };
 
                 // --- BINDING sobre SelectedDate ---
-                var binding = new Binding(prop.Name)
-                {
-                    Source = EntidadEditada,
-                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
-                    Mode = BindingMode.TwoWay,
-                    ValidatesOnExceptions = true,
-                    ValidatesOnDataErrors = true,
-                    StringFormat = "dd/MM/yyyy" // formato requerido
-                };
-
-                // Validación por DataAnnotations
-                var rule = new DataAnnotationValidationRule(prop, EntidadEditada)
-                {
-                    ValidationStep = ValidationStep.ConvertedProposedValue
-                };
-                binding.ValidationRules.Add(rule);
+                var binding = BindingFactory.CreateValidateBinding(prop, EntidadEditada, "dd/MM/yyyy");
 
                 datePicker.SetBinding(DatePicker.SelectedDateProperty, binding);
                 controlCampo = datePicker;
@@ -142,28 +124,15 @@ public partial class EntidadEditorTableWindow : Window
                     Margin = new Thickness(5, 0, 5, 10)
                 };
 
-                // --- BINDING ---
-                var binding = new Binding(prop.Name)
-                {
-                    Source = EntidadEditada,
-                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
-                    Mode = BindingMode.TwoWay,
-                    ValidatesOnExceptions = true,
-                    ValidatesOnDataErrors = true
-                };
-
                 // Si existe FechaAttribute pero no es DateTime (caso raro), no aplicamos.
+
+                // --- BINDING ---
+                var binding = BindingFactory.CreateValidateBinding(prop, EntidadEditada);
+
                 if (fechaAttr != null && prop.PropertyType == typeof(DateTime))
                 {
                     binding.StringFormat = fechaAttr.Formato;
                 }
-
-                // Validación por DataAnnotations
-                var rule = new DataAnnotationValidationRule(prop, EntidadEditada)
-                {
-                    ValidationStep = ValidationStep.ConvertedProposedValue
-                };
-                binding.ValidationRules.Add(rule);
 
                 textBox.SetBinding(TextBox.TextProperty, binding);
                 controlCampo = textBox;
@@ -208,22 +177,11 @@ public partial class EntidadEditorTableWindow : Window
 
     private void BtnGuardar_Click(object sender, RoutedEventArgs e)
     {
-        // Buscar errores en todos los controles generados (TextBox y DatePicker)
-        bool hayErrores = spCampos
-            .Children
-            .OfType<StackPanel>()
-            .SelectMany(f => f.Children.OfType<StackPanel>())
-            .SelectMany(c => c.Children.OfType<Control>().Where(c => c is TextBox || c is DatePicker))
-            .Any(t => Validation.GetHasError(t));
+        var errores = ValidationHelper.GetValidationErrors(spCampos);
 
-        if (hayErrores)
+        if (errores.Count != 0)
         {
-            MessageBox.Show(
-                "Hay errores en el formulario. Corrígelos antes de guardar.",
-                "Error",
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning
-            );
+            DialogUtils.MostrarErroresValidacion(errores);
             return;
         }
 
@@ -236,110 +194,4 @@ public partial class EntidadEditorTableWindow : Window
         DialogResult = false;
         Close();
     }
-}
-
-
-// ------------------------------------------------------------------
-//  VALIDATION RULE COMPATIBLE CON DATAANNOTATIONS (LISTA PARA USAR)
-// ------------------------------------------------------------------
-
-public class DataAnnotationValidationRule : ValidationRule
-{
-    private readonly PropertyInfo _prop;
-    private readonly object _instancia;
-
-    public DataAnnotationValidationRule(PropertyInfo prop, object instancia)
-    {
-        _prop = prop;
-        _instancia = instancia;
-    }
-
-    public override WPFValidationResult Validate(object value, CultureInfo cultureInfo)
-    {
-        object? valorConvertido = value;
-        Type tipo = _prop.PropertyType;
-        Type tipoSubyacente = Nullable.GetUnderlyingType(tipo) ?? tipo;
-
-        try
-        {
-            // Si el valor llega como cadena y la propiedad espera un tipo concreto,
-            // intentamos convertirlo de forma segura (DateTime, enum, primitivos).
-            if (value is string s)
-            {
-                if (string.IsNullOrWhiteSpace(s))
-                {
-                    valorConvertido = null;
-                }
-                else if (tipoSubyacente == typeof(DateTime))
-                {
-                    // Si hay un FechaAttribute, usar su formato para TryParseExact
-                    var fechaAttrLocal = _prop.GetCustomAttribute<FechaAttribute>();
-                    var formatoRequerido = "dd/MM/yyyy";
-
-                    if (fechaAttrLocal != null)
-                    {
-                        // preferir formato del atributo si existe
-                        if (DateTime.TryParseExact(s, fechaAttrLocal.Formato, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dtExactAttr))
-                            valorConvertido = dtExactAttr;
-                        else
-                            return new WPFValidationResult(false, $"{_prop.Name} debe tener el formato {fechaAttrLocal.Formato}.");
-                    }
-                    else
-                    {
-                        // aceptar explícitamente dd/MM/yyyy primero, luego parse flexible según cultureInfo
-                        if (DateTime.TryParseExact(s, formatoRequerido, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dtExact))
-                            valorConvertido = dtExact;
-                        else if (DateTime.TryParse(s, cultureInfo, DateTimeStyles.None, out var dt))
-                            valorConvertido = dt;
-                        else
-                            return new WPFValidationResult(false, $"{_prop.Name} debe tener el formato {formatoRequerido}.");
-                    }
-                }
-                else if (tipoSubyacente.IsEnum)
-                {
-                    try
-                    {
-                        valorConvertido = Enum.Parse(tipoSubyacente, s, ignoreCase: true);
-                    }
-                    catch
-                    {
-                        return new WPFValidationResult(false, $"{_prop.Name} tiene un formato inválido.");
-                    }
-                }
-                else if (tipoSubyacente.IsPrimitive || tipoSubyacente == typeof(decimal))
-                {
-                    try
-                    {
-                        valorConvertido = Convert.ChangeType(s, tipoSubyacente, CultureInfo.InvariantCulture);
-                    }
-                    catch
-                    {
-                        return new WPFValidationResult(false, $"{_prop.Name} tiene un formato inválido.");
-                    }
-                }
-                // otros tipos no convertidos aquí; si WPF ya convirtió, value no será string.
-            }
-        }
-        catch
-        {
-            return new WPFValidationResult(false,
-                $"{_prop.Name} tiene un formato inválido.");
-        }
-
-        //--------------------------------------------------------------
-        // Validación DataAnnotations final
-        //--------------------------------------------------------------
-        var contexto = new ValidationContext(_instancia)
-        {
-            MemberName = _prop.Name
-        };
-
-        var errores = new List<DAValidationResult>();
-
-        if (!Validator.TryValidateProperty(valorConvertido, contexto, errores))
-            return new WPFValidationResult(false, errores[0].ErrorMessage);
-
-        return WPFValidationResult.ValidResult;
-    }
-
 }

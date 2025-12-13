@@ -1,10 +1,8 @@
-using System.ComponentModel;
 using System.Reflection;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Gestion.presentation.util
+namespace Gestion.presentation.views.util
 {
     public static class PageUtils
     {

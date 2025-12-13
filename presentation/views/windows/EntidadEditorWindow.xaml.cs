@@ -7,7 +7,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Markup;
 using Gestion.core.attributes.validation;
-using Gestion.presentation.utils;
+using Gestion.presentation.views.util;
 
 namespace Gestion.presentation.views.windows;
 
@@ -129,24 +129,7 @@ public partial class EntidadEditorWindow : Window
                 };
 
                 // --- BINDING al SelectedDate ---
-                var formato = fechaAttr?.Formato ?? "dd/MM/yyyy";
-
-                var binding = new Binding(prop.Name)
-                {
-                    Source = EntidadEditada,
-                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
-                    Mode = BindingMode.TwoWay,
-                    ValidatesOnExceptions = true,
-                    ValidatesOnDataErrors = true,
-                    StringFormat = formato,
-                    ConverterCulture = CultureInfo.GetCultureInfo("es-ES")
-                };
-
-                var rule = new DataAnnotationValidationRule(prop, EntidadEditada)
-                {
-                    ValidationStep = ValidationStep.ConvertedProposedValue
-                };
-                binding.ValidationRules.Add(rule);
+                var binding = BindingFactory.CreateValidateBinding(prop, EntidadEditada, "dd/MM/yyyy");
 
                 dp.SetBinding(DatePicker.SelectedDateProperty, binding);
 
@@ -171,21 +154,7 @@ public partial class EntidadEditorWindow : Window
                 };
 
                 // --- BINDING al Text ---
-                var binding = new Binding(prop.Name)
-                {
-                    Source = EntidadEditada,
-                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
-                    Mode = BindingMode.TwoWay,
-                    ValidatesOnExceptions = true,
-                    ValidatesOnDataErrors = true,
-                    ConverterCulture = CultureInfo.GetCultureInfo("es-ES")
-                };
-
-                var rule = new DataAnnotationValidationRule(prop, EntidadEditada)
-                {
-                    ValidationStep = ValidationStep.ConvertedProposedValue
-                };
-                binding.ValidationRules.Add(rule);
+                var binding = BindingFactory.CreateValidateBinding(prop, EntidadEditada);
 
                 textBox.SetBinding(TextBox.TextProperty, binding);
 
@@ -227,26 +196,14 @@ public partial class EntidadEditorWindow : Window
 
     private void BtnGuardar_Click(object sender, RoutedEventArgs e)
     {
-        // Buscar errores en todos los controles generados (TextBox y DatePicker)
-        bool hayErrores = spCampos
-            .Children
-            .OfType<StackPanel>()
-            .SelectMany(f => f.Children.OfType<StackPanel>())
-            .SelectMany(c => c.Children.OfType<Control>().Where(c => c is TextBox || c is DatePicker))
-            .Any(t => Validation.GetHasError(t));
+        var errores = ValidationHelper.GetValidationErrors(spCampos);
 
-        if (hayErrores)
+        if (errores.Count != 0)
         {
-            MessageBox.Show(
-                "Hay errores en el formulario. Corrígelos antes de guardar.",
-                "Error",
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning
-            );
+            DialogUtils.MostrarErroresValidacion(errores);
             return;
         }
 
-        // Al usar binding TwoWay con Source=EntidadEditada, los valores ya están actualizados.
         DialogResult = true;
         Close();
     }
