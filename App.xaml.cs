@@ -9,8 +9,7 @@ using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.pages;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.database;
-using System.Globalization;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Gestion.presentation.views.util;
 
 namespace Gestion;
 
@@ -135,6 +134,8 @@ public partial class App : Application
         services.AddTransient<ClienteOTWindow>();
        
         ServiceProvider = services.BuildServiceProvider();
+
+        DialogUtils.Init(ServiceProvider.GetRequiredService<IDialogService>());
 
         var login = ServiceProvider.GetRequiredService<LoginWindow>();
         login.Show();
