@@ -177,22 +177,11 @@ public partial class EntidadEditorTableWindow : Window
 
     private void BtnGuardar_Click(object sender, RoutedEventArgs e)
     {
-        // Buscar errores en todos los controles generados (TextBox y DatePicker)
-        bool hayErrores = spCampos
-            .Children
-            .OfType<StackPanel>()
-            .SelectMany(f => f.Children.OfType<StackPanel>())
-            .SelectMany(c => c.Children.OfType<Control>().Where(c => c is TextBox || c is DatePicker))
-            .Any(t => Validation.GetHasError(t));
+        var errores = ValidationHelper.GetValidationErrors(spCampos);
 
-        if (hayErrores)
+        if (errores.Count != 0)
         {
-            MessageBox.Show(
-                "Hay errores en el formulario. Corrígelos antes de guardar.",
-                "Error",
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning
-            );
+            DialogUtils.MostrarErroresValidacion(errores);
             return;
         }
 

@@ -1,3 +1,4 @@
+using System.Text;
 using System.Windows;
 
 namespace Gestion.presentation.views.util
@@ -29,6 +30,21 @@ namespace Gestion.presentation.views.util
         public static void MostrarError(string mensaje, string titulo = "Error")
         {
             MessageBox.Show(mensaje, titulo, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        public static void MostrarErroresValidacion(IEnumerable<string> errores)
+        {
+            if (errores == null || !errores.Any())
+                return;
+
+            var sb = new StringBuilder();
+            sb.AppendLine("Se encontraron los siguientes errores:");
+            sb.AppendLine();
+
+            foreach (var error in errores.Distinct())
+                sb.AppendLine($"• {error}");
+
+            MostrarAdvertencia(sb.ToString(), "Errores de validación");
         }
     }
 }
