@@ -16,7 +16,7 @@ public static class BindingFactory
             Mode = BindingMode.TwoWay,
             ValidatesOnExceptions = true,
             ValidatesOnDataErrors = true,
-            ConverterCulture = CultureInfo.GetCultureInfo("es-CL"),
+            ConverterCulture = CultureInfo.GetCultureInfo("es-ES"),
             StringFormat = stringFormat
         };
 

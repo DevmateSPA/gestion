@@ -19,7 +19,10 @@ public class RutAttribute : ValidationAttribute
     
     private static bool EsRutValido(string rut)
     {
-        rut = rut.Replace(".", "").Replace("-", "").ToUpper();
+            rut = rut.Trim()
+                .Replace(".", "")
+                .Replace("-", "")
+                .ToUpper();
 
         string cuerpo = rut[..^1];
         char dv = rut[^1];

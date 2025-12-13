@@ -1,15 +1,21 @@
+using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using Gestion.core.model;
 using Gestion.core.session;
+using Gestion.presentation.views.util;
 using iText.IO.Font.Constants;
 using iText.Kernel.Font;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
+
 namespace Gestion.presentation.views.pages;
 
 public partial class OrdenTrabajoDetallePage : Window
@@ -21,11 +27,11 @@ public partial class OrdenTrabajoDetallePage : Window
     public OrdenTrabajoDetallePage(Page padre, object entidad)
     {
         InitializeComponent();
-        this.Owner = Window.GetWindow(padre);
+        Owner = Window.GetWindow(padre);
 
         _entidadOriginal = entidad;
 
-        // Crear copia profunda simple
+        // Clonado simple de la entidad
         EntidadEditada = Activator.CreateInstance(entidad.GetType())!;
         foreach (var prop in entidad.GetType().GetProperties())
         {
@@ -33,63 +39,151 @@ public partial class OrdenTrabajoDetallePage : Window
                 prop.SetValue(EntidadEditada, prop.GetValue(entidad));
         }
 
-        // Esc para cerrar
-        this.PreviewKeyDown += (s, e) =>
+        DataContext = EntidadEditada;
+
+        Loaded += (_, _) =>
         {
-            if (e.Key == Key.Escape)
-                this.DialogResult = false;
+            BindearCamposDinamico();
         };
 
-        DataContext = EntidadEditada;
+        // ESC para cerrar
+        PreviewKeyDown += (s, e) =>
+        {
+            if (e.Key == Key.Escape)
+                DialogResult = false;
+        };
     }
 
+    // =========================
+    // GUARDAR
+    // =========================
     private void BtnGuardar_Click(object sender, RoutedEventArgs e)
     {
+        var errores = ValidationHelper.GetValidationErrors(this);
+        if (errores.Count != 0)
+        {
+            DialogUtils.MostrarErroresValidacion(errores);
+            return;
+        }
+
         EntidadEditada.GetType()
             .GetProperty("Empresa")?
             .SetValue(EntidadEditada, SesionApp.IdEmpresa);
 
-        this.DialogResult = true;
+        DialogResult = true;
     }
-
-    
 
     private void BtnCancelar_Click(object sender, RoutedEventArgs e)
     {
-        this.DialogResult = false;
+        DialogResult = false;
     }
 
+    // =========================
+    // IMPRIMIR
+    // =========================
     private void BtnImprimir_Click(object sender, RoutedEventArgs e)
     {
-        GenerarOrdenTrabajoPdf((OrdenTrabajo)_entidadOriginal);
+        var errores = ValidationHelper.GetValidationErrors(this);
+        if (errores.Count != 0)
+        {
+            DialogUtils.MostrarErroresValidacion(errores);
+            return;
+        }
+
+        GenerarOrdenTrabajoPdf((OrdenTrabajo)EntidadEditada);
         ImprimirPDF();
     }
 
+    // =========================
+    // VALIDACIÓN
+    // =========================
+    private void BindearCamposDinamico()
+    {
+        if (DataContext == null)
+            return;
+
+        var tipo = DataContext.GetType();
+
+        foreach (var ctrl in FindVisualChildren<Control>(this))
+        {
+            string? propiedad = ctrl.Name switch
+            {
+                var n when n.StartsWith("txt") => n.Substring(3),
+                var n when n.StartsWith("dp")  => n.Substring(2),
+                _ => null
+            };
+
+            if (string.IsNullOrWhiteSpace(propiedad))
+                continue;
+
+            var propInfo = tipo.GetProperty(propiedad);
+            if (propInfo == null || !propInfo.CanWrite)
+                continue;
+
+            // TextBox
+            if (ctrl is TextBox tb)
+            {
+                var binding = BindingFactory.CreateValidateBinding(propInfo, DataContext);
+                tb.SetBinding(TextBox.TextProperty, binding);
+            }
+            // DatePicker
+            else if (ctrl is DatePicker dp)
+            {
+                var binding = BindingFactory.CreateValidateBinding(
+                    propInfo,
+                    DataContext,
+                    "dd/MM/yyyy"
+                );
+
+                dp.SetBinding(DatePicker.SelectedDateProperty, binding);
+            }
+        }
+
+        // 🔥 Fuerza validación inicial
+        ValidationHelper.ForceValidation(this);
+    }
+
+    private static IEnumerable<T> FindVisualChildren<T>(DependencyObject parent)
+        where T : DependencyObject
+    {
+        if (parent == null)
+            yield break;
+
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, i);
+
+            if (child is T t)
+                yield return t;
+
+            foreach (var sub in FindVisualChildren<T>(child))
+                yield return sub;
+        }
+    }
+
+    // =========================
+    // PDF
+    // =========================
     public static void GenerarOrdenTrabajoPdf(OrdenTrabajo ot)
     {
         string path = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
             "orden_trabajo.pdf");
-        var writer = new PdfWriter(path);
-        var pdf = new PdfDocument(writer);
-        var doc = new Document(pdf);
+
+        using var writer = new PdfWriter(path);
+        using var pdf = new PdfDocument(writer);
+        using var doc = new Document(pdf);
 
         PdfFont font = PdfFontFactory.CreateFont(StandardFonts.COURIER);
-
         doc.SetFont(font).SetFontSize(10);
 
-        // Función para evitar nulls
-        string T(object? v) => string.IsNullOrWhiteSpace(v?.ToString()) 
-        ? "---" 
-        : v!.ToString()!;
+        string T(object? v) =>
+            string.IsNullOrWhiteSpace(v?.ToString()) ? "---" : v!.ToString()!;
 
-        // CABECERA
-        doc.Add(new Paragraph("IMPRENTA MORIS").SetTextAlignment((iText.Layout.Properties.TextAlignment?)TextAlignment.Left));
-
+        doc.Add(new Paragraph("IMPRENTA MORIS"));
         doc.Add(new Paragraph("ADMINISTRADOR DE SERVICIOS V1.0"));
         doc.Add(new Paragraph($"Emitido : {DateTime.Now:dd/MM/yyyy}                Pagina : 1"));
-        doc.Add(new Paragraph("\nORDEN DE TRABAJO\n===============")
-            .SetTextAlignment((iText.Layout.Properties.TextAlignment?)TextAlignment.Center));
+        doc.Add(new Paragraph("\nORDEN DE TRABAJO\n===============").SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
 
         doc.Add(new Paragraph(
             $"Folio O.T. [{T(ot.Folio)}]                                          Cliente [{T(ot.RutCliente)}] {T(ot.Descripcion)}"
@@ -98,7 +192,6 @@ public partial class OrdenTrabajoDetallePage : Window
         doc.Add(new Paragraph($"Fecha [{ot.Fecha:dd/MM/yyyy}]"));
         doc.Add(new Paragraph(new string('-', 120)));
 
-        // SECCIÓN TRABAJO
         doc.Add(new Paragraph($"Trabajo           [{T(ot.Descripcion)}]"));
         doc.Add(new Paragraph($"Cantidad          [{ot.Cantidad}]"));
         doc.Add(new Paragraph($"Total impresiones [{ot.TotalImpresion}]"));
@@ -110,10 +203,11 @@ public partial class OrdenTrabajoDetallePage : Window
 
         doc.Add(new Paragraph(new string('-', 120)));
 
-        // CLIENTE PROPORCIONA
-        doc.Add(new Paragraph($"Cliente Proporciona:   Nada [{T(ot.ClienteProporcionanada)}]  Original [{T(ot.ClienteProporcionaOriginal)}]  Películas [{(ot.ClienteProporcionaPelicula ? "X" : " ")}]  Planchas [{(ot.ClienteProporcionaPlancha ? "X" : " ")}]  Papel [{(ot.ClienteProporcionaPapel ? "X" : " ")}]"));
+        doc.Add(new Paragraph(
+            $"Cliente Proporciona:   Nada [{T(ot.ClienteProporcionanada)}]  Original [{T(ot.ClienteProporcionaOriginal)}]  " +
+            $"Películas [{(ot.ClienteProporcionaPelicula ? "X" : " ")}]  Planchas [{(ot.ClienteProporcionaPlancha ? "X" : " ")}]  Papel [{(ot.ClienteProporcionaPapel ? "X" : " ")}]"
+        ));
 
-        // IMPRESIÓN Y MÁQUINAS
         doc.Add(new Paragraph($"Tipo impresión   [{T(ot.TipoImpresion)}]"));
         doc.Add(new Paragraph($"Máquina 1        [{T(ot.Maquina1)}]"));
         doc.Add(new Paragraph($"Máquina 2        [{T(ot.Maquina2)}]"));
@@ -123,22 +217,18 @@ public partial class OrdenTrabajoDetallePage : Window
 
         doc.Add(new Paragraph(new string('-', 120)));
 
-        // TINTAS
         doc.Add(new Paragraph($"Tintas:   1[{T(ot.Tintas1)}]   2[{T(ot.Tintas2)}]   3[{T(ot.Tintas3)}]   4[{T(ot.Tintas4)}]"));
-
-        // MATERIALES
         doc.Add(new Paragraph($"Sobres: [{T(ot.Sobres)}]"));
         doc.Add(new Paragraph($"Sacos:   [{T(ot.Sacos)}]"));
 
         doc.Add(new Paragraph(new string('-', 120)));
-
-        // PIE FINAL
         doc.Add(new Paragraph("Películas y Planchas   $____________"));
         doc.Add(new Paragraph("Impresión               $____________"));
-
-        doc.Close();
     }
 
+    // =========================
+    // IMPRESIÓN
+    // =========================
     public static void ImprimirPDF(string impresora = "Microsoft Print to PDF")
     {
         try
@@ -146,25 +236,19 @@ public partial class OrdenTrabajoDetallePage : Window
             string path = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 "orden_trabajo.pdf");
-            string appFolder = AppDomain.CurrentDomain.BaseDirectory;
 
-            string sumatraPath = Path.Combine(appFolder, "SumatraPDF.exe");
+            string sumatraPath = Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "SumatraPDF.exe");
 
             if (!File.Exists(sumatraPath))
             {
-                MessageBox.Show("No se encontró SumatraPDF.exe en la carpeta del programa.",
+                MessageBox.Show("No se encontró SumatraPDF.exe.",
                     "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            if (!File.Exists(path))
-            {
-                MessageBox.Show("No se encontró el archivo PDF a imprimir.",
-                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            Process p = new Process();
+            Process p = new();
             p.StartInfo.FileName = sumatraPath;
             p.StartInfo.Arguments = $"-print-to \"{impresora}\" \"{path}\"";
             p.StartInfo.CreateNoWindow = true;

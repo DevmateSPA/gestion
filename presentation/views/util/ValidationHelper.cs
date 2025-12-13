@@ -49,4 +49,29 @@ public static class ValidationHelper
             }
         }
     }
+
+    public static void ForceValidation(FrameworkElement container)
+    {
+        if (container == null)
+            return;
+
+        foreach (var child in GetLogicalChildren(container))
+        {
+            if (child is Control ctrl &&
+                (ctrl is TextBox || ctrl is DatePicker))
+            {
+                // Fuerza el UpdateSource del binding
+                if (ctrl is TextBox tb)
+                {
+                    tb.GetBindingExpression(TextBox.TextProperty)
+                    ?.UpdateSource();
+                }
+                else if (ctrl is DatePicker dp)
+                {
+                    dp.GetBindingExpression(DatePicker.SelectedDateProperty)
+                    ?.UpdateSource();
+                }
+            }
+        }
+    }
 }
