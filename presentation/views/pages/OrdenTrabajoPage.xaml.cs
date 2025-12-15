@@ -12,7 +12,6 @@ using Gestion.core.interfaces.service;
 using System.Collections.ObjectModel;
 using Gestion.core.model.detalles;
 using Gestion.core.session;
-using Gestion.presentation.util;
 
 namespace Gestion.presentation.views.pages;
 
