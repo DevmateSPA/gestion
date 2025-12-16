@@ -11,12 +11,42 @@ using MySql.Data.MySqlClient;
 
 namespace Gestion.Infrastructure.data;
 
+
+/// <summary>
+/// Repositorio base genérico que proporciona operaciones CRUD y consultas comunes
+/// para entidades persistentes.
+/// </summary>
+/// <typeparam name="T">
+/// Tipo de entidad que implementa <see cref="IModel"/> y posee constructor sin parámetros.
+/// </typeparam>
+/// <remarks>
+/// Este repositorio utiliza reflexión para mapear dinámicamente las columnas
+/// devueltas por la base de datos a las propiedades de la entidad.
+/// </remarks>
 public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, new()
+
 {
+    /// <summary>
+    /// Fábrica de conexiones a la base de datos.
+    /// </summary>
     protected readonly IDbConnectionFactory _connectionFactory;
+
+    /// <summary>
+    /// Nombre de la tabla asociada a la entidad.
+    /// </summary>
     protected readonly string _tableName;
+
+    /// <summary>
+    /// Nombre de la vista asociada a la entidad, si aplica.
+    /// </summary>
     protected readonly string? _viewName;
 
+    /// <summary>
+    /// Inicializa una nueva instancia del repositorio base.
+    /// </summary>
+    /// <param name="connectionFactory">Fábrica de conexiones a la base de datos.</param>
+    /// <param name="tableName">Nombre de la tabla principal.</param>
+    /// <param name="viewName">Nombre de la vista asociada (opcional).</param>
     protected BaseRepository(IDbConnectionFactory connectionFactory, string tableName, string? viewName)
     {
         _connectionFactory = connectionFactory;
@@ -24,6 +54,18 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         _viewName = viewName;
     }
 
+    /// <summary>
+    /// Convierte un valor proveniente de la base de datos al tipo de destino.
+    /// </summary>
+    /// <param name="value">Valor original obtenido del lector de datos.</param>
+    /// <param name="targetType">Tipo de destino.</param>
+    /// <returns>
+    /// Valor convertido al tipo correspondiente, o <c>null</c> si el valor es nulo.
+    /// </returns>
+    /// <remarks>
+    /// Incluye manejo especial para conversiones de valores booleanos
+    /// almacenados como BIT o TINYINT.
+    /// </remarks>
     protected object? ConvertValue(object? value, Type targetType)
     {
         if (value == null || value == DBNull.Value)
@@ -50,6 +92,14 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return Convert.ChangeType(value, targetType);
     }
 
+    /// <summary>
+    /// Mapea una fila del <see cref="DbDataReader"/> a una instancia de la entidad.
+    /// </summary>
+    /// <param name="reader">Lector de datos con la fila actual.</param>
+    /// <returns>Entidad mapeada.</returns>
+    /// <remarks>
+    /// Se ignoran propiedades marcadas con <see cref="NotMappedAttribute"/>.
+    /// </remarks>
     protected virtual T MapEntity(DbDataReader reader)
     {
         var entity = new T();
@@ -76,6 +126,13 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return entity;
     }
 
+    /// <summary>
+    /// Obtiene una entidad por su identificador.
+    /// </summary>
+    /// <param name="id">Identificador de la entidad.</param>
+    /// <returns>
+    /// La entidad encontrada o <c>null</c> si no existe.
+    /// </returns>
     public virtual async Task<T?> FindById(long id)
     {
         using var conn = await _connectionFactory.CreateConnection();
@@ -94,6 +151,10 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return default;
     }
 
+    /// <summary>
+    /// Obtiene todas las entidades de la tabla asociada.
+    /// </summary>
+    /// <returns>Lista completa de entidades.</returns>
     public virtual async Task<List<T>> FindAll()
     {
         using var conn = await _connectionFactory.CreateConnection();
@@ -111,6 +172,16 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return entities;
     }
 
+    /// <summary>
+    /// Ejecuta una consulta dinámica con cláusula WHERE, paginación opcional
+    /// y parámetros personalizados.
+    /// </summary>
+    /// <param name="tableOrView">Nombre de la tabla o vista.</param>
+    /// <param name="where">Condición WHERE (sin la palabra WHERE).</param>
+    /// <param name="limit">Cantidad máxima de registros.</param>
+    /// <param name="offset">Desplazamiento para paginación.</param>
+    /// <param name="parameters">Parámetros de la consulta.</param>
+    /// <returns>Lista de entidades que cumplen la condición.</returns>
     public async Task<List<T>> FindWhereFrom(
         string tableOrView,
         string where,
@@ -159,7 +230,13 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return list;
     }
 
-
+    /// <summary>
+    /// Elimina una entidad por su identificador.
+    /// </summary>
+    /// <param name="id">Identificador de la entidad.</param>
+    /// <returns>
+    /// <c>true</c> si la entidad fue eliminada; de lo contrario, <c>false</c>.
+    /// </returns>
     public async Task<bool> DeleteById(long id)
     {
         using var conn = await _connectionFactory.CreateConnection();
@@ -175,6 +252,13 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return affected > 0;
     }
 
+    /// <summary>
+    /// Actualiza una entidad existente en la base de datos.
+    /// </summary>
+    /// <param name="entity">Entidad a actualizar.</param>
+    /// <returns>
+    /// <c>true</c> si la actualización fue exitosa.
+    /// </returns>
     public virtual async Task<bool> Update(T entity)
     {
         using var conn = await _connectionFactory.CreateConnection();
@@ -207,6 +291,16 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return affected > 0;
     }
 
+    /// <summary>
+    /// Guarda una nueva entidad en la base de datos.
+    /// </summary>
+    /// <param name="entity">Entidad a persistir.</param>
+    /// <returns>
+    /// <c>true</c> si la entidad fue guardada correctamente.
+    /// </returns>
+    /// <remarks>
+    /// El identificador generado se asigna automáticamente a la entidad.
+    /// </remarks>
     public virtual async Task<bool> Save(T entity)
     {
         using var conn = await _connectionFactory.CreateConnection();
@@ -249,6 +343,12 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return true;
     }
 
+    /// <summary>
+    /// Cuenta la cantidad de registros que cumplen una condición.
+    /// </summary>
+    /// <param name="where">Condición WHERE (sin la palabra WHERE).</param>
+    /// <param name="parameters">Parámetros de la consulta.</param>
+    /// <returns>Número total de registros.</returns>
     public async Task<long> CountWhere(string where, params DbParameter[] parameters)
     {
         using var conn = await _connectionFactory.CreateConnection();
@@ -264,6 +364,14 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return Convert.ToInt64(result);
     }
 
+    /// <summary>
+    /// Obtiene todas las entidades asociadas a una empresa.
+    /// </summary>
+    /// <param name="empresaId">Identificador de la empresa.</param>
+    /// <returns>Lista de entidades asociadas a la empresa.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Se lanza si no existe una vista configurada.
+    /// </exception>
     public virtual async Task<List<T>> FindAllByEmpresa(long empresaId)
     {
         if (_viewName == null)
@@ -273,6 +381,17 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
 
         return await FindWhereFrom(_viewName, "empresa = @empresa", null, null ,p);
     }
+
+    /// <summary>
+    /// Obtiene una página de entidades asociadas a una empresa.
+    /// </summary>
+    /// <param name="empresaId">Identificador de la empresa.</param>
+    /// <param name="pageNumber">Número de página (comenzando en 1).</param>
+    /// <param name="pageSize">Cantidad de registros por página.</param>
+    /// <returns>Lista paginada de entidades.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Se lanza si no existe una vista configurada.
+    /// </exception>
     public virtual async Task<List<T>> FindPageByEmpresa(long empresaId, int pageNumber, int pageSize)
     {
         if (_viewName == null)
