@@ -113,8 +113,8 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
     {
         await RunWithLoading(
             action: async () => await _ordenTrabajoService.FindAllByEmpresaAndPendiente(SesionApp.IdEmpresa),
-            errorMessage: $"Error al cargar {typeof(OrdenTrabajo).Name}",
-            onEmpty: () => _dialogService.ShowMessage($"No hay {typeof(OrdenTrabajo).Name} cargadas."));
+            errorMessage: _errorMessage,
+            onEmpty: () => _dialogService.ShowMessage(_emptyMessage));
     }
 
     public async Task LoadPageByEmpresaAndPendiente(int page)
@@ -122,8 +122,8 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
         await LoadPagedEntities(
             serviceCall: async (p) => await _ordenTrabajoService.FindPageByEmpresaAndPendiente(SesionApp.IdEmpresa, PageNumber, PageSize),
             page: page,
-            emptyMessage: $"No hay {typeof(OrdenTrabajo).Name} para la empresa {SesionApp.NombreEmpresa}",
-            errorMessage: $"Error al cargar {typeof(OrdenTrabajo).Name} para la empresa {SesionApp.NombreEmpresa}",
+            emptyMessage: _emptyMessage,
+            errorMessage: _errorMessage,
             totalCountCall: async () => await _ordenTrabajoService.ContarPendientes(SesionApp.IdEmpresa),
             allItemsCall: async () => await _ordenTrabajoService.FindAllByEmpresaAndPendiente(SesionApp.IdEmpresa));
     }
