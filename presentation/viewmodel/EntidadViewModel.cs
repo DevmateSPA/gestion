@@ -199,13 +199,22 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
             onEmpty: () => _dialogService.ShowMessage($"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}"));
     }
 
-    public virtual async Task LoadPageByEmpresa(int page)
+    protected async Task LoadPagedEntities(
+        Func<int, Task<List<T>>> serviceCall,
+        int page,
+        string emptyMessage,
+        string errorMessage,
+        Func<Task<List<T>>>? allItemsCall = null)
     {
         if (PageSize == 0)
         {
-            await LoadAllByEmpresa();
+            if (allItemsCall == null)
+                await LoadAllByEmpresa();
+            else
+                await allItemsCall.Invoke();
+
             PageNumber = 1;
-            TotalRegistros = 1; // solo 1 página
+            TotalRegistros = 1;
             return;
         }
 
@@ -215,9 +224,18 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         TotalRegistros = (int)Math.Ceiling(total / (double)PageSize);
 
         await RunWithLoading(
-            action: async () => await _service.FindPageByEmpresa(SesionApp.IdEmpresa, PageNumber, PageSize),
-            errorMessage: $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}",
-            onEmpty: () => _dialogService.ShowMessage($"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}"));
+            action: () => serviceCall(PageNumber),
+            errorMessage: errorMessage,
+            onEmpty: () => _dialogService.ShowMessage(emptyMessage));
+    }
+
+    public virtual async Task LoadPageByEmpresa(int page)
+    {
+        await LoadPagedEntities(
+            serviceCall: (p) => _service.FindPageByEmpresa(SesionApp.IdEmpresa, p, PageSize),
+            page: page,
+            emptyMessage: $"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}",
+            errorMessage: $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}");
     }
     private protected async Task RunServiceAction(Func<Task<bool>> serviceAction, Action? onSuccess, string mensajeError)
     {
