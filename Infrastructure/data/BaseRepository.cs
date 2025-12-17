@@ -173,18 +173,41 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
     }
 
     /// <summary>
-    /// Ejecuta una consulta dinámica con cláusula WHERE, paginación opcional
-    /// y parámetros personalizados.
+    /// Ejecuta una consulta SELECT dinámica sobre una tabla o vista,
+    /// aplicando una cláusula WHERE obligatoria, ordenamiento opcional
+    /// y paginación mediante LIMIT/OFFSET.
+    /// 
+    /// Este método es genérico y no contiene reglas de negocio.
+    /// Las decisiones sobre filtros, ordenamiento y paginación
+    /// deben tomarse en capas superiores (servicios/repositorios concretos).
     /// </summary>
-    /// <param name="tableOrView">Nombre de la tabla o vista.</param>
-    /// <param name="where">Condición WHERE (sin la palabra WHERE).</param>
-    /// <param name="limit">Cantidad máxima de registros.</param>
-    /// <param name="offset">Desplazamiento para paginación.</param>
-    /// <param name="parameters">Parámetros de la consulta.</param>
-    /// <returns>Lista de entidades que cumplen la condición.</returns>
+    /// <param name="tableOrView">
+    /// Nombre de la tabla o vista sobre la que se ejecutará la consulta.
+    /// </param>
+    /// <param name="where">
+    /// Condición WHERE sin incluir la palabra clave WHERE.
+    /// </param>
+    /// <param name="orderBy">
+    /// Expresión ORDER BY sin incluir la palabra clave ORDER BY.
+    /// Ejemplo: "fecha DESC".
+    /// </param>
+    /// <param name="limit">
+    /// Cantidad máxima de registros a devolver. Si es null, no se aplica límite.
+    /// </param>
+    /// <param name="offset">
+    /// Cantidad de registros a omitir (usado para paginación).
+    /// Solo se aplica si <paramref name="limit"/> tiene valor.
+    /// </param>
+    /// <param name="parameters">
+    /// Parámetros utilizados en la cláusula WHERE.
+    /// </param>
+    /// <returns>
+    /// Lista de entidades mapeadas que cumplen la condición especificada.
+    /// </returns>
     public async Task<List<T>> FindWhereFrom(
         string tableOrView,
         string where,
+        string? orderBy = null,
         int? limit = null,
         int? offset = null,
         params DbParameter[] parameters)
@@ -192,7 +215,10 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         using var conn = await _connectionFactory.CreateConnection();
         using var cmd = (DbCommand)conn.CreateCommand();
 
-        var sql = new StringBuilder($"SELECT * FROM {tableOrView} WHERE {where} ORDER BY fecha DESC");
+        var sql = new StringBuilder($"SELECT * FROM {tableOrView} WHERE {where}");
+
+        if (!string.IsNullOrWhiteSpace(orderBy))
+            sql.Append($" ORDER BY {orderBy}");
 
         // Agregar LIMIT y OFFSET si existen
         if (limit.HasValue)
@@ -379,7 +405,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
 
         var p = new MySqlParameter("@empresa", empresaId);
 
-        return await FindWhereFrom(_viewName, "empresa = @empresa", null, null ,p);
+        return await FindWhereFrom(_viewName, "empresa = @empresa",null, null, null ,p);
     }
 
     /// <summary>
@@ -409,4 +435,25 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
             parameters: p);
     }
 
+    public virtual async Task<List<T>> FindPageWhere(
+        string where,
+        string? orderBy,
+        int pageNumber,
+        int pageSize,
+        params DbParameter[] parameters)
+    {
+        if (_viewName == null)
+            throw new InvalidOperationException(
+                "La vista no está asignada para este repositorio.");
+
+        int offset = (pageNumber - 1) * pageSize;
+
+        return await FindWhereFrom(
+            tableOrView: _viewName,
+            where: where,
+            orderBy: orderBy,
+            limit: pageSize,
+            offset: offset,
+            parameters: parameters);
+    }
 }

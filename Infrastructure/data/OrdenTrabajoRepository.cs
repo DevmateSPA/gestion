@@ -13,4 +13,22 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
 {
     public OrdenTrabajoRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "ordentrabajo", "vw_ordentrabajo") {}
+
+    public async Task<List<OrdenTrabajo>> FindPageByEmpresaAndPendiente(
+        long empresaId,
+        int pageNumber,
+        int pageSize)
+    {
+        DbParameter[] parameters =
+        [
+            new MySqlParameter("@empresa", empresaId)
+        ];
+
+        return await FindPageWhere(
+            where: "empresa = @empresa AND ordenentregada IS NULL",
+            orderBy: "fecha DESC",
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+            parameters);
+    }
 }
