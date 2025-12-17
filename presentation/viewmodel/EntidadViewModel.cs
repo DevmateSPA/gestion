@@ -166,7 +166,13 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         }
     }
 
-    private void LoadEntitiesIntoCollection(List<T> lista)
+    protected static PropertyInfo? GetDateProperty(Type t)
+    {
+        return t.GetProperty("Fecha", 
+            BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+    }
+
+    protected void LoadEntitiesIntoCollection(List<T> lista)
     {
         var dateProp = GetDateProperty(typeof(T));
         if (dateProp != null)
@@ -180,30 +186,17 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
     public virtual async Task LoadAll()
     {
         await RunWithLoading(
-            action: _service.FindAll,
+            action: async () => await _service.FindAll(),
             errorMessage: $"Error al cargar {typeof(T).Name}",
             onEmpty: () => _dialogService.ShowMessage($"No hay {typeof(T).Name} cargadas."));
     }
 
     public virtual async Task LoadAllByEmpresa()
     {
-        this.IsLoading = true;
-        await SafeExecutor.RunAsync(async () =>
-        {
-           var lista = await _service.FindAllByEmpresa(SesionApp.IdEmpresa);
-            if (lista.Count == 0)
-                _dialogService.ShowMessage($"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}");
-
-           var dateProp = GetDateProperty(typeof(T));
-           if (dateProp != null)
-            {
-                lista = lista.OrderByDescending(x => dateProp.GetValue(x)).ToList();
-            }
-            Entidades.Clear();
-            foreach(var entidad in lista)
-                AddEntity(entidad);
-        }, _dialogService, $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}");
-        this.IsLoading = false;
+        await RunWithLoading(
+            action: async () => await _service.FindAllByEmpresa(SesionApp.IdEmpresa),
+            errorMessage: $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}",
+            onEmpty: () => _dialogService.ShowMessage($"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}"));
     }
 
     public virtual async Task LoadPageByEmpresa(int page)
@@ -221,28 +214,10 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         long total = await _service.ContarPorEmpresa(SesionApp.IdEmpresa);
         TotalRegistros = (int)Math.Ceiling(total / (double)PageSize);
 
-        this.IsLoading = true;
-
-        await SafeExecutor.RunAsync(async () =>
-        {
-            var lista = await _service.FindPageByEmpresa(SesionApp.IdEmpresa, PageNumber, PageSize);
-
-            var dateProp = GetDateProperty(typeof(T));
-            if (dateProp != null)
-                lista = [.. lista.OrderByDescending(x => dateProp.GetValue(x))];
-
-            Entidades.Clear();
-            foreach (var entidad in lista)
-                AddEntity(entidad);
-
-        }, _dialogService, $"Error al cargar {typeof(T).Name}");
-        this.IsLoading = false;
-    }
-
-    public static PropertyInfo? GetDateProperty(Type t)
-    {
-        return t.GetProperty("Fecha", 
-            BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+        await RunWithLoading(
+            action: async () => await _service.FindPageByEmpresa(SesionApp.IdEmpresa, PageNumber, PageSize),
+            errorMessage: $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}",
+            onEmpty: () => _dialogService.ShowMessage($"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}"));
     }
     private protected async Task RunServiceAction(Func<Task<bool>> serviceAction, Action? onSuccess, string mensajeError)
     {
@@ -253,14 +228,22 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         }, _dialogService, mensajeError);
     }
     public virtual async Task Delete(long id) =>
-        await RunServiceAction(async () => await _service.DeleteById(id), () => RemoveEntityById(id), $"Error al eliminar {typeof(T).Name}");
+        await RunServiceAction(
+            serviceAction: async () => await _service.DeleteById(id), 
+            onSuccess: () => RemoveEntityById(id), 
+            mensajeError: $"Error al eliminar {typeof(T).Name}");
 
     public async Task Update(T entidad) =>
-        await RunServiceAction(async () => await _service.Update(entidad), () => ReplaceEntity(entidad), $"Error al actualizar {typeof(T).Name}");
+        await RunServiceAction(
+        serviceAction: async () => await _service.Update(entidad), 
+        onSuccess: () => ReplaceEntity(entidad), 
+        mensajeError: $"Error al actualizar {typeof(T).Name}");
 
     public async Task Save(T entidad)
     {
         entidad.Empresa = SesionApp.IdEmpresa;
-        await RunServiceAction(() => _service.Save(entidad), () => AddEntity(entidad), $"Error al guardar {typeof(T).Name}");
+        await RunServiceAction(serviceAction: async () => await _service.Save(entidad), 
+        onSuccess: () => AddEntity(entidad), 
+        mensajeError: $"Error al guardar {typeof(T).Name}");
     }
 }
