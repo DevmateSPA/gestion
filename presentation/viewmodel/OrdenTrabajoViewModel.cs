@@ -2,6 +2,7 @@ using System.ComponentModel;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
 using Gestion.core.model.detalles;
+using Gestion.core.session;
 using Gestion.helpers;
 
 namespace Gestion.presentation.viewmodel; 
@@ -104,5 +105,61 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
         }
 
         return lista;
+    }
+
+    // Pendientes Entrega
+
+    public async Task LoadAllByEmpresaAndPendiente()
+    {
+        this.IsLoading = true;
+        await SafeExecutor.RunAsync(async () =>
+        {
+            var lista = await _ordenTrabajoService.FindAllByEmpresaAndPendiente(SesionApp.IdEmpresa);
+            if (lista.Count == 0)
+                _dialogService.ShowMessage($"No hay {typeof(OrdenTrabajo).Name} cargadas.");
+            var dateProp = GetDateProperty(typeof(OrdenTrabajo));
+            if (dateProp != null)
+            {
+                lista = lista.OrderByDescending(x => dateProp.GetValue(x)).ToList();
+            }
+            Entidades.Clear();
+            foreach (var entidad in lista)
+                AddEntity(entidad);
+        }, _dialogService, $"Error al cargar {typeof(OrdenTrabajo).Name}");
+        this.IsLoading = false;
+    }
+
+    public async Task LoadPageByEmpresaAndPendiente(int page)
+    {
+        if (PageSize == 0)
+        {
+            await LoadAllByEmpresaAndPendiente();
+            PageNumber = 1;
+            TotalRegistros = 1; // solo 1 página
+            return;
+        }
+
+        PageNumber = page;
+
+        long total = await _ordenTrabajoService.ContarPendientes(SesionApp.IdEmpresa);
+        TotalRegistros = (int)Math.Ceiling(total / (double)PageSize);
+
+        this.IsLoading = true;
+
+        await SafeExecutor.RunAsync(async () =>
+        {
+            var lista = await _ordenTrabajoService.FindPageByEmpresaAndPendiente(SesionApp.IdEmpresa, PageNumber, PageSize);
+
+            var dateProp = GetDateProperty(typeof(OrdenTrabajo));
+            if (dateProp != null)
+                lista = [.. lista.OrderByDescending(x => dateProp.GetValue(x))];
+
+            Entidades.Clear();
+            foreach (var entidad in lista)
+                AddEntity(entidad);
+
+        }, _dialogService, $"Error al cargar {typeof(OrdenTrabajo).Name}");
+
+        this.IsLoading = false;
     }
 }

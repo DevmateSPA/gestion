@@ -46,9 +46,7 @@ public abstract class BaseService<T> : IBaseService<T> where T : IModel
 
     public async Task<long> ContarPorEmpresa(long empresaId)
     {
-        var where = "empresa = @empresa";
-        var p = new MySql.Data.MySqlClient.MySqlParameter("@empresa", empresaId);
-        return await _baseRepository.CountWhere(where, p);
+        return await _baseRepository.ContarPorEmpresa(empresaId);
     }
     public virtual async Task<List<T>> FindPageByEmpresa(long empresaId, int pageNumber, int pageSize)
     {
@@ -57,6 +55,6 @@ public abstract class BaseService<T> : IBaseService<T> where T : IModel
     public Task<List<T>> FindAllByParam(String tableOrView,MySqlParameter p,String where)
     {
 
-        return _baseRepository.FindWhereFrom(tableOrView,where,null,null,p);
+        return _baseRepository.FindWhereFrom(tableOrView,where, null, null,null,p);
     }
 }

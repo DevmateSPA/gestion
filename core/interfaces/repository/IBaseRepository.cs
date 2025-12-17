@@ -20,4 +20,5 @@ public interface IBaseRepository<T> where T : IModel
     Task<List<T>> FindPageByEmpresa(long empresaId, int pageNumber, int pageSize);
     Task<List<T>> FindPageWhere(string where, string? orderBy, int pageNumber, int pageSize, params DbParameter[] parameters);
     Task<long> CountWhere(string where, params DbParameter[] parameters);
+    Task<long> ContarPorEmpresa(long empresaId);
 }

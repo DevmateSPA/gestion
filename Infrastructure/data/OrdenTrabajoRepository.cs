@@ -14,6 +14,37 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
     public OrdenTrabajoRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "ordentrabajo", "vw_ordentrabajo") {}
 
+    public async Task<long> ContarPendientes(long empresaId)
+    {
+        DbParameter[] parameters =
+        [
+            new MySqlParameter("@empresa", empresaId)
+        ];
+
+        return await CountWhere(
+            where: "empresa = @empresa AND ordenentregada IS NULL",
+            parameters: parameters);
+    }
+
+    public async Task<List<OrdenTrabajo>> FindAllByEmpresaAndPendiente(long empresaId)
+    {
+        if (_viewName == null)
+            throw new InvalidOperationException("La vista no está asignada para este repositorio.");
+
+        DbParameter[] parameters =
+        [
+            new MySqlParameter("@empresa", empresaId)
+        ];
+
+        return await FindWhereFrom(
+            tableOrView: _viewName,
+            where: "empresa = @empresa AND ordenentregada IS NULL",
+            orderBy: "fecha DESC",
+            limit: null,
+            offset: null,
+            parameters);
+    }
+
     public async Task<List<OrdenTrabajo>> FindPageByEmpresaAndPendiente(
         long empresaId,
         int pageNumber,

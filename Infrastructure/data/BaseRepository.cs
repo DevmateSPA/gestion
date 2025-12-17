@@ -146,7 +146,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
 
         using var reader = await cmd.ExecuteReaderAsync();
         if (await reader.ReadAsync())
-            return MapEntity(reader);
+            return MapEntity(reader: reader);
 
         return default;
     }
@@ -166,7 +166,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         var entities = new List<T>();
         while (await reader.ReadAsync())
         {
-            entities.Add(MapEntity(reader));
+            entities.Add(MapEntity(reader: reader));
         }
 
         return entities;
@@ -251,7 +251,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
 
         var list = new List<T>();
         while (await reader.ReadAsync())
-            list.Add(MapEntity(reader));
+            list.Add(MapEntity(reader: reader));
 
         return list;
     }
@@ -403,9 +403,18 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         if (_viewName == null)
             throw new InvalidOperationException("La vista no está asignada para este repositorio.");
 
-        var p = new MySqlParameter("@empresa", empresaId);
+        DbParameter[] parameters =
+        [
+            new MySqlParameter("@empresa", empresaId)
+        ];
 
-        return await FindWhereFrom(_viewName, "empresa = @empresa",null, null, null ,p);
+        return await FindWhereFrom(
+            tableOrView: _viewName,
+            where: "empresa = @empresa",
+            orderBy: null,
+            limit: null,
+            offset: null,
+            parameters: parameters);
     }
 
     /// <summary>
@@ -423,16 +432,28 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         if (_viewName == null)
             throw new InvalidOperationException("La vista no está asignada para este repositorio.");
 
-        var p = new MySqlParameter("@empresa", empresaId);
+        DbParameter[] parameters =
+        [
+            new MySqlParameter("@empresa", empresaId)
+        ];
 
-        int offset = (pageNumber - 1) * pageSize;
-
-        return await FindWhereFrom(
-            tableOrView: _viewName,
+        return await FindPageWhere(
             where: "empresa = @empresa",
-            limit: pageSize,
-            offset: offset,
-            parameters: p);
+            orderBy: null,
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+            parameters: parameters);
+    }
+
+    public virtual async Task<long> ContarPorEmpresa(long empresaId)
+    {
+        DbParameter[] parameters =
+        [
+            new MySqlParameter("@empresa", empresaId)
+        ];
+
+        return await CountWhere(where: "empresa = @empresa",
+        parameters: parameters);
     }
 
     public virtual async Task<List<T>> FindPageWhere(

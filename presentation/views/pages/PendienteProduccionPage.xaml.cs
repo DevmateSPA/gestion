@@ -22,7 +22,29 @@ namespace Gestion.presentation.views.pages;
         DataContext = _viewModel;
         Title = $"Pendientes Producción";
 
-        Loaded += async (_, _) => await _viewModel.LoadAllByEntrega();
+        Loaded += async (_, _) =>
+        {
+            await _viewModel.LoadPageByEmpresaAndPendiente(1);
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        };
+
+        paginacion.PageChanged += async (nuevaPagina) =>
+        {
+            await _viewModel.LoadPageByEmpresaAndPendiente(nuevaPagina);
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        };
+
+        paginacion.PageSizeChanged += async (size) =>
+        {
+            _viewModel.PageSize = size;
+
+            if (size == 0)
+                await _viewModel.LoadAllByEmpresaAndPendiente(); // sin paginar
+            else
+                await _viewModel.LoadPageByEmpresaAndPendiente(1); // resetear a página 1
+
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        };
         _dataGrid = dgOrdenesTrabajo;
         _dataGrid.ItemContainerGenerator.StatusChanged += DataGrid_StatusChanged;
 
