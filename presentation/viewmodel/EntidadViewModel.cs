@@ -212,14 +212,15 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         int page,
         string emptyMessage,
         string errorMessage,
-        Func<Task<List<T>>>? allItemsCall = null)
+        Func<Task<long>>? totalCountCall = null,       // opcional: cómo calcular el total
+        Func<Task<List<T>>>? allItemsCall = null)      // opcional: cómo cargar todo si PageSize = 0
     {
         if (PageSize == 0)
         {
-            if (allItemsCall == null)
-                await LoadAllByEmpresa();
+            if (allItemsCall != null)
+                await allItemsCall();
             else
-                await allItemsCall.Invoke();
+                await LoadAllByEmpresa();
 
             PageNumber = 1;
             TotalRegistros = 1;
@@ -228,7 +229,11 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
 
         PageNumber = page;
 
-        long total = await _service.ContarPorEmpresa(SesionApp.IdEmpresa);
+        // Calcular el total usando el callback o por defecto
+        long total = totalCountCall != null
+            ? await totalCountCall.Invoke()
+            : await _service.ContarPorEmpresa(SesionApp.IdEmpresa);
+
         TotalRegistros = (int)Math.Ceiling(total / (double)PageSize);
 
         await RunWithLoading(

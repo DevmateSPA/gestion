@@ -124,6 +124,7 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
             page: page,
             emptyMessage: $"No hay {typeof(OrdenTrabajo).Name} para la empresa {SesionApp.NombreEmpresa}",
             errorMessage: $"Error al cargar {typeof(OrdenTrabajo).Name} para la empresa {SesionApp.NombreEmpresa}",
+            totalCountCall: async () => await _ordenTrabajoService.ContarPendientes(SesionApp.IdEmpresa),
             allItemsCall: async () => await _ordenTrabajoService.FindAllByEmpresaAndPendiente(SesionApp.IdEmpresa));
     }
 }
