@@ -22,4 +22,24 @@ public static class SafeExecutor
             });
         }
     }
+
+    public static async Task<T> RunAsync<T>(
+            Func<Task<T>> action,
+            IDialogService dialogService,
+            string mensajeError)
+    {
+        try
+        {
+            return await action();
+        }
+        catch (Exception ex)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                dialogService.ShowError($"{mensajeError}:\n{ex.Message}");
+            });
+
+             return default!;
+        }
+    }
 }

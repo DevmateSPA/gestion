@@ -142,24 +142,47 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
             Entidades.Insert(0, entidad);
     }
 
-    public virtual async Task LoadAll()
+    protected async Task RunWithLoading(
+        Func<Task<List<T>>> action,
+        string errorMessage,
+        Action? onSuccess = null,
+        Action? onEmpty = null)
     {
         this.IsLoading = true;
-        await SafeExecutor.RunAsync(async () =>
+        try
         {
-            var lista = await _service.FindAll();
+            // Variante con retorno
+            var lista = await SafeExecutor.RunAsync(action, _dialogService, errorMessage);
+
             if (lista.Count == 0)
-                _dialogService.ShowMessage($"No hay {typeof(T).Name} cargadas.");
-            var dateProp = GetDateProperty(typeof(T));
-            if (dateProp != null)
-            {
-                lista = lista.OrderByDescending(x => dateProp.GetValue(x)).ToList();
-            }
-            Entidades.Clear();
-            foreach (var entidad in lista)
-                AddEntity(entidad);
-        }, _dialogService, $"Error al cargar {typeof(T).Name}");
-        this.IsLoading = false;
+                onEmpty?.Invoke();
+
+            LoadEntitiesIntoCollection(lista);
+            onSuccess?.Invoke();
+        }
+        finally
+        {
+            this.IsLoading = false;
+        }
+    }
+
+    private void LoadEntitiesIntoCollection(List<T> lista)
+    {
+        var dateProp = GetDateProperty(typeof(T));
+        if (dateProp != null)
+            lista = [.. lista.OrderByDescending(x => dateProp.GetValue(x))];
+
+        Entidades.Clear();
+        foreach (var entidad in lista)
+            AddEntity(entidad);
+    }
+
+    public virtual async Task LoadAll()
+    {
+        await RunWithLoading(
+            action: _service.FindAll,
+            errorMessage: $"Error al cargar {typeof(T).Name}",
+            onEmpty: () => _dialogService.ShowMessage($"No hay {typeof(T).Name} cargadas."));
     }
 
     public virtual async Task LoadAllByEmpresa()
