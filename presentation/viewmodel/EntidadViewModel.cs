@@ -16,8 +16,10 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
 {
     protected readonly IDialogService _dialogService;
     protected readonly IBaseService<T> _service;
+    protected readonly string _emptyMessage;
+    protected readonly string _errorMessage;
 
-    public ObservableCollection<T> Entidades { get; set; } = new ObservableCollection<T>();
+    public ObservableCollection<T> Entidades { get; set; } = [];
     public ICollectionView EntidadesView { get; }
     private string _filtro = "";
     public string Filtro
@@ -76,11 +78,17 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
 
     // Constructor
 
-    protected EntidadViewModel(IBaseService<T> baseService, IDialogService dialogService)
+    protected EntidadViewModel(
+        IBaseService<T> baseService, 
+        IDialogService dialogService, 
+        string? emptyMessage = null, 
+        string? errorMessage = null)
     {
         _dialogService = dialogService;
         _service = baseService;
         EntidadesView = CollectionViewSource.GetDefaultView(Entidades);
+        _emptyMessage = emptyMessage ?? $"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}";
+        _errorMessage = errorMessage ?? $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}";
     }
 
     private readonly PropertyInfo[] _stringProps =
@@ -187,16 +195,16 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
     {
         await RunWithLoading(
             action: async () => await _service.FindAll(),
-            errorMessage: $"Error al cargar {typeof(T).Name}",
-            onEmpty: () => _dialogService.ShowMessage($"No hay {typeof(T).Name} cargadas."));
+            errorMessage: _errorMessage,
+            onEmpty: () => _dialogService.ShowMessage(_emptyMessage));
     }
 
     public virtual async Task LoadAllByEmpresa()
     {
         await RunWithLoading(
             action: async () => await _service.FindAllByEmpresa(SesionApp.IdEmpresa),
-            errorMessage: $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}",
-            onEmpty: () => _dialogService.ShowMessage($"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}"));
+            errorMessage: _errorMessage,
+            onEmpty: () => _dialogService.ShowMessage(_emptyMessage));
     }
 
     protected async Task LoadPagedEntities(
@@ -234,8 +242,8 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         await LoadPagedEntities(
             serviceCall: async (p) => await _service.FindPageByEmpresa(SesionApp.IdEmpresa, p, PageSize),
             page: page,
-            emptyMessage: $"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}",
-            errorMessage: $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}");
+            emptyMessage: _emptyMessage,
+            errorMessage: _errorMessage);
     }
     private protected async Task RunServiceAction(Func<Task<bool>> serviceAction, Action? onSuccess, string mensajeError)
     {
