@@ -1,6 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Gestion.core.model;
+using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.pages;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -241,6 +243,8 @@ namespace Gestion.presentation.views.windows
 
         private void MenuItemReportes_Click(object sender, RoutedEventArgs e)
         {
+            Page? page = null;
+
             if (sender is MenuItem item)
             {
                 string tituloVentana = item.Tag switch
@@ -256,12 +260,33 @@ namespace Gestion.presentation.views.windows
                 {
                     window.Title = "Gestión — " + tituloVentana;
                 }
-                Page? page = item.Tag switch
+
+                if (item.Tag as string == "ModuloMaquina")
                 {
-                    "ModuloProduccion" => App.ServiceProvider.GetRequiredService<PendienteProduccionPage>(),
-                    "ModuloMaquina" => App.ServiceProvider.GetRequiredService<PendienteMaquinaPage>(),
-                    _ => null
-                };
+                    // Crear la ventana modal vía DI
+                    var modalWindow = App.ServiceProvider.GetRequiredService<MaquinasConOTPendientesWindow>();
+                    modalWindow.Owner = window;
+                    modalWindow.ShowDialog();
+
+                    // Recuperar la máquina seleccionada
+                    Maquina? maquinaSeleccionada = modalWindow.MaquinaSeleccionada;
+
+                    if (maquinaSeleccionada != null)
+                    {
+                        // Crear la página pasando la máquina seleccionada
+                        var ordenTrabajoVM = App.ServiceProvider.GetRequiredService<OrdenTrabajoViewModel>();
+                        page = new PendienteMaquinaPage(ordenTrabajoVM, maquinaSeleccionada);
+                    }
+                }
+                else
+                {
+                    // Caso de Producción u otros
+                    page = item.Tag switch
+                    {
+                        "ModuloProduccion" => App.ServiceProvider.GetRequiredService<PendienteProduccionPage>(),
+                        _ => null
+                    };
+                }
 
                 if (page != null)
                 {
