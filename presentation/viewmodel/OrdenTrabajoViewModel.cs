@@ -111,55 +111,19 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
 
     public async Task LoadAllByEmpresaAndPendiente()
     {
-        this.IsLoading = true;
-        await SafeExecutor.RunAsync(async () =>
-        {
-            var lista = await _ordenTrabajoService.FindAllByEmpresaAndPendiente(SesionApp.IdEmpresa);
-            if (lista.Count == 0)
-                _dialogService.ShowMessage($"No hay {typeof(OrdenTrabajo).Name} cargadas.");
-            var dateProp = GetDateProperty(typeof(OrdenTrabajo));
-            if (dateProp != null)
-            {
-                lista = lista.OrderByDescending(x => dateProp.GetValue(x)).ToList();
-            }
-            Entidades.Clear();
-            foreach (var entidad in lista)
-                AddEntity(entidad);
-        }, _dialogService, $"Error al cargar {typeof(OrdenTrabajo).Name}");
-        this.IsLoading = false;
+        await RunWithLoading(
+            action: async () => await _ordenTrabajoService.FindAllByEmpresaAndPendiente(SesionApp.IdEmpresa),
+            errorMessage: $"Error al cargar {typeof(OrdenTrabajo).Name}",
+            onEmpty: () => _dialogService.ShowMessage($"No hay {typeof(OrdenTrabajo).Name} cargadas."));
     }
 
     public async Task LoadPageByEmpresaAndPendiente(int page)
     {
-        if (PageSize == 0)
-        {
-            await LoadAllByEmpresaAndPendiente();
-            PageNumber = 1;
-            TotalRegistros = 1; // solo 1 página
-            return;
-        }
-
-        PageNumber = page;
-
-        long total = await _ordenTrabajoService.ContarPendientes(SesionApp.IdEmpresa);
-        TotalRegistros = (int)Math.Ceiling(total / (double)PageSize);
-
-        this.IsLoading = true;
-
-        await SafeExecutor.RunAsync(async () =>
-        {
-            var lista = await _ordenTrabajoService.FindPageByEmpresaAndPendiente(SesionApp.IdEmpresa, PageNumber, PageSize);
-
-            var dateProp = GetDateProperty(typeof(OrdenTrabajo));
-            if (dateProp != null)
-                lista = [.. lista.OrderByDescending(x => dateProp.GetValue(x))];
-
-            Entidades.Clear();
-            foreach (var entidad in lista)
-                AddEntity(entidad);
-
-        }, _dialogService, $"Error al cargar {typeof(OrdenTrabajo).Name}");
-
-        this.IsLoading = false;
+        await LoadPagedEntities(
+            serviceCall: async (p) => await _ordenTrabajoService.FindPageByEmpresaAndPendiente(SesionApp.IdEmpresa, PageNumber, PageSize),
+            page: page,
+            emptyMessage: $"No hay {typeof(OrdenTrabajo).Name} para la empresa {SesionApp.NombreEmpresa}",
+            errorMessage: $"Error al cargar {typeof(OrdenTrabajo).Name} para la empresa {SesionApp.NombreEmpresa}",
+            allItemsCall: async () => await _ordenTrabajoService.FindAllByEmpresaAndPendiente(SesionApp.IdEmpresa));
     }
 }

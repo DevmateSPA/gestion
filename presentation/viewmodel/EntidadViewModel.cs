@@ -232,7 +232,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
     public virtual async Task LoadPageByEmpresa(int page)
     {
         await LoadPagedEntities(
-            serviceCall: (p) => _service.FindPageByEmpresa(SesionApp.IdEmpresa, p, PageSize),
+            serviceCall: async (p) => await _service.FindPageByEmpresa(SesionApp.IdEmpresa, p, PageSize),
             page: page,
             emptyMessage: $"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}",
             errorMessage: $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}");

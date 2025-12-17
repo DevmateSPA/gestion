@@ -20,9 +20,9 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
         List<FacturaCompraProducto>? detalles = null;
 
         await SafeExecutor.RunAsync(
-            async () => detalles = await _detalleService.FindByFolio(folio),
-            _dialogService,
-            $"Error al cargar los detalles de la factura con folio: {folio}");
+            action: async () => detalles = await _detalleService.FindByFolio(folio),
+            dialogService: _dialogService,
+            mensajeError: $"Error al cargar los detalles de la factura con folio: {folio}");
             
         return detalles ?? [];
     }
@@ -34,7 +34,8 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
         if (factura == null)
             return;
 
-        await RunServiceAction(async () =>
+        await RunServiceAction(
+        serviceAction: async () =>
         {
             bool eliminoFactura = await _facturaCompraService.DeleteById(id);
             bool detalles = false;
@@ -44,8 +45,8 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
 
             return eliminoFactura;
         },
-        () => RemoveEntityById(id),
-        "Error al eliminar la factura de compra");
+        onSuccess: () => RemoveEntityById(id),
+        mensajeError: "Error al eliminar la factura de compra");
     }
 
     public async Task SincronizarDetalles(
