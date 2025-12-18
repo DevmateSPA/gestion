@@ -51,7 +51,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
             OnPropertyChanged(nameof(PageNumber));
         }
     }
-    private int _pageSize = 29;
+    private int _pageSize = 50;
     public int PageSize
     {
         get => _pageSize;

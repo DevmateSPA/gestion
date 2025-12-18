@@ -6,7 +6,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </UserControl.Resources>
 
-    <Grid x:Name="Root"
+    <Grid  Style="{StaticResource GridStyle}" x:Name="Root"
           Background="#80000000"
           Visibility="{Binding IsLoading, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibilityConverter}}"
           HorizontalAlignment="Stretch"

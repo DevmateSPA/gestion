@@ -20,6 +20,7 @@
     </Style>
     <!--#endregion-->
 
+
     <!-- #region Estilos Login -->
     <Style x:Key="LoginBorderStyle" TargetType="Border">
         <Setter Property="CornerRadius" Value="10"/>
