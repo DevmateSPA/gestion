@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using MySql.Data.MySqlClient;
+using Gestion.core.model;
 
 namespace Gestion.presentation.viewmodel;
 
@@ -15,8 +16,10 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
 {
     protected readonly IDialogService _dialogService;
     protected readonly IBaseService<T> _service;
+    protected readonly string _emptyMessage;
+    protected readonly string _errorMessage;
 
-    public ObservableCollection<T> Entidades { get; set; } = new ObservableCollection<T>();
+    public ObservableCollection<T> Entidades { get; set; } = [];
     public ICollectionView EntidadesView { get; }
     private string _filtro = "";
     public string Filtro
@@ -75,11 +78,17 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
 
     // Constructor
 
-    protected EntidadViewModel(IBaseService<T> baseService, IDialogService dialogService)
+    protected EntidadViewModel(
+        IBaseService<T> baseService, 
+        IDialogService dialogService, 
+        string? emptyMessage = null, 
+        string? errorMessage = null)
     {
         _dialogService = dialogService;
         _service = baseService;
         EntidadesView = CollectionViewSource.GetDefaultView(Entidades);
+        _emptyMessage = emptyMessage ?? $"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}";
+        _errorMessage = errorMessage ?? $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}";
     }
 
     private readonly PropertyInfo[] _stringProps =
@@ -141,107 +150,105 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
             Entidades.Insert(0, entidad);
     }
 
-    public virtual async Task LoadAll()
+    protected async Task RunWithLoading(
+        Func<Task<List<T>>> action,
+        string errorMessage,
+        Action? onSuccess = null,
+        Action? onEmpty = null)
     {
         this.IsLoading = true;
-        await SafeExecutor.RunAsync(async () =>
+        try
         {
-            var lista = await _service.FindAll();
+            // Variante con retorno
+            var lista = await SafeExecutor.RunAsync(action, _dialogService, errorMessage);
+
             if (lista.Count == 0)
-                _dialogService.ShowMessage($"No hay {typeof(T).Name} cargadas.");
-            var dateProp = GetDateProperty(typeof(T));
-            if (dateProp != null)
-            {
-                lista = lista.OrderByDescending(x => dateProp.GetValue(x)).ToList();
-            }
-            Entidades.Clear();
-            foreach (var entidad in lista)
-                AddEntity(entidad);
-        }, _dialogService, $"Error al cargar {typeof(T).Name}");
-        this.IsLoading = false;
+                onEmpty?.Invoke();
+
+            LoadEntitiesIntoCollection(lista);
+            onSuccess?.Invoke();
+        }
+        finally
+        {
+            this.IsLoading = false;
+        }
+    }
+
+    protected static PropertyInfo? GetDateProperty(Type t)
+    {
+        return t.GetProperty("Fecha", 
+            BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+    }
+
+    protected void LoadEntitiesIntoCollection(List<T> lista)
+    {
+        var dateProp = GetDateProperty(typeof(T));
+        if (dateProp != null)
+            lista = [.. lista.OrderByDescending(x => dateProp.GetValue(x))];
+
+        Entidades.Clear();
+        foreach (var entidad in lista)
+            AddEntity(entidad);
+    }
+
+    public virtual async Task LoadAll()
+    {
+        await RunWithLoading(
+            action: async () => await _service.FindAll(),
+            errorMessage: _errorMessage,
+            onEmpty: () => _dialogService.ShowMessage(_emptyMessage));
     }
 
     public virtual async Task LoadAllByEmpresa()
     {
-        this.IsLoading = true;
-        await SafeExecutor.RunAsync(async () =>
-        {
-           var lista = await _service.FindAllByEmpresa(SesionApp.IdEmpresa);
-            if (lista.Count == 0)
-                _dialogService.ShowMessage($"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}");
-
-           var dateProp = GetDateProperty(typeof(T));
-           if (dateProp != null)
-            {
-                lista = lista.OrderByDescending(x => dateProp.GetValue(x)).ToList();
-            }
-            Entidades.Clear();
-            foreach(var entidad in lista)
-                AddEntity(entidad);
-        }, _dialogService, $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}");
-        this.IsLoading = false;
+        await RunWithLoading(
+            action: async () => await _service.FindAllByEmpresa(SesionApp.IdEmpresa),
+            errorMessage: _errorMessage,
+            onEmpty: () => _dialogService.ShowMessage(_emptyMessage));
     }
 
-    public virtual async Task LoadAllByEntrega()
-    {
-        this.IsLoading = true;
-        await SafeExecutor.RunAsync(async () =>
-        {
-            var p = new MySqlParameter("@empresa", SesionApp.IdEmpresa);
-            var where = "empresa = @empresa AND fechaentrega IS NULL";
-            var lista = await _service.FindAllByParam("vw_ordentrabajo",p,where);
-            if (!lista.Any())
-                _dialogService.ShowMessage($"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}");
-
-           var dateProp = GetDateProperty(typeof(T));
-           if (dateProp != null)
-            {
-                lista = lista.OrderByDescending(x => dateProp.GetValue(x)).ToList();
-            }
-            Entidades.Clear();
-            foreach(var entidad in lista)
-                AddEntity(entidad);
-        }, _dialogService, $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}");
-        this.IsLoading = false;
-    }
-
-    public virtual async Task LoadPageByEmpresa(int page)
+    protected async Task LoadPagedEntities(
+        Func<int, Task<List<T>>> serviceCall,
+        int page,
+        string emptyMessage,
+        string errorMessage,
+        Func<Task<long>>? totalCountCall = null,       // opcional: cómo calcular el total
+        Func<Task<List<T>>>? allItemsCall = null)      // opcional: cómo cargar todo si PageSize = 0
     {
         if (PageSize == 0)
         {
-            await LoadAllByEmpresa();
+            if (allItemsCall != null)
+                await allItemsCall();
+            else
+                await LoadAllByEmpresa();
+
             PageNumber = 1;
-            TotalRegistros = 1; // solo 1 página
+            TotalRegistros = 1;
             return;
         }
 
         PageNumber = page;
 
-        long total = await _service.ContarPorEmpresa(SesionApp.IdEmpresa);
+        // Calcular el total usando el callback o por defecto
+        long total = totalCountCall != null
+            ? await totalCountCall.Invoke()
+            : await _service.ContarPorEmpresa(SesionApp.IdEmpresa);
+
         TotalRegistros = (int)Math.Ceiling(total / (double)PageSize);
 
-        this.IsLoading = true;
-
-        await SafeExecutor.RunAsync(async () =>
-        {
-            var lista = await _service.FindPageByEmpresa(SesionApp.IdEmpresa, PageNumber, PageSize);
-
-            var dateProp = GetDateProperty(typeof(T));
-            if (dateProp != null)
-                lista = [.. lista.OrderByDescending(x => dateProp.GetValue(x))];
-
-            Entidades.Clear();
-            foreach (var entidad in lista)
-                AddEntity(entidad);
-
-        }, _dialogService, $"Error al cargar {typeof(T).Name}");
-        this.IsLoading = false;
+        await RunWithLoading(
+            action: () => serviceCall(PageNumber),
+            errorMessage: errorMessage,
+            onEmpty: () => _dialogService.ShowMessage(emptyMessage));
     }
 
-    public static PropertyInfo? GetDateProperty(Type t)
+    public virtual async Task LoadPageByEmpresa(int page)
     {
-        return t.GetProperty("Fecha", 
-            BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+        await LoadPagedEntities(
+            serviceCall: async (p) => await _service.FindPageByEmpresa(SesionApp.IdEmpresa, p, PageSize),
+            page: page,
+            emptyMessage: _emptyMessage,
+            errorMessage: _errorMessage);
     }
     private protected async Task RunServiceAction(Func<Task<bool>> serviceAction, Action? onSuccess, string mensajeError)
     {
@@ -252,14 +259,22 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         }, _dialogService, mensajeError);
     }
     public virtual async Task Delete(long id) =>
-        await RunServiceAction(async () => await _service.DeleteById(id), () => RemoveEntityById(id), $"Error al eliminar {typeof(T).Name}");
+        await RunServiceAction(
+            serviceAction: async () => await _service.DeleteById(id), 
+            onSuccess: () => RemoveEntityById(id), 
+            mensajeError: $"Error al eliminar {typeof(T).Name}");
 
     public async Task Update(T entidad) =>
-        await RunServiceAction(async () => await _service.Update(entidad), () => ReplaceEntity(entidad), $"Error al actualizar {typeof(T).Name}");
+        await RunServiceAction(
+        serviceAction: async () => await _service.Update(entidad), 
+        onSuccess: () => ReplaceEntity(entidad), 
+        mensajeError: $"Error al actualizar {typeof(T).Name}");
 
     public async Task Save(T entidad)
     {
         entidad.Empresa = SesionApp.IdEmpresa;
-        await RunServiceAction(() => _service.Save(entidad), () => AddEntity(entidad), $"Error al guardar {typeof(T).Name}");
+        await RunServiceAction(serviceAction: async () => await _service.Save(entidad), 
+        onSuccess: () => AddEntity(entidad), 
+        mensajeError: $"Error al guardar {typeof(T).Name}");
     }
 }

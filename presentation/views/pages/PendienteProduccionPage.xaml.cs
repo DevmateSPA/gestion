@@ -7,6 +7,9 @@ using Gestion.presentation.views.windows;
 using Gestion.presentation.views.util;
 using Gestion.presentation.utils;
 using System.IO;
+using System.Threading.Tasks;
+using Gestion.core.model.detalles;
+using System.Collections.ObjectModel;
 
 namespace Gestion.presentation.views.pages;
     public partial class PendienteProduccionPage : Page
@@ -22,18 +25,60 @@ namespace Gestion.presentation.views.pages;
         DataContext = _viewModel;
         Title = $"Pendientes Producción";
 
-        Loaded += async (_, _) => await _viewModel.LoadAllByEntrega();
+        Loaded += async (_, _) =>
+        {
+            await _viewModel.LoadPageByEmpresaAndPendiente(1);
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        };
+
+        paginacion.PageChanged += async (nuevaPagina) =>
+        {
+            await _viewModel.LoadPageByEmpresaAndPendiente(nuevaPagina);
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        };
+
+        paginacion.PageSizeChanged += async (size) =>
+        {
+            _viewModel.PageSize = size;
+
+            if (size == 0)
+                await _viewModel.LoadAllByEmpresaAndPendiente(); // sin paginar
+            else
+                await _viewModel.LoadPageByEmpresaAndPendiente(1); // resetear a página 1
+
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        };
         _dataGrid = dgOrdenesTrabajo;
         _dataGrid.ItemContainerGenerator.StatusChanged += DataGrid_StatusChanged;
 
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
     
-    private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private async void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        
+        if (_dataGrid.SelectedItem is OrdenTrabajo ordenTrabajoSeleccionado)
+            await Editar(ordenTrabajoSeleccionado);
     }
 
+    private async Task Editar(OrdenTrabajo ordenTrabajo)
+    {
+        if (ordenTrabajo == null)
+            return;
+
+        ordenTrabajo.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(
+            await _viewModel.LoadDetailsByFolio(ordenTrabajo.Folio));
+
+        var ventana = new OrdenTrabajoDetallePage(this, ordenTrabajo);
+        if (ventana.ShowDialog() != true)
+        {
+            return;
+        }
+
+        var ordenTrabajoEditada = (OrdenTrabajo)ventana.EntidadEditada;
+
+        await _viewModel.Update(ordenTrabajoEditada);
+        await _viewModel.SincronizarDetalles(ordenTrabajo.Detalles, ordenTrabajoEditada.Detalles, ordenTrabajoEditada);
+    }
     private void BtnImprimir_Click(object sender, RoutedEventArgs e)
     {
         var modal = new ImpresoraModal

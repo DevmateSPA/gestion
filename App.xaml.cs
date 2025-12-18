@@ -155,6 +155,12 @@ public partial class App : Application
         services.AddTransient<AgregarBancoWindow>();
         services.AddTransient<ClienteCartolaWindow>();
         services.AddTransient<ClienteOTWindow>();
+        // Registrar ventana con factory
+        services.AddTransient<MaquinasConOTPendientesWindow>(sp =>
+        {
+            var vm = sp.GetRequiredService<MaquinaViewModel>();
+            return new MaquinasConOTPendientesWindow(vm);
+        });
        
         ServiceProvider = services.BuildServiceProvider();
 

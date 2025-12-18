@@ -2,6 +2,7 @@ using System.ComponentModel;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
 using Gestion.core.model.detalles;
+using Gestion.core.session;
 using Gestion.helpers;
 
 namespace Gestion.presentation.viewmodel; 
@@ -104,5 +105,26 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
         }
 
         return lista;
+    }
+
+    // Pendientes Entrega
+
+    public async Task LoadAllByEmpresaAndPendiente()
+    {
+        await RunWithLoading(
+            action: async () => await _ordenTrabajoService.FindAllByEmpresaAndPendiente(SesionApp.IdEmpresa),
+            errorMessage: _errorMessage,
+            onEmpty: () => _dialogService.ShowMessage(_emptyMessage));
+    }
+
+    public async Task LoadPageByEmpresaAndPendiente(int page)
+    {
+        await LoadPagedEntities(
+            serviceCall: async (p) => await _ordenTrabajoService.FindPageByEmpresaAndPendiente(SesionApp.IdEmpresa, PageNumber, PageSize),
+            page: page,
+            emptyMessage: _emptyMessage,
+            errorMessage: _errorMessage,
+            totalCountCall: async () => await _ordenTrabajoService.ContarPendientes(SesionApp.IdEmpresa),
+            allItemsCall: async () => await _ordenTrabajoService.FindAllByEmpresaAndPendiente(SesionApp.IdEmpresa));
     }
 }

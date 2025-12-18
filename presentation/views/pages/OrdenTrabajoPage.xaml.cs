@@ -76,16 +76,16 @@ public partial class OrdenTrabajoPage : Page
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
         if (_dataGrid.SelectedItem is OrdenTrabajo ordenTrabajoSeleccionado)
-            await Editar(ordenTrabajoSeleccionado, "Editar Orden de Trabajo");
+            await Editar(ordenTrabajoSeleccionado);
     }
 
     private async void dgOrdenTrabajo_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (_dataGrid.SelectedItem is OrdenTrabajo ordenTrabajoSeleccionado)
-            await Editar(ordenTrabajoSeleccionado, "Editar Orden de Trabajo");
+            await Editar(ordenTrabajoSeleccionado);
     }
 
-    private async Task Editar(OrdenTrabajo ordenTrabajo, string titulo)
+    private async Task Editar(OrdenTrabajo ordenTrabajo)
     {
         if (ordenTrabajo == null)
             return;

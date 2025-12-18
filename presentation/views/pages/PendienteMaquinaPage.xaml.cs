@@ -10,13 +10,15 @@ namespace Gestion.presentation.views.pages;
     public partial class PendienteMaquinaPage : Page
     {
     private readonly OrdenTrabajoViewModel _viewModel;
+    private readonly Maquina _maquina;
     
     private DataGrid _dataGrid;
     
-    public PendienteMaquinaPage(OrdenTrabajoViewModel ordenTrabajoViewModel)
+    public PendienteMaquinaPage(OrdenTrabajoViewModel ordenTrabajoViewModel, Maquina maquina)
     {
         InitializeComponent();
         _viewModel = ordenTrabajoViewModel;
+        _maquina = maquina;
         DataContext = _viewModel;
         Title = $"Pendientes Maquina";
 

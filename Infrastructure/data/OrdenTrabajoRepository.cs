@@ -14,69 +14,52 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
     public OrdenTrabajoRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "ordentrabajo", "vw_ordentrabajo") {}
 
-    public override async Task<List<OrdenTrabajo>> FindAllByEmpresa(long empresaId)
+    public async Task<long> ContarPendientes(long empresaId)
     {
-        using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
+        DbParameter[] parameters =
+        [
+            new MySqlParameter("@empresa", empresaId)
+        ];
 
-        cmd.CommandText = $@"
-            SELECT
-                f.id,
-                f.folio,
-                f.fecha,
-                f.rutcliente,
-                f.descripcion,
-                f.cantidad,
-                f.totalimpresion,
-                f.foliodesde,
-                f.foliohasta,
-                f.cortartamanio,
-                f.cortartamanion,
-                f.cortartamaniolargo,
-                f.montar,
-                f.moldetamanio,
-                f.tamaniofinalancho,
-                f.tamaniofinallargo,
-                f.clienteproporcionapelicula,
-                f.clienteproporcionaplancha,
-                f.clienteproporcionapapel,
-                f.tipoimpresion,
-                f.maquina1,
-                f.maquina2,
-                f.pin,
-                f.nva,
-                f.us,
-                f.ctpnva,
-                f.u,
-                f.sobres,
-                f.sacos,
-                f.tintas1,
-                f.tintas2,
-                f.tintas3,
-                f.tintas4,
-                f.fechaentrega
-            FROM {_tableName} f
-            WHERE
-                f.empresa = {SesionApp.IdEmpresa}";
-
-        using var reader = await cmd.ExecuteReaderAsync();
-
-        var ots = new Dictionary<long, OrdenTrabajo>();
-
-        while (await reader.ReadAsync())
-        {
-            long otId = reader.GetInt64(reader.GetOrdinal("id"));
-
-            if (!ots.TryGetValue(otId, out var ot))
-            {
-                ot = MapEntity(reader);
-                ot.Detalles = new ObservableCollection<DetalleOrdenTrabajo>();
-                ots.Add(otId, ot);
-            }
-        }
-
-        return ots.Values.ToList();
+        return await CountWhere(
+            where: "empresa = @empresa AND ordenentregada IS NULL",
+            parameters: parameters);
     }
 
+    public async Task<List<OrdenTrabajo>> FindAllByEmpresaAndPendiente(long empresaId)
+    {
+        if (_viewName == null)
+            throw new InvalidOperationException("La vista no está asignada para este repositorio.");
 
+        DbParameter[] parameters =
+        [
+            new MySqlParameter("@empresa", empresaId)
+        ];
+
+        return await FindWhereFrom(
+            tableOrView: _viewName,
+            where: "empresa = @empresa AND ordenentregada IS NULL",
+            orderBy: "fecha DESC",
+            limit: null,
+            offset: null,
+            parameters);
+    }
+
+    public async Task<List<OrdenTrabajo>> FindPageByEmpresaAndPendiente(
+        long empresaId,
+        int pageNumber,
+        int pageSize)
+    {
+        DbParameter[] parameters =
+        [
+            new MySqlParameter("@empresa", empresaId)
+        ];
+
+        return await FindPageWhere(
+            where: "empresa = @empresa AND ordenentregada IS NULL",
+            orderBy: "fecha DESC",
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+            parameters);
+    }
 }
