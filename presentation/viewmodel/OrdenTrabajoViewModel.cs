@@ -30,6 +30,31 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
         return detalles ?? [];
     }
 
+    public virtual async Task LoadAllByMaquinaWhereEmpresaAndPendiente(string codigoMaquina)
+    {
+        await RunWithLoading(
+            action: async () => await _ordenTrabajoService.FindAllByMaquinaWhereEmpresaAndPendiente(SesionApp.IdEmpresa, codigoMaquina),
+            errorMessage: _errorMessage,
+            onEmpty: () => _dialogService.ShowMessage(_emptyMessage));
+    }
+
+    public virtual async Task LoadPageByMaquinaWhereEmpresaAndPendiente(int page, string codigoMaquina)
+    {
+        await LoadPagedEntities(
+            serviceCall: async (p) => await _ordenTrabajoService.FindPageByMaquinaWhereEmpresaAndPendiente(SesionApp.IdEmpresa, codigoMaquina, p, PageSize),
+            page: page,
+            emptyMessage: _emptyMessage,
+            errorMessage: _errorMessage);
+
+        await LoadPagedEntities(
+            serviceCall: async (p) => await _ordenTrabajoService.FindPageByMaquinaWhereEmpresaAndPendiente(SesionApp.IdEmpresa, codigoMaquina, p, PageSize),
+            page: page,
+            emptyMessage: _emptyMessage,
+            errorMessage: _errorMessage,
+            totalCountCall: async () => await _ordenTrabajoService.ContarByMaquinaWhereEmpresaAndPendientes(SesionApp.IdEmpresa, codigoMaquina),
+            allItemsCall: async () => await _ordenTrabajoService.FindAllByMaquinaWhereEmpresaAndPendiente(SesionApp.IdEmpresa, codigoMaquina));
+    }
+
     public override async Task Delete(long id)
     {
         OrdenTrabajo? ordenTrabajo = await _ordenTrabajoService.FindById(id);

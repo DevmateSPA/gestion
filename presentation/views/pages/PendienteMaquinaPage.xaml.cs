@@ -24,13 +24,13 @@ namespace Gestion.presentation.views.pages;
 
         Loaded += async (_, _) =>
         {
-            await _viewModel.LoadPageByEmpresa(1);
+            await _viewModel.LoadPageByMaquinaWhereEmpresaAndPendiente(1, _maquina.Codigo);
             paginacion.SetTotalPages(_viewModel.TotalRegistros);
         };
 
         paginacion.PageChanged += async (nuevaPagina) =>
         {
-            await _viewModel.LoadPageByEmpresa(nuevaPagina);
+            await _viewModel.LoadPageByMaquinaWhereEmpresaAndPendiente(nuevaPagina, _maquina.Codigo);
             paginacion.SetTotalPages(_viewModel.TotalRegistros);
         };
 
@@ -39,9 +39,9 @@ namespace Gestion.presentation.views.pages;
             _viewModel.PageSize = size;
 
             if (size == 0)
-                await _viewModel.LoadAllByEmpresa(); // sin paginar
+                await _viewModel.LoadAllByMaquinaWhereEmpresaAndPendiente(_maquina.Codigo); // sin paginar
             else
-                await _viewModel.LoadPageByEmpresa(1); // resetear a página 1
+                await _viewModel.LoadPageByMaquinaWhereEmpresaAndPendiente(1, _maquina.Codigo); // resetear a página 1
 
             paginacion.SetTotalPages(_viewModel.TotalRegistros);
         };
@@ -85,7 +85,7 @@ namespace Gestion.presentation.views.pages;
         {
             // Si hay texto, cargar TODO antes de filtrar
             _viewModel.PageSize = 0;
-            await _viewModel.LoadAllByEmpresa();
+            await _viewModel.LoadAllByMaquinaWhereEmpresaAndPendiente(_maquina.Codigo);
 
             paginacion.SetTotalPages(_viewModel.TotalRegistros);
         }
@@ -97,7 +97,7 @@ namespace Gestion.presentation.views.pages;
                 _viewModel.PageSize = paginacion.CurrentPageSize; // el valor del TextBox de paginación
             }
 
-            await _viewModel.LoadPageByEmpresa(1);
+            await _viewModel.LoadPageByMaquinaWhereEmpresaAndPendiente(1, _maquina.Codigo);
             paginacion.SetTotalPages(_viewModel.TotalRegistros);
         }
 

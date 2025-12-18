@@ -15,6 +15,11 @@ public class OrdenTrabajoService : BaseService<OrdenTrabajo>, IOrdenTrabajoServi
         _ordenTrabajoRepository = ordenTrabajoRepository;
     }
 
+    public async Task<long> ContarByMaquinaWhereEmpresaAndPendientes(long empresaId, string codigoMaquina)
+    {
+        return await _ordenTrabajoRepository.ContarByMaquinaWhereEmpresaAndPendientes(empresaId, codigoMaquina);
+    }
+
     public async Task<long> ContarPendientes(long empresaId)
     {
         return await _ordenTrabajoRepository.ContarPendientes(empresaId);
@@ -25,8 +30,18 @@ public class OrdenTrabajoService : BaseService<OrdenTrabajo>, IOrdenTrabajoServi
         return await _ordenTrabajoRepository.FindAllByEmpresaAndPendiente(empresaId);
     }
 
+    public async Task<List<OrdenTrabajo>> FindAllByMaquinaWhereEmpresaAndPendiente(long empresaId, string codigoMaquina)
+    {
+        return await _ordenTrabajoRepository.FindAllByMaquinaWhereEmpresaAndPendiente(empresaId, codigoMaquina);
+    }
+
     public async Task<List<OrdenTrabajo>> FindPageByEmpresaAndPendiente(long empresaId, int pageNumber, int pageSize)
     {
         return await _ordenTrabajoRepository.FindPageByEmpresaAndPendiente(empresaId, pageNumber, pageSize);
+    }
+
+    public async Task<List<OrdenTrabajo>> FindPageByMaquinaWhereEmpresaAndPendiente(long empresaId, string codigoMaquina, int pageNumber, int pageSize)
+    {
+        return await _ordenTrabajoRepository.FindPageByMaquinaWhereEmpresaAndPendiente(empresaId, codigoMaquina, pageNumber, pageSize);
     }
 }
