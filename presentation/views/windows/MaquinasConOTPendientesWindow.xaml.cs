@@ -45,6 +45,38 @@ public partial class MaquinasConOTPendientesWindow : Window
         Closing += MaquinasConOTPendientesWindow_Closing;
 
         _dataGrid = dgMaquinas;
+
+        // Asociar evento de búsqueda
+        txtBuscar.KeyDown += TxtBuscar_KeyDown;
+    }
+
+ private async void TxtBuscar_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter) return;
+
+        string? filtro = txtBuscar.Text?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(filtro))
+        {
+            // Si hay texto, cargar todo antes de filtrar
+            _viewModel.PageSize = 0;
+            await _viewModel.LoadAllMaquinaWithPendingOrders();
+
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        }
+        else
+        {
+            // Si está vacío, volver a paginación normal
+            if (_viewModel.PageSize == 0)
+                _viewModel.PageSize = paginacion.CurrentPageSize;
+
+            await _viewModel.LoadPageMaquinaWithPendingOrders(1);
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        }
+
+        if (filtro != null)
+            _viewModel.Buscar(filtro);
+        e.Handled = true;
     }
 
     private async void dgMaquinas_MouseDoubleClick(object sender, MouseButtonEventArgs e)
