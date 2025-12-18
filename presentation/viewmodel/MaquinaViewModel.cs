@@ -14,12 +14,23 @@ namespace Gestion.presentation.viewmodel
             _maquinaService = maquinaService;
         }
 
-        public async Task LoadMaquinaWithPendingOrders()
+        public async Task LoadAllMaquinaWithPendingOrders()
         {
             await RunWithLoading(
-                action: async () => await _maquinaService.FindMaquinaWithPendingOrders(SesionApp.IdEmpresa),
+                action: async () => await _maquinaService.FindAllMaquinaWithPendingOrders(SesionApp.IdEmpresa),
                 errorMessage: _errorMessage,
                 onEmpty: () => _dialogService.ShowMessage(_emptyMessage));
+        }
+
+        public async Task LoadPageMaquinaWithPendingOrders(int page)
+        {
+            await LoadPagedEntities(
+                serviceCall: async (p) => await _maquinaService.FindPageMaquinaWithPendingOrders(SesionApp.IdEmpresa, PageNumber, PageSize),
+                page: page,
+                emptyMessage: _emptyMessage,
+                errorMessage: _errorMessage,
+                totalCountCall: async () => await _maquinaService.ContarMaquinasConPendientes(SesionApp.IdEmpresa),
+                allItemsCall: async () => await _maquinaService.FindAllMaquinaWithPendingOrders(SesionApp.IdEmpresa));
         }
     }
 }

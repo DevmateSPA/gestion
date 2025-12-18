@@ -17,7 +17,29 @@ public partial class MaquinasConOTPendientesWindow : Window
         _viewModel = viewModel;
         DataContext = _viewModel;
 
-        Loaded += async (_,_) => await _viewModel.LoadMaquinaWithPendingOrders();
+                Loaded += async (_, _) =>
+        {
+            await _viewModel.LoadPageMaquinaWithPendingOrders(1);
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        };
+
+        paginacion.PageChanged += async (nuevaPagina) =>
+        {
+            await _viewModel.LoadPageMaquinaWithPendingOrders(nuevaPagina);
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        };
+
+        paginacion.PageSizeChanged += async (size) =>
+        {
+            _viewModel.PageSize = size;
+
+            if (size == 0)
+                await _viewModel.LoadAllMaquinaWithPendingOrders(); // sin paginar
+            else
+                await _viewModel.LoadPageMaquinaWithPendingOrders(1); // resetear a página 1
+
+            paginacion.SetTotalPages(_viewModel.TotalRegistros);
+        };
 
         // Cancelar el cierre
         Closing += MaquinasConOTPendientesWindow_Closing;
