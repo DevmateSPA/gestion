@@ -375,12 +375,15 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
     /// <param name="where">Condición WHERE (sin la palabra WHERE).</param>
     /// <param name="parameters">Parámetros de la consulta.</param>
     /// <returns>Número total de registros.</returns>
-    public async Task<long> CountWhere(string where, params DbParameter[] parameters)
+    public async Task<long> CountWhere(string where, string? tableName = null, params DbParameter[] parameters)
     {
         using var conn = await _connectionFactory.CreateConnection();
         using var cmd = (DbCommand)conn.CreateCommand();
 
-        cmd.CommandText = $"SELECT COUNT(1) FROM {_tableName} WHERE {where}";
+        if (tableName == null)
+            tableName = _tableName;
+
+        cmd.CommandText = $"SELECT COUNT(1) FROM {tableName} WHERE {where}";
 
         foreach (var p in parameters)
             cmd.Parameters.Add(p);

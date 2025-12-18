@@ -4,5 +4,7 @@ namespace Gestion.core.interfaces.repository;
 
 public interface IMaquinaRepository: IBaseRepository<Maquina>
 {
-    Task<List<Maquina>> FindMaquinaWithPendingOrders(long empresaId);
+    Task<List<Maquina>> FindAllMaquinaWithPendingOrders(long empresaId);
+    Task<List<Maquina>> FindPageMaquinaWithPendingOrders(long empresaId, int pageNumber, int pageSize);
+    Task<long> ContarMaquinasConPendientes(long empresaId);
 }

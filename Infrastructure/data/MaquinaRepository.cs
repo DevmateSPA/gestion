@@ -11,7 +11,20 @@ public class MaquinaRepository : BaseRepository<Maquina>, IMaquinaRepository
     public MaquinaRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "maquina", "vw_maquina") {}
 
-    public async Task<List<Maquina>> FindMaquinaWithPendingOrders(long empresaId)
+    public async Task<long> ContarMaquinasConPendientes(long empresaId)
+    {
+        DbParameter[] parameters =
+        [
+            new MySqlParameter("@empresa", empresaId)
+        ];
+
+        return await CountWhere(
+            where: "empresa = @empresa",
+            tableName: "vw_maquinas_with_pending_orders",
+            parameters: parameters);
+    }
+
+    public async Task<List<Maquina>> FindAllMaquinaWithPendingOrders(long empresaId)
     {
         DbParameter[] parameters =
         [
@@ -24,6 +37,24 @@ public class MaquinaRepository : BaseRepository<Maquina>, IMaquinaRepository
             orderBy: null,
             limit: null,
             offset: null,
+            parameters: parameters);
+    }
+
+    public async Task<List<Maquina>> FindPageMaquinaWithPendingOrders(long empresaId, int pageNumber, int pageSize)
+    {
+        DbParameter[] parameters =
+        [
+            new MySqlParameter("@empresa", empresaId),
+        ];
+
+        int offset = (pageNumber - 1) * pageSize;
+
+        return await FindWhereFrom(
+            tableOrView: "vw_maquinas_with_pending_orders",
+            where: "empresa = @empresa",
+            orderBy: null,
+            limit: pageSize,
+            offset: offset,
             parameters: parameters);
     }
 }

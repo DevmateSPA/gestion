@@ -14,8 +14,18 @@ public class MaquinaService : BaseService<Maquina>, IMaquinaService
         _maquinaRepository = maquinaRepository;
     }
 
-    public async Task<List<Maquina>> FindMaquinaWithPendingOrders(long empresaId)
+    public async Task<long> ContarMaquinasConPendientes(long empresaId)
     {
-        return await _maquinaRepository.FindMaquinaWithPendingOrders(empresaId);
+        return await _maquinaRepository.ContarMaquinasConPendientes(empresaId);
+    }
+
+    public async Task<List<Maquina>> FindAllMaquinaWithPendingOrders(long empresaId)
+    {
+        return await _maquinaRepository.FindAllMaquinaWithPendingOrders(empresaId);
+    }
+
+    public async Task<List<Maquina>> FindPageMaquinaWithPendingOrders(long empresaId, int pageNumber, int pageSize)
+    {
+        return await _maquinaRepository.FindPageMaquinaWithPendingOrders(empresaId, pageNumber, pageSize);
     }
 }
