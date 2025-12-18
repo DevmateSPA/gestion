@@ -263,20 +263,13 @@ namespace Gestion.presentation.views.windows
 
                 if (item.Tag as string == "ModuloMaquina")
                 {
-                    // Crear la ventana modal vía DI
-                    var modalWindow = App.ServiceProvider.GetRequiredService<MaquinasConOTPendientesWindow>();
-                    modalWindow.Owner = window;
-                    modalWindow.ShowDialog();
-
-                    // Recuperar la máquina seleccionada
-                    Maquina? maquinaSeleccionada = modalWindow.MaquinaSeleccionada;
-
-                    if (maquinaSeleccionada != null)
+                    // Caso de Producción u otros
+                    page = item.Tag switch
                     {
-                        // Crear la página pasando la máquina seleccionada
-                        var ordenTrabajoVM = App.ServiceProvider.GetRequiredService<OrdenTrabajoViewModel>();
-                        page = new PendienteMaquinaPage(ordenTrabajoVM, maquinaSeleccionada);
-                    }
+                        "ModuloMaquina" => App.ServiceProvider.GetRequiredService<MaquinasConOTPendientesPage>(),
+                        _ => null
+                    };
+                    
                 }
                 else
                 {

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Gestion.presentation.views.windows"
         mc:Ignorable="d"
-        Title="LoginWindow" Height="450" Width="800" Loaded="LoginWindow_Loaded">
+        Title="LoginWindow" Height="450" Width="800" Loaded="LoginWindow_Loaded" WindowStartupLocation="CenterScreen">
     <Grid Style="{StaticResource GridStyle}">
         <!-- Tarjeta central -->
         <Border Style="{StaticResource LoginBorderStyle}">

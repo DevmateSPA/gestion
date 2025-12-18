@@ -17,10 +17,17 @@ public partial class OrdenTrabajoDetallePage : Window
 
     public object EntidadEditada { get; private set; }
 
-    public OrdenTrabajoDetallePage(Page padre, object entidad)
+    public OrdenTrabajoDetallePage(object padre, object entidad)
     {
         InitializeComponent();
-        Owner = Window.GetWindow(padre);
+        if (padre is Window windowPadre)
+        {
+            this.Owner = windowPadre; 
+        }
+        else if (padre is Page pagePadre)
+        {
+            this.Owner = Window.GetWindow(pagePadre);
+        }
 
         _entidadOriginal = entidad;
 

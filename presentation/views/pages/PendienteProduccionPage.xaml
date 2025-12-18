@@ -7,7 +7,7 @@
       xmlns:localControls="clr-namespace:Gestion.presentation.views.resources.paginationcontrols"
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="600"
-      Title="Pendientes Producción">
+      Title="Pendientes Producción"> 
 
     <Grid Margin="10">
         <Grid.RowDefinitions>

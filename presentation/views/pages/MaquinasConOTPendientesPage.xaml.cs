@@ -3,15 +3,17 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
+using Gestion.presentation.views.pages;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Gestion.presentation.views.windows;
 
-public partial class MaquinasConOTPendientesWindow : Window
+public partial class MaquinasConOTPendientesPage : Page
 {
     private readonly DataGrid _dataGrid;
     private readonly MaquinaViewModel _viewModel;
     public Maquina? MaquinaSeleccionada;
-    public MaquinasConOTPendientesWindow(MaquinaViewModel viewModel)
+    public MaquinasConOTPendientesPage(MaquinaViewModel viewModel)
     {
         InitializeComponent();
         _viewModel = viewModel;
@@ -41,8 +43,6 @@ public partial class MaquinasConOTPendientesWindow : Window
             paginacion.SetTotalPages(_viewModel.TotalRegistros);
         };
 
-        // Cancelar el cierre
-        Closing += MaquinasConOTPendientesWindow_Closing;
 
         _dataGrid = dgMaquinas;
 
@@ -79,28 +79,25 @@ public partial class MaquinasConOTPendientesWindow : Window
         e.Handled = true;
     }
 
-    private async void dgMaquinas_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private void dgMaquinas_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (_dataGrid.SelectedItem is Maquina maquinaSeleccionada)
         {
             this.MaquinaSeleccionada = maquinaSeleccionada;
-            CerrarVentana();
+
+            if (maquinaSeleccionada != null)
+            {
+                var ordenTrabajoVM = App.ServiceProvider.GetRequiredService<OrdenTrabajoViewModel>();
+                Window window = new PendienteMaquinaWindow(ordenTrabajoVM, maquinaSeleccionada);
+                window.ShowDialog();
+            }
         }
             
     }
 
-    private void CerrarVentana()
+    private void BtnImprimir_Click(object sender, RoutedEventArgs  e)
     {
-        // Remueve temporalmente el evento Closing
-        Closing -= MaquinasConOTPendientesWindow_Closing;
-
-        // Cierra la ventana
-        Close();
-    }
-
-    private void MaquinasConOTPendientesWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
-    {
-        e.Cancel = true;
+        
     }
 }
 

@@ -1,4 +1,4 @@
-<Page x:Class="Gestion.presentation.views.pages.PendienteMaquinaPage"
+<Window x:Class="Gestion.presentation.views.pages.PendienteMaquinaWindow"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,6 +7,8 @@
       xmlns:localControls="clr-namespace:Gestion.presentation.views.resources.paginationcontrols"
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="600"
+      WindowStartupLocation="CenterOwner"
+      ResizeMode="NoResize"
       Title="Pendientes por Maquina">
 
     <Grid Margin="10">
@@ -38,14 +40,17 @@
                 ItemsSource="{Binding EntidadesView}" 
                 FontSize="16" 
                 IsReadOnly="True"
-                MouseDoubleClick="dataGrid_MouseDoubleClick" 
+                MouseDoubleClick="DataGrid_MouseDoubleClick" 
                 PreviewKeyDown="DataGrid_PreviewKeyDown">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Folio" Binding="{Binding Folio}" Width="*" />
                     <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha, StringFormat={}{0:dd/MM/yyyy}}" Width="*" />
-                    <DataGridTextColumn Header="Razón Social" Binding="{Binding Razon_Social}" Width="*" />
-                    <DataGridTextColumn Header="Rut" Binding="{Binding Rut}" Width="*" />
-                </DataGrid.Columns>
+                    <DataGridTextColumn Header="Razón Social" Binding="{Binding Razon_social}" Width="*" />
+                    <DataGridTextColumn Header="Rut" Binding="{Binding RutCliente}" Width="*" />
+                    <DataGridTextColumn Header="Trabajo" Binding="{Binding Descripcion}" Width="*" />
+                    <DataGridTextColumn Header="Maquina" Binding="{Binding Maquina1}" Width="*" />
+                    <DataGridTextColumn Header="Descripción" Binding="{Binding Maquina1descripcion}" Width="*" />
+                </DataGrid.Columns> 
                 </DataGrid>
 
         <localControls:PaginationControls
@@ -55,11 +60,8 @@
 
         <!-- Botones -->
         <StackPanel Orientation="Horizontal" Grid.Row="3" HorizontalAlignment="Center" Margin="0,5,0,0">
-            <Button Width="150" Height="50"  Content="Buscar (F2)" Click="BtnBuscar_Click" Margin="5"/>
-            <Button Width="150" Height="50"  Content="Saldos (F3)" Click="BtnSaldos_Click" Margin="5"/>
-            <Button Width="150" Height="50"  Content="Cartola (ENTER)" Click="BtnCartola_Click" Margin="5"/>
-            <Button Width="150" Height="50"  Content="Cancelar (ESC)" Click="BtnCancelar_Click" Margin="5"/>
-            <Button Width="150" Height="50"  Content="O.T. (F7)" Click="BtnOT_Click" Margin="5"/>
+            <Button Width="150" Height="50"  Content="Imprimir (F4)" Click="BtnImprimir_Click" Margin="5"/>
+            <Button Width="150" Height="50"  Content="Retorno (ESC)" Click="BtnImprimir_Click" Margin="5"/>
         </StackPanel>
     </Grid>
-</Page>
+</Window>

@@ -20,19 +20,51 @@ namespace Gestion.presentation.views.windows;
 
 public partial class ClienteCartolaWindow : Window
 {
-    public ClienteCartolaWindow(Cliente cliente,DateTime fechaDesde,DateTime fechaHasta)
+    private DataGrid _dataGrid;
+    private readonly FacturaViewModel _viewModel;
+    public ClienteCartolaWindow(FacturaViewModel viewModel, Cliente? cliente, DateTime fechaDesde,DateTime fechaHasta)
     {
         var total = 0;
         InitializeComponent();
-        Console.Write(fechaDesde);
+         _viewModel = viewModel;
+        DataContext = _viewModel;
+        Title = $"Facturas";
+
+        Loaded += async (_, _) => await _viewModel.LoadAllByRutClienteBetweenFecha(cliente.Rut, fechaDesde, fechaHasta);
+
+        
+        _dataGrid = dgFacturas;
+        //_dataGrid.ItemContainerGenerator.StatusChanged += DgFacturas_StatusChanged;
+
         TxtCartola.Text = "Cartola de "+cliente.Razon_Social+" ("+cliente.Rut+")";
         TxtSaldo.Text = "Saldo inicial al "+fechaDesde.ToString("dd/mm/yyyy")+": "+total;
         TxtSaldoFinal.Text = "Saldo final al "+fechaHasta.ToString("dd/mm/yyyy")+": "+total;
+
+
     }
 
-    private void ClienteCartolaWindow_Loaded(object sender, RoutedEventArgs e)
+    private async void dgFacturas_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        
+        if (_dataGrid.SelectedItem is Factura facturaSeleccionado)
+            await editar(facturaSeleccionado, "Editar Facturas");
+    }
+
+    private async Task editar(Factura factura, string titulo)
+    {
+        if (factura == null)
+            return;
+
+        var ventana = new EntidadEditorWindow(this, factura, titulo);
+
+        if (ventana.ShowDialog() != true)
+        {
+            var facturaCancelada = (Factura)ventana.EntidadEditada;
+            return;
+        }
+
+        var facturaEditada = (Factura)ventana.EntidadEditada;
+
+        await _viewModel.Update(facturaEditada);
     }
 
     private void BtnFactura_Click(object sender, RoutedEventArgs e)

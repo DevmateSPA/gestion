@@ -5,16 +5,18 @@ using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
 using Gestion.presentation.views.util;
+using System.Collections.ObjectModel;
+using Gestion.core.model.detalles;
 
 namespace Gestion.presentation.views.pages;
-    public partial class PendienteMaquinaPage : Page
+    public partial class PendienteMaquinaWindow : Window
     {
     private readonly OrdenTrabajoViewModel _viewModel;
     private readonly Maquina _maquina;
     
     private DataGrid _dataGrid;
     
-    public PendienteMaquinaPage(OrdenTrabajoViewModel ordenTrabajoViewModel, Maquina maquina)
+    public PendienteMaquinaWindow(OrdenTrabajoViewModel ordenTrabajoViewModel, Maquina maquina)
     {
         InitializeComponent();
         _viewModel = ordenTrabajoViewModel;
@@ -50,6 +52,32 @@ namespace Gestion.presentation.views.pages;
 
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
+
+    private async void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (_dataGrid.SelectedItem is OrdenTrabajo ordenTrabajoSeleccionado)
+            await Editar(ordenTrabajoSeleccionado);
+    }
+
+    private async Task Editar(OrdenTrabajo ordenTrabajo)
+    {
+        if (ordenTrabajo == null)
+            return;
+
+        ordenTrabajo.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(
+            await _viewModel.LoadDetailsByFolio(ordenTrabajo.Folio));
+
+        var ventana = new OrdenTrabajoDetallePage(this, ordenTrabajo);
+        if (ventana.ShowDialog() != true)
+        {
+            return;
+        }
+
+        var ordenTrabajoEditada = (OrdenTrabajo)ventana.EntidadEditada;
+
+        await _viewModel.Update(ordenTrabajoEditada);
+        await _viewModel.SincronizarDetalles(ordenTrabajo.Detalles, ordenTrabajoEditada.Detalles, ordenTrabajoEditada);
+    }
     
     private void BtnSaldos_Click(object sender, RoutedEventArgs e)
     {
@@ -61,12 +89,6 @@ namespace Gestion.presentation.views.pages;
 
 
     }
-
-    private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-    {
-        
-    }
-
     private void BtnCancelar_Click(object sender, RoutedEventArgs e)
     {
         
@@ -160,7 +182,11 @@ namespace Gestion.presentation.views.pages;
                 break;
         }
     }
-
+    
+    private void BtnImprimir_Click(object sender, RoutedEventArgs  e)
+    {
+        
+    }
     private void TxtBuscar_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)

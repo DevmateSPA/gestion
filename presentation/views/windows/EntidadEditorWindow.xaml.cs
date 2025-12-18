@@ -19,10 +19,17 @@ public partial class EntidadEditorWindow : Window
 
     public object EntidadEditada { get; private set; }
 
-    public EntidadEditorWindow(Page padre, object entidad, string titulo = "Ventana")
+    public EntidadEditorWindow(object padre, object entidad, string titulo = "Ventana")
     {
         InitializeComponent();
-        this.Owner = Window.GetWindow(padre);
+        if (padre is Window windowPadre)
+        {
+            this.Owner = windowPadre; 
+        }
+        else if (padre is Page pagePadre)
+        {
+            this.Owner = Window.GetWindow(pagePadre);
+        }
         Title = titulo;
 
         _entidadOriginal = entidad;

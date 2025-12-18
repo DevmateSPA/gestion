@@ -32,6 +32,7 @@ public class Factura : FacturaBase
     [Nombre("Haber")]
     [Orden(6)]
     public int Habe { get; set; }
+    public decimal Debe => Total - Habe;
     [Nombre("Nota de crédito")]
     [Orden(7)]
     public long NotaCredito { get; set; }

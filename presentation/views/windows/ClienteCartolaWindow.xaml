@@ -29,17 +29,19 @@
         </StackPanel>
 
         <!-- TABLA -->
-        <DataGrid x:Name="dgCartola"
+        <DataGrid x:Name="dgFacturas"
                   Grid.Row="1"
                   AutoGenerateColumns="False"
-                  IsReadOnly="True"
+                  ItemsSource="{Binding EntidadesView}"
+                  IsReadOnly="True" 
+                  MouseDoubleClick="dgFacturas_MouseDoubleClick" 
                   FontSize="16">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Tipo" Binding="{Binding Tipo}" Width="*" />
                 <DataGridTextColumn Header="Folio" Binding="{Binding Folio}" Width="*" />
                 <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha, StringFormat={}{0:dd/MM/yyyy}}" Width="*" />
-                <DataGridTextColumn Header="Debe" Binding="{Binding Debe, StringFormat={}{0:C0}}" Width="*" />
-                <DataGridTextColumn Header="Haber" Binding="{Binding Haber, StringFormat={}{0:C0}}" Width="*" />
+                <DataGridTextColumn Header="TOTAL" Binding="{Binding Debe, StringFormat={}{0:C0}}" Width="*" />
+                <DataGridTextColumn Header="Haber" Binding="{Binding Habe, StringFormat={}{0:C0}}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
 
@@ -49,6 +51,7 @@
                        Text="Saldo Final"
                        FontSize="20"
                        Margin="0 0 0 15"/>
+
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Ver Factura (ENTER)"

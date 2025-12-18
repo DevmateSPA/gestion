@@ -12,4 +12,9 @@ public class FacturaService : BaseService<Factura>, IFacturaService
     {
         _facturaRepository = facturaRepository;
     }
+
+    public async Task<List<Factura>> FindAllByRutBetweenFecha(long empresaId, string rutCliente, DateTime fechaDesde, DateTime fechaHasta)
+    {
+        return await _facturaRepository.FindAllByRutBetweenFecha(empresaId, rutCliente, fechaDesde, fechaHasta);
+    }
 }

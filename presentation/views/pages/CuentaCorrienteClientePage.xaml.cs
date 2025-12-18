@@ -5,6 +5,7 @@ using Gestion.core.model;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.windows;
 using Gestion.presentation.views.util;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Gestion.presentation.views.pages;
     public partial class CuentaCorrienteClientePage : Page
@@ -74,7 +75,8 @@ namespace Gestion.presentation.views.pages;
                 MessageBox.Show("Debe seleccionar ambas fechas.");
                 return;
             }
-            var modal = new ClienteCartolaWindow(cliente, desde.Value, hasta.Value);
+            var facturaVM = App.ServiceProvider.GetRequiredService<FacturaViewModel>();
+            var modal = new ClienteCartolaWindow(facturaVM,cliente, (DateTime)desde, (DateTime)hasta);
             modal.Owner = parentWindow;
             modal.ShowDialog();
         }

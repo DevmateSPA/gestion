@@ -99,9 +99,9 @@
                 <MenuItem Header="Pendientes de Producción" Click="MenuItemReportes_Click" Tag="ModuloProduccion"/>
                 <MenuItem Header="Pendientes por Maquina" Click="MenuItemReportes_Click" Tag="ModuloMaquina"/>
             </MenuItem>
-            <MenuItem Header="Procesos"/>
+            <!--<MenuItem Header="Procesos"/>-->
             <MenuItem Header="Salir" Click="BtnSalir_Click"/>
-            <MenuItem Header="Ir al inicio" Click="BtnInicio_Click"/>
+            <MenuItem Header="Inicio" Click="BtnInicio_Click"/>
             <!--<MenuItem Header="Prueba OT" Click="BtnOT_Click"/>-->
         </Menu>
 
