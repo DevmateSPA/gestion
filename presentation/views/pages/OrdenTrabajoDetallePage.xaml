@@ -412,7 +412,168 @@
 
                     </StackPanel>
                 </GroupBox>
+                <GroupBox Header="Datos de O.T. (Continuación)" Margin="0 0 0 15">
+                    <StackPanel Margin="10">
+                        
+                        <Grid Margin="0,0,0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="60"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="60"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding Blockde}" Grid.Column="1"/>
+                            <TextBlock Text="Block de" VerticalAlignment="Center"/>
+                            <TextBlock Text=" x " Grid.Column="2" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding BlockAncho}" Grid.Column="3"/>
+                            <TextBlock Text=" x " Grid.Column="4" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding BlockAlto}" Grid.Column="5"/>
+                            <TextBlock Text=" Obs. " Grid.Column="6" VerticalAlignment="Center" Margin="10,0"/>
+                            <TextBox Text="{Binding Observacion1}" Grid.Column="7" Margin="0"/>
+                        </Grid>
 
+                        <Grid Margin="0,0,0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="60"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="60"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding Talonariode}" Grid.Column="1"/>
+                            <TextBlock Text="Talonarios de" VerticalAlignment="Center"/>
+                            <TextBlock Text=" x " Grid.Column="2" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding TalonarioAncho}" Grid.Column="3"/>
+                            <TextBlock Text=" x " Grid.Column="4" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding TalonarioAlto}" Grid.Column="5"/>
+                            <TextBox Text="{Binding Observacion2}" Grid.Column="6" Margin="110,0,0,0"/>
+                        </Grid>
+
+                        <Grid Margin="0,0,0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding Paquetede}" Grid.Column="1"/>
+                            <TextBlock Text="Paquetes de" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding Paqueteca}" Grid.Column="2"/>
+                            <TextBox Text="{Binding Observacion3}" Grid.Column="3" Margin="10,0,0,0"/>
+                        </Grid>
+
+                        <Grid Margin="0,0,0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding Resmade}" Grid.Column="1"/>
+                            <TextBlock Text="Resmas de" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding Resmaca}" Grid.Column="2"/>
+                            <TextBox Text="{Binding Observacion4}" Grid.Column="3" Margin="10,0,0,0"/>
+                        </Grid>
+
+                        <Grid Margin="0,0,0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding Fajadode}" Grid.Column="1"/>
+                            <TextBlock Text="Fajados de" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding Fajadoca}" Grid.Column="2"/>
+                            <TextBox Text="{Binding Observacion5}" Grid.Column="3" Margin="10,0,0,0"/>
+                        </Grid>
+
+                        <Grid Margin="0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/> <ColumnDefinition Width="200"/> <ColumnDefinition Width="*"/>   </Grid.ColumnDefinitions>
+                            
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="Fecha término" 
+                                    Grid.Row="0" Grid.Column="0" 
+                                    VerticalAlignment="Center"/>
+                            
+                            <DatePicker SelectedDate="{Binding FechaTermino}" 
+                                        Language="es-ES" 
+                                        Grid.Row="0" Grid.Column="1" 
+                                        Margin="0,0,10,5" 
+                                        VerticalAlignment="Center"/>
+                            
+                            <TextBox Text="{Binding Observacion6}" 
+                                    Grid.Row="0" Grid.Column="2" 
+                                    Margin="0,0,0,5" 
+                                    VerticalAlignment="Center"/>
+
+                            <TextBlock Text="Fecha entrega" 
+                                    Grid.Row="1" Grid.Column="0" 
+                                    VerticalAlignment="Center"/>
+                            
+                            <DatePicker SelectedDate="{Binding FechaEntrega}" 
+                                        Language="es-ES" 
+                                        Grid.Row="1" Grid.Column="1" 
+                                        Margin="0,0,10,0" 
+                                        VerticalAlignment="Center"/>
+                            
+                            <TextBox Text="{Binding Observacion7}" 
+                                    Grid.Row="1" Grid.Column="2" 
+                                    VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <Grid Margin="0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="G.Desp.N°" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding GuiaDesde}" Grid.Column="1" Margin="0,5,5,5"/>
+                            <TextBlock Text=" al " Grid.Column="2" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding GuiaHasta}" Grid.Column="3" Margin="5,5,0,5"/>
+                            <TextBox Text="{Binding Observacion8}" Grid.Row="4" Grid.RowSpan="2" Grid.Column="4" Margin="10,0,0,0"/>
+
+                            <TextBlock Text="Factura N°" Grid.Row="1" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding FacturaDesde}" Grid.Row="1" Grid.Column="1" Margin="0,5,5,5"/>
+                            <TextBlock Text=" al " Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding FacturaHasta}" Grid.Row="3" Grid.Column="3" Margin="5,5,0,5"/>
+                            
+                            <TextBox Text="{Binding Observacion9}" Grid.Column="4" Margin="10,0,0,0"/>
+                        </Grid>
+
+                        <Grid Margin="0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Operarios" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding Operario1}" Grid.Column="1" Margin="0,0,5,0"/>
+                            <TextBox Text="{Binding Operario2}" Grid.Column="2" Margin="5,0,0,0"/>
+                        </Grid>
+
+                    </StackPanel>
+                </GroupBox>
             </StackPanel>
         </ScrollViewer>
 

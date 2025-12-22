@@ -48,4 +48,41 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     public string Tintas3 { get; set; } = string.Empty;
     public string Tintas4 { get; set; } = string.Empty;
     public long Empresa { get; set; } = 0;
+    public int Blockde { get; set; } = 0;
+    public string BlockAncho { get; set; } = string.Empty;
+    public string BlockAlto { get; set; } = string.Empty;
+    public string Observacion1 { get; set; } = string.Empty;
+    public int Talonariode { get; set; } = 0;
+    public string TalonarioAncho { get; set; } = string.Empty;
+    public string TalonarioAlto { get; set; } = string.Empty;
+    public string Observacion2 { get; set; } = string.Empty;
+    public int Paquetede { get; set; } = 0;
+    public string Paqueteca { get; set; } = string.Empty;
+    public string Observacion3 { get; set; } = string.Empty;
+    public int Resmade { get; set; } = 0;
+    public string Resmaca { get; set; } = string.Empty;
+    public string Observacion4 { get; set; } = string.Empty;
+    public int Fajadode { get; set; } = 0;
+    public string Fajadoca { get; set; } = string.Empty;
+    public string Observacion5 { get; set; } = string.Empty;
+    [Fecha]
+    public DateTime FechaTermino { get; set; } = DateTime.Now;
+    [Fecha]
+    public DateTime FechaEntrega { get; set; } = DateTime.Now;
+    public string Observacion6 { get; set; } = string.Empty;
+
+    // Guías de Despacho
+    public string GuiaDesde { get; set; } = string.Empty;
+    public string GuiaHasta { get; set; } = string.Empty;
+
+    // Facturas
+    public string FacturaDesde { get; set; } = string.Empty;
+    public string FacturaHasta { get; set; } = string.Empty;
+    public string Observacion7 { get; set; } = string.Empty;
+
+    // Operarios
+    public string Operario1 { get; set; } = string.Empty;
+    public string Operario2 { get; set; } = string.Empty;
+    public string Observacion8 { get; set; } = string.Empty;
+    public string Observacion9 { get; set; } = string.Empty;
 }
