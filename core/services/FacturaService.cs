@@ -17,4 +17,20 @@ public class FacturaService : BaseService<Factura>, IFacturaService
     {
         return await _facturaRepository.FindAllByRutBetweenFecha(empresaId, rutCliente, fechaDesde, fechaHasta);
     }
+
+    protected override async Task<List<string>> ValidarReglasNegocio(Factura entity)
+    {
+        List<string> erroresEncontrados = [];
+
+        if (await _facturaRepository.ExisteFolio(folio: entity.Folio, empresaId: entity.Empresa))
+            erroresEncontrados.Add($"El folio de la factura: {entity.Folio}, ya existe para la empresa actual.");
+
+        if (string.IsNullOrWhiteSpace(entity.Folio))
+            erroresEncontrados.Add("El folio de la factura es obligatorio.");
+
+        if (string.IsNullOrWhiteSpace(entity.RutCliente))
+            erroresEncontrados.Add("El rut del cliente de la factura es obligatorio.");
+
+        return erroresEncontrados;
+    }
 }

@@ -480,4 +480,38 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
             offset: offset,
             parameters: parameters);
     }
+
+    protected async Task<bool> ExistsByColumns(
+        Dictionary<string, object> columns,
+        long? excludeId = null)
+    {
+        using var conn = await _connectionFactory.CreateConnection();
+        using var cmd = (DbCommand)conn.CreateCommand();
+
+        var where = new StringBuilder();
+
+        int i = 0;
+        foreach (var kv in columns)
+        {
+            if (i++ > 0)
+                where.Append(" AND ");
+
+            where.Append($"{kv.Key} = @{kv.Key}");
+            cmd.Parameters.Add(new MySqlParameter($"@{kv.Key}", kv.Value));
+        }
+
+        if (excludeId.HasValue)
+        {
+            where.Append(" AND id <> @excludeId");
+            cmd.Parameters.Add(new MySqlParameter("@excludeId", excludeId.Value));
+        }
+
+        cmd.CommandText = $@"
+            SELECT 1
+            FROM {_tableName}
+            WHERE {where}
+            LIMIT 1";
+
+        return await cmd.ExecuteScalarAsync() != null;
+    }
 }

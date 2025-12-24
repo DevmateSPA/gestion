@@ -28,4 +28,17 @@ public class MaquinaService : BaseService<Maquina>, IMaquinaService
     {
         return await _maquinaRepository.FindPageMaquinaWithPendingOrders(empresaId, pageNumber, pageSize);
     }
+
+    protected override async Task<List<string>> ValidarReglasNegocio(Maquina entity)
+    {
+        List<string> erroresEncontrados = [];
+
+        if (await _maquinaRepository.ExisteCodigo(codigo: entity.Codigo, empresaId: entity.Empresa))
+            erroresEncontrados.Add($"El código de la máquina: {entity.Codigo}, ya existe para la empresa actual.");
+
+        if (string.IsNullOrWhiteSpace(entity.Descripcion))
+            erroresEncontrados.Add("La descripción de la máquina es obligatoria.");
+
+        return erroresEncontrados;
+    }
 }

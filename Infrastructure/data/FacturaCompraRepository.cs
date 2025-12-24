@@ -13,4 +13,11 @@ public class FacturaCompraRepository : BaseRepository<FacturaCompra>, IFacturaCo
 {
     public FacturaCompraRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "facturacompra", "vw_facturacompra") {}
+
+    public async Task<bool> ExisteFolio(string folio, long empresaId)
+    => await ExistsByColumns(new Dictionary<string, object>
+    {
+        ["folio"] = folio,
+        ["empresa"] = empresaId
+    });
 }

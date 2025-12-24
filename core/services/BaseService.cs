@@ -1,3 +1,4 @@
+using Gestion.core.exceptions;
 using Gestion.core.interfaces.model;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
@@ -34,8 +35,11 @@ public abstract class BaseService<T> : IBaseService<T> where T : IModel
         return await _baseRepository.Update(entity);
     }
 
-    public async Task<bool> Save(T entity)
+    public virtual async Task<bool> Save(T entity)
     {
+        List<string> errores = await ValidarReglasNegocio(entity);
+        BaseService<T>.AplicarReglasNegocio(errores);
+
         return await _baseRepository.Save(entity);
     }
 
@@ -56,5 +60,13 @@ public abstract class BaseService<T> : IBaseService<T> where T : IModel
     {
 
         return _baseRepository.FindWhereFrom(tableOrView,where, null, null,null,p);
+    }
+
+    protected abstract Task<List<string>> ValidarReglasNegocio(T entity);
+
+    private static void AplicarReglasNegocio(List<string> errores)
+    {
+        if (errores.Count != 0)
+            throw new ReglaNegocioException(string.Join("\n", errores));
     }
 }

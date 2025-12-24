@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
 
@@ -32,6 +33,7 @@ public class Factura : FacturaBase
     [Nombre("Haber")]
     [Orden(6)]
     public int Habe { get; set; }
+    [NotMapped]
     public decimal Debe => Total - Habe;
     [Nombre("Nota de crédito")]
     [Orden(7)]

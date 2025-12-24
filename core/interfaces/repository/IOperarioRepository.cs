@@ -4,5 +4,5 @@ namespace Gestion.core.interfaces.repository;
 
 public interface IOperarioRepository : IBaseRepository<Operario>
 {
-    
+    Task<bool> ExisteCodigo(string codigo, long empresaId);
 }

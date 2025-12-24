@@ -9,6 +9,7 @@ public class Producto : IEmpresa
     [Nombre("Código")]
     [Required]
     public string Codigo { get; set; } = string.Empty;
+    [Required]
     public string Descripcion { get; set; } = string.Empty;
     public int Grupo { get; set; }
     [Nombre("Stock minimo")]

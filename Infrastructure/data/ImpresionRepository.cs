@@ -9,4 +9,11 @@ public class ImpresionRepository : BaseRepository<Impresion>, IImpresionReposito
 {
     public ImpresionRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "impresion", "vw_impresion") {}
+
+    public async Task<bool> ExisteCodigo(string codigo, long empresaId)
+    => await ExistsByColumns(new Dictionary<string, object>
+    {
+        ["codigo"] = codigo,
+        ["empresa"] = empresaId
+    });
 }

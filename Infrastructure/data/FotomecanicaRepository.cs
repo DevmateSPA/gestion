@@ -9,4 +9,11 @@ public class FotomecanicaRepository : BaseRepository<Fotomecanica>, IFotomecanic
 {
     public FotomecanicaRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "fotomecanica", "vw_fotomecanica") {}
+
+    public async Task<bool> ExisteCodigo(string codigo, long empresaId)
+    => await ExistsByColumns(new Dictionary<string, object>
+    {
+        ["codigo"] = codigo,
+        ["empresa"] = empresaId
+    });
 }

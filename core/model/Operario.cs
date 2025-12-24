@@ -9,6 +9,7 @@ public class Operario : IEmpresa
     [Nombre("Código")]
     [Required]
     public string Codigo { get; set; } = string.Empty;
+    [Required]
     public string Nombre { get; set; } = string.Empty;
     [Visible(false)]
     public long Empresa { get; set; }

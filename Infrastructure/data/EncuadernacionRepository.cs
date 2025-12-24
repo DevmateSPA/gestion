@@ -9,4 +9,11 @@ public class EncuadernacionRepository : BaseRepository<Encuadernacion>, IEncuade
 {
     public EncuadernacionRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "encuadernacion", "vw_encuadernacion") {}
+
+    public async Task<bool> ExisteCodigo(string codigo, long empresaId)
+    => await ExistsByColumns(new Dictionary<string, object>
+    {
+        ["codigo"] = codigo,
+        ["empresa"] = empresaId
+    });
 }

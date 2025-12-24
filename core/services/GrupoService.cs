@@ -6,6 +6,23 @@ namespace Gestion.core.services;
 
 public class GrupoService : BaseService<Grupo>, IGrupoService
 {
+    private readonly IGrupoRepository _grupoRepository;
     public GrupoService(IGrupoRepository grupoRepository)
-        :base(grupoRepository) { }
+        :base(grupoRepository)
+    {
+        _grupoRepository = grupoRepository;
+    }
+
+    protected override async Task<List<string>> ValidarReglasNegocio(Grupo entity)
+    {
+        List<string> erroresEncontrados = [];
+
+        if (await _grupoRepository.ExisteCodigo(codigo: entity.Codigo, empresaId: entity.Empresa))
+            erroresEncontrados.Add($"El código del grupo: {entity.Codigo}, ya existe para la empresa actual.");
+
+        if (string.IsNullOrWhiteSpace(entity.Descripcion))
+            erroresEncontrados.Add("La descripción del grupo es obligatorio.");
+
+        return erroresEncontrados;
+    }
 }

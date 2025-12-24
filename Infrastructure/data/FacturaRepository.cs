@@ -32,4 +32,11 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
             offset: null,
             parameters);
     }
+
+    public async Task<bool> ExisteFolio(string folio, long empresaId)
+    => await ExistsByColumns(new Dictionary<string, object>
+    {
+        ["folio"] = folio,
+        ["empresa"] = empresaId
+    });
 }

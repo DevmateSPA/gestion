@@ -9,4 +9,11 @@ public class GuiaDespachoRepository : BaseRepository<GuiaDespacho>, IGuiaDespach
 {
     public GuiaDespachoRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "guiadespacho", "vw_guiadespacho") {}
+
+    public async Task<bool> ExisteFolio(string folio, long empresaId)
+    => await ExistsByColumns(new Dictionary<string, object>
+    {
+        ["folio"] = folio,
+        ["empresa"] = empresaId
+    });
 }
