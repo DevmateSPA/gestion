@@ -51,7 +51,7 @@ public partial class EncuadernacionPage : Page
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(this, new Encuadernacion(), "Ingresar Encuadernación");
+        var ventana = new EntidadEditorWindow(new Encuadernacion(), "Ingresar Encuadernación");
         ventana.Owner = Window.GetWindow(this);
         if (ventana.ShowDialog() == true)
         {
@@ -74,7 +74,7 @@ public partial class EncuadernacionPage : Page
 
     private async Task editar(Encuadernacion encuadernacion, string titulo)
     {
-        var ventana = new EntidadEditorWindow(this, encuadernacion, titulo);
+        var ventana = new EntidadEditorWindow(encuadernacion, titulo);
 
         if (ventana.ShowDialog() == true)
         {

@@ -51,7 +51,7 @@ namespace Gestion.presentation.views.pages
 
         private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-             var ventana = new EntidadEditorWindow(this,new Proveedor(), "Ingresar Proveedor");
+             var ventana = new EntidadEditorWindow(new Proveedor(), "Ingresar Proveedor");
 
             if (ventana.ShowDialog() == true)
             {
@@ -80,7 +80,7 @@ namespace Gestion.presentation.views.pages
         {
             if (_dataGrid.SelectedItem is Proveedor proveedorSeleccionado)
             {
-                var ventana = new EntidadEditorWindow(this, proveedorSeleccionado)
+                var ventana = new EntidadEditorWindow(proveedorSeleccionado)
                 {
                     Title = "Editar Proveedor"
                 };
@@ -133,7 +133,7 @@ namespace Gestion.presentation.views.pages
         {
             if (_dataGrid.SelectedItem is Proveedor proveedorSeleccionado)
             {
-                var ventana = new EntidadEditorWindow(this, proveedorSeleccionado)
+                var ventana = new EntidadEditorWindow(proveedorSeleccionado)
                 {
                     Title = "Editar Proveedor",
                 };

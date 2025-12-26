@@ -52,7 +52,7 @@ namespace Gestion.presentation.views.pages
 
         private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            var ventana = new EntidadEditorWindow(this,new Grupo(), "Ingresar Grupo");
+            var ventana = new EntidadEditorWindow(new Grupo(), "Ingresar Grupo");
 
             if (ventana.ShowDialog() == true)
             {
@@ -81,7 +81,7 @@ namespace Gestion.presentation.views.pages
         {
             if (_dataGrid.SelectedItem is Grupo grupoSeleccionado)
             {
-                var ventana = new EntidadEditorWindow(this, grupoSeleccionado)
+                var ventana = new EntidadEditorWindow(grupoSeleccionado)
                 {
                     Title = "Editar Grupo"
                 };
@@ -134,7 +134,7 @@ namespace Gestion.presentation.views.pages
         {
             if (_dataGrid.SelectedItem is Grupo grupoSeleccionado)
             {
-                var ventana = new EntidadEditorWindow(this, grupoSeleccionado)
+                var ventana = new EntidadEditorWindow(grupoSeleccionado)
                 {
                     Title = "Editar Grupo"
                 };

@@ -52,7 +52,7 @@ namespace Gestion.presentation.views.pages;
     
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(this,new Cliente(), "Ingresar Cliente");
+        var ventana = new EntidadEditorWindow(new Cliente(), "Ingresar Cliente");
 
         if (ventana.ShowDialog() == true)
         {
@@ -75,7 +75,7 @@ namespace Gestion.presentation.views.pages;
 
     private async Task editar(Cliente cliente, string titulo)
     {
-        var ventana = new EntidadEditorWindow(this, cliente, titulo);
+        var ventana = new EntidadEditorWindow(cliente, titulo);
 
         if (ventana.ShowDialog() == true)
         {

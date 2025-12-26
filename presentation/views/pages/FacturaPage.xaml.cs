@@ -58,7 +58,7 @@ public partial class FacturaPage : Page
     {
         var factura = new Factura();
         factura.Empresa = SesionApp.IdEmpresa;
-        var ventana = new EntidadEditorWindow(this, factura, "Ingresar Factura");
+        var ventana = new EntidadEditorWindow(factura, "Ingresar Factura");
 
         if (ventana.ShowDialog() != true)
             return; 
@@ -86,7 +86,7 @@ public partial class FacturaPage : Page
         if (factura == null)
             return;
 
-        var ventana = new EntidadEditorWindow(this, factura, titulo);
+        var ventana = new EntidadEditorWindow(factura, titulo);
 
         if (ventana.ShowDialog() != true)
         {

@@ -51,7 +51,7 @@ namespace Gestion.presentation.views.pages
 
         private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            var ventana = new EntidadEditorWindow(this,new Fotomecanica(), "Ingresar Fotomecanica");
+            var ventana = new EntidadEditorWindow(new Fotomecanica(), "Ingresar Fotomecanica");
 
             if (ventana.ShowDialog() == true)
             {
@@ -80,7 +80,7 @@ namespace Gestion.presentation.views.pages
         {
             if (_dataGrid.SelectedItem is Fotomecanica fotomecanicaSeleccionado)
             {
-                var ventana = new EntidadEditorWindow(this, fotomecanicaSeleccionado)
+                var ventana = new EntidadEditorWindow(fotomecanicaSeleccionado)
                 {
                     Title = "Editar Fotomecanica"
                 };
@@ -133,7 +133,7 @@ namespace Gestion.presentation.views.pages
         {
             if (_dataGrid.SelectedItem is Fotomecanica fotomecanicaSeleccionada)
             {
-                var ventana = new EntidadEditorWindow(this, fotomecanicaSeleccionada)
+                var ventana = new EntidadEditorWindow(fotomecanicaSeleccionada)
                 {
                     Title = "Editar Fotomecánica",
                 };

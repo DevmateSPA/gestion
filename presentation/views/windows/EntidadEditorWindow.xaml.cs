@@ -1,9 +1,6 @@
-using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Markup;
 using Gestion.core.attributes.validation;
@@ -19,17 +16,9 @@ public partial class EntidadEditorWindow : Window
 
     public object EntidadEditada { get; private set; }
 
-    public EntidadEditorWindow(object padre, object entidad, string titulo = "Ventana")
+    public EntidadEditorWindow(object entidad, string titulo = "Ventana")
     {
         InitializeComponent();
-        if (padre is Window windowPadre)
-        {
-            this.Owner = windowPadre; 
-        }
-        else if (padre is Page pagePadre)
-        {
-            this.Owner = Window.GetWindow(pagePadre);
-        }
         Title = titulo;
 
         _entidadOriginal = entidad;

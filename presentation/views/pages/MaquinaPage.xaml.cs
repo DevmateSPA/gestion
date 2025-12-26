@@ -51,7 +51,7 @@ namespace Gestion.presentation.views.pages
 
         private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            var ventana = new EntidadEditorWindow(this,new Maquina(), "Ingresar Maquina");
+            var ventana = new EntidadEditorWindow(new Maquina(), "Ingresar Maquina");
 
             if (ventana.ShowDialog() == true)
             {
@@ -80,7 +80,7 @@ namespace Gestion.presentation.views.pages
         {
             if (_dataGrid.SelectedItem is Maquina maquinaSeleccionado)
             {
-                var ventana = new EntidadEditorWindow(this, maquinaSeleccionado)
+                var ventana = new EntidadEditorWindow(maquinaSeleccionado)
                 {
                     Title = "Editar Maquina"
                 };
@@ -133,7 +133,7 @@ namespace Gestion.presentation.views.pages
         {
             if (_dataGrid.SelectedItem is Maquina maquinaSeleccionada)
             {
-                var ventana = new EntidadEditorWindow(this, maquinaSeleccionada)
+                var ventana = new EntidadEditorWindow(maquinaSeleccionada)
                 {
                     Title = "Editar Máquina",
                 };

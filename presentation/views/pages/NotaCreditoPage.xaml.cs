@@ -52,7 +52,7 @@ public partial class NotaCreditoPage : Page
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(this, new NotaCredito(), "Ingresar Nota de crédito");
+        var ventana = new EntidadEditorWindow(new NotaCredito(), "Ingresar Nota de crédito");
 
         if (ventana.ShowDialog() == true)
         {
@@ -75,7 +75,7 @@ public partial class NotaCreditoPage : Page
 
     private async Task editar(NotaCredito notaCredito, string titulo) 
     {
-        var ventana = new EntidadEditorWindow(this, notaCredito, titulo);
+        var ventana = new EntidadEditorWindow(notaCredito, titulo);
 
         if (ventana.ShowDialog() == true)
         {

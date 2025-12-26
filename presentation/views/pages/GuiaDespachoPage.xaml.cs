@@ -54,7 +54,7 @@ public partial class GuiaDespachoPage : Page
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
         var guiaDespacho = new GuiaDespacho();
-        var ventana = new EntidadEditorWindow(this, guiaDespacho, "Ingresar Guía de despacho");
+        var ventana = new EntidadEditorWindow(guiaDespacho, "Ingresar Guía de despacho");
 
         if (ventana.ShowDialog() != true)
             return; 
@@ -81,7 +81,7 @@ public partial class GuiaDespachoPage : Page
         if (guiaDespacho == null)
             return;
 
-        var ventana = new EntidadEditorWindow(this, guiaDespacho, titulo);
+        var ventana = new EntidadEditorWindow(guiaDespacho, titulo);
 
         if (ventana.ShowDialog() != true)
         {

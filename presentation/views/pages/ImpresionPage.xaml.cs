@@ -51,7 +51,7 @@ namespace Gestion.presentation.views.pages
 
         private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            var ventana = new EntidadEditorWindow(this,new Impresion(), "Ingresar Impresión");
+            var ventana = new EntidadEditorWindow(new Impresion(), "Ingresar Impresión");
 
             if (ventana.ShowDialog() == true)
             {
@@ -80,7 +80,7 @@ namespace Gestion.presentation.views.pages
         {
             if (_dataGrid.SelectedItem is Impresion impresionSeleccionado)
             {
-                var ventana = new EntidadEditorWindow(this, impresionSeleccionado)
+                var ventana = new EntidadEditorWindow(impresionSeleccionado)
                 {
                     Title = "Editar Impresion"
                 };
@@ -133,7 +133,7 @@ namespace Gestion.presentation.views.pages
         {
             if (_dataGrid.SelectedItem is Impresion impresionSeleccionado)
             {
-                var ventana = new EntidadEditorWindow(this, impresionSeleccionado)
+                var ventana = new EntidadEditorWindow(impresionSeleccionado)
                 {
                     Title = "Editar Impresión"
                 };

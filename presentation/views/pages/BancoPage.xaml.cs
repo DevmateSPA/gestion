@@ -57,7 +57,7 @@ public partial class BancoPage : Page
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(this,new Banco(), "Ingresar Banco");
+        var ventana = new EntidadEditorWindow(new Banco(), "Ingresar Banco");
 
         if (ventana.ShowDialog() == true)
         {
@@ -80,7 +80,7 @@ public partial class BancoPage : Page
 
     private async Task editar(Banco banco, string titulo)
     {
-        var ventana = new EntidadEditorWindow(this,banco, titulo);
+        var ventana = new EntidadEditorWindow(banco, titulo);
 
         if (ventana.ShowDialog() == true)
         {

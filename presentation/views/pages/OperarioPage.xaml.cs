@@ -51,7 +51,7 @@ namespace Gestion.presentation.views.pages
 
         private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            var ventana = new EntidadEditorWindow(this,new Operario(), "Ingresar Operario");
+            var ventana = new EntidadEditorWindow(new Operario(), "Ingresar Operario");
 
             if (ventana.ShowDialog() == true)
             {
@@ -80,7 +80,7 @@ namespace Gestion.presentation.views.pages
         {
             if (_dataGrid.SelectedItem is Operario operarioSeleccionado)
             {
-                var ventana = new EntidadEditorWindow(this, operarioSeleccionado)
+                var ventana = new EntidadEditorWindow(operarioSeleccionado)
                 {
                     Title = "Editar Operario"
                 };
@@ -133,7 +133,7 @@ namespace Gestion.presentation.views.pages
         {
             if (_dataGrid.SelectedItem is Operario operadorSeleccionada)
             {
-                var ventana = new EntidadEditorWindow(this, operadorSeleccionada)
+                var ventana = new EntidadEditorWindow(operadorSeleccionada)
                 {
                     Title = "Editar Operario",
                 };
