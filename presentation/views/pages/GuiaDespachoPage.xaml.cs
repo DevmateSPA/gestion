@@ -1,11 +1,12 @@
+using Gestion.core.model;
+using Gestion.helpers;
+using Gestion.presentation.viewmodel;
+using Gestion.presentation.views.util;
+using Gestion.presentation.views.windows;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Gestion.core.model;
-using Gestion.presentation.viewmodel;
-using Gestion.presentation.views.windows;
-using Gestion.presentation.views.util;
 
 namespace Gestion.presentation.views.pages;
 
@@ -51,47 +52,37 @@ public partial class GuiaDespachoPage : Page
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
 
-    private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
+    private void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var guiaDespacho = new GuiaDespacho();
-        var ventana = new EntidadEditorWindow(guiaDespacho, "Ingresar Guía de despacho");
-
-        if (ventana.ShowDialog() != true)
-            return; 
-
-        var guiaDespachoEditado = (GuiaDespacho)ventana.EntidadEditada;
-
-        await _viewModel.Save(guiaDespachoEditado);
+        EditorHelper.Abrir(
+            owner: Window.GetWindow(this),
+            entidad: new GuiaDespacho(),
+            accion: async entidad => await _viewModel.Save((GuiaDespacho)entidad),
+            titulo: "Agregar Guía de Despacho");
     }
 
-    private async void BtnEditar_Click(object sender, RoutedEventArgs e)
+    private void Editar(GuiaDespacho entity)
     {
-        if (dgGuiasDespacho.SelectedItem is GuiaDespacho guiaDespachoSeleccionado)
-            await editar(guiaDespachoSeleccionado, "Editar Guias de Despacho");
+        EditorHelper.Abrir(
+            owner: Window.GetWindow(this),
+            entidad: entity,
+            accion: async entidad => await _viewModel.Update((GuiaDespacho)entidad),
+            titulo: "Editar Guía de Despacho");
     }
 
-    private async void dgGuiasDespacho_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private void EditarSeleccionado()
     {
-        if (dgGuiasDespacho.SelectedItem is GuiaDespacho guiaDespachoSeleccionado)
-            await editar(guiaDespachoSeleccionado, "Editar Guias de Despacho");
+        if (dgGuiasDespacho.SelectedItem is GuiaDespacho seleccionado)
+            Editar(seleccionado);
     }
 
-    private async Task editar(GuiaDespacho guiaDespacho, string titulo)
+    private void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
-        if (guiaDespacho == null)
-            return;
-
-        var ventana = new EntidadEditorWindow(guiaDespacho, titulo);
-
-        if (ventana.ShowDialog() != true)
-        {
-            var guiaDespachoCancelada = (GuiaDespacho)ventana.EntidadEditada;
-            return;
-        }
-
-        var guiaDespachoEditada = (GuiaDespacho)ventana.EntidadEditada;
-
-        await _viewModel.Update(guiaDespachoEditada);
+        EditarSeleccionado();
+    }
+    private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        EditarSeleccionado();
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)

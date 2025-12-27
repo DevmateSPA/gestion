@@ -1,10 +1,11 @@
+using Gestion.core.model;
+using Gestion.helpers;
+using Gestion.presentation.viewmodel;
+using Gestion.presentation.views.util;
+using Gestion.presentation.views.windows;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Gestion.core.model;
-using Gestion.presentation.viewmodel;
-using Gestion.presentation.views.windows;
-using Gestion.presentation.views.util;
 
 namespace Gestion.presentation.views.pages;
 
@@ -49,38 +50,37 @@ public partial class EncuadernacionPage : Page
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
 
-    private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
+    private void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(new Encuadernacion(), "Ingresar Encuadernación");
-        ventana.Owner = Window.GetWindow(this);
-        if (ventana.ShowDialog() == true)
-        {
-            var guardado = (Encuadernacion)ventana.EntidadEditada;
-            await _viewModel.Save(guardado);
-        }
+        EditorHelper.Abrir(
+            owner: Window.GetWindow(this),
+            entidad: new Encuadernacion(),
+            accion: async entidad => await _viewModel.Save((Encuadernacion)entidad),
+            titulo: "Agregar Encuadernación");
     }
 
-    private async void BtnEditar_Click(object sender, RoutedEventArgs e)
+    private void Editar(Encuadernacion entity)
     {
-        if (_dataGrid.SelectedItem is Encuadernacion seleccionado)
-            await editar(seleccionado, "Editar Encuadernación");
+        EditorHelper.Abrir(
+            owner: Window.GetWindow(this),
+            entidad: entity,
+            accion: async entidad => await _viewModel.Update((Encuadernacion)entidad),
+            titulo: "Editar Encuadernación");
     }
 
-    private async void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private void EditarSeleccionado()
     {
-        if (_dataGrid.SelectedItem is Encuadernacion seleccionado)
-            await editar(seleccionado, "Editar Encuadernación");
+        if (dgEncuadernacion.SelectedItem is Encuadernacion seleccionado)
+            Editar(seleccionado);
     }
 
-    private async Task editar(Encuadernacion encuadernacion, string titulo)
+    private void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(encuadernacion, titulo);
-
-        if (ventana.ShowDialog() == true)
-        {
-            var editado = (Encuadernacion)ventana.EntidadEditada;
-            await _viewModel.Update(editado);
-        }
+        EditarSeleccionado();
+    }
+    private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        EditarSeleccionado();
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)

@@ -1,15 +1,11 @@
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
-using Gestion.presentation.views.windows;
-using Microsoft.Extensions.DependencyInjection;
 using Gestion.presentation.views.util;
-using System.Drawing.Printing;
-using System.Windows.Documents;
 using System.Printing;
+using Gestion.helpers;
 
 namespace Gestion.presentation.views.pages;
 
@@ -55,38 +51,38 @@ public partial class BancoPage : Page
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
 
-    private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
+    private void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(new Banco(), "Ingresar Banco");
-
-        if (ventana.ShowDialog() == true)
-        {
-            var bancoEditado = (Banco)ventana.EntidadEditada;
-            await _viewModel.Save(bancoEditado);
-        }
+        EditorHelper.Abrir(
+            owner: Window.GetWindow(this),
+            entidad: new Banco(),
+            accion: async entidad => await _viewModel.Save((Banco)entidad),
+            titulo: "Agregar Banco");
     }
 
-    private async void BtnEditar_Click(object sender, RoutedEventArgs e)
+    private void Editar(Banco banco)
+    {
+        EditorHelper.Abrir(
+            owner: Window.GetWindow(this),
+            entidad: banco,
+            accion: async entidad => await _viewModel.Update((Banco)entidad),
+            titulo: "Editar Banco");
+    }
+
+    private void EditarSeleccionado()
     {
         if (dgBancos.SelectedItem is Banco bancoSeleccionado)
-            await editar(bancoSeleccionado, "Editar Banco");
+            Editar(bancoSeleccionado);
     }
 
-    private async void dgBancos_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
-        if (dgBancos.SelectedItem is Banco bancoSeleccionado)
-            await editar(bancoSeleccionado, "Editar Banco");
+        EditarSeleccionado();
     }
 
-    private async Task editar(Banco banco, string titulo)
+    private void DgBancos_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(banco, titulo);
-
-        if (ventana.ShowDialog() == true)
-        {
-            var bancoEditado = (Banco)ventana.EntidadEditada;
-            await _viewModel.Update(bancoEditado);
-        }
+        EditarSeleccionado();
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
@@ -168,7 +164,7 @@ public partial class BancoPage : Page
         }
     }
 
-    private void dgBancos_PreviewKeyDown(object sender, KeyEventArgs e)
+    private void DgBancos_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         var teclas = new[] { Key.Enter, Key.Insert, Key.Delete, Key.F2, Key.F4 };
 

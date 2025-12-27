@@ -4,36 +4,53 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Markup;
 using Gestion.core.attributes.validation;
+using Gestion.helpers;
 using Gestion.presentation.views.util;
 
 namespace Gestion.presentation.views.windows;
 
 public partial class EntidadEditorWindow : Window
 {
-    private readonly object _entidadOriginal;
+    private object _entidadOriginal;
     // Cambiado para almacenar TextBox o DatePicker
+    private readonly Func<object, Task<bool>>? _accion;
     private readonly Dictionary<PropertyInfo, Control> _controles = new();
 
     public object EntidadEditada { get; private set; }
 
-    public EntidadEditorWindow(object entidad, string titulo = "Ventana")
+    public EntidadEditorWindow(object entidad, Func<object, Task<bool>>? accion = null, string titulo = "Ventana")
     {
         InitializeComponent();
         Title = titulo;
 
+        _accion = accion;
+
+        InicializarEntidad(entidad);
+        InicializarUI(entidad);
+        InicializarEventos();
+    }
+
+    private void InicializarEntidad(object entidad)
+    {
         _entidadOriginal = entidad;
 
-        // Clonar entidad
         EntidadEditada = Activator.CreateInstance(entidad.GetType())!;
         foreach (var prop in entidad.GetType().GetProperties())
         {
             if (prop.CanWrite)
                 prop.SetValue(EntidadEditada, prop.GetValue(entidad));
         }
+    }
 
+    private void InicializarUI(object entidad)
+    {
         GenerarCampos(EntidadEditada);
+        CargarMemoSiAplica(entidad);
+        EnfocarPrimerControl();
+    }
 
-        // Cargar MEMO si aplica
+    private void CargarMemoSiAplica(object entidad)
+    {
         switch (entidad)
         {
             case Gestion.core.model.Factura f:
@@ -51,18 +68,22 @@ public partial class EntidadEditorWindow : Window
                 txtMemo.Text = gd.Memo;
                 break;
         }
+    }
 
-        // Focus al primer control (TextBox o DatePicker)
+    private void EnfocarPrimerControl()
+    {
         var primerControl = _controles.Values.FirstOrDefault();
         primerControl?.Focus();
+    }
 
-        // ESC para cerrar
-        this.PreviewKeyDown += (s, e) =>
+    private void InicializarEventos()
+    {
+        PreviewKeyDown += (_, e) =>
         {
             if (e.Key == Key.Escape)
             {
-                this.DialogResult = false;
-                this.Close();
+                DialogResult = false;
+                Close();
             }
         };
     }
@@ -190,18 +211,38 @@ public partial class EntidadEditorWindow : Window
         }
     }
 
-    private void BtnGuardar_Click(object sender, RoutedEventArgs e)
+    private bool Validar()
     {
         var errores = ValidationHelper.GetValidationErrors(spCampos);
 
-        if (errores.Count != 0)
+        if (errores.Count == 0)
+            return true;
+
+        DialogUtils.MostrarErroresValidacion(errores);
+        return false;
+    }
+
+    private async Task EjecutarAcción()
+    {
+        if (_accion != null)
         {
-            DialogUtils.MostrarErroresValidacion(errores);
-            return;
+            bool ok = await _accion(EntidadEditada);
+
+            if (!ok)
+                return;
         }
 
+        DialogUtils.MostrarInfo(Mensajes.OperacionExitosa, "Éxito");
         DialogResult = true;
         Close();
+    }
+
+    private async void BtnGuardar_Click(object sender, RoutedEventArgs e)
+    {
+        if (!Validar())
+            return;
+
+        await EjecutarAcción();
     }
 
     private void BtnCancelar_Click(object sender, RoutedEventArgs e)

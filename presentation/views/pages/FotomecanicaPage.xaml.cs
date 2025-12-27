@@ -1,10 +1,11 @@
+using Gestion.core.model;
+using Gestion.helpers;
+using Gestion.presentation.viewmodel;
+using Gestion.presentation.views.util;
+using Gestion.presentation.views.windows;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Gestion.core.model;
-using Gestion.presentation.viewmodel;
-using Gestion.presentation.views.windows;
-using Gestion.presentation.views.util;
 
 namespace Gestion.presentation.views.pages
 {
@@ -49,15 +50,37 @@ namespace Gestion.presentation.views.pages
             txtBuscar.KeyDown += TxtBuscar_KeyDown; 
         }
 
-        private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
+        private void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            var ventana = new EntidadEditorWindow(new Fotomecanica(), "Ingresar Fotomecanica");
+            EditorHelper.Abrir(
+                owner: Window.GetWindow(this),
+                entidad: new Fotomecanica(),
+                accion: async entidad => await _viewModel.Save((Fotomecanica)entidad),
+                titulo: "Agregar Fotomecánica");
+        }
 
-            if (ventana.ShowDialog() == true)
-            {
-                var editado = (Fotomecanica)ventana.EntidadEditada;
-                await _viewModel.Save(editado);
-            }            
+        private void Editar(Fotomecanica entity)
+        {
+            EditorHelper.Abrir(
+                owner: Window.GetWindow(this),
+                entidad: entity,
+                accion: async entidad => await _viewModel.Update((Fotomecanica)entidad),
+                titulo: "Editar Fotomecánica");
+        }
+
+        private void EditarSeleccionado()
+        {
+            if (dgFotomecanica.SelectedItem is Fotomecanica seleccionado)
+                Editar(seleccionado);
+        }
+
+        private void BtnEditar_Click(object sender, RoutedEventArgs e)
+        {
+            EditarSeleccionado();
+        }
+        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            EditarSeleccionado();
         }
 
         private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
@@ -73,24 +96,6 @@ namespace Gestion.presentation.views.pages
             else
             {
                 DialogUtils.MostrarAdvertencia("Selecciona un item antes de eliminar.", "Aviso");
-            }
-        }
-
-        private void BtnEditar_Click(object sender, RoutedEventArgs e)
-        {
-            if (_dataGrid.SelectedItem is Fotomecanica fotomecanicaSeleccionado)
-            {
-                var ventana = new EntidadEditorWindow(fotomecanicaSeleccionado)
-                {
-                    Title = "Editar Fotomecanica"
-                };
-
-                if (ventana.ShowDialog() == true)
-                {
-                    GridFocus(_dataGrid);
-                    //var fotomecanicaEditado = (Fotomecanica)ventana.EntidadEditada;
-                    //await _viewModel.updateFotomecanica(fotomecanicaEditado);
-                }
             }
         }
 

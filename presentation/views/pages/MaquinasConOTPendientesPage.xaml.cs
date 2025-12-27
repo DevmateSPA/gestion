@@ -50,7 +50,7 @@ public partial class MaquinasConOTPendientesPage : Page
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
 
- private async void TxtBuscar_KeyDown(object sender, KeyEventArgs e)
+    private async void TxtBuscar_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key != Key.Enter) return;
 

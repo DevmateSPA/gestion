@@ -57,7 +57,7 @@
                 ItemsSource="{Binding EntidadesView}"
                 FontSize="16"
                 IsReadOnly="True"
-                MouseDoubleClick="dgFacturas_MouseDoubleClick" 
+                MouseDoubleClick="DataGrid_MouseDoubleClick" 
                 PreviewKeyDown="dgFacturas_PreviewKeyDown">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Folio" Binding="{Binding Folio}" Width="*" />

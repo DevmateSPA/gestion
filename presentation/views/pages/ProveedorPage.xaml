@@ -35,7 +35,7 @@
                 ItemsSource="{Binding EntidadesView}" 
                 FontSize="16" 
                 IsReadOnly="True"
-                MouseDoubleClick="dgProveedores_MouseDoubleClick" 
+                MouseDoubleClick="DataGrid_MouseDoubleClick" 
                 PreviewKeyDown="dgProveedores_PreviewKeyDown">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Rut Proveedor" Binding="{Binding Rut}" Width="*" />

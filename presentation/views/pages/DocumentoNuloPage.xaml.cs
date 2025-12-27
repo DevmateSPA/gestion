@@ -1,11 +1,12 @@
+using Gestion.core.model;
+using Gestion.helpers;
+using Gestion.presentation.viewmodel;
+using Gestion.presentation.views.util;
+using Gestion.presentation.views.windows;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Gestion.core.model;
-using Gestion.presentation.viewmodel;
-using Gestion.presentation.views.windows;
-using Gestion.presentation.views.util;
 
 namespace Gestion.presentation.views.pages;
 
@@ -50,38 +51,37 @@ public partial class DocumentoNuloPage : Page
          txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
 
-    private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
+    private void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(new DocumentoNulo(), "Ingresar Nota de crédito");
-        ventana.Owner = Window.GetWindow(this);
-        if (ventana.ShowDialog() == true)
-        {
-            var documentoNuloEditado = (DocumentoNulo)ventana.EntidadEditada;
-            await _viewModel.Save(documentoNuloEditado);
-        }
+        EditorHelper.Abrir(
+            owner: Window.GetWindow(this),
+            entidad: new DocumentoNulo(),
+            accion: async entidad => await _viewModel.Save((DocumentoNulo)entidad),
+            titulo: "Agregar Documento Nulo");
     }
 
-    private async void BtnEditar_Click(object sender, RoutedEventArgs e)
+    private void Editar(DocumentoNulo entity)
     {
-        if (_dataGrid.SelectedItem is DocumentoNulo documentoNuloSeleccionado)
-            await editar(documentoNuloSeleccionado, "Editar Nota credito");
+        EditorHelper.Abrir(
+            owner: Window.GetWindow(this),
+            entidad: entity,
+            accion: async entidad => await _viewModel.Update((DocumentoNulo)entidad),
+            titulo: "Editar Documento Nulo");
     }
 
-    private async void dgDocumentosNulos_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private void EditarSeleccionado()
     {
-        if (_dataGrid.SelectedItem is DocumentoNulo documentoNuloSeleccionado)
-            await editar(documentoNuloSeleccionado, "Editar Nota credito");
+        if (dgDocumentosNulos.SelectedItem is DocumentoNulo seleccionado)
+            Editar(seleccionado);
     }
 
-    private async Task editar(DocumentoNulo documentoNulo, string titulo)
+    private void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(documentoNulo, titulo);
-
-        if (ventana.ShowDialog() == true)
-        {
-            var documentoNuloEditado = (DocumentoNulo)ventana.EntidadEditada;
-            await _viewModel.Update(documentoNuloEditado);
-        }
+        EditarSeleccionado();
+    }
+    private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        EditarSeleccionado();
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)

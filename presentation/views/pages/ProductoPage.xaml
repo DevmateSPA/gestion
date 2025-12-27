@@ -35,7 +35,7 @@
                 ItemsSource="{Binding EntidadesView}" 
                 FontSize="16" 
                 IsReadOnly="True"
-                MouseDoubleClick="dgProductos_MouseDoubleClick" 
+                MouseDoubleClick="DataGrid_MouseDoubleClick" 
                 PreviewKeyDown="dgProductos_PreviewKeyDown">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Código" Binding="{Binding Codigo}" Width="*" />

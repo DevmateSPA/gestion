@@ -38,7 +38,7 @@
                 ItemsSource="{Binding EntidadesView}" 
                 FontSize="16" 
                 IsReadOnly="True"
-                MouseDoubleClick="dataGrid_MouseDoubleClick" 
+                MouseDoubleClick="DataGrid_MouseDoubleClick" 
                 PreviewKeyDown="DataGrid_PreviewKeyDown">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Rut" Binding="{Binding Rut}" Width="*" />

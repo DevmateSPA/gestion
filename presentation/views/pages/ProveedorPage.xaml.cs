@@ -1,10 +1,11 @@
+using Gestion.core.model;
+using Gestion.helpers;
+using Gestion.presentation.viewmodel;
+using Gestion.presentation.views.util;
+using Gestion.presentation.views.windows;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Gestion.core.model;
-using Gestion.presentation.viewmodel;
-using Gestion.presentation.views.windows;
-using Gestion.presentation.views.util;
 
 namespace Gestion.presentation.views.pages
 {
@@ -49,15 +50,37 @@ namespace Gestion.presentation.views.pages
             txtBuscar.KeyDown += TxtBuscar_KeyDown;
         }
 
-        private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
+        private void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-             var ventana = new EntidadEditorWindow(new Proveedor(), "Ingresar Proveedor");
+            EditorHelper.Abrir(
+                owner: Window.GetWindow(this),
+                entidad: new Proveedor(),
+                accion: async entidad => await _viewModel.Save((Proveedor)entidad),
+                titulo: "Agregar Proveedor");
+        }
 
-            if (ventana.ShowDialog() == true)
-            {
-                var editado = (Proveedor)ventana.EntidadEditada;
-                await _viewModel.Save(editado);
-            }
+        private void Editar(Proveedor entity)
+        {
+            EditorHelper.Abrir(
+                owner: Window.GetWindow(this),
+                entidad: entity,
+                accion: async entidad => await _viewModel.Update((Proveedor)entidad),
+                titulo: "Editar Proveedor");
+        }
+
+        private void EditarSeleccionado()
+        {
+            if (dgProveedores.SelectedItem is Proveedor seleccionado)
+                Editar(seleccionado);
+        }
+
+        private void BtnEditar_Click(object sender, RoutedEventArgs e)
+        {
+            EditarSeleccionado();
+        }
+        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            EditarSeleccionado();
         }
 
         private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
@@ -75,25 +98,6 @@ namespace Gestion.presentation.views.pages
                 DialogUtils.MostrarAdvertencia("Selecciona un proveedor antes de eliminar.", "Aviso");
             }
         }
-
-        private void BtnEditar_Click(object sender, RoutedEventArgs e)
-        {
-            if (_dataGrid.SelectedItem is Proveedor proveedorSeleccionado)
-            {
-                var ventana = new EntidadEditorWindow(proveedorSeleccionado)
-                {
-                    Title = "Editar Proveedor"
-                };
-
-                if (ventana.ShowDialog() == true)
-                {
-                    GridFocus(_dataGrid);
-                    //var proveedorEditado = (Proveedore)ventana.EntidadEditada;
-                    //await _viewModel.updateProveedore(proveedorEditado);
-                }
-            }
-        }
-
         private async void BtnBuscar_Click(object sender, RoutedEventArgs e)
         {
             string? filtro = txtBuscar.Text?.Trim();

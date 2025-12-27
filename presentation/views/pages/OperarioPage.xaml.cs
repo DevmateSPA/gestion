@@ -1,10 +1,11 @@
+using Gestion.core.model;
+using Gestion.helpers;
+using Gestion.presentation.viewmodel;
+using Gestion.presentation.views.util;
+using Gestion.presentation.views.windows;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Gestion.core.model;
-using Gestion.presentation.viewmodel;
-using Gestion.presentation.views.windows;
-using Gestion.presentation.views.util;
 
 namespace Gestion.presentation.views.pages
 {
@@ -49,15 +50,37 @@ namespace Gestion.presentation.views.pages
             txtBuscar.KeyDown += TxtBuscar_KeyDown;
         }
 
-        private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
+        private void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            var ventana = new EntidadEditorWindow(new Operario(), "Ingresar Operario");
+            EditorHelper.Abrir(
+                owner: Window.GetWindow(this),
+                entidad: new Operario(),
+                accion: async entidad => await _viewModel.Save((Operario)entidad),
+                titulo: "Agregar Operario");
+        }
 
-            if (ventana.ShowDialog() == true)
-            {
-                var editado = (Operario)ventana.EntidadEditada;
-                await _viewModel.Save(editado);
-            }
+        private void Editar(Operario entity)
+        {
+            EditorHelper.Abrir(
+                owner: Window.GetWindow(this),
+                entidad: entity,
+                accion: async entidad => await _viewModel.Update((Operario)entidad),
+                titulo: "Editar Operario");
+        }
+
+        private void EditarSeleccionado()
+        {
+            if (dgOperarios.SelectedItem is Operario seleccionado)
+                Editar(seleccionado);
+        }
+
+        private void BtnEditar_Click(object sender, RoutedEventArgs e)
+        {
+            EditarSeleccionado();
+        }
+        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            EditarSeleccionado();
         }
 
         private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
@@ -73,24 +96,6 @@ namespace Gestion.presentation.views.pages
             else
             {
                 DialogUtils.MostrarAdvertencia("Selecciona un operario antes de eliminar.", "Aviso");
-            }
-        }
-
-        private void BtnEditar_Click(object sender, RoutedEventArgs e)
-        {
-            if (_dataGrid.SelectedItem is Operario operarioSeleccionado)
-            {
-                var ventana = new EntidadEditorWindow(operarioSeleccionado)
-                {
-                    Title = "Editar Operario"
-                };
-
-                if (ventana.ShowDialog() == true)
-                {
-                    GridFocus(_dataGrid);
-                    //var operarioEditado = (Operario)ventana.EntidadEditada;
-                    //await _viewModel.updateOperario(operarioEditado);
-                }
             }
         }
 

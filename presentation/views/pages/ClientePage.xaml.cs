@@ -1,10 +1,11 @@
+using Gestion.core.model;
+using Gestion.helpers;
+using Gestion.presentation.viewmodel;
+using Gestion.presentation.views.util;
+using Gestion.presentation.views.windows;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Gestion.core.model;
-using Gestion.presentation.viewmodel;
-using Gestion.presentation.views.windows;
-using Gestion.presentation.views.util;
 
 namespace Gestion.presentation.views.pages;
     public partial class ClientePage : Page
@@ -49,39 +50,39 @@ namespace Gestion.presentation.views.pages;
 
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
-    
-    private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
-    {
-        var ventana = new EntidadEditorWindow(new Cliente(), "Ingresar Cliente");
 
-        if (ventana.ShowDialog() == true)
-        {
-            var guardado = (Cliente)ventana.EntidadEditada;
-            await _viewModel.Save(guardado);
-        }
+    private void BtnAgregar_Click(object sender, RoutedEventArgs e)
+    {
+        EditorHelper.Abrir(
+            owner: Window.GetWindow(this),
+            entidad: new Cliente(),
+            accion: async entidad => await _viewModel.Save((Cliente)entidad),
+            titulo: "Agregar Cliente");
     }
 
-    private async void BtnEditar_Click(object sender, RoutedEventArgs e)
+    private void Editar(Cliente cliente)
     {
-        if (_dataGrid.SelectedItem is Cliente seleccionado)
-            await editar(seleccionado, "Editar Cliente");
+        EditorHelper.Abrir(
+            owner: Window.GetWindow(this),
+            entidad: cliente,
+            accion: async entidad => await _viewModel.Update((Cliente)entidad),
+            titulo: "Editar Cliente");
     }
 
-    private async void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private void EditarSeleccionado()
     {
-        if (_dataGrid.SelectedItem is Cliente seleccionado)
-            await editar(seleccionado, "Editar Cliente");
+        if (dgClientes.SelectedItem is Cliente seleccionado)
+            Editar(seleccionado);
     }
 
-    private async Task editar(Cliente cliente, string titulo)
+    private void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
-        var ventana = new EntidadEditorWindow(cliente, titulo);
+        EditarSeleccionado();
+    }
 
-        if (ventana.ShowDialog() == true)
-        {
-            var editado = (Cliente)ventana.EntidadEditada;
-            await _viewModel.Update(editado);
-        }
+    private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        EditarSeleccionado();
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)

@@ -1,14 +1,15 @@
+using Gestion.core.model;
+using Gestion.core.session;
+using Gestion.helpers;
+using Gestion.presentation.viewmodel;
+using Gestion.presentation.views.util;
+using Gestion.presentation.views.windows;
+using System.Printing;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using Gestion.core.model;
-using Gestion.presentation.viewmodel;
-using Gestion.presentation.views.windows;
-using Gestion.presentation.views.util;
-using Gestion.core.session;
 using System.Windows.Documents;
-using System.Printing;
+using System.Windows.Input;
 
 namespace Gestion.presentation.views.pages;
 
@@ -54,52 +55,38 @@ public partial class FacturaPage : Page
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
 
-    private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
+    private void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var factura = new Factura();
-        factura.Empresa = SesionApp.IdEmpresa;
-        var ventana = new EntidadEditorWindow(factura, "Ingresar Factura");
-
-        if (ventana.ShowDialog() != true)
-            return; 
-
-        var facturaEditado = (Factura)ventana.EntidadEditada;
-
-        await _viewModel.Save(facturaEditado);
+        EditorHelper.Abrir(
+            owner: Window.GetWindow(this),
+            entidad: new Factura(),
+            accion: async entidad => await _viewModel.Save((Factura)entidad),
+            titulo: "Agregar Factura");
     }
 
-    private async void BtnEditar_Click(object sender, RoutedEventArgs e)
+    private void Editar(Factura entity)
     {
-        if (_dataGrid.SelectedItem is Factura facturaSeleccionado)
-            await editar(facturaSeleccionado, "Editar Facturas");
+        EditorHelper.Abrir(
+            owner: Window.GetWindow(this),
+            entidad: entity,
+            accion: async entidad => await _viewModel.Update((Factura)entidad),
+            titulo: "Editar Factura");
     }
 
-    private async void dgFacturas_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private void EditarSeleccionado()
     {
-        if (_dataGrid.SelectedItem is Factura facturaSeleccionado)
-            await editar(facturaSeleccionado, "Editar Facturas");
+        if (dgFacturas.SelectedItem is Factura seleccionado)
+            Editar(seleccionado);
     }
 
-    // Metodo Editar -------------------------------------------- |
-    private async Task editar(Factura factura, string titulo)
+    private void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
-        if (factura == null)
-            return;
-
-        var ventana = new EntidadEditorWindow(factura, titulo);
-
-        if (ventana.ShowDialog() != true)
-        {
-            var facturaCancelada = (Factura)ventana.EntidadEditada;
-            return;
-        }
-
-        var facturaEditada = (Factura)ventana.EntidadEditada;
-
-        await _viewModel.Update(facturaEditada);
+        EditarSeleccionado();
     }
-
-    // ------------------------------------------------------ |
+    private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        EditarSeleccionado();
+    }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {

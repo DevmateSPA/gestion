@@ -1,10 +1,11 @@
+using Gestion.core.model;
+using Gestion.helpers;
+using Gestion.presentation.viewmodel;
+using Gestion.presentation.views.util;
+using Gestion.presentation.views.windows;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Gestion.core.model;
-using Gestion.presentation.viewmodel;
-using Gestion.presentation.views.windows;
-using Gestion.presentation.views.util;
 
 namespace Gestion.presentation.views.pages
 {
@@ -48,17 +49,37 @@ namespace Gestion.presentation.views.pages
 
              txtBuscar.KeyDown += TxtBuscar_KeyDown;
         }
-        
-
-        private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
+        private void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            var ventana = new EntidadEditorWindow(new Grupo(), "Ingresar Grupo");
+            EditorHelper.Abrir(
+                owner: Window.GetWindow(this),
+                entidad: new Grupo(),
+                accion: async entidad => await _viewModel.Save((Grupo)entidad),
+                titulo: "Agregar Grupo");
+        }
 
-            if (ventana.ShowDialog() == true)
-            {
-                var editado = (Grupo)ventana.EntidadEditada;
-                await _viewModel.Save(editado);
-            }
+        private void Editar(Grupo entity)
+        {
+            EditorHelper.Abrir(
+                owner: Window.GetWindow(this),
+                entidad: entity,
+                accion: async entidad => await _viewModel.Update((Grupo)entidad),
+                titulo: "Editar Grupo");
+        }
+
+        private void EditarSeleccionado()
+        {
+            if (dgGrupos.SelectedItem is Grupo seleccionado)
+                Editar(seleccionado);
+        }
+
+        private void BtnEditar_Click(object sender, RoutedEventArgs e)
+        {
+            EditarSeleccionado();
+        }
+        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            EditarSeleccionado();
         }
 
         private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
@@ -74,24 +95,6 @@ namespace Gestion.presentation.views.pages
             else
             {
                 DialogUtils.MostrarAdvertencia("Selecciona un grupo antes de eliminar.", "Aviso");
-            }
-        }
-
-        private void BtnEditar_Click(object sender, RoutedEventArgs e)
-        {
-            if (_dataGrid.SelectedItem is Grupo grupoSeleccionado)
-            {
-                var ventana = new EntidadEditorWindow(grupoSeleccionado)
-                {
-                    Title = "Editar Grupo"
-                };
-
-                if (ventana.ShowDialog() == true)
-                {
-                    GridFocus(_dataGrid);
-                    //var grupoEditado = (Grupo)ventana.EntidadEditada;
-                    //await _viewModel.updateGrupo(grupoEditado);
-                }
             }
         }
 

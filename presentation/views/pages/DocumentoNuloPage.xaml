@@ -39,7 +39,7 @@
                 ItemsSource="{Binding EntidadesView}"
                 FontSize="16"
                 IsReadOnly="True"
-                MouseDoubleClick="dgDocumentosNulos_MouseDoubleClick" 
+                MouseDoubleClick="DataGrid_MouseDoubleClick" 
                 PreviewKeyDown="dgDocumentosNulos_PreviewKeyDown">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Tipo" Binding="{Binding Tipo}" Width="*" />

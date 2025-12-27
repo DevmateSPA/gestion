@@ -54,7 +54,7 @@ public partial class ClienteCartolaWindow : Window
         if (factura == null)
             return;
 
-        var ventana = new EntidadEditorWindow(factura, titulo);
+        var ventana = new EntidadEditorWindow(factura, null, titulo);
 
         if (ventana.ShowDialog() != true)
         {

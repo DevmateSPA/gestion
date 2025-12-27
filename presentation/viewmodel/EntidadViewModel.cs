@@ -250,13 +250,23 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
             emptyMessage: _emptyMessage,
             errorMessage: _errorMessage);
     }
-    private protected async Task RunServiceAction(Func<Task<bool>> serviceAction, Action? onSuccess, string mensajeError)
+    private protected async Task<bool> RunServiceAction(
+        Func<Task<bool>> serviceAction,
+        Action? onSuccess,
+        string mensajeError)
     {
-        await SafeExecutor.RunAsync(async () =>
+        return await SafeExecutor.RunAsync(
+        action: async () =>
         {
             if (await serviceAction())
+            {
                 onSuccess?.Invoke();
-        }, _dialogService, mensajeError);
+                return true;
+            }
+
+            return false;
+        }, dialogService: _dialogService, 
+        mensajeError: mensajeError);
     }
     public virtual async Task Delete(long id) =>
         await RunServiceAction(
@@ -264,16 +274,18 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
             onSuccess: () => RemoveEntityById(id), 
             mensajeError: $"Error al eliminar {typeof(T).Name}");
 
-    public async Task Update(T entidad) =>
+    public async Task<bool> Update(T entidad) =>
         await RunServiceAction(
         serviceAction: async () => await _service.Update(entidad), 
         onSuccess: () => ReplaceEntity(entidad), 
         mensajeError: $"Error al actualizar {typeof(T).Name}");
 
-    public async Task Save(T entidad)
+    public async Task<bool> Save(T entidad)
     {
         entidad.Empresa = SesionApp.IdEmpresa;
-        await RunServiceAction(serviceAction: async () => await _service.Save(entidad), 
+
+        return await RunServiceAction(
+        serviceAction: async () => await _service.Save(entidad), 
         onSuccess: () => AddEntity(entidad), 
         mensajeError: $"Error al guardar {typeof(T).Name}");
     }
