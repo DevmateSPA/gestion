@@ -95,15 +95,22 @@ public partial class EntidadEditorWindow : Window
         var tipo = entidad.GetType();
 
         // Seleccionar propiedades visibles
-        var propiedades = tipo.GetProperties()
-            .Where(p =>
-                p.CanWrite &&
-                p.Name != "Memo" &&
-                !string.Equals(p.Name, "Id", StringComparison.OrdinalIgnoreCase) &&
-                (p.PropertyType == typeof(string) || p.PropertyType.IsValueType) &&
-                (p.GetCustomAttribute<VisibleAttribute>()?.Mostrar ?? true)
-            )
-            .ToList();
+    var propiedades = tipo.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+        .Where(p =>
+            p.CanWrite &&
+            p.Name != "Memo" &&
+            !string.Equals(p.Name, "Id", StringComparison.OrdinalIgnoreCase) &&
+            (p.PropertyType == typeof(string) || p.PropertyType.IsValueType) &&
+            (p.GetCustomAttribute<VisibleAttribute>()?.Mostrar ?? true)
+        )
+        .Select(p => new
+        {
+            Propiedad = p,
+            Orden = p.GetCustomAttribute<OrdenAttribute>()?.Index ?? int.MaxValue
+        })
+        .OrderBy(p => p.Orden)
+        .Select(p => p.Propiedad)
+        .ToList();
 
         spCampos.Children.Clear();
         _controles.Clear();
