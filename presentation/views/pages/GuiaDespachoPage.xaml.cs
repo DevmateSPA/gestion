@@ -87,18 +87,11 @@ public partial class GuiaDespachoPage : Page
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
-        if (_dataGrid.SelectedItem is GuiaDespacho seleccionado)
-        {
-            if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar la guía \"{seleccionado.Folio}\"?", "Confirmar eliminación"))
-            {
-                await _viewModel.Delete(seleccionado.Id);
-                DialogUtils.MostrarInfo("Guía eliminado correctamente.", "Éxito");
-            }
-        }
-        else
-        {
-            DialogUtils.MostrarAdvertencia("Selecciona una guía antes de eliminar.", "Aviso");
-        }
+        await EditorHelper.BorrarSeleccionado(
+            seleccionado: _dataGrid.SelectedItem as GuiaDespacho,
+            borrarAccion: async b => await _viewModel.Delete(b.Id),
+            mensajeConfirmacion: $"¿Seguro que deseas eliminar la Guía de Despacho \"{((_dataGrid.SelectedItem as GuiaDespacho)?.Folio)}\"?",
+            mensajeExito: "Guía de Despacho eliminada correctamente.");
     }
 
     private async void BtnBuscar_Click(object sender, RoutedEventArgs e)

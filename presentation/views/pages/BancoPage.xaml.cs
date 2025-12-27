@@ -87,18 +87,11 @@ public partial class BancoPage : Page
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
-        if (_dataGrid.SelectedItem is Banco seleccionado)
-        {
-            if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar al banco \"{seleccionado.Nombre}\"?", "Confirmar eliminación"))
-            {
-                await _viewModel.Delete(seleccionado.Id);
-                DialogUtils.MostrarInfo("Banco eliminado correctamente.", "Éxito");
-            }
-        }
-        else
-        {
-            DialogUtils.MostrarAdvertencia("Selecciona un banco antes de eliminar.", "Aviso");
-        }
+        await EditorHelper.BorrarSeleccionado(
+            seleccionado: _dataGrid.SelectedItem as Banco,
+            borrarAccion: async b => await _viewModel.Delete(b.Id),
+            mensajeConfirmacion: $"¿Seguro que deseas eliminar al banco \"{((_dataGrid.SelectedItem as Banco)?.Nombre)}\"?",
+            mensajeExito: "Banco eliminado correctamente.");
     }
 
     private async void BtnBuscar_Click(object sender, RoutedEventArgs e)
@@ -196,7 +189,6 @@ public partial class BancoPage : Page
                 break;
         }
     }
-
         
     private void TxtBuscar_KeyDown(object sender, KeyEventArgs e)
     {

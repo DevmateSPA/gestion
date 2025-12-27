@@ -86,18 +86,11 @@ public partial class DocumentoNuloPage : Page
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
-        if (_dataGrid.SelectedItem is DocumentoNulo seleccionado)
-        {
-            if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar el documento \"{seleccionado.Folio}\"?", "Confirmar eliminación"))
-            {
-                await _viewModel.Delete(seleccionado.Id);
-                DialogUtils.MostrarInfo("Documento eliminado correctamente.", "Éxito");
-            }
-        }
-        else
-        {
-            DialogUtils.MostrarAdvertencia("Selecciona un documento antes de eliminar.", "Aviso");
-        }
+        await EditorHelper.BorrarSeleccionado(
+            seleccionado: _dataGrid.SelectedItem as DocumentoNulo,
+            borrarAccion: async b => await _viewModel.Delete(b.Id),
+            mensajeConfirmacion: $"¿Seguro que deseas eliminar el Documento Nulo \"{((_dataGrid.SelectedItem as DocumentoNulo)?.Folio)}\"?",
+            mensajeExito: "Documento eliminado correctamente.");
     }
 
     private async void BtnBuscar_Click(object sender, RoutedEventArgs e)

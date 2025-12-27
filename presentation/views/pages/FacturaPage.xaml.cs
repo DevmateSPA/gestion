@@ -90,20 +90,12 @@ public partial class FacturaPage : Page
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
-        if (_dataGrid.SelectedItem is Factura seleccionado)
-        {
-            if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar la factura \"{seleccionado.Id}\"?", "Confirmar eliminación"))
-            {
-                await _viewModel.Delete(seleccionado.Id);
-                DialogUtils.MostrarInfo("Factura eliminada correctamente.", "Éxito");
-            }
-        }
-        else
-        {
-            DialogUtils.MostrarAdvertencia("Selecciona una factura antes de eliminar.", "Aviso");
-        }
+        await EditorHelper.BorrarSeleccionado(
+            seleccionado: _dataGrid.SelectedItem as Factura,
+            borrarAccion: async b => await _viewModel.Delete(b.Id),
+            mensajeConfirmacion: $"¿Seguro que deseas eliminar la Factura \"{((_dataGrid.SelectedItem as Factura)?.Folio)}\"?",
+            mensajeExito: "Factura eliminada correctamente.");
     }
-    
 
     private async void BtnBuscar_Click(object sender, RoutedEventArgs e)
     {

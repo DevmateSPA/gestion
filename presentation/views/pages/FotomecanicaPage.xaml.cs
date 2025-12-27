@@ -85,18 +85,11 @@ namespace Gestion.presentation.views.pages
 
         private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
-            if (_dataGrid.SelectedItem is Fotomecanica seleccionado)
-            {
-                if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar el item \"{seleccionado.Id}\"?", "Confirmar eliminación"))
-                {
-                    await _viewModel.Delete(seleccionado.Id);
-                    DialogUtils.MostrarInfo("Item eliminado correctamente.", "Éxito");
-                }
-            }
-            else
-            {
-                DialogUtils.MostrarAdvertencia("Selecciona un item antes de eliminar.", "Aviso");
-            }
+            await EditorHelper.BorrarSeleccionado(
+                seleccionado: _dataGrid.SelectedItem as Fotomecanica,
+                borrarAccion: async b => await _viewModel.Delete(b.Id),
+                mensajeConfirmacion: $"¿Seguro que deseas eliminar la Fotomecánica \"{((_dataGrid.SelectedItem as Fotomecanica)?.Descripcion)}\"?",
+                mensajeExito: "Fotomecánica eliminada correctamente.");
         }
 
         private async void BtnBuscar_Click(object sender, RoutedEventArgs e)

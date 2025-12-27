@@ -85,18 +85,11 @@ namespace Gestion.presentation.views.pages
 
         private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
-            if (_dataGrid.SelectedItem is Proveedor seleccionado)
-            {
-                if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar el proveedor \"{seleccionado.Razon_Social}\"?", "Confirmar eliminación"))
-                {
-                    await _viewModel.Delete(seleccionado.Id);
-                    DialogUtils.MostrarInfo("Proveedor eliminado correctamente.", "Éxito");
-                }
-            }
-            else
-            {
-                DialogUtils.MostrarAdvertencia("Selecciona un proveedor antes de eliminar.", "Aviso");
-            }
+            await EditorHelper.BorrarSeleccionado(
+                seleccionado: _dataGrid.SelectedItem as Proveedor,
+                borrarAccion: async b => await _viewModel.Delete(b.Id),
+                mensajeConfirmacion: $"¿Seguro que deseas eliminar el Proveedor \"{((_dataGrid.SelectedItem as Proveedor)?.Rut)}\"?",
+                mensajeExito: "Proveedor eliminado correctamente.");
         }
         private async void BtnBuscar_Click(object sender, RoutedEventArgs e)
         {

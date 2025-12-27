@@ -85,18 +85,11 @@ namespace Gestion.presentation.views.pages
 
         private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
-            if (_dataGrid.SelectedItem is Producto seleccionado)
-            {
-                if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar el producto \"{seleccionado.Codigo}\"?", "Confirmar eliminación"))
-                {
-                    await _viewModel.Delete(seleccionado.Id);
-                    DialogUtils.MostrarInfo("Producto eliminado correctamente.", "Éxito");
-                }
-            }
-            else
-            {
-                DialogUtils.MostrarAdvertencia("Selecciona un producto antes de eliminar.", "Aviso");
-            }
+            await EditorHelper.BorrarSeleccionado(
+                seleccionado: _dataGrid.SelectedItem as Producto,
+                borrarAccion: async b => await _viewModel.Delete(b.Id),
+                mensajeConfirmacion: $"¿Seguro que deseas eliminar el Producto \"{((_dataGrid.SelectedItem as Producto)?.Descripcion)}\"?",
+                mensajeExito: "Producto eliminado correctamente.");
         }
 
         private async void BtnBuscar_Click(object sender, RoutedEventArgs e)

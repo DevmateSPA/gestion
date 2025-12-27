@@ -87,18 +87,11 @@ namespace Gestion.presentation.views.pages;
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
-        if (_dataGrid.SelectedItem is Cliente seleccionado)
-        {
-            if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar al cliente \"{seleccionado.Razon_Social}\"?", "Confirmar eliminación"))
-            {
-                await _viewModel.Delete(seleccionado.Id);
-                DialogUtils.MostrarInfo("Cliente eliminado correctamente.", "Éxito");
-            }
-        }
-        else
-        {
-            DialogUtils.MostrarAdvertencia("Selecciona un cliente antes de eliminar.", "Aviso");
-        }
+        await EditorHelper.BorrarSeleccionado(
+            seleccionado: _dataGrid.SelectedItem as Cliente,
+            borrarAccion: async b => await _viewModel.Delete(b.Id),
+            mensajeConfirmacion: $"¿Seguro que deseas eliminar al cliente \"{((_dataGrid.SelectedItem as Cliente)?.Rut)}\"?",
+            mensajeExito: "Cliente eliminado correctamente.");
     }
 
     private async void BtnBuscar_Click(object sender, RoutedEventArgs e)

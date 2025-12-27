@@ -85,18 +85,11 @@ namespace Gestion.presentation.views.pages
 
         private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
-            if (_dataGrid.SelectedItem is Operario seleccionado)
-            {
-                if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar al operario \"{seleccionado.Nombre}\"?", "Confirmar eliminación"))
-                {
-                    await _viewModel.Delete(seleccionado.Id);
-                    DialogUtils.MostrarInfo("Operario eliminado correctamente.", "Éxito");
-                }
-            }
-            else
-            {
-                DialogUtils.MostrarAdvertencia("Selecciona un operario antes de eliminar.", "Aviso");
-            }
+            await EditorHelper.BorrarSeleccionado(
+                seleccionado: _dataGrid.SelectedItem as Operario,
+                borrarAccion: async b => await _viewModel.Delete(b.Id),
+                mensajeConfirmacion: $"¿Seguro que deseas eliminar el Operario \"{((_dataGrid.SelectedItem as Operario)?.Nombre)}\"?",
+                mensajeExito: "Operario eliminado correctamente.");
         }
 
         private async void BtnBuscar_Click(object sender, RoutedEventArgs e)

@@ -84,18 +84,11 @@ namespace Gestion.presentation.views.pages
 
         private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
-            if (_dataGrid.SelectedItem is Grupo seleccionado)
-            {
-                if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar el grupo \"{seleccionado.Descripcion}\"?", "Confirmar eliminación"))
-                {
-                    await _viewModel.Delete(seleccionado.Id);
-                    DialogUtils.MostrarInfo("Grupo eliminado correctamente.", "Éxito");
-                }
-            }
-            else
-            {
-                DialogUtils.MostrarAdvertencia("Selecciona un grupo antes de eliminar.", "Aviso");
-            }
+            await EditorHelper.BorrarSeleccionado(
+                seleccionado: _dataGrid.SelectedItem as Grupo,
+                borrarAccion: async b => await _viewModel.Delete(b.Id),
+                mensajeConfirmacion: $"¿Seguro que deseas eliminar el Grupo \"{((_dataGrid.SelectedItem as Grupo)?.Descripcion)}\"?",
+                mensajeExito: "Grupo eliminado correctamente.");
         }
 
         private async void BtnBuscar_Click(object sender, RoutedEventArgs e)

@@ -86,18 +86,11 @@ public partial class NotaCreditoPage : Page
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
-        if (_dataGrid.SelectedItem is NotaCredito seleccionado)
-        {
-            if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar la nota de crédito \"{seleccionado.Folio}\"?", "Confirmar eliminación"))
-            {
-                await _viewModel.Delete(seleccionado.Id);
-                DialogUtils.MostrarInfo("Nota de crédito eliminada correctamente.", "Éxito");
-            }
-        }
-        else
-        {
-            DialogUtils.MostrarAdvertencia("Selecciona una nota de crédito antes de eliminar.", "Aviso");
-        }
+        await EditorHelper.BorrarSeleccionado(
+            seleccionado: _dataGrid.SelectedItem as NotaCredito,
+            borrarAccion: async b => await _viewModel.Delete(b.Id),
+            mensajeConfirmacion: $"¿Seguro que deseas eliminar la Nota de Crédito \"{((_dataGrid.SelectedItem as NotaCredito)?.Folio)}\"?",
+            mensajeExito: "Nota de Crédito eliminada correctamente.");
     }
 
     private async void BtnBuscar_Click(object sender, RoutedEventArgs e)

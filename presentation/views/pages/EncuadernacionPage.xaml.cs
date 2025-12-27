@@ -85,18 +85,11 @@ public partial class EncuadernacionPage : Page
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
-        if (_dataGrid.SelectedItem is Encuadernacion seleccionado)
-        {
-            if (DialogUtils.Confirmar($"¿Seguro que deseas eliminar el item \"{seleccionado.Id}\"?", "Confirmar eliminación"))
-            {
-                await _viewModel.Delete(seleccionado.Id);
-                DialogUtils.MostrarInfo("Item eliminado correctamente.", "Éxito");
-            }
-        }
-        else
-        {
-            DialogUtils.MostrarAdvertencia("Selecciona un item antes de eliminar.", "Aviso");
-        }
+        await EditorHelper.BorrarSeleccionado(
+            seleccionado: _dataGrid.SelectedItem as Encuadernacion,
+            borrarAccion: async b => await _viewModel.Delete(b.Id),
+            mensajeConfirmacion: $"¿Seguro que deseas eliminar la encuadernación \"{((_dataGrid.SelectedItem as Encuadernacion)?.Descripcion)}\"?",
+            mensajeExito: "Encuadernación eliminada correctamente.");
     }
 
     private async void BtnBuscar_Click(object sender, RoutedEventArgs e)
