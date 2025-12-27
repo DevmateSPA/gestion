@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Markup;
 using Gestion.core.attributes.validation;
+using Gestion.core.interfaces.model;
 using Gestion.helpers;
 using Gestion.presentation.views.util;
 
@@ -11,14 +12,14 @@ namespace Gestion.presentation.views.windows;
 
 public partial class EntidadEditorWindow : Window
 {
-    private object _entidadOriginal;
+    private IModel _entidadOriginal;
     // Cambiado para almacenar TextBox o DatePicker
-    private readonly Func<object, Task<bool>>? _accion;
-    private readonly Dictionary<PropertyInfo, Control> _controles = new();
+    private readonly Func<IModel, Task<bool>>? _accion;
+    private readonly Dictionary<PropertyInfo, Control> _controles = [];
 
-    public object EntidadEditada { get; private set; }
+    public IModel EntidadEditada { get; private set; }
 
-    public EntidadEditorWindow(object entidad, Func<object, Task<bool>>? accion = null, string titulo = "Ventana")
+    public EntidadEditorWindow(IModel entidad, Func<IModel, Task<bool>>? accion = null, string titulo = "Ventana")
     {
         InitializeComponent();
         Title = titulo;
@@ -30,11 +31,12 @@ public partial class EntidadEditorWindow : Window
         InicializarEventos();
     }
 
-    private void InicializarEntidad(object entidad)
+    private void InicializarEntidad(IModel entidad)
     {
         _entidadOriginal = entidad;
 
-        EntidadEditada = Activator.CreateInstance(entidad.GetType())!;
+        EntidadEditada = (IModel)Activator.CreateInstance(entidad.GetType())!;
+
         foreach (var prop in entidad.GetType().GetProperties())
         {
             if (prop.CanWrite)

@@ -9,8 +9,8 @@ public static class EditorHelper
 {
     public static bool Abrir(
         Window owner,
-        object entidad,
-        Func<object, Task<bool>> accion,
+        IModel entidad,
+        Func<IModel, Task<bool>> accion,
         string titulo)
     {
         var ventana = new EntidadEditorWindow(entidad, accion, titulo)
@@ -27,7 +27,7 @@ public static class EditorHelper
         string mensajeConfirmacion,
         string mensajeExito,
         string mensajeSeleccionVacia = "Selecciona un registro antes de eliminar.")
-        where T : IEmpresa
+        where T : IModel
     {
         if (seleccionado == null)
         {
