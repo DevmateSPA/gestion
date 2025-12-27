@@ -38,7 +38,9 @@ public class FacturaCompraProductoService : BaseService<FacturaCompraProducto>, 
         return await _facturaCompraProductoRepository.UpdateAll(detalles);
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(FacturaCompraProducto entity)
+    protected override async Task<List<string>> ValidarReglasNegocio(
+        FacturaCompraProducto entity,
+        long? excludeId = null)
     {
         List<string> erroresEncontrados = [];
         return erroresEncontrados;

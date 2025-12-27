@@ -32,6 +32,9 @@ public abstract class BaseService<T> : IBaseService<T> where T : IModel
 
     public async Task<bool> Update(T entity)
     {
+        List<string> errores = await ValidarReglasNegocio(entity, entity.Id);
+        AplicarReglasNegocio(errores);
+
         return await _baseRepository.Update(entity);
     }
 
@@ -62,7 +65,7 @@ public abstract class BaseService<T> : IBaseService<T> where T : IModel
         return _baseRepository.FindWhereFrom(tableOrView,where, null, null,null,p);
     }
 
-    protected abstract Task<List<string>> ValidarReglasNegocio(T entity);
+    protected abstract Task<List<string>> ValidarReglasNegocio(T entity, long? excludeId = null);
 
     private static void AplicarReglasNegocio(List<string> errores)
     {

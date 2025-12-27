@@ -18,11 +18,16 @@ public class FacturaService : BaseService<Factura>, IFacturaService
         return await _facturaRepository.FindAllByRutBetweenFecha(empresaId, rutCliente, fechaDesde, fechaHasta);
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(Factura entity)
+    protected override async Task<List<string>> ValidarReglasNegocio(
+        Factura entity,
+        long? excludeId = null)
     {
         List<string> erroresEncontrados = [];
 
-        if (await _facturaRepository.ExisteFolio(folio: entity.Folio, empresaId: entity.Empresa))
+        if (await _facturaRepository.ExisteFolio(
+                folio: entity.Folio,
+                empresaId: entity.Empresa,
+                excludeId: excludeId))
             erroresEncontrados.Add($"El folio de la factura: {entity.Folio}, ya existe para la empresa actual.");
 
         if (string.IsNullOrWhiteSpace(entity.Folio))

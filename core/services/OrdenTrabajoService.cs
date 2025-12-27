@@ -45,11 +45,16 @@ public class OrdenTrabajoService : BaseService<OrdenTrabajo>, IOrdenTrabajoServi
         return await _ordenTrabajoRepository.FindPageByMaquinaWhereEmpresaAndPendiente(empresaId, codigoMaquina, pageNumber, pageSize);
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(OrdenTrabajo entity)
+    protected override async Task<List<string>> ValidarReglasNegocio(
+        OrdenTrabajo entity,
+        long? excludeId = null)
     {
         List<string> erroresEncontrados = [];
 
-        if (await _ordenTrabajoRepository.ExisteFolio(folio: entity.Folio, empresaId: entity.Empresa))
+        if (await _ordenTrabajoRepository.ExisteFolio(
+                folio: entity.Folio,
+                empresaId: entity.Empresa,
+                excludeId: excludeId))
             erroresEncontrados.Add($"El folio de la orden de trabajo: {entity.Folio}, ya existe para la empresa actual.");
 
         if (string.IsNullOrWhiteSpace(entity.Folio))

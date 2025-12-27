@@ -58,10 +58,14 @@ public class MaquinaRepository : BaseRepository<Maquina>, IMaquinaRepository
             parameters: parameters);
     }
 
-    public async Task<bool> ExisteCodigo(string codigo, long empresaId)
-    => await ExistsByColumns(new Dictionary<string, object>
-    {
-        ["codigo"] = codigo,
-        ["empresa"] = empresaId
-    });
+    public async Task<bool> ExisteCodigo(
+        string codigo,
+        long empresaId,
+        long? excludeId = null) => await ExistsByColumns(
+            new Dictionary<string, object>
+            {
+                ["codigo"] = codigo,
+                ["empresa"] = empresaId
+            },
+            excludeId);
 }

@@ -14,16 +14,24 @@ public class BancoService : BaseService<Banco>, IBancoService
         _bancoRepository = bancoRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(Banco entity)
+    protected override async Task<List<string>> ValidarReglasNegocio(
+        Banco entity,
+        long? excludeId = null)
     {
-        List<string> erroresEncontrados = [];
+        List<string> errores = [];
 
-        if (await _bancoRepository.ExisteCodigo(codigo: entity.Codigo, empresaId: entity.Empresa))
-            erroresEncontrados.Add($"El código del banco: {entity.Codigo}, ya existe para la empresa actual.");
+        if (await _bancoRepository.ExisteCodigo(
+                codigo: entity.Codigo,
+                empresaId: entity.Empresa,
+                excludeId: excludeId))
+        {
+            errores.Add($"El código del banco: {entity.Codigo}, ya existe para la empresa actual.");
+        }
 
         if (string.IsNullOrWhiteSpace(entity.Nombre))
-            erroresEncontrados.Add("El nombre del banco es obligatorio.");
+            errores.Add("El nombre del banco es obligatorio.");
 
-        return erroresEncontrados;
+        return errores;
     }
+
 }

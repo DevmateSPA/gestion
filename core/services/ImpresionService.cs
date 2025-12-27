@@ -13,16 +13,23 @@ public class ImpresionService : BaseService<Impresion>, IImpresionService
         _impresionRepository = impresionRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(Impresion entity)
+    protected override async Task<List<string>> ValidarReglasNegocio(
+        Impresion entity,
+        long? excludeId = null)
     {
-        List<string> erroresEncontrados = [];
+        List<string> errores = [];
 
-        if (await _impresionRepository.ExisteCodigo(codigo: entity.Codigo, empresaId: entity.Empresa))
-            erroresEncontrados.Add($"El código de la impresión: {entity.Codigo}, ya existe para la empresa actual.");
+        if (await _impresionRepository.ExisteCodigo(
+                codigo: entity.Codigo,
+                empresaId: entity.Empresa,
+                excludeId: excludeId))
+        {
+            errores.Add($"El código de la impresión: {entity.Codigo}, ya existe para la empresa actual.");
+        }
 
         if (string.IsNullOrWhiteSpace(entity.Descripcion))
-            erroresEncontrados.Add("La descripción de la impresión es obligatoria.");
+            errores.Add("La descripción de la impresión es obligatoria.");
 
-        return erroresEncontrados;
+        return errores;
     }
 }

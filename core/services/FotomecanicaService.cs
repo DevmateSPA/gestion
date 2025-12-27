@@ -13,16 +13,23 @@ public class FotomecanicaService : BaseService<Fotomecanica>, IFotomecanicaServi
         _fotomecanicaRepository = fotomecanicaRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(Fotomecanica entity)
+    protected override async Task<List<string>> ValidarReglasNegocio(
+        Fotomecanica entity,
+        long? excludeId = null)
     {
-        List<string> erroresEncontrados = [];
+        List<string> errores = [];
 
-        if (await _fotomecanicaRepository.ExisteCodigo(codigo: entity.Codigo, empresaId: entity.Empresa))
-            erroresEncontrados.Add($"El código de la fotomecánica: {entity.Codigo}, ya existe para la empresa actual.");
+        if (await _fotomecanicaRepository.ExisteCodigo(
+                codigo: entity.Codigo,
+                empresaId: entity.Empresa,
+                excludeId: excludeId))
+        {
+            errores.Add($"El código del banco: {entity.Codigo}, ya existe para la empresa actual.");
+        }
 
         if (string.IsNullOrWhiteSpace(entity.Descripcion))
-            erroresEncontrados.Add("La descripción de la fotomecánica es obligatoria.");
+            errores.Add("La descripción de la fotomecánica es obligatoria.");
 
-        return erroresEncontrados;
+        return errores;
     }
 }

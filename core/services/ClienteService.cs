@@ -13,11 +13,16 @@ public class ClienteService : BaseService<Cliente>, IClienteService
         _clienteRepository = clienteRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(Cliente entity)
+    protected override async Task<List<string>> ValidarReglasNegocio(
+        Cliente entity,
+        long? excludeId = null)
     {
         List<string> erroresEncontrados = [];
 
-        if (await _clienteRepository.ExisteRut(rut: entity.Rut, empresaId: entity.Empresa))
+        if (await _clienteRepository.ExisteRut(
+                rut: entity.Rut,
+                empresaId: entity.Empresa,
+                excludeId: excludeId))
             erroresEncontrados.Add($"El rut del cliente: {entity.Rut}, ya existe para la empresa actual.");
 
         if (string.IsNullOrWhiteSpace(entity.Rut))

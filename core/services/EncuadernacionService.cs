@@ -13,16 +13,23 @@ public class EncuadernacionService : BaseService<Encuadernacion>, IEncuadernacio
         _encuadernacionRepository = encuadernacionRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(Encuadernacion entity)
+    protected override async Task<List<string>> ValidarReglasNegocio(
+        Encuadernacion entity,
+        long? excludeId = null)
     {
-        List<string> erroresEncontrados = [];
+        List<string> errores = [];
 
-        if (await _encuadernacionRepository.ExisteCodigo(codigo: entity.Codigo, empresaId: entity.Empresa))
-            erroresEncontrados.Add($"El código de la encuadernación: {entity.Codigo}, ya existe para la empresa actual.");
+        if (await _encuadernacionRepository.ExisteCodigo(
+                codigo: entity.Codigo,
+                empresaId: entity.Empresa,
+                excludeId: excludeId))
+        {
+            errores.Add($"El código de la encuadernación: {entity.Codigo}, ya existe para la empresa actual.");
+        }
 
         if (string.IsNullOrWhiteSpace(entity.Descripcion))
-            erroresEncontrados.Add("La descripción de la encuadernación es obligatoria.");
+            errores.Add("La descripción de la encuadernación es obligatoria.");
 
-        return erroresEncontrados;
+        return errores;
     }
 }

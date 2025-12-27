@@ -13,16 +13,23 @@ public class GrupoService : BaseService<Grupo>, IGrupoService
         _grupoRepository = grupoRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(Grupo entity)
+    protected override async Task<List<string>> ValidarReglasNegocio(
+        Grupo entity,
+        long? excludeId = null)
     {
-        List<string> erroresEncontrados = [];
+        List<string> errores = [];
 
-        if (await _grupoRepository.ExisteCodigo(codigo: entity.Codigo, empresaId: entity.Empresa))
-            erroresEncontrados.Add($"El código del grupo: {entity.Codigo}, ya existe para la empresa actual.");
+        if (await _grupoRepository.ExisteCodigo(
+                codigo: entity.Codigo,
+                empresaId: entity.Empresa,
+                excludeId: excludeId))
+        {
+            errores.Add($"El código del grupo: {entity.Codigo}, ya existe para la empresa actual.");
+        }
 
         if (string.IsNullOrWhiteSpace(entity.Descripcion))
-            erroresEncontrados.Add("La descripción del grupo es obligatorio.");
+            errores.Add("La descripción del grupo es obligatorio.");
 
-        return erroresEncontrados;
+        return errores;
     }
 }

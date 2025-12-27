@@ -9,7 +9,9 @@ public class EmpresaService : BaseService<Empresa>, IEmpresaService
     public EmpresaService(IEmpresaRepository empresaRepository)
         :base(empresaRepository) { }
 
-    protected override Task<List<string>> ValidarReglasNegocio(Empresa entity)
+    protected override async Task<List<string>> ValidarReglasNegocio(
+        Empresa entity,
+        long? excludeId = null)
     {
         throw new NotImplementedException();
     }

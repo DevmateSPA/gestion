@@ -13,16 +13,23 @@ public class ProductoService : BaseService<Producto>, IProductoService
         _productoRepository = productoRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(Producto entity)
+    protected override async Task<List<string>> ValidarReglasNegocio(
+        Producto entity,
+        long? excludeId = null)
     {
-        List<string> erroresEncontrados = [];
+        List<string> errores = [];
 
-        if (await _productoRepository.ExisteCodigo(codigo: entity.Codigo, empresaId: entity.Empresa))
-            erroresEncontrados.Add($"El código del producto: {entity.Codigo}, ya existe para la empresa actual.");
+        if (await _productoRepository.ExisteCodigo(
+                codigo: entity.Codigo,
+                empresaId: entity.Empresa,
+                excludeId: excludeId))
+        {
+            errores.Add($"El código del producto: {entity.Codigo}, ya existe para la empresa actual.");
+        }
 
         if (string.IsNullOrWhiteSpace(entity.Descripcion))
-            erroresEncontrados.Add("La descripción del producto es obligatoria.");
+            errores.Add("La descripción del producto es obligatoria.");
 
-        return erroresEncontrados;
+        return errores;
     }
 }

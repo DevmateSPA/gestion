@@ -13,11 +13,16 @@ public class GuiaDespachoService : BaseService<GuiaDespacho>, IGuiaDespachoServi
         _guiaDespachoRepository = guiaDespachoRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(GuiaDespacho entity)
+    protected override async Task<List<string>> ValidarReglasNegocio(
+        GuiaDespacho entity,
+        long? excludeId = null)
     {
         List<string> erroresEncontrados = [];
 
-        if (await _guiaDespachoRepository.ExisteFolio(folio: entity.Folio, empresaId: entity.Empresa))
+        if (await _guiaDespachoRepository.ExisteFolio(
+                folio: entity.Folio,
+                empresaId: entity.Empresa,
+                excludeId: excludeId))
             erroresEncontrados.Add($"El folio de la guia de despacho: {entity.Folio}, ya existe para la empresa actual.");
 
         if (string.IsNullOrWhiteSpace(entity.Folio))

@@ -13,11 +13,16 @@ public class DocumentoNuloService : BaseService<DocumentoNulo>, IDocumentoNuloSe
         _documentoNuloRepository = documentoNuloRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(DocumentoNulo entity)
+    protected override async Task<List<string>> ValidarReglasNegocio(
+        DocumentoNulo entity,
+        long? excludeId = null)
     {
         List<string> erroresEncontrados = [];
 
-        if (await _documentoNuloRepository.ExisteFolio(folio: entity.Folio, empresaId: entity.Empresa))
+        if (await _documentoNuloRepository.ExisteFolio(
+                folio: entity.Folio,
+                empresaId: entity.Empresa,
+                excludeId: excludeId))
             erroresEncontrados.Add($"El folio del documento: {entity.Folio}, ya existe para la empresa actual.");
 
         if (string.IsNullOrWhiteSpace(entity.Folio))

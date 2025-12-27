@@ -39,7 +39,9 @@ public class DetalleOTService : BaseService<DetalleOrdenTrabajo>, IDetalleOTServ
         return await _detalleOTRepository.UpdateAll(detalles);
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(DetalleOrdenTrabajo entity)
+    protected override async Task<List<string>> ValidarReglasNegocio(
+        DetalleOrdenTrabajo entity,
+        long? excludeId = null)
     {
         List<string> erroresEncontrados = [];
         return erroresEncontrados;

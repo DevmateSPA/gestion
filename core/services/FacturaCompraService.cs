@@ -13,11 +13,16 @@ public class FacturaCompraService : BaseService<FacturaCompra>, IFacturaCompraSe
         _facturaCompraRepository = facturaCompraRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(FacturaCompra entity)
+    protected override async Task<List<string>> ValidarReglasNegocio(
+        FacturaCompra entity,
+        long? excludeId = null)
     {
         List<string> erroresEncontrados = [];
 
-        if (await _facturaCompraRepository.ExisteFolio(folio: entity.Folio, empresaId: entity.Empresa))
+        if (await _facturaCompraRepository.ExisteFolio(
+                folio: entity.Folio,
+                empresaId: entity.Empresa,
+                excludeId: excludeId))
             erroresEncontrados.Add($"El folio de la factura: {entity.Folio}, ya existe para la empresa actual.");
 
         if (string.IsNullOrWhiteSpace(entity.Folio))
