@@ -7,6 +7,7 @@ using Gestion.presentation.views.windows;
 using Gestion.presentation.views.util;
 using System.Collections.ObjectModel;
 using Gestion.core.model.detalles;
+using Gestion.helpers;
 
 namespace Gestion.presentation.views.pages;
     public partial class PendienteMaquinaWindow : Window
@@ -67,16 +68,15 @@ namespace Gestion.presentation.views.pages;
         ordenTrabajo.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(
             await _viewModel.LoadDetailsByFolio(ordenTrabajo.Folio));
 
-        var ventana = new OrdenTrabajoDetallePage(this, ordenTrabajo);
-        if (ventana.ShowDialog() != true)
-        {
-            return;
-        }
-
-        var ordenTrabajoEditada = (OrdenTrabajo)ventana.EntidadEditada;
-
-        await _viewModel.Update(ordenTrabajoEditada);
-        await _viewModel.SincronizarDetalles(ordenTrabajo.Detalles, ordenTrabajoEditada.Detalles, ordenTrabajoEditada);
+        EditorOtHelper.Abrir(
+            owner: Window.GetWindow(this),
+            entidad: ordenTrabajo,
+            accion: _viewModel.Update,
+            syncDetalles: ordenTrabajoEditada =>
+                _viewModel.SincronizarDetalles(
+                    ordenTrabajo.Detalles,
+                    ordenTrabajoEditada.Detalles,
+                    ordenTrabajoEditada));
     }
     
     private void BtnSaldos_Click(object sender, RoutedEventArgs e)

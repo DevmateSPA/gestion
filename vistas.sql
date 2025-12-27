@@ -134,18 +134,18 @@ CREATE OR REPLACE VIEW vw_proveedor AS
     ON t.empresa = e.id;
 
 CREATE OR REPLACE
-ALGORITHM = UNDEFINED
-DEFINER = `root`@`localhost`
-SQL SECURITY DEFINER
-VIEW vw_ordentrabajo AS
-SELECT 
-    t.*,
-    c.razon_social AS razon_social,
-    m.descripcion AS Maquina1descripcion
-FROM ordentrabajo t
-JOIN empresa e ON t.empresa = e.id
-LEFT JOIN cliente c ON t.rutcliente = c.rut;
-LEFT JOIN maquina m ON t.maquina1 = m.codigo;
+    ALGORITHM = UNDEFINED
+    DEFINER = `root`@`localhost`
+    SQL SECURITY DEFINER
+    VIEW vw_ordentrabajo AS
+    SELECT 
+        t.*,
+        c.razon_social AS razon_social,
+        m.descripcion AS Maquina1descripcion
+    FROM ordentrabajo t
+    JOIN empresa e ON t.empresa = e.id
+    LEFT JOIN cliente c ON t.rutcliente = c.rut
+    LEFT JOIN maquina m ON t.maquina1 = m.codigo;
 
 -- Vista para trabajar con las Maquinas con pendientes
 CREATE OR REPLACE VIEW vw_maquinas_with_pending_orders AS 

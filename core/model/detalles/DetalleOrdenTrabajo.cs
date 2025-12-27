@@ -12,4 +12,19 @@ public class DetalleOrdenTrabajo : IModel
     public long Total { get; set; }
     public int Tamanio { get; set; }
     public int Cplie { get; set; }
+
+    public DetalleOrdenTrabajo Clone()
+    {
+        return new DetalleOrdenTrabajo
+        {
+            Id = Id,
+            Folio = Folio,
+            TipoPapel = TipoPapel,
+            Cantidad = Cantidad,
+            Sobr = Sobr,
+            Total = Total,
+            Tamanio = Tamanio,
+            Cplie = Cplie
+        };
+    }
 }

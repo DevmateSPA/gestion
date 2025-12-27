@@ -87,9 +87,7 @@ public partial class FacturaCompraPage : Page
         if (factura == null)
             return;
 
-        var detallesOriginales = (await _viewModel.LoadDetailsByFolio(factura.Folio))
-            .Select(d => (FacturaCompraProducto)d.Clone())
-            .ToList();
+        var detallesOriginales = await _viewModel.LoadDetailsByFolio(factura.Folio);
 
         factura.Detalles = new ObservableCollection<FacturaCompraProducto>(
             detallesOriginales.Select(d => (FacturaCompraProducto)d.Clone()));
@@ -108,8 +106,7 @@ public partial class FacturaCompraPage : Page
                 await _viewModel.SincronizarDetalles(
                     detallesOriginales,
                     facturaEditada.Detalles,
-                    facturaEditada
-                );
+                    facturaEditada);
             },
             titulo: titulo
         );

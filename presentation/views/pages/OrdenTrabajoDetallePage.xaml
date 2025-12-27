@@ -45,7 +45,7 @@
         </StackPanel>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="20">
+            <StackPanel x:Name="spCampos" Margin="20">
 
                 <!-- DATOS PRINCIPALES -->
                 <GroupBox Header="Datos Principales" Margin="0 0 0 15">
@@ -263,7 +263,6 @@
                               ItemsSource="{Binding Detalles}">
 
                         <DataGrid.Columns>
-
                             <DataGridTextColumn Header="Tipo Papel" Width="*" Binding="{Binding TipoPapel}"/>
                             <DataGridTextColumn Header="Cantidad" Width="80" Binding="{Binding Cantidad}"/>
                             <DataGridTextColumn Header="Sobras" Width="80" Binding="{Binding Sobras}"/>

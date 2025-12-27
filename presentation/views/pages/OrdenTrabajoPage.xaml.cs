@@ -12,6 +12,7 @@ using Gestion.core.interfaces.service;
 using System.Collections.ObjectModel;
 using Gestion.core.model.detalles;
 using Gestion.core.session;
+using Gestion.helpers;
 
 namespace Gestion.presentation.views.pages;
 
@@ -60,17 +61,20 @@ public partial class OrdenTrabajoPage : Page
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var ordenTrabajo = new OrdenTrabajo();
-        ordenTrabajo.Empresa = SesionApp.IdEmpresa;
-        var ventana = new OrdenTrabajoDetallePage(this, ordenTrabajo);
+        var ordenTrabajo = new OrdenTrabajo
+        {
+            Empresa = SesionApp.IdEmpresa
+        };
 
-        if (ventana.ShowDialog() != true)
-            return; 
-
-        var ordenTrabajoEditado = (OrdenTrabajo)ventana.EntidadEditada;
-
-        await _viewModel.Save(ordenTrabajoEditado);
-        await _viewModel.SincronizarDetalles([], ordenTrabajoEditado.Detalles, ordenTrabajoEditado);
+    EditorOtHelper.Abrir(
+        owner: Window.GetWindow(this),
+        entidad: ordenTrabajo,
+        accion: _viewModel.Save,
+        syncDetalles: ordenTrabajoEditada =>
+            _viewModel.SincronizarDetalles(
+                [],
+                ordenTrabajoEditada.Detalles,
+                ordenTrabajoEditada));
     }
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
@@ -90,19 +94,17 @@ public partial class OrdenTrabajoPage : Page
         if (ordenTrabajo == null)
             return;
 
-        ordenTrabajo.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(
-            await _viewModel.LoadDetailsByFolio(ordenTrabajo.Folio));
+        ordenTrabajo.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(await _viewModel.LoadDetailsByFolio(ordenTrabajo.Folio));
 
-        var ventana = new OrdenTrabajoDetallePage(this, ordenTrabajo);
-        if (ventana.ShowDialog() != true)
-        {
-            return;
-        }
-
-        var ordenTrabajoEditada = (OrdenTrabajo)ventana.EntidadEditada;
-
-        await _viewModel.Update(ordenTrabajoEditada);
-        await _viewModel.SincronizarDetalles(ordenTrabajo.Detalles, ordenTrabajoEditada.Detalles, ordenTrabajoEditada);
+        EditorOtHelper.Abrir(
+            owner: Window.GetWindow(this),
+            entidad: ordenTrabajo,
+            accion: _viewModel.Update,
+            syncDetalles: ordenTrabajoEditada =>
+                _viewModel.SincronizarDetalles(
+                    ordenTrabajo.Detalles,
+                    ordenTrabajoEditada.Detalles,
+                    ordenTrabajoEditada));
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)

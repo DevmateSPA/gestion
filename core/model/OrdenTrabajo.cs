@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
 using Gestion.core.model.detalles;
@@ -14,6 +15,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     public DateTime Fecha { get; set; } = DateTime.Now;
     [Rut]
     public string RutCliente { get; set; } = string.Empty;
+    [NotMapped]
     public string Razon_social { get; set; } = string.Empty;
     public string Descripcion { get; set; } = string.Empty;
     public int Cantidad { get; set; } = 0;
@@ -34,6 +36,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     public bool ClienteProporcionaPapel { get; set; } = false;
     public string TipoImpresion { get; set; } = string.Empty;
     public string Maquina1 { get; set; } = string.Empty;
+    [NotMapped]
     public string Maquina1descripcion { get; set; } = string.Empty;
     public string Maquina2 { get; set; } = string.Empty;
     public string Pin { get; set; } = string.Empty;
@@ -49,21 +52,21 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     public string Tintas4 { get; set; } = string.Empty;
     public long Empresa { get; set; } = 0;
     public int Blockde { get; set; } = 0;
-    public string BlockAncho { get; set; } = string.Empty;
-    public string BlockAlto { get; set; } = string.Empty;
+    public int BlockAncho { get; set; } = 0;
+    public int BlockLargo { get; set; } = 0;
     public string Observacion1 { get; set; } = string.Empty;
     public int Talonariode { get; set; } = 0;
-    public string TalonarioAncho { get; set; } = string.Empty;
-    public string TalonarioAlto { get; set; } = string.Empty;
+    public int TalonarioAncho { get; set; } = 0;
+    public int TalonarioLargo { get; set; } = 0;
     public string Observacion2 { get; set; } = string.Empty;
     public int Paquetede { get; set; } = 0;
-    public string Paqueteca { get; set; } = string.Empty;
+    public int Paqueteca { get; set; } = 0;
     public string Observacion3 { get; set; } = string.Empty;
     public int Resmade { get; set; } = 0;
-    public string Resmaca { get; set; } = string.Empty;
+    public int Resmaca { get; set; } = 0;
     public string Observacion4 { get; set; } = string.Empty;
     public int Fajadode { get; set; } = 0;
-    public string Fajadoca { get; set; } = string.Empty;
+    public int Fajadoca { get; set; } = 0;
     public string Observacion5 { get; set; } = string.Empty;
     [Fecha]
     public DateTime FechaTermino { get; set; } = DateTime.Now;
@@ -81,8 +84,8 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     public string Observacion7 { get; set; } = string.Empty;
 
     // Operarios
-    public string Operario1 { get; set; } = string.Empty;
-    public string Operario2 { get; set; } = string.Empty;
+    public string Operador1 { get; set; } = string.Empty;
+    public string Operador2 { get; set; } = string.Empty;
     public string Observacion8 { get; set; } = string.Empty;
     public string Observacion9 { get; set; } = string.Empty;
 }

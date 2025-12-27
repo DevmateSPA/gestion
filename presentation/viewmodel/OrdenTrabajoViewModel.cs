@@ -77,8 +77,8 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
     }
 
     public async Task SincronizarDetalles(
-        IList<DetalleOrdenTrabajo> originales,
-        IList<DetalleOrdenTrabajo> editados,
+        IEnumerable<DetalleOrdenTrabajo> originales,
+        IEnumerable<DetalleOrdenTrabajo> editados,
         OrdenTrabajo ordenTrabajo)
     {
         List<long> paraEliminar = originales.Any() ? 

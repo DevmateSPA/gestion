@@ -1,10 +1,13 @@
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Gestion.core.model;
+using Gestion.core.model.detalles;
 using Gestion.core.session;
+using Gestion.helpers;
 using Gestion.presentation.utils;
 using Gestion.presentation.views.util;
 using Gestion.presentation.views.windows;
@@ -13,64 +16,99 @@ namespace Gestion.presentation.views.pages;
 
 public partial class OrdenTrabajoDetallePage : Window
 {
-    private readonly object _entidadOriginal;
+    private readonly OrdenTrabajo _entidadOriginal;
+    private readonly Func<OrdenTrabajo, Task<bool>> _accion;
+    private readonly Func<OrdenTrabajo, Task> _syncDetalles;
 
-    public object EntidadEditada { get; private set; }
+    public OrdenTrabajo EntidadEditada { get; private set; }
 
-    public OrdenTrabajoDetallePage(object padre, object entidad)
+    public OrdenTrabajoDetallePage(
+        OrdenTrabajo entidad,
+        Func<OrdenTrabajo, Task<bool>> accion,
+        Func<OrdenTrabajo, Task> syncDetalles)
     {
         InitializeComponent();
-        if (padre is Window windowPadre)
-        {
-            this.Owner = windowPadre; 
-        }
-        else if (padre is Page pagePadre)
-        {
-            this.Owner = Window.GetWindow(pagePadre);
-        }
 
         _entidadOriginal = entidad;
+        _accion = accion;
+        _syncDetalles = syncDetalles;
 
-        // Clonado simple de la entidad
-        EntidadEditada = Activator.CreateInstance(entidad.GetType())!;
-        foreach (var prop in entidad.GetType().GetProperties())
-        {
-            if (prop.CanWrite)
-                prop.SetValue(EntidadEditada, prop.GetValue(entidad));
-        }
-
+        EntidadEditada = ClonarEntidad(_entidadOriginal);
         DataContext = EntidadEditada;
 
-        Loaded += (_, _) =>
-        {
-            BindearCamposDinamico();
-        };
+        Loaded += OnLoaded;
+        PreviewKeyDown += OnPreviewKeyDown;
+    }
 
-        // ESC para cerrar
-        PreviewKeyDown += (s, e) =>
+    private static OrdenTrabajo ClonarEntidad(OrdenTrabajo entidad)
+    {
+        var tipo = entidad.GetType();
+        var clon = (OrdenTrabajo)Activator.CreateInstance(tipo)!;
+
+        foreach (var prop in tipo.GetProperties())
         {
-            if (e.Key == Key.Escape)
-                DialogResult = false;
-        };
+            if (!prop.CanWrite)
+                continue;
+
+            if (prop.Name == nameof(OrdenTrabajo.Detalles))
+                continue;
+
+            prop.SetValue(clon, prop.GetValue(entidad));
+        }
+
+        clon.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(entidad.Detalles.Select(d => d.Clone()));
+
+        return clon;
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        BindearCamposDinamico();
+    }
+
+    private void OnPreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Escape)
+            DialogResult = false;
     }
 
     // =========================
     // GUARDAR
     // =========================
-    private void BtnGuardar_Click(object sender, RoutedEventArgs e)
+    private bool Validar()
     {
-        var errores = ValidationHelper.GetValidationErrors(this);
-        if (errores.Count != 0)
+        var errores = ValidationHelper.GetValidationErrors(spCampos);
+
+        if (errores.Count == 0)
+            return true;
+
+        DialogUtils.MostrarErroresValidacion(errores);
+        return false;
+    }
+
+    private async Task EjecutarAcción()
+    {
+        if (_accion != null)
         {
-            DialogUtils.MostrarErroresValidacion(errores);
-            return;
+            bool ok = await _accion(EntidadEditada);
+
+            if (!ok)
+                return;
+
+            await _syncDetalles(EntidadEditada);
         }
 
-        EntidadEditada.GetType()
-            .GetProperty("Empresa")?
-            .SetValue(EntidadEditada, SesionApp.IdEmpresa);
-
+        DialogUtils.MostrarInfo(Mensajes.OperacionExitosa, "Éxito");
         DialogResult = true;
+        Close();
+    }
+
+    private async void BtnGuardar_Click(object sender, RoutedEventArgs e)
+    {
+        if (!Validar())
+            return;
+
+        await EjecutarAcción();
     }
 
     private void BtnCancelar_Click(object sender, RoutedEventArgs e)
