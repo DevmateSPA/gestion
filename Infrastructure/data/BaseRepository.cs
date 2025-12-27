@@ -414,7 +414,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return await FindWhereFrom(
             tableOrView: _viewName,
             where: "empresa = @empresa",
-            orderBy: null,
+            orderBy: "fecha DESC",
             limit: null,
             offset: null,
             parameters: parameters);
@@ -442,7 +442,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
 
         return await FindPageWhere(
             where: "empresa = @empresa",
-            orderBy: null,
+            orderBy: "fecha DESC",
             pageNumber: pageNumber,
             pageSize: pageSize,
             parameters: parameters);

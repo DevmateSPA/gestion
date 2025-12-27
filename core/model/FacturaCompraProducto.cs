@@ -3,24 +3,27 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Gestion.core.attributes;
 using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
+using Gestion.core.model.detalles;
 
 namespace Gestion.core.model;
 
-public class FacturaCompraProducto : IDetalle
+public class FacturaCompraProducto : Detalle
 {
-    [Visible(false)]
-    public long Id { get; set; } = 0;
-    [Required]
-    public string Folio { get; set; } = string.Empty;
-    public string Tipo { get; set; } = string.Empty;
-    public string Producto { get; set; } = string.Empty;
     public string Productonombre { get; set; } = string.Empty;
-    public long Entrada { get; set; }
-    [Visible(false)]
-    public long Salida { get; set; }
-    public string Maquina { get; set; } = string.Empty;
-    public string Operario { get; set; } = string.Empty;
-    [Fecha]
-    [Visible(false)]
-    public DateTime Fecha { get; set; } = DateTime.Now;
+    public override Detalle Clone()
+    {
+        return new FacturaCompraProducto
+        {
+            Id = Id,
+            Folio = Folio,
+            Tipo = Tipo,
+            Producto = Producto,
+            Entrada = Entrada,
+            Salida = Salida,
+            Maquina = Maquina,
+            Operario = Operario,
+            Fecha = Fecha,
+            Productonombre = Productonombre
+        };
+    }
 }

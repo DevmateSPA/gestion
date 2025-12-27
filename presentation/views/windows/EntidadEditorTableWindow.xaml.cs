@@ -1,54 +1,85 @@
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Markup;
 using Gestion.core.attributes.validation;
+using Gestion.core.interfaces.model;
+using Gestion.core.model;
+using Gestion.helpers;
 using Gestion.presentation.views.util;
 
 namespace Gestion.presentation.views.windows;
 
 public partial class EntidadEditorTableWindow : Window
 {
-    private readonly object _entidadOriginal;
-    private readonly IEnumerable<object>? _detalles;
+    private readonly FacturaCompra _entidadOriginal;
+    private readonly IEnumerable<FacturaCompraProducto>? _detalles;
+    private readonly Func<FacturaCompra, Task<bool>> _accion;
+    private readonly Func<FacturaCompra, Task> _syncDetalles;
 
-    public object EntidadEditada { get; private set; }
+    public FacturaCompra EntidadEditada { get; private set; }
 
-    public EntidadEditorTableWindow(Page padre, object entidad, IEnumerable<object>? detalles, string titulo = "Ventana con tabla")
+    public EntidadEditorTableWindow(
+        FacturaCompra entidad,
+        IEnumerable<FacturaCompraProducto> detalles,
+        Func<FacturaCompra, Task<bool>> accion,
+        Func<FacturaCompra, Task> syncDetalles,
+        string titulo = "Ventana con tabla")
     {
         InitializeComponent();
-        this.Owner = Window.GetWindow(padre);
         Title = titulo;
 
         _entidadOriginal = entidad;
+        _accion = accion;
+        _syncDetalles = syncDetalles;
         _detalles = detalles;
 
-        // Clonar la entidad original
-        EntidadEditada = Activator.CreateInstance(entidad.GetType())!;
+        ClonarEntidad(entidad);
+
+        InicializarUI();
+        InicializarEventos();
+    }
+
+    private void ClonarEntidad(FacturaCompra entidad)
+    {
+        EntidadEditada = (FacturaCompra)Activator.CreateInstance(entidad.GetType())!;
+
         foreach (var prop in entidad.GetType().GetProperties())
         {
             if (prop.CanWrite)
                 prop.SetValue(EntidadEditada, prop.GetValue(entidad));
         }
+    }
 
+    private void InicializarUI()
+    {
         GenerarCampos();
         CargarTabla();
+        EnfocarPrimerControl();
+    }
 
-        // Focus al primer campo (TextBox o DatePicker)
-        var primerControl = spCampos.Children.OfType<StackPanel>()
-                .SelectMany(x => x.Children.OfType<StackPanel>())
-                .SelectMany(x => x.Children.OfType<Control>().Where(c => c is TextBox || c is DatePicker))
-                .FirstOrDefault();
+    private void EnfocarPrimerControl()
+    {
+        var primerControl = spCampos.Children
+            .OfType<StackPanel>()
+            .SelectMany(x => x.Children.OfType<StackPanel>())
+            .SelectMany(x => x.Children
+                .OfType<Control>()
+                .Where(c => c is TextBox || c is DatePicker))
+            .FirstOrDefault();
+
         primerControl?.Focus();
+    }
 
-        this.PreviewKeyDown += (s, e) =>
+    private void InicializarEventos()
+    {
+        PreviewKeyDown += (_, e) =>
         {
             if (e.Key == Key.Escape)
             {
-                this.DialogResult = false;
-                this.Close();
+                DialogResult = false;
+                Close();
             }
         };
     }
@@ -175,18 +206,40 @@ public partial class EntidadEditorTableWindow : Window
             dgDetalles.ItemsSource = _detalles;
     }
 
-    private void BtnGuardar_Click(object sender, RoutedEventArgs e)
+    private bool Validar()
     {
         var errores = ValidationHelper.GetValidationErrors(spCampos);
 
-        if (errores.Count != 0)
+        if (errores.Count == 0)
+            return true;
+
+        DialogUtils.MostrarErroresValidacion(errores);
+        return false;
+    }
+
+    private async Task EjecutarAcción()
+    {
+        if (_accion != null)
         {
-            DialogUtils.MostrarErroresValidacion(errores);
-            return;
+            bool ok = await _accion(EntidadEditada);
+
+            if (!ok)
+                return;
+
+            await _syncDetalles(EntidadEditada);
         }
 
+        DialogUtils.MostrarInfo(Mensajes.OperacionExitosa, "Éxito");
         DialogResult = true;
         Close();
+    }
+
+    private async void BtnGuardar_Click(object sender, RoutedEventArgs e)
+    {
+        if (!Validar())
+            return;
+
+        await EjecutarAcción();
     }
 
     private void BtnCancelar_Click(object sender, RoutedEventArgs e)

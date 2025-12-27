@@ -1,3 +1,4 @@
+using Gestion.core.interfaces.model;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
 using Gestion.helpers;
@@ -50,8 +51,8 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
     }
 
     public async Task SincronizarDetalles(
-        IList<FacturaCompraProducto> originales,
-        IList<FacturaCompraProducto> editados,
+        IEnumerable<FacturaCompraProducto> originales,
+        IEnumerable<FacturaCompraProducto> editados,
         FacturaCompra factura)
     {
         List<long> paraEliminar = originales.Any() ? 

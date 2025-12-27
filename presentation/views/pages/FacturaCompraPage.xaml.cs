@@ -7,6 +7,7 @@ using Gestion.presentation.views.windows;
 using Gestion.presentation.views.util;
 using Gestion.core.interfaces.service;
 using System.Collections.ObjectModel;
+using Gestion.helpers;
 
 namespace Gestion.presentation.views.pages;
 
@@ -55,47 +56,63 @@ public partial class FacturaCompraPage : Page
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        var factura = new FacturaCompra();
-        var ventana = new EntidadEditorTableWindow(this, factura, factura.Detalles, "Agregar Factura");
-
-        if (ventana.ShowDialog() != true)
-            return;
-
-        var facturaEditada = (FacturaCompra)ventana.EntidadEditada;
-        await _viewModel.Save(facturaEditada);
-        await _viewModel.SincronizarDetalles([], facturaEditada.Detalles, facturaEditada);
+        EditorTableHelper.Abrir(
+            owner: Window.GetWindow(this),
+            entidadConDetalles: new FacturaCompra(),
+            detalles: [],
+            accion: async entidad => await _viewModel.Save((FacturaCompra)entidad),
+            syncDetalles: async facturaEditada =>
+                await _viewModel.SincronizarDetalles(
+                    Enumerable.Empty<FacturaCompraProducto>(),
+                    facturaEditada.Detalles.Cast<FacturaCompraProducto>(),
+                    facturaEditada),
+            titulo: "Agregar Factura de Compra");
     }
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
         if (_dataGrid.SelectedItem is FacturaCompra facturaCompraSeleccionado)
-            await editar(facturaCompraSeleccionado);
+            await Editar(facturaCompraSeleccionado);
     }
 
     private async void dgFacturasCompra_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (_dataGrid.SelectedItem is FacturaCompra facturaCompraSeleccionado)
-            await editar(facturaCompraSeleccionado);
+            await Editar(facturaCompraSeleccionado);
     }
 
     // Metodo Editar -------------------------------------------- |
-    private async Task editar(FacturaCompra factura, string titulo = "Editar Facturas de Compra")
+    private async Task Editar(FacturaCompra factura, string titulo = "Editar Factura de Compra")
     {
         if (factura == null)
             return;
 
+        var detallesOriginales = (await _viewModel.LoadDetailsByFolio(factura.Folio))
+            .Select(d => (FacturaCompraProducto)d.Clone())
+            .ToList();
+
         factura.Detalles = new ObservableCollection<FacturaCompraProducto>(
-            await _viewModel.LoadDetailsByFolio(factura.Folio));
+            detallesOriginales.Select(d => (FacturaCompraProducto)d.Clone()));
 
-        var ventana = new EntidadEditorTableWindow(this, factura, factura.Detalles, titulo);
-
-        if (ventana.ShowDialog() != true)
-            return;
-
-        var facturaEditada = (FacturaCompra)ventana.EntidadEditada;
-
-        await _viewModel.Update(facturaEditada);
-        await _viewModel.SincronizarDetalles(factura.Detalles, facturaEditada.Detalles, facturaEditada);
+        EditorTableHelper.Abrir(
+            owner: Window.GetWindow(this),
+            entidadConDetalles: factura,
+            detalles: factura.Detalles,
+            accion: async facturaEditada =>
+            {
+                await _viewModel.Update(facturaEditada);
+                return true;
+            },
+            syncDetalles: async facturaEditada =>
+            {
+                await _viewModel.SincronizarDetalles(
+                    detallesOriginales,
+                    facturaEditada.Detalles,
+                    facturaEditada
+                );
+            },
+            titulo: titulo
+        );
     }
 
     // ------------------------------------------------------ |
