@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Markup;
 using Gestion.core.attributes.validation;
@@ -54,26 +55,30 @@ public partial class EntidadEditorWindow : Window
         EnfocarPrimerControl();
     }
 
-    private void CargarMemoSiAplica(object entidad)
+private void CargarMemoSiAplica(object entidad)
+{
+    string? propiedadMemo = entidad switch
     {
-        switch (entidad)
-        {
-            case Gestion.core.model.Factura f:
-                spMemo.Visibility = Visibility.Visible;
-                txtMemo.Text = f.Memo;
-                break;
+        Gestion.core.model.Factura => "Memo",
+        Gestion.core.model.NotaCredito => "Memo",
+        Gestion.core.model.GuiaDespacho => "Memo",
+        _ => null
+    };
 
-            case Gestion.core.model.NotaCredito nc:
-                spMemo.Visibility = Visibility.Visible;
-                txtMemo.Text = nc.Memo;
-                break;
+    if (propiedadMemo == null)
+        return;
 
-            case Gestion.core.model.GuiaDespacho gd:
-                spMemo.Visibility = Visibility.Visible;
-                txtMemo.Text = gd.Memo;
-                break;
-        }
-    }
+    spMemo.Visibility = Visibility.Visible;
+
+    var binding = new Binding(propiedadMemo)
+    {
+        Source = EntidadEditada,
+        Mode = BindingMode.TwoWay,
+        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+    };
+
+    txtMemo.SetBinding(TextBox.TextProperty, binding);
+}
 
     private void EnfocarPrimerControl()
     {
