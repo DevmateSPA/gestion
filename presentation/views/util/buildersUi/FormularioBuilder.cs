@@ -13,25 +13,15 @@ public class FormularioBuilder
         Dictionary<PropertyInfo, Control> controles,
         int maxPorFila = 3)
     {
-        var props = FormularioReflectionHelper.ObtenerPropiedadesFormulario(entidad);
-
-        // Inicializamos 
         contenedor.Children.Clear();
         controles.Clear();
 
-        StackPanel? filaActual = null;
+        var grupos = ObtenerGruposFormulario(entidad);
 
-        for (int i = 0; i < props.Count; i++)
+        foreach (var grupo in grupos)
         {
-            // Cumple con necesitar más espacio??
-            if (i % maxPorFila == 0)
-            {
-                filaActual = CrearFila();
-                contenedor.Children.Add(filaActual);
-            }
-
-            var bloque = CrearBloqueCampo(props[i], entidad, controles);
-            filaActual!.Children.Add(bloque);
+            var groupBox = CrearGroupBox(grupo, entidad, controles, maxPorFila);
+            contenedor.Children.Add(groupBox);
         }
     }
 
@@ -76,6 +66,36 @@ public class FormularioBuilder
             Orientation = Orientation.Vertical,
             Width = 310,
             Children = { label, control }
+        };
+    }
+
+    private GroupBox CrearGroupBox(
+        GrupoFormulario grupo,
+        object entidad,
+        Dictionary<PropertyInfo, Control> controles,
+        int maxPorFila)
+    {
+        var panel = new StackPanel { Margin = new Thickness(10) };
+
+        StackPanel? filaActual = null;
+
+        for (int i = 0; i < grupo.Propiedades.Count; i++)
+        {
+            if (i % maxPorFila == 0)
+            {
+                filaActual = CrearFila();
+                panel.Children.Add(filaActual);
+            }
+
+            var bloque = CrearBloqueCampo(grupo.Propiedades[i], entidad, controles);
+            filaActual!.Children.Add(bloque);
+        }
+
+        return new GroupBox
+        {
+            Header = grupo.Nombre,
+            Margin = new Thickness(0, 0, 0, 15),
+            Content = panel
         };
     }
 }
