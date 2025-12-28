@@ -17,7 +17,7 @@ public class Banco : IEmpresa
     [Orden(1)]
     public string Nombre { get; set; } = string.Empty;
     [Nombre("Dirección")]
-    [Grupo("Te paseo", 1)]
+    [Grupo("Datos Generales", 1)]
     [Orden(2)]
     public string Direccion { get; set; } = string.Empty;
     [Visible(false)]
