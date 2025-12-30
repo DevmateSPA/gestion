@@ -65,21 +65,21 @@ public class Cliente : IEmpresa
     // SALDOS
     // ===============================
 
-    [Grupo("Saldos", 4)]
+    [Grupo("DebI", 4)]
     [Orden(0)]
     public int debi { get; set; }
 
-    [Nombre("Debe Inicial")]
+    [Nombre("HabI")]
     [Grupo("Saldos", 4)]
     [Orden(1)]
     public int habi { get; set; }
 
-    [Nombre("Haber Inicial")]
+    [Nombre("Debe")]
     [Grupo("Saldos", 4)]
     [Orden(2)]
     public long Debe { get; set; }
 
-    [Nombre("Haber")]
+    [Nombre("Habe")]
     [Grupo("Saldos", 4)]
     [Orden(3)]
     public long Habe { get; set; }
