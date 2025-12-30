@@ -8,7 +8,7 @@ namespace Gestion.Infrastructure.data;
 public class NotaCreditoRepository : BaseRepository<NotaCredito>, INotaCreditoRepository
 {
     public NotaCreditoRepository(IDbConnectionFactory connectionFactory)
-        : base(connectionFactory, "notacredito", "vw_maquina") {}
+        : base(connectionFactory, "notacredito", "vw_notacredito") {}
 
     public async Task<bool> ExisteFolio(
         string folio,
