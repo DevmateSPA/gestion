@@ -33,7 +33,7 @@ public class FacturaCompra : IEmpresa, IConDetalles<FacturaCompraProducto>, INot
     [Grupo("Datos del Documento", GRUPO_DOCUMENTO)]
     [Orden(2)]
     [Fecha]
-    public DateTime? FechaVencimiento { get; set; } = null;
+    public DateTime Fechavencimiento { get; set; }= DateTime.Now;
 
     [Nombre("Tipo de Factura")]
     [Required]
@@ -68,7 +68,7 @@ public class FacturaCompra : IEmpresa, IConDetalles<FacturaCompraProducto>, INot
     [Nombre("Total")]
     [Grupo("Totales", GRUPO_TOTALES)]
     [Orden(3)]
-    public int Debe { get; set; }
+    public int Total { get; set; }
     [Nombre("Haber")]
     [Grupo("Totales", GRUPO_TOTALES)]
     [Orden(4)]
