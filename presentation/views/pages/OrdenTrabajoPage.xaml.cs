@@ -59,7 +59,7 @@ public partial class OrdenTrabajoPage : Page
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
 
-    private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
+    private void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
         var ordenTrabajo = new OrdenTrabajo
         {
