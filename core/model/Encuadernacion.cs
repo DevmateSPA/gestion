@@ -15,25 +15,17 @@ public class Encuadernacion : IEmpresa
 
     [Nombre("Código")]
     [Required]
-    [Grupo("Datos Generales", 1)]
     [Orden(0)]
     public string Codigo { get; set; } = string.Empty;
 
     [Nombre("Descripción")]
     [Required]
-    [Grupo("Datos Generales", 1)]
     [Orden(1)]
     public string Descripcion { get; set; } = string.Empty;
 
-    [Nombre("Valor por mil")]
-    [Grupo("Datos Generales", 1)]
+    [Nombre("Valor por Mil")]
     [Orden(2)]
     public int Valorpormil { get; set; } = 0;
-
-
-    // ===============================
-    // CONTROL
-    // ===============================
 
     [Visible(false)]
     public long Empresa { get; set; }

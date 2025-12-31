@@ -13,6 +13,7 @@ public class Cliente : IEmpresa
     // DATOS DEL CLIENTE
     // ===============================
 
+    [Nombre("Rut Cliente")]
     [Rut]
     [Grupo("Datos del Cliente", 1)]
     [Orden(0)]
@@ -23,6 +24,7 @@ public class Cliente : IEmpresa
     [Orden(1)]
     public string Razon_Social { get; set; } = string.Empty;
 
+    [Nombre("Giro Comercial")]
     [Grupo("Datos del Cliente", 1)]
     [Orden(2)]
     public string Giro { get; set; } = string.Empty;
@@ -65,12 +67,12 @@ public class Cliente : IEmpresa
     // SALDOS
     // ===============================
 
-    [Nombre("DebeI")]
+    [Nombre("Debe")]
     [Grupo("Saldos Iniciales", 4)]
     [Orden(0)]
     public int Debi { get; set; }
 
-    [Nombre("HabI")]
+    [Nombre("Haber")]
     [Grupo("Saldos Iniciales", 4)]
     [Orden(1)]
     public int Habi { get; set; }
@@ -80,7 +82,7 @@ public class Cliente : IEmpresa
     [Orden(2)]
     public long Debe { get; set; }
 
-    [Nombre("Habe")]
+    [Nombre("Haber")]
     [Grupo("Saldos", 4)]
     [Orden(3)]
     public long Habe { get; set; }

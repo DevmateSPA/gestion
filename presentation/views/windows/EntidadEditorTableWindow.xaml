@@ -30,9 +30,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Producto" Binding="{Binding Producto}" Width="*" />
                     <DataGridTextColumn Header="Descripción" Binding="{Binding Productonombre}" Width="*" />
-                    <DataGridTextColumn Header="Entrada" Binding="{Binding Entrada}" Width="*" />
-                    <!--<DataGridTextColumn Header="Salida" Binding="{Binding Salida}" Width="*" />
-                    <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha}" Width="*" />-->
+                    <DataGridTextColumn Header="Cantidad" Binding="{Binding Entrada}" Width="*" />
                 </DataGrid.Columns>
             </DataGrid>
             </StackPanel>

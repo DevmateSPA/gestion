@@ -42,7 +42,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Código" Binding="{Binding Codigo}" Width="*" />
                 <DataGridTextColumn Header="Descripción" Binding="{Binding Descripcion}" Width="2*" />
-                <DataGridTextColumn Header="Valor por mil" Binding="{Binding Valorpormil, StringFormat={}{0:N0}}" Width="*" />
+                <DataGridTextColumn Header="Valor por mil" Binding="{Binding Valorpormil, StringFormat=C0}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
 

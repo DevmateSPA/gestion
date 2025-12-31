@@ -14,21 +14,12 @@ public class Operario : IEmpresa
 
     [Nombre("Código")]
     [Required]
-    [Grupo("Datos Generales", 1)]
     [Orden(0)]
     public string Codigo { get; set; } = string.Empty;
 
     [Required]
-    [Nombre("Nombre")]
-    [Grupo("Datos Generales", 1)]
     [Orden(1)]
     public string Nombre { get; set; } = string.Empty;
 
-
-    // ===============================
-    // CONTROL
-    // ===============================
-
-    [Visible(false)]
-    public long Empresa { get; set; }
+    [Visible(false)] public long Empresa { get; set; }
 }

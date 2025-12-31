@@ -44,7 +44,6 @@
                     <DataGridTextColumn Header="Rut" Binding="{Binding Rut}" Width="*" />
                     <DataGridTextColumn Header="Razón Social" Binding="{Binding Razon_Social}" Width="*" />
                     <DataGridTextColumn Header="Giro" Binding="{Binding Giro}" Width="*" />
-                    <DataGridTextColumn Header="Dirección" Binding="{Binding Direccion}" Width="*" />
                 </DataGrid.Columns>
                 </DataGrid>
 

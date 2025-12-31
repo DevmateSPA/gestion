@@ -12,36 +12,38 @@ public class Proveedor : IEmpresa
     // DATOS GENERALES
     // ===============================
 
+    [Nombre("Rut Proveedor")]
     [Rut]
-    [Grupo("Datos Generales", 1)]
+    [Grupo("Datos del Proveedor", 1)]
     [Orden(0)]
     public string Rut { get; set; } = string.Empty;
 
     [Nombre("Razón Social")]
-    [Grupo("Datos Generales", 1)]
+    [Grupo("Datos del Proveedor", 1)]
     [Orden(1)]
     public string Razon_Social { get; set; } = string.Empty;
 
-    [Grupo("Datos Generales", 1)]
+    [Nombre("Giro Comercial")]
+    [Grupo("Datos del Proveedor", 1)]
     [Orden(2)]
     public string Giro { get; set; } = string.Empty;
 
     [Nombre("Dirección")]
-    [Grupo("Datos Generales", 1)]
+    [Grupo("Datos del Proveedor", 1)]
     [Orden(3)]
     public string Direccion { get; set; } = string.Empty;
 
-    [Grupo("Datos Generales", 1)]
+    [Grupo("Datos del Proveedor", 1)]
     [Orden(4)]
     public string Ciudad { get; set; } = string.Empty;
 
     [Nombre("Teléfono")]
-    [Grupo("Datos Generales", 1)]
-    [Orden(5)]
+    [Grupo("Contacto", 2)]
+    [Orden(0)]
     public string Telefono { get; set; } = string.Empty;
 
-    [Grupo("Datos Generales", 1)]
-    [Orden(6)]
+    [Grupo("Contacto", 2)]
+    [Orden(1)]
     public string Fax { get; set; } = string.Empty;
 
 
@@ -49,12 +51,14 @@ public class Proveedor : IEmpresa
     // OBSERVACIONES
     // ===============================
 
-    [Nombre("Observaciones")]
-    [Grupo("Observaciones", 2)]
+    [Nombre("Observaciones 1")]
+    [Grupo("Observaciones", 3)]
     [Orden(0)]
     public string Observacion1 { get; set; } = string.Empty;
 
-    [Visible(false)]
+    [Nombre("Observaciones 2")]
+    [Grupo("Observaciones", 3)]
+    [Orden(2)]
     public string Observacion2 { get; set; } = string.Empty;
 
 
@@ -62,13 +66,13 @@ public class Proveedor : IEmpresa
     // SALDOS INICIALES
     // ===============================
 
-    [Nombre("Debe inicial")]
-    [Grupo("Saldos Iniciales", 3)]
+    [Nombre("Debe")]
+    [Grupo("Saldos Iniciales", 4)]
     [Orden(0)]
     public int Debi { get; set; }
 
-    [Nombre("Haber inicial")]
-    [Grupo("Saldos Iniciales", 3)]
+    [Nombre("Haber")]
+    [Grupo("Saldos Iniciales", 4)]
     [Orden(1)]
     public int Habi { get; set; }
 
@@ -77,23 +81,18 @@ public class Proveedor : IEmpresa
     // MOVIMIENTOS / CONTROL
     // ===============================
 
-    [Grupo("Saldos", 4)]
+    [Grupo("Saldos", 5)]
     [Orden(0)]
     public long Debe { get; set; }
 
     [Nombre("Haber")]
-    [Grupo("Saldos", 4)]
+    [Grupo("Saldos", 5)]
     [Orden(1)]
     public long Habe { get; set; }
 
-    [Grupo("Saldos", 4)]
+    [Grupo("Saldos", 5)]
     [Orden(2)]
     public long Saldo { get; set; }
-
-
-    // ===============================
-    // SISTEMA
-    // ===============================
 
     [Visible(false)]
     public long Empresa { get; set; }

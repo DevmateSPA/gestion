@@ -35,15 +35,9 @@ public abstract class FacturaBase : IEmpresa
     public string RutCliente { get; set; } = string.Empty;
 
     [Nombre("Nombre")]
-    [Required]
     [Grupo("Cliente", 2)]
     [Orden(1)]
     public string NombreCliente { get; set; } = string.Empty;
-
-    [Nombre("Dirección")]
-    [Grupo("Cliente", 2)]
-    [Orden(2)]
-    public string DireccionCliente { get; set; } = string.Empty;
 
 
     // ===============================
@@ -64,16 +58,6 @@ public abstract class FacturaBase : IEmpresa
     [Grupo("Totales", 3)]
     [Orden(2)]
     public long Total { get; set; }
-
-
-    // ===============================
-    // OBSERVACIONES
-    // ===============================
-
-    [Nombre("Observaciones")]
-    [Grupo("Observaciones", 4)]
-    [Orden(0)]
-    public string Observacion { get; set; } = string.Empty;
 
 
     // ===============================
