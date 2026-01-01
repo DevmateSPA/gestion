@@ -39,7 +39,8 @@ public class Factura : FacturaBase
     [Nombre("Nombre")]
     [Grupo("Cliente", GRUPO_CLIENTE)]
     [Orden(1)]
-    [NotMapped]
+    [NoSaveDb]
+    [OnlyRead]
     public string NombreCliente { get; set; } = string.Empty;
 
     [Nombre("Crédito")]
@@ -50,9 +51,11 @@ public class Factura : FacturaBase
     [Nombre("Haber")]
     [Grupo("Totales", GRUPO_TOTALES)]
     [Orden(6)]
+    [Visible(false)]
     public int Habe { get; set; }
 
     [NotMapped]
+    [Visible(false)]
     public decimal Debe => Total - Habe;
 
     [Nombre("Nota de Crédito")]
