@@ -52,7 +52,7 @@ public class FacturaCompra : IEmpresa, IConDetalles<FacturaCompraProducto>, INot
     [Nombre("Nombre")]
     [Grupo("Proveedor", GRUPO_CLIENTE)]
     [Orden(1)]
-    [DbIgnore]
+    [NoSaveDb]
     public string NombreCliente { get; set; } = string.Empty;
 
     [Nombre("Neto")]

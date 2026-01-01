@@ -47,7 +47,7 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
         var props = typeof(DetalleOrdenTrabajo).GetProperties()
             .Where(p => p.Name != "Id" 
                 && Attribute.IsDefined(p, typeof(NotMappedAttribute)) == false
-                && !Attribute.IsDefined(p, typeof(DbIgnoreAttribute)))
+                && !Attribute.IsDefined(p, typeof(NoSaveDbAttribute)))
             .ToList();
 
         string columns = string.Join(", ", props.Select(p => p.Name.ToLower()));
@@ -100,7 +100,7 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
         var props = typeof(DetalleOrdenTrabajo).GetProperties()
             .Where(p => p.Name != "Id"
                 && !Attribute.IsDefined(p, typeof(NotMappedAttribute))
-                && !Attribute.IsDefined(p, typeof(DbIgnoreAttribute)))
+                && !Attribute.IsDefined(p, typeof(NoSaveDbAttribute)))
             .ToList();
 
         var sb = new StringBuilder();
