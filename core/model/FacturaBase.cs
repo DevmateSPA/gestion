@@ -41,8 +41,11 @@ public abstract class FacturaBase : IEmpresa, INotifyPropertyChanged
         get => _total;
         set
         {
-            if (_total == value) return;
-            _total = value;
+            var nuevoValor = Math.Max(0, value);
+
+            if (_total == nuevoValor) return;
+
+            _total = nuevoValor;
             OnPropertyChanged(nameof(Total));
             RecalcularTotales();
         }
