@@ -7,7 +7,7 @@ using Gestion.core.interfaces.model;
 namespace Gestion.core.model;
 
 // Implementa la lista de detalles, implementa la interfaz IModel
-public class Factura : FacturaBase
+public class Factura : TotalBase
 {
     private const int GRUPO_DOCUMENTO = 10;
     private const int GRUPO_CLIENTE = 20;

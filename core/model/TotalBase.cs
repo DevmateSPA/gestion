@@ -4,7 +4,7 @@ using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
-public abstract class FacturaBase : IEmpresa, INotifyPropertyChanged
+public abstract class TotalBase : IEmpresa, INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 

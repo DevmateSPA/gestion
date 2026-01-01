@@ -8,7 +8,7 @@ using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
-public class FacturaCompra : FacturaBase, IConDetalles<FacturaCompraProducto>, INotifyPropertyChanged
+public class FacturaCompra : TotalBase, IConDetalles<FacturaCompraProducto>, INotifyPropertyChanged
 {
     private const int GRUPO_DOCUMENTO = 10;
     private const int GRUPO_CLIENTE = 20;

@@ -34,15 +34,16 @@ public class GuiaDespacho : IEmpresa
     public string Factura { get; set; } = string.Empty;
 
     [Rut]
-    [Nombre("Rut Cliente")]
+    [Nombre("Rut")]
     [Grupo("Datos del Cliente", 2)]
     [Orden(0)]
     public string RutCliente { get; set; } = string.Empty;
 
-    [Nombre("Nombre Cliente")]
+    [Nombre("Nombre")]
     [Grupo("Datos del Cliente", 2)]
     [Orden(1)]
-    [NotMapped]
+    [NoSaveDb]
+    [OnlyRead]
     public string NombreCliente { get; set; } = string.Empty;
 
     [Nombre("Detalles")]

@@ -203,7 +203,7 @@ namespace Gestion.presentation.utils
                     string linea =
                         Pad(ot.Folio.ToString(), 12) +
                         Pad(ot.Fecha.ToString("dd/MM/yyyy"), 12) +
-                        Pad(ot.Razon_social ?? "", 12) +
+                        Pad(ot.RazonSocial ?? "", 12) +
                         Pad(ot.RutCliente ?? "", 14) +
                         Pad(ot.Descripcion ?? "", 30) +     // ← más ancho
                         Pad(ot.Maquina1 ?? "", 6) +

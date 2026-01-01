@@ -44,6 +44,7 @@
                     <DataGridTextColumn Header="Rut" Binding="{Binding Rut}" Width="*" />
                     <DataGridTextColumn Header="Razón Social" Binding="{Binding Razon_Social}" Width="*" />
                     <DataGridTextColumn Header="Giro" Binding="{Binding Giro}" Width="*" />
+                    <DataGridTextColumn Header="Debe" Binding="{Binding Debe, StringFormat=C0}" Width="*" />
                 </DataGrid.Columns>
                 </DataGrid>
 

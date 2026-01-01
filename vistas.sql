@@ -85,10 +85,12 @@ CREATE OR REPLACE VIEW vw_grupo AS
 CREATE OR REPLACE VIEW vw_guiadespacho AS
     SELECT
         t.*,
-        e.nombre AS EmpresaNombre
+        e.nombre AS EmpresaNombre,
+        c.razon_social AS NombreCliente
     FROM GUIADESPACHO t
     JOIN EMPRESA e
-    ON t.empresa = e.id;
+    ON t.empresa = e.id
+    JOIN cliente c ON (t.rutcliente = c.rut);
 
 -- Para Impresion
 CREATE OR REPLACE VIEW vw_impresion AS
@@ -112,10 +114,12 @@ CREATE OR REPLACE VIEW vw_maquina AS
 CREATE OR REPLACE VIEW vw_notacredito AS
     SELECT
         t.*,
-        e.nombre AS EmpresaNombre
+        e.nombre AS EmpresaNombre,
+        c.razon_social AS NombreCliente
     FROM NOTACREDITO t
     JOIN EMPRESA e
-    ON t.empresa = e.id;
+    ON t.empresa = e.id
+    JOIN cliente c ON (t.rutcliente = c.rut);
 
 -- Para Operario
 CREATE OR REPLACE VIEW vw_operario AS
@@ -144,14 +148,10 @@ CREATE OR REPLACE VIEW vw_proveedor AS
     JOIN EMPRESA e
     ON t.empresa = e.id;
 
-CREATE OR REPLACE
-    ALGORITHM = UNDEFINED
-    DEFINER = `root`@`localhost`
-    SQL SECURITY DEFINER
-    VIEW vw_ordentrabajo AS
+CREATE OR REPLACE VIEW vw_ordentrabajo AS
     SELECT 
         t.*,
-        c.razon_social AS razon_social,
+        c.razon_social AS RazonSocial,
         m.descripcion AS Maquina1descripcion
     FROM ordentrabajo t
     JOIN empresa e ON t.empresa = e.id

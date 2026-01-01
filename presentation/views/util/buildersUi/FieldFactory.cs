@@ -33,16 +33,17 @@ public static class FieldFactory
         var tb = new TextBlock
         {
             FontSize = 20,
-            Height = 30,
-            Width = 300,
+            MaxWidth = 600,
             Margin = new Thickness(5, 6, 5, 10),
-            VerticalAlignment = VerticalAlignment.Center
+            VerticalAlignment = VerticalAlignment.Center,
+            TextWrapping = TextWrapping.Wrap
         };
 
         var binding = BindingFactory.CreateValidateBinding(
-            prop, 
+            prop,
             entidad,
             BindingMode.OneWay);
+
         tb.SetBinding(TextBlock.TextProperty, binding);
 
         return tb;

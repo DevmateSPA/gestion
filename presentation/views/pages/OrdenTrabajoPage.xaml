@@ -48,7 +48,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Folio" Binding="{Binding Folio}" Width="*" />
                     <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha, StringFormat={}{0:dd/MM/yyyy}}" Width="*" />
-                    <DataGridTextColumn Header="Razón Social" Binding="{Binding Razon_social}" Width="*" />
+                    <DataGridTextColumn Header="Razón Social" Binding="{Binding RazonSocial}" Width="*" />
                 </DataGrid.Columns>
         </DataGrid>
 

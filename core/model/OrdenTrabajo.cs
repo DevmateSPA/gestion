@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Gestion.core.attributes;
 using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
 using Gestion.core.model.detalles;
@@ -15,8 +16,8 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     public DateTime Fecha { get; set; } = DateTime.Now;
     [Rut]
     public string RutCliente { get; set; } = string.Empty;
-    [NotMapped]
-    public string Razon_social { get; set; } = string.Empty;
+    [NoSaveDb]
+    public string RazonSocial { get; set; } = string.Empty;
     public string Descripcion { get; set; } = string.Empty;
     public int Cantidad { get; set; } = 0;
     public int TotalImpresion { get; set; } = 0;
