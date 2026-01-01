@@ -7,25 +7,31 @@ namespace Gestion.presentation.views.util;
 
 public static class BindingFactory
 {
-    public static Binding CreateValidateBinding(PropertyInfo prop, object source, string? stringFormat = null)
+    public static Binding CreateValidateBinding(
+        PropertyInfo prop,
+        object source,
+        BindingMode mode,
+        string? stringFormat = null)
     {
         Binding binding = new(prop.Name)
         {
             Source = source,
             UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
-            Mode = BindingMode.TwoWay,
+            Mode = mode,
             ValidatesOnExceptions = true,
             ValidatesOnDataErrors = true,
             ConverterCulture = CultureInfo.GetCultureInfo("es-ES"),
             StringFormat = stringFormat
         };
 
-        DataAnnotationValidationRule rule = new(prop, source)
+        if (mode == BindingMode.TwoWay)
         {
-            ValidationStep = ValidationStep.ConvertedProposedValue
-        };
-
-        binding.ValidationRules.Add(rule);
+            DataAnnotationValidationRule rule = new(prop, source)
+            {
+                ValidationStep = ValidationStep.ConvertedProposedValue
+            };
+            binding.ValidationRules.Add(rule);
+        }
 
         return binding;
     }

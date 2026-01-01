@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using Gestion.core.model;
@@ -172,7 +173,7 @@ public partial class OrdenTrabajoDetallePage : Window
             // TextBox
             if (ctrl is TextBox tb)
             {
-                var binding = BindingFactory.CreateValidateBinding(propInfo, DataContext);
+                var binding = BindingFactory.CreateValidateBinding(propInfo, DataContext, BindingMode.TwoWay);
                 tb.SetBinding(TextBox.TextProperty, binding);
             }
             // DatePicker
@@ -181,6 +182,7 @@ public partial class OrdenTrabajoDetallePage : Window
                 var binding = BindingFactory.CreateValidateBinding(
                     propInfo,
                     DataContext,
+                    BindingMode.TwoWay,
                     "dd/MM/yyyy"
                 );
 

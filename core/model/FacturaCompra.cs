@@ -8,15 +8,11 @@ using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
-public class FacturaCompra : IEmpresa, IConDetalles<FacturaCompraProducto>, INotifyPropertyChanged
+public class FacturaCompra : FacturaBase, IConDetalles<FacturaCompraProducto>, INotifyPropertyChanged
 {
     private const int GRUPO_DOCUMENTO = 10;
     private const int GRUPO_CLIENTE = 20;
-    private const int GRUPO_TOTALES = 30;
 
-    public long Id { get; set; }
-    [Visible(false)]
-    public long Empresa { get; set; }
 
     [Nombre("Folio")]
     [Required]
@@ -53,24 +49,9 @@ public class FacturaCompra : IEmpresa, IConDetalles<FacturaCompraProducto>, INot
     [Grupo("Proveedor", GRUPO_CLIENTE)]
     [Orden(1)]
     [NoSaveDb]
-    public string NombreCliente { get; set; } = string.Empty;
-
-    [Nombre("Neto")]
-    [Grupo("Totales", GRUPO_TOTALES)]
-    [Orden(0)]
     [OnlyRead]
-    public long Neto { get; set; }
+    public string NombreProveedor { get; set; } = string.Empty;
 
-    [Nombre("I.V.A")]
-    [Grupo("Totales", GRUPO_TOTALES)]
-    [Orden(1)]
-    [OnlyRead]
-    public long Iva { get; set; }
-
-    [Nombre("Total")]
-    [Grupo("Totales", GRUPO_TOTALES)]
-    [Orden(3)]
-    public int Total { get; set; }
     [Nombre("Haber")]
     [Grupo("Totales", GRUPO_TOTALES)]
     [Orden(4)]
@@ -92,10 +73,8 @@ public class FacturaCompra : IEmpresa, IConDetalles<FacturaCompraProducto>, INot
             if (_detalles != value)
             {
                 _detalles = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Detalles)));
+                OnPropertyChanged(nameof(Detalles));
             }
         }
     }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
 }

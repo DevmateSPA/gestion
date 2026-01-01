@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Markup;
 using Gestion.core.attributes;
 
@@ -38,7 +39,10 @@ public static class FieldFactory
             VerticalAlignment = VerticalAlignment.Center
         };
 
-        var binding = BindingFactory.CreateValidateBinding(prop, entidad);
+        var binding = BindingFactory.CreateValidateBinding(
+            prop, 
+            entidad,
+            BindingMode.OneWay);
         tb.SetBinding(TextBlock.TextProperty, binding);
 
         return tb;
@@ -54,7 +58,10 @@ public static class FieldFactory
             Margin = new Thickness(5, 0, 5, 10)
         };
 
-        var binding = BindingFactory.CreateValidateBinding(prop, entidad);
+        var binding = BindingFactory.CreateValidateBinding(
+            prop, 
+            entidad,
+            BindingMode.TwoWay);
         tb.SetBinding(TextBox.TextProperty, binding);
 
         return tb;
@@ -67,7 +74,10 @@ public static class FieldFactory
             Margin = new Thickness(5, 6, 5, 10)
         };
 
-        var binding = BindingFactory.CreateValidateBinding(prop, entidad);
+        var binding = BindingFactory.CreateValidateBinding(
+            prop, 
+            entidad,
+            BindingMode.TwoWay);
         cb.SetBinding(CheckBox.IsCheckedProperty, binding);
 
         return cb;
@@ -84,7 +94,10 @@ public static class FieldFactory
             Margin = new Thickness(5, 0, 5, 10)
         };
 
-        var binding = BindingFactory.CreateValidateBinding(prop, entidad);
+        var binding = BindingFactory.CreateValidateBinding(
+            prop, 
+            entidad,
+            BindingMode.TwoWay);
         combo.SetBinding(ComboBox.SelectedItemProperty, binding);
 
         return combo;
@@ -102,7 +115,11 @@ public static class FieldFactory
             Language = XmlLanguage.GetLanguage("es-ES")
         };
 
-        var binding = BindingFactory.CreateValidateBinding(prop, entidad, "dd/MM/yyyy");
+        var binding = BindingFactory.CreateValidateBinding(
+            prop, 
+            entidad, 
+            BindingMode.TwoWay,
+            "dd/MM/yyyy");
         dp.SetBinding(DatePicker.SelectedDateProperty, binding);
 
         return dp;

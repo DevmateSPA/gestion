@@ -7,17 +7,12 @@ using Gestion.core.interfaces.model;
 namespace Gestion.core.model;
 
 // Implementa la lista de detalles, implementa la interfaz IModel
-public class Factura : IEmpresa
+public class Factura : FacturaBase
 {
     private const int GRUPO_DOCUMENTO = 10;
     private const int GRUPO_CLIENTE = 20;
-    private const int GRUPO_TOTALES = 30;
     private const int GRUPO_GUIAS = 40;
     private const int GRUPO_ORDENES = 50;
-
-    public long Id { get; set; }
-    [Visible(false)]
-    public long Empresa { get; set; }
 
     [Nombre("Folio")]
     [Required]
@@ -42,21 +37,6 @@ public class Factura : IEmpresa
     [Orden(1)]
     [NotMapped]
     public string NombreCliente { get; set; } = string.Empty;
-
-    [Nombre("Neto")]
-    [Grupo("Totales", GRUPO_TOTALES)]
-    [Orden(0)]
-    public long Neto { get; set; }
-
-    [Nombre("I.V.A")]
-    [Grupo("Totales", GRUPO_TOTALES)]
-    [Orden(1)]
-    public long Iva { get; set; }
-
-    [Nombre("Total")]
-    [Grupo("Totales", GRUPO_TOTALES)]
-    [Orden(2)]
-    public long Total { get; set; }
 
     [Nombre("Crédito")]
     [Grupo("Totales", GRUPO_TOTALES)]

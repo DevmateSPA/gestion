@@ -1,69 +1,59 @@
-using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 using Gestion.core.attributes;
-using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
 
-public abstract class FacturaBase : IEmpresa
+public abstract class FacturaBase : IEmpresa, INotifyPropertyChanged
 {
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected void OnPropertyChanged(string propertyName)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
     public long Id { get; set; }
 
-    // ===============================
-    // DATOS DEL DOCUMENTO
-    // ===============================
-
-    [Nombre("Folio")]
-    [Required]
-    [Grupo("Datos del Documento", 1)]
-    [Orden(0)]
-    public string Folio { get; set; } = string.Empty;
-
-    [Nombre("Fecha")]
-    [Fecha]
-    [Grupo("Datos del Documento", 1)]
-    [Orden(1)]
-    public DateTime Fecha { get; set; } = DateTime.Now;
-
-
-    // ===============================
-    // CLIENTE / PROVEEDOR
-    // ===============================
-
-    [Nombre("Rut")]
-    [Rut]
-    [Grupo("Cliente", 2)]
-    [Orden(0)]
-    public string RutCliente { get; set; } = string.Empty;
-
-    [Nombre("Nombre")]
-    [Grupo("Cliente", 2)]
-    [Orden(1)]
-    public string NombreCliente { get; set; } = string.Empty;
-
-
-    // ===============================
-    // MONTOS
-    // ===============================
-
-    [Nombre("Neto")]
-    [Grupo("Totales", 3)]
-    [Orden(0)]
-    public long Neto { get; set; }
-
-    [Nombre("IVA")]
-    [Grupo("Totales", 3)]
-    [Orden(1)]
-    public long Iva { get; set; }
-
-    [Nombre("Total")]
-    [Grupo("Totales", 3)]
-    [Orden(2)]
-    public long Total { get; set; }
-
-
-    // ===============================
-    // CONTROL
-    // ===============================
 
     [Visible(false)]
     public long Empresa { get; set; }
+
+    protected const int GRUPO_TOTALES = 30;
+
+    [Nombre("Neto")]
+    [Grupo("Totales", GRUPO_TOTALES)]
+    [Orden(0)]
+    [OnlyRead]
+    public long Neto { get; set; }
+
+    [Nombre("I.V.A")]
+    [Grupo("Totales", GRUPO_TOTALES)]
+    [Orden(1)]
+    [OnlyRead]
+    public long Iva { get; set; }
+
+    private long _total;
+
+    [Nombre("Total")]
+    [Grupo("Totales", GRUPO_TOTALES)]
+    [Orden(3)]
+    public long Total
+    {
+        get => _total;
+        set
+        {
+            if (_total == value) return;
+            _total = value;
+            OnPropertyChanged(nameof(Total));
+            RecalcularTotales();
+        }
+    }
+
+    private const decimal IVA_FACTOR = 1.19m;
+
+    private void RecalcularTotales()
+    {
+        Neto = (long)Math.Round(Total / IVA_FACTOR);
+        Iva = Total - Neto;
+
+        OnPropertyChanged(nameof(Neto));
+        OnPropertyChanged(nameof(Iva));
+    }
 }
