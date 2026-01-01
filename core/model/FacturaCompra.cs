@@ -29,7 +29,7 @@ public class FacturaCompra : FacturaBase, IConDetalles<FacturaCompraProducto>, I
     [Grupo("Datos del Documento", GRUPO_DOCUMENTO)]
     [Orden(2)]
     [Fecha]
-    public DateTime? Fechavencimiento { get; set; } = DateTime.Now;
+    public DateTime FechaVencimiento { get; set; } = DateTime.Now;
 
     [Nombre("Tipo de Factura")]
     [Required]

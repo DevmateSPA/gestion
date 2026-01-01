@@ -46,7 +46,6 @@
                     <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha, StringFormat={}{0:dd/MM/yyyy}}" Width="*" />
                     <DataGridTextColumn Header="Proveedor" Binding="{Binding RutCliente}" Width="*" />
                     <DataGridTextColumn Header="Proveedor" Binding="{Binding NombreProveedor}" Width="*" />
-                    <!--<DataGridTextColumn Header="Tipo" Binding="{Binding Tipo}" Width="*" />-->
                 </DataGrid.Columns>
         </DataGrid>
 

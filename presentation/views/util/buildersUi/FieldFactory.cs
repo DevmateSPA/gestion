@@ -112,7 +112,8 @@ public static class FieldFactory
             Width = 300,
             Margin = new Thickness(5, 0, 5, 10),
             SelectedDateFormat = DatePickerFormat.Short,
-            Language = XmlLanguage.GetLanguage("es-ES")
+            Language = XmlLanguage.GetLanguage("es-ES"),
+            Text = "Seleccione fecha"
         };
 
         var binding = BindingFactory.CreateValidateBinding(

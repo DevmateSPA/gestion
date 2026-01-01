@@ -36,6 +36,12 @@ public class FacturaService : BaseService<Factura>, IFacturaService
         if (string.IsNullOrWhiteSpace(entity.RutCliente))
             erroresEncontrados.Add("El rut del cliente de la factura es obligatorio.");
 
+        if (entity.FechaVencimiento.Date < entity.Fecha.Date)
+            erroresEncontrados.Add("La fecha de vencimiento no puede ser anterior a la fecha de la factura.");
+
+        if (entity.FechaVencimiento.Date < DateTime.Today)
+            erroresEncontrados.Add("La fecha de vencimiento no puede ser anterior a hoy.");
+
         return erroresEncontrados;
     }
 }

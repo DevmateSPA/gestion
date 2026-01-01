@@ -21,10 +21,14 @@ public class Factura : FacturaBase
     public string Folio { get; set; } = string.Empty;
 
     [Nombre("Fecha")]
-    [Fecha]
     [Grupo("Datos del Documento", GRUPO_DOCUMENTO)]
     [Orden(1)]
-    public DateTime Fecha { get; set; } = DateTime.Now;
+    public DateTime Fecha { get; set; } = DateTime.Today;
+
+    [Nombre("Fecha de Vencimiento")]
+    [Grupo("Datos del Documento", GRUPO_DOCUMENTO)]
+    [Orden(2)]
+    public DateTime FechaVencimiento { get; set; } = DateTime.Today;
 
     [Nombre("Rut")]
     [Rut]
@@ -60,12 +64,6 @@ public class Factura : FacturaBase
     [Grupo("Datos Internos", GRUPO_TOTALES+1)]
     [Orden(0)]
     public string OrdenTrabajo { get; set; } = string.Empty;
-
-    [Nombre("Fecha de Vencimiento")]
-    [Grupo("Datos Internos", GRUPO_TOTALES+1)]
-    [Orden(1)]
-    [Fecha]
-    public DateTime FechaVencimiento { get; set; } = DateTime.Now;
 
     [Visible(false)]
     public string Tipo { get; set; } = string.Empty;
