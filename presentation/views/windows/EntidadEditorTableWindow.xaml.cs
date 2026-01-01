@@ -1,8 +1,6 @@
 using System.Reflection;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Markup;
 using Gestion.core.model;
 using Gestion.helpers;
 using Gestion.presentation.views.util;
@@ -18,7 +16,7 @@ public partial class EntidadEditorTableWindow : Window
     private readonly IEnumerable<FacturaCompraProducto>? _detalles;
     private readonly Func<FacturaCompra, Task<bool>> _accion;
     private readonly Func<FacturaCompra, Task> _syncDetalles;
-    private readonly Dictionary<PropertyInfo, Control> _controles = [];
+    private readonly Dictionary<PropertyInfo, FrameworkElement> _controles = [];
 
     public FacturaCompra EntidadEditada { get; private set; }
 

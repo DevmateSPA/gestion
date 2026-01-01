@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Gestion.presentation.views.util.buildersUi;
@@ -6,7 +7,7 @@ namespace Gestion.presentation.views.util.buildersUi;
 public static class FormularioValidator
 {
     public static void ForzarValidacionInicial(
-        Dictionary<PropertyInfo, Control> controles)
+        Dictionary<PropertyInfo, FrameworkElement> controles)
     {
         foreach (var control in controles.Values)
         {

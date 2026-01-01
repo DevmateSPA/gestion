@@ -19,7 +19,7 @@ public partial class EntidadEditorWindow : Window
     private IModel _entidadOriginal;
     // Cambiado para almacenar TextBox o DatePicker
     private readonly Func<IModel, Task<bool>>? _accion;
-    private readonly Dictionary<PropertyInfo, Control> _controles = [];
+    private readonly Dictionary<PropertyInfo, FrameworkElement> _controles = [];
 
     public IModel EntidadEditada { get; private set; }
 

@@ -58,11 +58,13 @@ public class FacturaCompra : IEmpresa, IConDetalles<FacturaCompraProducto>, INot
     [Nombre("Neto")]
     [Grupo("Totales", GRUPO_TOTALES)]
     [Orden(0)]
+    [OnlyRead]
     public long Neto { get; set; }
 
     [Nombre("I.V.A")]
     [Grupo("Totales", GRUPO_TOTALES)]
     [Orden(1)]
+    [OnlyRead]
     public long Iva { get; set; }
 
     [Nombre("Total")]

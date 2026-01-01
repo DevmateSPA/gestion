@@ -10,7 +10,7 @@ public class FormularioBuilder
     public void Build(
         object entidad,
         Panel contenedor,
-        Dictionary<PropertyInfo, Control> controles,
+        Dictionary<PropertyInfo, FrameworkElement> controles,
         int maxPorFila = 3)
     {
         contenedor.Children.Clear();
@@ -54,7 +54,7 @@ public class FormularioBuilder
     private StackPanel CrearBloqueCampo(
         PropertyInfo prop,
         object entidad,
-        Dictionary<PropertyInfo, Control> controles)
+        Dictionary<PropertyInfo, FrameworkElement> controles)
     {
         var label = LabelFactory.Crear(prop);
         var control = FieldFactory.Crear(prop, entidad);
@@ -72,7 +72,7 @@ public class FormularioBuilder
     private GroupBox CrearGroupBox(
         GrupoFormulario grupo,
         object entidad,
-        Dictionary<PropertyInfo, Control> controles,
+        Dictionary<PropertyInfo, FrameworkElement> controles,
         int maxPorFila)
     {
         var panel = new StackPanel { Margin = new Thickness(10) };
