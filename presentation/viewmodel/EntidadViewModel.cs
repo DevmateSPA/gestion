@@ -160,7 +160,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         try
         {
             // Variante con retorno
-            var lista = await SafeExecutor.RunAsync(action, _dialogService, errorMessage);
+            var lista = await SafeExecutor.RunAsyncList(action, _dialogService, errorMessage);
 
             if (lista.Count == 0)
                 onEmpty?.Invoke();
@@ -255,7 +255,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         Action? onSuccess,
         string mensajeError)
     {
-        return await SafeExecutor.RunAsync(
+        return await SafeExecutor.RunAsyncValue(
         action: async () =>
         {
             if (await serviceAction())

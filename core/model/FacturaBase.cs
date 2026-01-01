@@ -2,6 +2,8 @@ using System.ComponentModel;
 using Gestion.core.attributes;
 using Gestion.core.interfaces.model;
 
+namespace Gestion.core.model;
+
 public abstract class FacturaBase : IEmpresa, INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;

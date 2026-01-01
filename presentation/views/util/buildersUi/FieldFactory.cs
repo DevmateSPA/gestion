@@ -118,8 +118,7 @@ public static class FieldFactory
         var binding = BindingFactory.CreateValidateBinding(
             prop, 
             entidad, 
-            BindingMode.TwoWay,
-            "dd/MM/yyyy");
+            BindingMode.TwoWay);
         dp.SetBinding(DatePicker.SelectedDateProperty, binding);
 
         return dp;

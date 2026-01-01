@@ -23,10 +23,11 @@ public static class SafeExecutor
         }
     }
 
-    public static async Task<T> RunAsync<T>(
-            Func<Task<T>> action,
-            IDialogService dialogService,
-            string mensajeError)
+    public static async Task<T> RunAsyncValue<T>(
+        Func<Task<T>> action,
+        IDialogService dialogService,
+        string mensajeError,
+        T defaultValue = default!)
     {
         try
         {
@@ -39,7 +40,27 @@ public static class SafeExecutor
                 dialogService.ShowError($"{mensajeError}:\n{ex.Message}");
             });
 
-             return default!;
+            return defaultValue;
+        }
+    }
+
+    public static async Task<List<T>> RunAsyncList<T>(
+        Func<Task<List<T>>> action,
+        IDialogService dialogService,
+        string mensajeError)
+    {
+        try
+        {
+            return await action();
+        }
+        catch (Exception ex)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                dialogService.ShowError($"{mensajeError}:\n{ex.Message}");
+            });
+
+            return [];
         }
     }
 }

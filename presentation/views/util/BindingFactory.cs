@@ -21,8 +21,10 @@ public static class BindingFactory
             ValidatesOnExceptions = true,
             ValidatesOnDataErrors = true,
             ConverterCulture = CultureInfo.GetCultureInfo("es-ES"),
-            StringFormat = stringFormat
         };
+
+        if (!string.IsNullOrWhiteSpace(stringFormat))
+            binding.StringFormat = stringFormat;
 
         if (mode == BindingMode.TwoWay)
         {

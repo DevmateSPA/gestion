@@ -6,6 +6,7 @@ namespace Gestion.core.attributes.validation;
 public class FechaAttribute : ValidationAttribute
 {
     public string Formato { get; }
+
     public FechaAttribute(string formato = "dd/MM/yyyy")
     {
         Formato = formato;
@@ -13,32 +14,14 @@ public class FechaAttribute : ValidationAttribute
 
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
-        // Si ya es DateTime (o Nullable<DateTime> con valor), es válido
+        // null es válido (Required se encarga)
+        if (value is null)
+            return ValidationResult.Success;
+
+        // DateTime o DateTime? con valor
         if (value is DateTime)
             return ValidationResult.Success;
 
-        // Permitir vacío (deja que [Required] lo gestione)
-        string? texto = value?.ToString();
-        if (string.IsNullOrWhiteSpace(texto))
-            return ValidationResult.Success;
-
-        if (!EsFechaValida(texto))
-        {
-            string nombreCampo = validationContext.MemberName ?? "Este campo";
-            return new ValidationResult(ErrorMessage ?? $"{nombreCampo} debe tener el formato {Formato}.");
-        }
-
-        return ValidationResult.Success;
-    }
-
-    private bool EsFechaValida(string fecha)
-    {
-        return DateTime.TryParseExact(
-            fecha,
-            Formato,
-            CultureInfo.InvariantCulture,
-            DateTimeStyles.None,
-            out _
-        );
+        return new ValidationResult("Debe ingresar una fecha válida.");
     }
 }
