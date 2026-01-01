@@ -45,12 +45,23 @@ CREATE OR REPLACE VIEW vw_encuadernacion AS
 
 -- Para FacturaCompra
 CREATE OR REPLACE VIEW vw_facturacompra AS
-    SELECT
-        t.*,
+    SELECT 
+        t.id AS id,
+        t.fecha AS fecha,
+        t.tipo AS tipo,
+        t.folio AS folio,
+        t.rutcliente AS rutcliente,
+        t.neto AS neto,
+        t.iva AS iva,
+        t.fechavencimiento AS fechavencimiento,
+        t.total AS total,
+        t.debe AS debe,
+        t.habe AS habe,
+        t.fopa AS fopa,
+        t.empresa AS empresa,
         e.nombre AS EmpresaNombre
-    FROM FACTURACOMPRA t
-    JOIN EMPRESA e
-    ON t.empresa = e.id;
+    FROM facturacompra t
+    JOIN empresa e ON (t.empresa = e.id);
 
 -- Para Fotomecanica
 CREATE OR REPLACE VIEW vw_fotomecanica AS

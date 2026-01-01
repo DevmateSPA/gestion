@@ -293,7 +293,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         var props = typeof(T).GetProperties()
             .Where(p => p.Name != "Id" 
             && Attribute.IsDefined(p, typeof(NotMappedAttribute)) == false
-            && !Attribute.IsDefined(p, typeof(DbIgnoreAttribute)))
+            && !Attribute.IsDefined(p, typeof(NoSaveDbAttribute)))
             .ToList();
 
         var setClause = string.Join(", ", props.Select(p => $"{p.Name.ToLower()} = @{p.Name.ToLower()}"));
@@ -335,7 +335,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         var props = typeof(T).GetProperties()
             .Where(p => p.Name != "Id"
             && Attribute.IsDefined(p, typeof(NotMappedAttribute)) == false
-            && !Attribute.IsDefined(p, typeof(DbIgnoreAttribute)))
+            && !Attribute.IsDefined(p, typeof(NoSaveDbAttribute)))
             .ToList();
 
         var columns = string.Join(", ", props.Select(p => p.Name.ToLower()));
