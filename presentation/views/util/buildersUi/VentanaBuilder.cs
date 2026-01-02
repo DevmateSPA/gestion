@@ -60,23 +60,43 @@ public class VentanaBuilder<TEntidad>
 
         foreach (var prop in colecciones)
         {
-            var items = (prop.GetValue(_entidad) as IEnumerable)?.Cast<object>().ToList();
-            if (items == null || items.Count == 0) continue;
+            // Obtiene el Tipo
+            var itemType = prop.PropertyType.GetGenericArguments().First();
 
-            var dgBuilderType = typeof(DataGridBuilder<>)
-                .MakeGenericType(prop.PropertyType.GetGenericArguments().FirstOrDefault() ?? typeof(object));
+            // Transforma la colección
+            IEnumerable enumerableTyped = (IEnumerable) typeof(Enumerable)
+                .GetMethod(nameof(Enumerable.Cast))!
+                .MakeGenericMethod(itemType)
+                .Invoke(null, [prop.GetValue(_entidad)!])!;
 
+            // Crea un Group Box
+            var groupBox = new GroupBox
+            {
+                Header = $"Detalles",    // Título del grupo
+                Margin = new Thickness(0, 10, 0, 10)
+            };
+
+            // Crear contenedor interno del DataGrid
+            var stackPanel = new StackPanel();
+            groupBox.Content = stackPanel;
+
+            // Agregar el GroupBox al contenedor principal de tablas
+            _contenedorTablas!.Children.Add(groupBox);
+
+            // Crear el DataGridBuilder<T>
+            var dgBuilderType = typeof(DataGridBuilder<>).MakeGenericType(itemType);
             dynamic dgBuilder = Activator.CreateInstance(dgBuilderType)!;
 
-            // Editable según el modo del formulario
+            // Modo edición / lectura
             if (_modo == ModoFormulario.Edicion)
                 dgBuilder.Editable();
             else
                 dgBuilder.SoloLectura();
 
+            // Construir el DataGrid DENTRO del GroupBox
             dgBuilder
-                .SetContenedor(_contenedorTablas)
-                .SetItems(items)
+                .SetContenedor(stackPanel)   // aquí va dentro del GroupBox
+                .SetItems(enumerableTyped)
                 .Build();
         }
     }
