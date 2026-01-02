@@ -83,6 +83,7 @@ public class DetallesBuilder
         dgBuilder
             .SetContenedor(grid)
             .SetItems(items)
+            .SetMaxHeight(150)
             .Build();
     }
 }

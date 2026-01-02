@@ -43,10 +43,9 @@
             </ScrollViewer>
 
             <Grid Grid.Row="1">
-                <StackPanel x:Name="spTabla"
-                            Orientation="Vertical"
-                            Margin="0,10,0,0"/>
-            </Grid>
+                <Grid x:Name="spTabla"
+                    Margin="0,10,0,0"/>
+                            </Grid>
         </Grid>
 
     </DockPanel>

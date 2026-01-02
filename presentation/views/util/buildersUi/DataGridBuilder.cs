@@ -39,6 +39,12 @@ public class DataGridBuilder<T>
         return this;
     }
 
+    public DataGridBuilder<T> SetMaxHeight(double maxHeight)
+    {
+        _dg.MaxHeight = maxHeight;
+        return this;
+    }
+
     public DataGridBuilder<T> AddColumna(
         string header,
         string bindingPath,
@@ -64,12 +70,17 @@ public class DataGridBuilder<T>
         if (_contenedor == null)
             throw new InvalidOperationException("Contenedor no definido");
 
+        if (_contenedor is StackPanel)
+            throw new InvalidOperationException(
+                "DataGrid no puede alojarse en StackPanel. Use Grid o DockPanel.");
+
         _dg.AutoGenerateColumns = !_tieneColumnas;
 
-        if (_contenedor is StackPanel)
-        {
-            _dg.MaxHeight = 150; // fallback
-        }
+        _dg.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+        _dg.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+
+        if (double.IsNaN(_dg.MaxHeight) || _dg.MaxHeight == 0)
+            _dg.MaxHeight = 250;
 
         _contenedor.Children.Add(_dg);
     }
