@@ -50,38 +50,41 @@ namespace Gestion.presentation.views.pages
             txtBuscar.KeyDown += TxtBuscar_KeyDown; 
         }
 
-        private void BtnAgregar_Click(object sender, RoutedEventArgs e)
-        {
-            EditorHelper.Abrir(
-                owner: Window.GetWindow(this),
-                entidad: new Fotomecanica(),
-                accion: async entidad => await _viewModel.Save((Fotomecanica)entidad),
-                titulo: "Agregar Fotomecánica");
-        }
+    private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
+    {
+        await new EditorEntidadBuilder<Fotomecanica>()
+            .Owner(Window.GetWindow(this)!)
+            .Entidad(new Fotomecanica())
+            .Titulo("Agregar Fotomecánica")
+            .Guardar(_viewModel.Save)
+            .Abrir();
+    }
 
-        private void Editar(Fotomecanica entity)
-        {
-            EditorHelper.Abrir(
-                owner: Window.GetWindow(this),
-                entidad: entity,
-                accion: async entidad => await _viewModel.Update((Fotomecanica)entidad),
-                titulo: "Editar Fotomecánica");
-        }
+    private async Task Editar(Fotomecanica fotomecanica)
+    {
+        await new EditorEntidadBuilder<Fotomecanica>()
+            .Owner(Window.GetWindow(this)!)
+            .Entidad(fotomecanica)
+            .Titulo("Editar Fotomecánica")
+            .Guardar(_viewModel.Update)
+            .Abrir();
+    }
 
-        private void EditarSeleccionado()
-        {
-            if (dgFotomecanica.SelectedItem is Fotomecanica seleccionado)
-                Editar(seleccionado);
-        }
+    private async Task EditarSeleccionado()
+    {
+        if (dgFotomecanica.SelectedItem is Fotomecanica fotomecanicaSeleccionada)
+            await Editar(fotomecanicaSeleccionada);
+    }
 
-        private void BtnEditar_Click(object sender, RoutedEventArgs e)
-        {
-            EditarSeleccionado();
-        }
-        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            EditarSeleccionado();
-        }
+    private async void BtnEditar_Click(object sender, RoutedEventArgs e)
+    {
+        await EditarSeleccionado();
+    }
+
+    private async void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        await EditarSeleccionado();
+    }
 
         private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
