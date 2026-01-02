@@ -98,15 +98,17 @@ public partial class OrdenTrabajoPage : Page
 
         ordenTrabajo.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(await _viewModel.LoadDetailsByFolio(ordenTrabajo.Folio));
 
-        EditorOtHelper.Abrir(
-            owner: Window.GetWindow(this),
-            entidad: ordenTrabajo,
-            accion: _viewModel.Update,
-            syncDetalles: ordenTrabajoEditada =>
-                _viewModel.SincronizarDetalles(
+        await new EditorEntidadBuilder<OrdenTrabajo>()
+            .Owner(Window.GetWindow(this)!)
+            .Entidad(ordenTrabajo)
+            .Titulo("Editar Orden de Trabajo")
+            .Guardar(_viewModel.Update)
+            .OnClose(async facturaEditada =>
+                await _viewModel.SincronizarDetalles(
                     ordenTrabajo.Detalles,
-                    ordenTrabajoEditada.Detalles,
-                    ordenTrabajoEditada));
+                    facturaEditada.Detalles.Cast<DetalleOrdenTrabajo>(),
+                    facturaEditada))
+            .Abrir();
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
