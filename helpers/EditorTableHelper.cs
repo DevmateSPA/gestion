@@ -17,7 +17,6 @@ public static class EditorTableHelper
     {
         var ventana = new EntidadEditorTableWindow(
             entidadConDetalles,
-            detalles,
             accion,
             syncDetalles,
             titulo)

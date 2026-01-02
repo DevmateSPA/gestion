@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -31,7 +32,7 @@ public class DataGridBuilder<T>
         return this;
     }
 
-    public DataGridBuilder<T> SetItems(IEnumerable<T> items)
+    public DataGridBuilder<T> SetItems(IEnumerable items)
     {
         _dg.ItemsSource = items;
         return this;

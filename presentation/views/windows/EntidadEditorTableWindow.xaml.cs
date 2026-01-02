@@ -11,27 +11,24 @@ using Gestion.presentation.views.util.buildersUi;
 
 namespace Gestion.presentation.views.windows;
 
-public partial class EntidadEditorTableWindow<TEntidad, TDetalle> : Window
-    where TEntidad : class
+public partial class EntidadEditorTableWindow: Window
 {
     // Builder de formularios
     private readonly FormularioBuilder _formularioBuilder = new();
-    private readonly DataGridBuilder<TDetalle> _dataGridBuilder = new();
-    private readonly TEntidad _entidadOriginal;
-    private readonly IEnumerable<TDetalle>? _detalles;
-    private readonly Func<TEntidad, Task<bool>> _accion;
-    private readonly Func<TEntidad, Task>? _syncDetalles;
+    private readonly DataGridBuilder<FacturaCompraProducto> _dataGridBuilder = new();
+    private readonly FacturaCompra _entidadOriginal;
+    private readonly Func<FacturaCompra, Task<bool>> _accion;
+    private readonly Func<FacturaCompra, Task>? _syncDetalles;
     private Dictionary<PropertyInfo, FrameworkElement> _controles = [];
 
     private DataGrid? dgDetalles;
 
-    public TEntidad? EntidadEditada { get; private set; }
+    public FacturaCompra? EntidadEditada { get; private set; }
 
     public EntidadEditorTableWindow(
-        TEntidad entidad,
-        IEnumerable<TDetalle> detalles,
-        Func<TEntidad, Task<bool>> accion,
-        Func<TEntidad, Task>? syncDetalles,
+        FacturaCompra entidad,
+        Func<FacturaCompra, Task<bool>> accion,
+        Func<FacturaCompra, Task>? syncDetalles,
         string titulo = "Ventana con tabla")
     {
         InitializeComponent();
@@ -40,7 +37,6 @@ public partial class EntidadEditorTableWindow<TEntidad, TDetalle> : Window
         _entidadOriginal = entidad;
         _accion = accion;
         _syncDetalles = syncDetalles;
-        _detalles = detalles;
 
         ClonarEntidad(entidad);
 
@@ -48,9 +44,9 @@ public partial class EntidadEditorTableWindow<TEntidad, TDetalle> : Window
         InicializarEventos();
     }
 
-    private void ClonarEntidad(TEntidad entidad)
+    private void ClonarEntidad(FacturaCompra entidad)
     {
-        EntidadEditada = (TEntidad)Activator.CreateInstance(entidad.GetType())!;
+        EntidadEditada = (FacturaCompra)Activator.CreateInstance(entidad.GetType())!;
 
         foreach (var prop in entidad.GetType().GetProperties())
         {
@@ -59,10 +55,10 @@ public partial class EntidadEditorTableWindow<TEntidad, TDetalle> : Window
         }
     }
 
-    private void InicializarUI(TEntidad entidad)
+    private void InicializarUI(FacturaCompra entidad)
     {
         // Crear el builder para la entidad
-        var builder = new VentanaBuilder<TEntidad>()
+        var builder = new VentanaBuilder<FacturaCompra>()
             .SetEntidad(entidad)
             .SetContenedorCampos(spCampos)
             .SetContenedorTablas(spTabla)

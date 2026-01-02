@@ -1,8 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Gestion.core.attributes;
-using Gestion.core.attributes.validation;
-using Gestion.core.interfaces.model;
 using Gestion.core.model.detalles;
 
 namespace Gestion.core.model;
