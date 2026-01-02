@@ -7,6 +7,7 @@ namespace Gestion.helpers;
 
 public static class EditorTableHelper
 {
+    // Debo Limpiar esto y quedariamos para generalizar 1 sola ventana
     public static bool Abrir(
         Window owner,
         FacturaCompra entidadConDetalles,
