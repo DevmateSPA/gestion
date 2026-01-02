@@ -159,14 +159,17 @@ CREATE OR REPLACE VIEW vw_ordentrabajo AS
     LEFT JOIN maquina m ON t.maquina1 = m.codigo;
 
 -- Vista para trabajar con las Maquinas con pendientes
-CREATE OR REPLACE VIEW vw_maquinas_with_pending_orders AS 
-    SELECT DISTINCT
+CREATE OR REPLACE VIEW vw_maquinas_with_pending_orders AS
+    SELECT 
         m.codigo,
         m.descripcion,
+        ot.empresa,
         COUNT(ot.maquina1) AS cantidad_pendientes
     FROM maquina m
     JOIN ordentrabajo ot
         ON m.codigo = ot.maquina1
-    GROUP BY
+    WHERE ot.ordenentregada IS NULL   -- solo pendientes
+    GROUP BY 
         m.codigo,
-        m.descripcion;
+        m.descripcion,
+        ot.empresa;
