@@ -19,7 +19,7 @@ public partial class MaquinasConOTPendientesPage : Page
         _viewModel = viewModel;
         DataContext = _viewModel;
 
-                Loaded += async (_, _) =>
+        Loaded += async (_, _) =>
         {
             await _viewModel.LoadPageMaquinaWithPendingOrders(1);
             paginacion.SetTotalPages(_viewModel.TotalRegistros);
