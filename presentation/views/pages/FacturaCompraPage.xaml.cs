@@ -54,19 +54,19 @@ public partial class FacturaCompraPage : Page
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
 
-    private void BtnAgregar_Click(object sender, RoutedEventArgs e)
+    private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        EditorTableHelper.Abrir(
-            owner: Window.GetWindow(this),
-            entidadConDetalles: new FacturaCompra(),
-            detalles: [],
-            accion: async entidad => await _viewModel.Save((FacturaCompra)entidad),
-            syncDetalles: async facturaEditada =>
+        await new EditorEntidadBuilder<FacturaCompra>()
+            .Owner(Window.GetWindow(this)!)
+            .Entidad(new FacturaCompra())
+            .Titulo("Agregar Factura de Compra")
+            .Guardar(_viewModel.Save)
+            .OnClose(async facturaEditada =>
                 await _viewModel.SincronizarDetalles(
-                    Enumerable.Empty<FacturaCompraProducto>(),
+                    [],
                     facturaEditada.Detalles.Cast<FacturaCompraProducto>(),
-                    facturaEditada),
-            titulo: "Agregar Factura de Compra");
+                    facturaEditada))
+            .Abrir();
     }
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
@@ -92,24 +92,21 @@ public partial class FacturaCompraPage : Page
         factura.Detalles = new ObservableCollection<FacturaCompraProducto>(
             detallesOriginales.Select(d => (FacturaCompraProducto)d.Clone()));
 
-        EditorTableHelper.Abrir(
-            owner: Window.GetWindow(this),
-            entidadConDetalles: factura,
-            detalles: factura.Detalles,
-            accion: async facturaEditada =>
+        await new EditorEntidadBuilder<FacturaCompra>()
+            .Owner(Window.GetWindow(this)!)
+            .Entidad(factura)
+            .Titulo(titulo)
+            .Guardar(async f =>
             {
-                await _viewModel.Update(facturaEditada);
+                await _viewModel.Update(f);
                 return true;
-            },
-            syncDetalles: async facturaEditada =>
-            {
+            })
+            .OnClose(async f =>
                 await _viewModel.SincronizarDetalles(
                     detallesOriginales,
-                    facturaEditada.Detalles,
-                    facturaEditada);
-            },
-            titulo: titulo
-        );
+                    f.Detalles,
+                    f))
+            .Abrir();
     }
 
     // ------------------------------------------------------ |

@@ -2,7 +2,6 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Gestion.core.interfaces.model;
 using Gestion.core.model;
 using Gestion.helpers;
 using Gestion.presentation.enums;
@@ -16,27 +15,25 @@ public partial class EntidadEditorTableWindow: Window
     // Builder de formularios
     private readonly FormularioBuilder _formularioBuilder = new();
     private readonly DataGridBuilder<FacturaCompraProducto> _dataGridBuilder = new();
-    private readonly FacturaCompra _entidadOriginal;
-    private readonly Func<FacturaCompra, Task<bool>> _accion;
-    private readonly Func<FacturaCompra, Task>? _syncDetalles;
+    private readonly object _entidadOriginal;
     private Dictionary<PropertyInfo, FrameworkElement> _controles = [];
 
     private DataGrid? dgDetalles;
 
-    public FacturaCompra? EntidadEditada { get; private set; }
+    public object? EntidadEditada { get; private set; }
+
+    private readonly Func<object, Task<bool>> _guardar;
 
     public EntidadEditorTableWindow(
-        FacturaCompra entidad,
-        Func<FacturaCompra, Task<bool>> accion,
-        Func<FacturaCompra, Task>? syncDetalles,
+        object entidad,
+        Func<object, Task<bool>> guardar,
         string titulo = "Ventana con tabla")
     {
         InitializeComponent();
         Title = titulo;
 
         _entidadOriginal = entidad;
-        _accion = accion;
-        _syncDetalles = syncDetalles;
+        _guardar = guardar;
 
         ClonarEntidad(entidad);
 
@@ -44,9 +41,9 @@ public partial class EntidadEditorTableWindow: Window
         InicializarEventos();
     }
 
-    private void ClonarEntidad(FacturaCompra entidad)
+    private void ClonarEntidad(object entidad)
     {
-        EntidadEditada = (FacturaCompra)Activator.CreateInstance(entidad.GetType())!;
+        EntidadEditada = Activator.CreateInstance(entidad.GetType())!;
 
         foreach (var prop in entidad.GetType().GetProperties())
         {
@@ -55,10 +52,10 @@ public partial class EntidadEditorTableWindow: Window
         }
     }
 
-    private void InicializarUI(FacturaCompra entidad)
+    private void InicializarUI(object entidad)
     {
         // Crear el builder para la entidad
-        var builder = new VentanaBuilder<FacturaCompra>()
+        var builder = new VentanaBuilder<object>()
             .SetEntidad(entidad)
             .SetContenedorCampos(spCampos)
             .SetContenedorTablas(spTabla)
@@ -109,33 +106,17 @@ public partial class EntidadEditorTableWindow: Window
         return false;
     }
 
-    private async Task EjecutarAcción()
-    {
-        if (_accion != null)
-        {
-            if (EntidadEditada == null)
-                throw new InvalidOperationException("Entidad editada no definida.");
-
-            bool ok = await _accion(EntidadEditada);
-
-            if (!ok)
-                return;
-
-            if (_syncDetalles != null)
-                await _syncDetalles(EntidadEditada);
-        }
-
-        DialogUtils.MostrarInfo(Mensajes.OperacionExitosa, "Éxito");
-        DialogResult = true;
-        Close();
-    }
-
     private async void BtnGuardar_Click(object sender, RoutedEventArgs e)
     {
         if (!Validar())
             return;
 
-        await EjecutarAcción();
+        var ok = await _guardar(EntidadEditada!);
+
+        if (!ok)
+            return;
+
+        DialogResult = true;
     }
 
     private void BtnCancelar_Click(object sender, RoutedEventArgs e)

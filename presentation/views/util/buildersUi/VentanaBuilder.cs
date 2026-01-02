@@ -9,6 +9,7 @@ namespace Gestion.presentation.views.util.buildersUi;
 public class VentanaBuilder<TEntidad>
 {
     private readonly FormularioBuilder _fomularioBuilder = new();
+    private readonly DetallesBuilder _detallesBuilder = new();
     private Dictionary<PropertyInfo, FrameworkElement> _controles = [];
     private Panel? _contenedorCampos;
     private Panel? _contenedorTablas;
@@ -41,7 +42,6 @@ public class VentanaBuilder<TEntidad>
 
     public void Build()
     {
-        // Llamamos el builder de UI
         _fomularioBuilder
             .SetEntidad(_entidad!)
             .SetContenedor(_contenedorCampos!)
@@ -49,56 +49,11 @@ public class VentanaBuilder<TEntidad>
             .SetModo(_modo)
             .Build();
 
-        // Colección ("Detalles") que tenga la entidad?
-        // Genera un dg
-
-        var colecciones = _entidad!
-            .GetType()
-            .GetProperties()
-            .Where(p => typeof(IEnumerable).IsAssignableFrom(p.PropertyType) 
-                && p.PropertyType != typeof(string));
-
-        foreach (var prop in colecciones)
-        {
-            // Obtiene el Tipo
-            var itemType = prop.PropertyType.GetGenericArguments().First();
-
-            // Transforma la colección
-            IEnumerable enumerableTyped = (IEnumerable) typeof(Enumerable)
-                .GetMethod(nameof(Enumerable.Cast))!
-                .MakeGenericMethod(itemType)
-                .Invoke(null, [prop.GetValue(_entidad)!])!;
-
-            // Crea un Group Box
-            var groupBox = new GroupBox
-            {
-                Header = $"Detalles",    // Título del grupo
-                Margin = new Thickness(0, 10, 0, 10)
-            };
-
-            // Crear contenedor interno del DataGrid
-            var stackPanel = new StackPanel();
-            groupBox.Content = stackPanel;
-
-            // Agregar el GroupBox al contenedor principal de tablas
-            _contenedorTablas!.Children.Add(groupBox);
-
-            // Crear el DataGridBuilder<T>
-            var dgBuilderType = typeof(DataGridBuilder<>).MakeGenericType(itemType);
-            dynamic dgBuilder = Activator.CreateInstance(dgBuilderType)!;
-
-            // Modo edición / lectura
-            if (_modo == ModoFormulario.Edicion)
-                dgBuilder.Editable();
-            else
-                dgBuilder.SoloLectura();
-
-            // Construir el DataGrid DENTRO del GroupBox
-            dgBuilder
-                .SetContenedor(stackPanel)   // aquí va dentro del GroupBox
-                .SetItems(enumerableTyped)
-                .Build();
-        }
+        _detallesBuilder
+            .SetEntidad(_entidad!)
+            .SetContenedor(_contenedorTablas!)
+            .SetModo(_modo)
+            .Build();
     }
 
     public Dictionary<PropertyInfo, FrameworkElement> GetControles() => _controles;

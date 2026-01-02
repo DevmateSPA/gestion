@@ -7,8 +7,6 @@ using Gestion.core.session;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
-using MySql.Data.MySqlClient;
-using Gestion.core.model;
 
 namespace Gestion.presentation.viewmodel;
 

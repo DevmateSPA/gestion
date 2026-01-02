@@ -10,6 +10,7 @@ using Gestion.presentation.views.pages;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.database;
 using Gestion.presentation.views.util;
+using Gestion.presentation.config;
 
 namespace Gestion;
 
@@ -19,6 +20,8 @@ public partial class App : Application
 
     private void Application_Startup(object sender, StartupEventArgs e)
     {
+        UiConfig.Register(); // Llama los registros de los dg personalziados
+
         DispatcherUnhandledException += (s, ex) =>
         {
             var dialog = ServiceProvider?

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -64,6 +65,11 @@ public class DataGridBuilder<T>
             throw new InvalidOperationException("Contenedor no definido");
 
         _dg.AutoGenerateColumns = !_tieneColumnas;
+
+        if (_contenedor is StackPanel)
+        {
+            _dg.MaxHeight = 150; // fallback
+        }
 
         _contenedor.Children.Add(_dg);
     }
