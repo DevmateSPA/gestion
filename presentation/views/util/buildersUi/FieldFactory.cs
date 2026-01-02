@@ -4,16 +4,26 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Markup;
 using Gestion.core.attributes;
+using Gestion.presentation.enums;
 
 namespace Gestion.presentation.views.util.buildersUi;
 
 public static class FieldFactory
 {
-    public static FrameworkElement Crear(PropertyInfo prop, object entidad)
+    public static FrameworkElement Crear(
+        PropertyInfo prop,
+        object entidad,
+        ModoFormulario modo)
     {
+        // Prioridad 1: atributo explícito
         if (prop.GetCustomAttribute<OnlyReadAttribute>() != null)
             return CrearTextBlock(prop, entidad);
 
+        // Prioridad 2: modo del formulario
+        if (modo == ModoFormulario.SoloLectura)
+            return CrearTextBlock(prop, entidad);
+
+        // Edición normal
         var tipo = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
 
         if (tipo == typeof(bool))
@@ -54,15 +64,20 @@ public static class FieldFactory
         var tb = new TextBox
         {
             FontSize = 20,
-            Height = 30,
             Width = 300,
-            Margin = new Thickness(5, 0, 5, 10)
+            Margin = new Thickness(5, 0, 5, 10),
+
+            TextWrapping = TextWrapping.Wrap,
+            AcceptsReturn = true,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            MinHeight = 30
         };
 
         var binding = BindingFactory.CreateValidateBinding(
-            prop, 
+            prop,
             entidad,
             BindingMode.TwoWay);
+
         tb.SetBinding(TextBox.TextProperty, binding);
 
         return tb;

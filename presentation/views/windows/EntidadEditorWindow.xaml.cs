@@ -100,12 +100,12 @@ private void CargarMemoSiAplica(object entidad)
 
     private void GenerarCampos(object entidad)
     {
-        _formularioBuilder.Build(
-            entidad: entidad,
-            contenedor: spCampos,
-            controles: _controles,
-            maxPorFila: 3
-        );
+        _formularioBuilder
+            .SetEntidad(entidad)
+            .SetContenedor(spCampos)
+            .SetControles(_controles)
+            .SetMaxFila(3)
+            .Build();
 
         FormularioValidator.ForzarValidacionInicial(_controles);
     }

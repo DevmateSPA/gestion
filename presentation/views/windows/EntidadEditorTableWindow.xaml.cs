@@ -1,30 +1,37 @@
 using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using Gestion.core.interfaces.model;
 using Gestion.core.model;
 using Gestion.helpers;
+using Gestion.presentation.enums;
 using Gestion.presentation.views.util;
 using Gestion.presentation.views.util.buildersUi;
 
 namespace Gestion.presentation.views.windows;
 
-public partial class EntidadEditorTableWindow : Window
+public partial class EntidadEditorTableWindow<TEntidad, TDetalle> : Window
+    where TEntidad : class
 {
     // Builder de formularios
     private readonly FormularioBuilder _formularioBuilder = new();
-    private readonly FacturaCompra _entidadOriginal;
-    private readonly IEnumerable<FacturaCompraProducto>? _detalles;
-    private readonly Func<FacturaCompra, Task<bool>> _accion;
-    private readonly Func<FacturaCompra, Task> _syncDetalles;
-    private readonly Dictionary<PropertyInfo, FrameworkElement> _controles = [];
+    private readonly DataGridBuilder<TDetalle> _dataGridBuilder = new();
+    private readonly TEntidad _entidadOriginal;
+    private readonly IEnumerable<TDetalle>? _detalles;
+    private readonly Func<TEntidad, Task<bool>> _accion;
+    private readonly Func<TEntidad, Task>? _syncDetalles;
+    private Dictionary<PropertyInfo, FrameworkElement> _controles = [];
 
-    public FacturaCompra EntidadEditada { get; private set; }
+    private DataGrid? dgDetalles;
+
+    public TEntidad? EntidadEditada { get; private set; }
 
     public EntidadEditorTableWindow(
-        FacturaCompra entidad,
-        IEnumerable<FacturaCompraProducto> detalles,
-        Func<FacturaCompra, Task<bool>> accion,
-        Func<FacturaCompra, Task> syncDetalles,
+        TEntidad entidad,
+        IEnumerable<TDetalle> detalles,
+        Func<TEntidad, Task<bool>> accion,
+        Func<TEntidad, Task>? syncDetalles,
         string titulo = "Ventana con tabla")
     {
         InitializeComponent();
@@ -41,9 +48,9 @@ public partial class EntidadEditorTableWindow : Window
         InicializarEventos();
     }
 
-    private void ClonarEntidad(FacturaCompra entidad)
+    private void ClonarEntidad(TEntidad entidad)
     {
-        EntidadEditada = (FacturaCompra)Activator.CreateInstance(entidad.GetType())!;
+        EntidadEditada = (TEntidad)Activator.CreateInstance(entidad.GetType())!;
 
         foreach (var prop in entidad.GetType().GetProperties())
         {
@@ -52,11 +59,26 @@ public partial class EntidadEditorTableWindow : Window
         }
     }
 
-    private void InicializarUI(object entidad)
+    private void InicializarUI(TEntidad entidad)
     {
-        GenerarCampos(entidad);
-        CargarTabla();
-        EnfocarPrimerControl();
+        // Crear el builder para la entidad
+        var builder = new VentanaBuilder<TEntidad>()
+            .SetEntidad(entidad)
+            .SetContenedorCampos(spCampos)
+            .SetContenedorTablas(spTabla)
+            .SetModo(ModoFormulario.Edicion);
+
+        // Se genera la UI
+        builder.Build();
+
+        // Recuperamos los controles
+        _controles = builder.GetControles();
+
+        // Validamos los campos inicialmente
+        FormularioValidator.ForzarValidacionInicial(_controles);
+
+        // Se enfooca el control
+        _controles.Values.FirstOrDefault()?.Focus();
     }
 
     private void EnfocarPrimerControl()
@@ -76,31 +98,9 @@ public partial class EntidadEditorTableWindow : Window
         };
     }
 
-    // --------------------------------------------------------
-    //  GENERAR CAMPOS CON BINDING + VALIDACIÓN AUTOMÁTICA
-    // --------------------------------------------------------
-
-    private void GenerarCampos(object entidad)
-    {
-        _formularioBuilder.Build(
-            entidad,
-            spCampos,
-            _controles,
-            maxPorFila: 3
-        );
-
-        FormularioValidator.ForzarValidacionInicial(_controles);
-    }
-
     // -----------------------------
     //   DATA GRID DE DETALLES
     // -----------------------------
-
-    private void CargarTabla()
-    {
-        if (_detalles != null)
-            dgDetalles.ItemsSource = _detalles;
-    }
 
     private bool Validar()
     {
@@ -117,12 +117,16 @@ public partial class EntidadEditorTableWindow : Window
     {
         if (_accion != null)
         {
+            if (EntidadEditada == null)
+                throw new InvalidOperationException("Entidad editada no definida.");
+
             bool ok = await _accion(EntidadEditada);
 
             if (!ok)
                 return;
 
-            await _syncDetalles(EntidadEditada);
+            if (_syncDetalles != null)
+                await _syncDetalles(EntidadEditada);
         }
 
         DialogUtils.MostrarInfo(Mensajes.OperacionExitosa, "Éxito");
