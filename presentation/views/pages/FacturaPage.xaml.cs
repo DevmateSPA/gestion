@@ -55,37 +55,40 @@ public partial class FacturaPage : Page
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
 
-    private void BtnAgregar_Click(object sender, RoutedEventArgs e)
+    private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        EditorHelper.Abrir(
-            owner: Window.GetWindow(this),
-            entidad: new Factura(),
-            accion: async entidad => await _viewModel.Save((Factura)entidad),
-            titulo: "Agregar Factura");
+        await new EditorEntidadBuilder<Factura>()
+            .Owner(Window.GetWindow(this)!)
+            .Entidad(new Factura())
+            .Titulo("Agregar Factura")
+            .Guardar(_viewModel.Save)
+            .Abrir();
     }
 
-    private void Editar(Factura entity)
+    private async Task Editar(Factura factura)
     {
-        EditorHelper.Abrir(
-            owner: Window.GetWindow(this),
-            entidad: entity,
-            accion: async entidad => await _viewModel.Update((Factura)entidad),
-            titulo: "Editar Factura");
+        await new EditorEntidadBuilder<Factura>()
+            .Owner(Window.GetWindow(this)!)
+            .Entidad(factura)
+            .Titulo("Editar Factura")
+            .Guardar(_viewModel.Update)
+            .Abrir();
     }
 
-    private void EditarSeleccionado()
+    private async Task EditarSeleccionado()
     {
-        if (dgFacturas.SelectedItem is Factura seleccionado)
-            Editar(seleccionado);
+        if (dgFacturas.SelectedItem is Factura facturaSeleccionada)
+            await Editar(facturaSeleccionada);
     }
 
-    private void BtnEditar_Click(object sender, RoutedEventArgs e)
+    private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
-        EditarSeleccionado();
+        await EditarSeleccionado();
     }
-    private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+
+    private async void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        EditarSeleccionado();
+        await EditarSeleccionado();
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
