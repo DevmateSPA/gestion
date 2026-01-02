@@ -76,8 +76,13 @@ public class DetallesBuilder
         var columns = DataGridColumnRegistry.Get(itemType);
         if (columns != null)
         {
-            foreach (var col in columns)
-                dgBuilder.AddColumna(col.Header, col.Binding, col.Width);
+            for (int i = 0; i < columns.Count; i++)
+            {
+                var col = columns[i];
+                // Por defecto, la primera columna de texto ocupa el resto del ancho
+                bool fillRemaining = !col.Width.HasValue && i == 0;
+                dgBuilder.AddColumna(col.Header, col.Binding, col.Width, fillRemaining);
+            }
         }
 
         dgBuilder

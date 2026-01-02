@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 
 namespace Gestion.presentation.views.util.buildersUi;
@@ -48,19 +49,36 @@ public class DataGridBuilder<T>
     public DataGridBuilder<T> AddColumna(
         string header,
         string bindingPath,
-        double? width = null)
+        double? width = null,
+        bool fillRemaining = false)
     {
         _tieneColumnas = true;
 
-        _dg.Columns.Add(
-            new DataGridTextColumn
+        var col = new DataGridTextColumn
+        {
+            Header = header,
+            Binding = new Binding(bindingPath),
+            Width = width.HasValue
+                ? new DataGridLength(width.Value)
+                : fillRemaining
+                    ? new DataGridLength(1, DataGridLengthUnitType.Star)
+                    : new DataGridLength(1, DataGridLengthUnitType.Auto),
+            MinWidth = 10
+        };
+
+        _dg.Columns.Add(col);
+
+        if (_dg.ColumnHeaderStyle == null)
+        {
+            _dg.ColumnHeaderStyle = new Style(typeof(DataGridColumnHeader))
             {
-                Header = header,
-                Binding = new Binding(bindingPath),
-                Width = width.HasValue ? new DataGridLength(width.Value)
-                    : new DataGridLength(1, DataGridLengthUnitType.Star)
-            }
-        );
+                Setters =
+                {
+                    new Setter(TextBlock.TextWrappingProperty, TextWrapping.Wrap),
+                    new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Center)
+                }
+            };
+        }
 
         return this;
     }

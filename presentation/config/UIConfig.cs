@@ -14,9 +14,9 @@ public static class UiConfig
     {
         // Dg de FacturaCompraProducto
         DataGridColumnRegistry.Register<FacturaCompraProducto>(
-            new() { Header = "Código", Binding = "Producto" },
-            new() { Header = "Nombre", Binding = "Productonombre"},
-            new() { Header = "Cantidad", Binding = "Entrada"}
+            new() { Header = "Código", Binding = "Producto", Width = 100 },
+            new() { Header = "Nombre", Binding = "Productonombre", Width = 800},
+            new() { Header = "Cantidad", Binding = "Entrada", Width = 100}
         );
     }
 }
