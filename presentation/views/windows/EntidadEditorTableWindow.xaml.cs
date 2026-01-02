@@ -22,7 +22,7 @@ public partial class EntidadEditorTableWindow: Window
 
     public object? EntidadEditada { get; private set; }
 
-    private readonly Func<object, Task<bool>> _guardar;
+    private readonly Func<object, Task<bool>>? _guardar;
 
     public EntidadEditorTableWindow(
         object entidad,
@@ -112,7 +112,12 @@ public partial class EntidadEditorTableWindow: Window
         if (!Validar())
             return;
 
-        var ok = await _guardar(EntidadEditada!);
+        var ok = false;
+
+        if (_guardar != null)
+            ok = await _guardar(EntidadEditada!);
+        else
+            ok = true;
 
         if (!ok)
             return;

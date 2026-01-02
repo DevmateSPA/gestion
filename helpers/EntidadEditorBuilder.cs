@@ -67,8 +67,6 @@ public class EditorEntidadBuilder<T>
     {
         if (_entidad == null)
             throw new InvalidOperationException("Entidad no definida");
-        if (_guardar == null)
-            throw new InvalidOperationException("Acción Guardar no definida");
 
         var ventana = new EntidadEditorTableWindow(
             _entidad,

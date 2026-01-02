@@ -205,7 +205,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     [Grupo("Datos de Máquina", ORDEN_GRUPO_DATOS_MAQUINA)]
     [Orden(0)]
     public string Maquina1 { get; set; } = string.Empty;
-    [NotMapped]
+    [NoSaveDb]
     [Visible(false)]
     public string Maquina1descripcion { get; set; } = string.Empty;
     [Nombre("Máquina 2")]

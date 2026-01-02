@@ -68,15 +68,12 @@ namespace Gestion.presentation.views.pages;
         ordenTrabajo.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(
             await _viewModel.LoadDetailsByFolio(ordenTrabajo.Folio));
 
-        EditorOtHelper.Abrir(
-            owner: Window.GetWindow(this),
-            entidad: ordenTrabajo,
-            accion: _viewModel.Update,
-            syncDetalles: ordenTrabajoEditada =>
-                _viewModel.SincronizarDetalles(
-                    ordenTrabajo.Detalles,
-                    ordenTrabajoEditada.Detalles,
-                    ordenTrabajoEditada));
+        await new EditorEntidadBuilder<OrdenTrabajo>()
+            .Owner(Window.GetWindow(this)!)
+            .Entidad(ordenTrabajo)
+            .Titulo("Visualizar Orden de Trabajo")
+            .SoloLecutra()
+            .Abrir();
     }
     
     private void BtnSaldos_Click(object sender, RoutedEventArgs e)
