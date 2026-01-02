@@ -49,37 +49,40 @@ namespace Gestion.presentation.views.pages
 
              txtBuscar.KeyDown += TxtBuscar_KeyDown;
         }
-        private void BtnAgregar_Click(object sender, RoutedEventArgs e)
+        private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            EditorHelper.Abrir(
-                owner: Window.GetWindow(this),
-                entidad: new Grupo(),
-                accion: async entidad => await _viewModel.Save((Grupo)entidad),
-                titulo: "Agregar Grupo");
+            await new EditorEntidadBuilder<Grupo>()
+                .Owner(Window.GetWindow(this)!)
+                .Entidad(new Grupo())
+                .Titulo("Agregar Grupo")
+                .Guardar(_viewModel.Save)
+                .Abrir();
         }
 
-        private void Editar(Grupo entity)
+        private async Task Editar(Grupo grupo)
         {
-            EditorHelper.Abrir(
-                owner: Window.GetWindow(this),
-                entidad: entity,
-                accion: async entidad => await _viewModel.Update((Grupo)entidad),
-                titulo: "Editar Grupo");
+            await new EditorEntidadBuilder<Grupo>()
+                .Owner(Window.GetWindow(this)!)
+                .Entidad(grupo)
+                .Titulo("Editar Grupo")
+                .Guardar(_viewModel.Update)
+                .Abrir();
         }
 
-        private void EditarSeleccionado()
+        private async Task EditarSeleccionado()
         {
-            if (dgGrupos.SelectedItem is Grupo seleccionado)
-                Editar(seleccionado);
+            if (dgGrupos.SelectedItem is Grupo grupoSeleccionado)
+                await Editar(grupoSeleccionado);
         }
 
-        private void BtnEditar_Click(object sender, RoutedEventArgs e)
+        private async void BtnEditar_Click(object sender, RoutedEventArgs e)
         {
-            EditarSeleccionado();
+            await EditarSeleccionado();
         }
-        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+
+        private async void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            EditarSeleccionado();
+            await EditarSeleccionado();
         }
 
         private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
