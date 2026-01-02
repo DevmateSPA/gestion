@@ -62,7 +62,7 @@ public partial class EntidadEditorTableWindow: Window
             .SetEntidad(entidad)
             .SetContenedorCampos(spCampos)
             .SetContenedorTablas(spTabla)
-            .SetModo(ModoFormulario.SoloLectura);
+            .SetModo(ModoFormulario.Edicion);
 
         // Se genera la UI
         builder.Build();
