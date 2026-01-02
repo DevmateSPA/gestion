@@ -13,7 +13,6 @@ public static class FormularioReflectionHelper
                 .Where(p =>
                     p.CanWrite &&
                     !string.Equals(p.Name, "Id", StringComparison.OrdinalIgnoreCase) &&
-                    p.Name != "Memo" &&
                     (p.PropertyType == typeof(string) || p.PropertyType.IsValueType) &&
                     (p.GetCustomAttribute<VisibleAttribute>()?.Mostrar ?? true))
                 .Select(p =>

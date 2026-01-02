@@ -38,5 +38,7 @@ public class NotaCredito : TotalBase
     public string NombreCliente { get; set; } = string.Empty;
 
     [Nombre("Detalle")]
+    [Grupo("Detalles", 2)]
+    [TextArea]
     public string Memo { get; set; } = string.Empty;
 }

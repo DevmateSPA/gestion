@@ -29,24 +29,23 @@
         </StackPanel>
 
         <!-- CONTENIDO -->
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-            <ScrollViewer Grid.Row="0"
-                        VerticalScrollBarVisibility="Auto">
                 <StackPanel x:Name="spCampos"
                             Orientation="Vertical"
-                            Margin="0,0,0,10"/>
-            </ScrollViewer>
+                            Margin="0,0,0,10"
+                            Grid.Row="0"/>
 
-            <Grid Grid.Row="1">
                 <Grid x:Name="spTabla"
-                    Margin="0,10,0,0"/>
-                            </Grid>
-        </Grid>
+                    Margin="0,10,0,0"
+                    Grid.Row="1"/>
+            </Grid>
+        </ScrollViewer>
 
     </DockPanel>
 </Window>

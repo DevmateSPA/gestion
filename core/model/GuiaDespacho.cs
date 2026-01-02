@@ -47,6 +47,8 @@ public class GuiaDespacho : IEmpresa
     public string NombreCliente { get; set; } = string.Empty;
 
     [Nombre("Detalles")]
+    [Grupo("Detalles", 3)]
+    [TextArea]
     public string Memo { get; set; } = string.Empty;
 
     [Visible(false)]

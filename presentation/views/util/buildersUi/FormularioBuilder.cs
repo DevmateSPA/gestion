@@ -125,24 +125,36 @@ public class FormularioBuilder
         int maxPorFila)
     {
         var panel = new StackPanel { Margin = new Thickness(10) };
-
         StackPanel? filaActual = null;
 
         for (int i = 0; i < grupo.Propiedades.Count; i++)
         {
-            if (i % maxPorFila == 0)
+            var prop = grupo.Propiedades[i];
+
+            // Crear bloque del campo
+            var bloque = CrearBloqueCampo(prop, entidad, controles, _modo);
+
+            // Si es TextAreaAttribute, ocupa toda la fila
+            if (prop.GetCustomAttribute<TextAreaAttribute>() != null)
             {
-                filaActual = CrearFila();
+                filaActual = new StackPanel
+                {
+                    Orientation = Orientation.Vertical
+                };
+                filaActual.Children.Add(bloque);
                 panel.Children.Add(filaActual);
+                filaActual = null; // siguiente propiedad inicia nueva fila
             }
-
-            var bloque = CrearBloqueCampo(
-                grupo.Propiedades[i],
-                entidad,
-                controles,
-                _modo);
-
-            filaActual!.Children.Add(bloque);
+            else
+            {
+                // filas normales
+                if (i % maxPorFila == 0)
+                {
+                    filaActual = CrearFila(); // StackPanel Horizontal
+                    panel.Children.Add(filaActual);
+                }
+                filaActual!.Children.Add(bloque);
+            }
         }
 
         return new GroupBox

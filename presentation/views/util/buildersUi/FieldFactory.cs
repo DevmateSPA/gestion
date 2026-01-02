@@ -35,7 +35,36 @@ public static class FieldFactory
         if (tipo == typeof(DateTime))
             return CrearDatePicker(prop, entidad);
 
+        if (prop.GetCustomAttribute<TextAreaAttribute>() != null)
+            return CrearTextArea(prop, entidad);
+
         return CrearTextBox(prop, entidad);
+    }
+
+    private static TextBox CrearTextArea(PropertyInfo prop, object entidad)
+    {
+        var tb = new TextBox
+        {
+            FontSize = 20,
+            Margin = new Thickness(5, 0, 5, 10),
+
+            AcceptsReturn = true,
+            TextWrapping = TextWrapping.Wrap,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+
+            MinHeight = 150,
+            MaxWidth = 900,
+            HorizontalAlignment = HorizontalAlignment.Stretch
+        };
+
+        var binding = BindingFactory.CreateValidateBinding(
+            prop,
+            entidad,
+            BindingMode.TwoWay);
+
+        tb.SetBinding(TextBox.TextProperty, binding);
+
+        return tb;
     }
 
     private static TextBlock CrearTextBlock(PropertyInfo prop, object entidad)

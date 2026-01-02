@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Gestion.core.attributes;
 using Gestion.core.attributes.validation;
-using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;
 
@@ -135,10 +134,8 @@ public class Factura : TotalBase
     [Orden(2)]
     public bool Plan { get; set; }
 
-    // ===============================
-    // OBSERVACIONES / DETALLE
-    // ===============================
-
+    [Grupo("Detalles", GRUPO_TOTALES+2)]
     [Nombre("Detalle")]
+    [TextArea]
     public string Memo { get; set; } = string.Empty;
 }
