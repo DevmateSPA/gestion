@@ -27,6 +27,7 @@ public partial class EntidadEditorTableWindow: Window
     public EntidadEditorTableWindow(
         object entidad,
         Func<object, Task<bool>> guardar,
+        ModoFormulario modo,
         string titulo = "Ventana con tabla")
     {
         InitializeComponent();
@@ -37,7 +38,7 @@ public partial class EntidadEditorTableWindow: Window
 
         ClonarEntidad(entidad);
 
-        InicializarUI(EntidadEditada!);
+        InicializarUI(EntidadEditada!, modo);
         InicializarEventos();
     }
 
@@ -52,14 +53,14 @@ public partial class EntidadEditorTableWindow: Window
         }
     }
 
-    private void InicializarUI(object entidad)
+    private void InicializarUI(object entidad, ModoFormulario modo)
     {
         // Crear el builder para la entidad
         var builder = new VentanaBuilder<object>()
             .SetEntidad(entidad)
             .SetContenedorCampos(spCampos)
             .SetContenedorTablas(spTabla)
-            .SetModo(ModoFormulario.Edicion);
+            .SetModo(modo);
 
         // Se genera la UI
         builder.Build();

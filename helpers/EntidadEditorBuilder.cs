@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using System.Windows;
+using Gestion.presentation.enums;
 using Gestion.presentation.views.windows;
 
 namespace Gestion.helpers;
@@ -12,6 +13,7 @@ public class EditorEntidadBuilder<T>
     private string _titulo = "Editar";
     private Func<T, Task<bool>>? _guardar;
     private Func<T, Task>? _onClose;
+    private ModoFormulario _modo = ModoFormulario.Edicion;
 
     public EditorEntidadBuilder<T> Owner(Window owner)
     {
@@ -43,6 +45,24 @@ public class EditorEntidadBuilder<T>
         return this;
     }
 
+    public EditorEntidadBuilder<T> SoloLecutra()
+    {
+        _modo = ModoFormulario.SoloLectura;
+        return this;
+    }
+
+    public EditorEntidadBuilder<T> Edicion()
+    {
+        _modo = ModoFormulario.Edicion;
+        return this;
+    }
+
+    public EditorEntidadBuilder<T> Modo(ModoFormulario modo)
+    {
+        _modo = modo;
+        return this;
+    }
+
     public async Task Abrir()
     {
         if (_entidad == null)
@@ -53,6 +73,7 @@ public class EditorEntidadBuilder<T>
         var ventana = new EntidadEditorTableWindow(
             _entidad,
             async obj => await _guardar!((T)obj),
+            _modo,
             _titulo)
         {
             Owner = _owner
