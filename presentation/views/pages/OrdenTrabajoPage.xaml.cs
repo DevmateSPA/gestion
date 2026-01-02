@@ -59,22 +59,24 @@ public partial class OrdenTrabajoPage : Page
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
 
-    private void BtnAgregar_Click(object sender, RoutedEventArgs e)
+    private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
         var ordenTrabajo = new OrdenTrabajo
         {
             Empresa = SesionApp.IdEmpresa
         };
 
-    EditorOtHelper.Abrir(
-        owner: Window.GetWindow(this),
-        entidad: ordenTrabajo,
-        accion: _viewModel.Save,
-        syncDetalles: ordenTrabajoEditada =>
-            _viewModel.SincronizarDetalles(
-                [],
-                ordenTrabajoEditada.Detalles,
-                ordenTrabajoEditada));
+        await new EditorEntidadBuilder<OrdenTrabajo>()
+            .Owner(Window.GetWindow(this)!)
+            .Entidad(ordenTrabajo)
+            .Titulo("Agregar Orden de Trabajo")
+            .Guardar(_viewModel.Save)
+            .OnClose(async facturaEditada =>
+                await _viewModel.SincronizarDetalles(
+                    [],
+                    facturaEditada.Detalles.Cast<DetalleOrdenTrabajo>(),
+                    facturaEditada))
+            .Abrir();
     }
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)

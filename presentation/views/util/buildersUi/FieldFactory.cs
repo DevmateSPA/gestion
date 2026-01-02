@@ -52,7 +52,7 @@ public static class FieldFactory
             TextWrapping = TextWrapping.Wrap,
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
 
-            MinHeight = 150,
+            MinHeight = 20,
             MaxWidth = 900,
             HorizontalAlignment = HorizontalAlignment.Stretch
         };
