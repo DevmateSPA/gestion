@@ -54,6 +54,10 @@ public static class FieldFactory
             entidad,
             BindingMode.OneWay);
 
+        var tipo = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+        if (tipo == typeof(DateTime))
+            binding.StringFormat = "dd/MM/yyyy";
+
         tb.SetBinding(TextBlock.TextProperty, binding);
 
         return tb;
@@ -135,7 +139,8 @@ public static class FieldFactory
         var binding = BindingFactory.CreateValidateBinding(
             prop, 
             entidad, 
-            BindingMode.TwoWay);
+            BindingMode.TwoWay,
+            "dd/MM/yyyy");
         dp.SetBinding(DatePicker.SelectedDateProperty, binding);
 
         return dp;
