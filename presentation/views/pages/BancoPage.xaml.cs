@@ -6,6 +6,7 @@ using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.util;
 using System.Printing;
 using Gestion.helpers;
+using System.Threading.Tasks;
 
 namespace Gestion.presentation.views.pages;
 
@@ -51,38 +52,40 @@ public partial class BancoPage : Page
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
 
-    private void BtnAgregar_Click(object sender, RoutedEventArgs e)
+    private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        EditorHelper.Abrir(
-            owner: Window.GetWindow(this),
-            entidad: new Banco(),
-            accion: async entidad => await _viewModel.Save((Banco)entidad),
-            titulo: "Agregar Banco");
+        await new EditorEntidadBuilder<Banco>()
+            .Owner(Window.GetWindow(this)!)
+            .Entidad(new Banco())
+            .Titulo("Agregar Banco")
+            .Guardar(_viewModel.Save)
+            .Abrir();
     }
 
-    private void Editar(Banco banco)
+    private async Task Editar(Banco banco)
     {
-        EditorHelper.Abrir(
-            owner: Window.GetWindow(this),
-            entidad: banco,
-            accion: async entidad => await _viewModel.Update((Banco)entidad),
-            titulo: "Editar Banco");
+        await new EditorEntidadBuilder<Banco>()
+            .Owner(Window.GetWindow(this)!)
+            .Entidad(banco)
+            .Titulo("Editar Banco")
+            .Guardar(_viewModel.Update)
+            .Abrir();
     }
 
-    private void EditarSeleccionado()
+    private async Task EditarSeleccionado()
     {
         if (dgBancos.SelectedItem is Banco bancoSeleccionado)
-            Editar(bancoSeleccionado);
+            await Editar(bancoSeleccionado);
     }
 
-    private void BtnEditar_Click(object sender, RoutedEventArgs e)
+    private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
-        EditarSeleccionado();
+        await EditarSeleccionado();
     }
 
-    private void DgBancos_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private async void DgBancos_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        EditarSeleccionado();
+        await EditarSeleccionado();
     }
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
