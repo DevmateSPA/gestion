@@ -13,23 +13,6 @@ public static class FieldFactory
     // --- Constantes de configuración ---
     private const int FONT_SIZE = 20;
 
-    // Text Area CFG
-    private static readonly Thickness MARGIN_TEXTAREA = new(5, 0, 5, 10);
-    // Text Block CFG
-    private static readonly Thickness MARGIN_TEXT_BLOCK = new(5, 0, 5, 10);
-    private const double MAX_WIDTH_TEXTBLOCK = 900;
-    // Text Box CFG
-    private static readonly Thickness MARGIN_TEXT_BOX = new(5, 0, 5, 10);
-    // Check Box CFG
-    private static readonly Thickness MARGIN_CHECK_BOX = new(5, 15, 5, 15);
-    private const double WIDTH_TEXTBOX = 300;
-    // Combo Box CFG
-    private static readonly Thickness MARGIN_COMBO_BOX = new(5, 0, 5, 10);
-    // Date Picker CFG
-    private static readonly Thickness MARGIN_DATE_PICKER = new(5, 0, 5, 10);
-    // Radio Group CFG
-    private static readonly Thickness MARGIN_RADIO_GROUP = new(5, 0, 5, 10);
-
     public static FrameworkElement Crear(PropertyInfo prop, object entidad, ModoFormulario modo)
     {
         // Solo lectura
@@ -54,7 +37,7 @@ public static class FieldFactory
         var tb = new TextBox 
         { 
             FontSize = FONT_SIZE, 
-            Margin = MARGIN_TEXTAREA, 
+            Margin = new Thickness(5, 0, 5, 10), 
             AcceptsReturn = true, 
             TextWrapping = TextWrapping.Wrap, 
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto, 
@@ -76,7 +59,8 @@ public static class FieldFactory
         var tb = new TextBox 
         { 
             FontSize = FONT_SIZE, 
-            Width = WIDTH_TEXTBOX, Margin = MARGIN_TEXT_BOX, 
+            Width = 900, 
+            Margin = new Thickness(5, 0, 5, 10), 
             TextWrapping = TextWrapping.Wrap, 
             AcceptsReturn = true, 
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto, 
@@ -95,8 +79,8 @@ public static class FieldFactory
         var tb = new TextBlock
         {
             FontSize = FONT_SIZE,
-            MaxWidth = MAX_WIDTH_TEXTBLOCK,
-            Margin = MARGIN_TEXT_BLOCK,
+            MaxWidth = 900,
+            Margin = new Thickness(5, 0, 5, 10),
             VerticalAlignment = VerticalAlignment.Center,
             TextWrapping = TextWrapping.Wrap
         };
@@ -115,7 +99,7 @@ public static class FieldFactory
     {
         var cb = new CheckBox
         {
-            Margin = MARGIN_CHECK_BOX,
+            Margin = new Thickness(5, 15, 5, 15),
             FontSize = FONT_SIZE
         };
 
@@ -136,7 +120,7 @@ public static class FieldFactory
                 Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType),
             Height = 30,
             Width = 300,
-            Margin = MARGIN_COMBO_BOX,
+            Margin = new Thickness(5, 0, 5, 10),
             FontSize = FONT_SIZE
         };
 
@@ -156,7 +140,7 @@ public static class FieldFactory
             FontSize = FONT_SIZE,
             Height = 30,
             Width = 300,
-            Margin = MARGIN_DATE_PICKER,
+            Margin = new Thickness(5, 0, 5, 10),
             SelectedDateFormat = DatePickerFormat.Short,
             Language = XmlLanguage.GetLanguage("es-ES"),
             Text = "Seleccione fecha"
@@ -177,7 +161,7 @@ public static class FieldFactory
         var panel = new StackPanel
         {
             Orientation = Orientation.Horizontal,
-            Margin = MARGIN_RADIO_GROUP
+            Margin = new Thickness(5, 0, 5, 10)
         };
 
         foreach (var (texto, valor) in radioGroup.Opciones)
