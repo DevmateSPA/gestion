@@ -34,9 +34,6 @@ public class FacturaCompraService : BaseService<FacturaCompra>, IFacturaCompraSe
         if (entity.FechaVencimiento.Date < entity.Fecha.Date)
             erroresEncontrados.Add("La fecha de vencimiento no puede ser anterior a la fecha de la factura.");
 
-        if (entity.FechaVencimiento.Date < DateTime.Today)
-            erroresEncontrados.Add("La fecha de vencimiento no puede ser anterior a hoy.");
-
         return erroresEncontrados;
     }
 }
