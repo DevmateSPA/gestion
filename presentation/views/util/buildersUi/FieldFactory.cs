@@ -10,61 +10,80 @@ namespace Gestion.presentation.views.util.buildersUi;
 
 public static class FieldFactory
 {
-    public static FrameworkElement Crear(
-        PropertyInfo prop,
-        object entidad,
-        ModoFormulario modo)
+    // --- Constantes de configuración ---
+    private const int FONT_SIZE = 20;
+
+    // Text Area CFG
+    private static readonly Thickness MARGIN_TEXTAREA = new(5, 0, 5, 10);
+    private const double MIN_HEIGHT_TEXTAREA = 20;
+    private const double MAX_WIDTH_TEXTAREA = 900;
+    // Text Block CFG
+    private static readonly Thickness MARGIN_TEXT_BLOCK = new(5, 6, 5, 10);
+    private const double MAX_WIDTH_TEXTBLOCK = 600;
+    // Text Box CFG
+    private static readonly Thickness MARGIN_TEXT_BOX = new(5, 0, 5, 10);
+    // Check Box CFG
+    private static readonly Thickness MARGIN_CHECK_BOX = new(5, 6, 5, 10);
+    private const double WIDTH_TEXTBOX = 300;
+    private const double MIN_HEIGHT_TEXTBOX = 30;
+    // Combo Box CFG
+    private static readonly Thickness MARGIN_COMBO_BOX = new(5, 0, 5, 10);
+    // Date Picker CFG
+    private static readonly Thickness MARGIN_DATE_PICKER = new(5, 0, 5, 10);
+    // Radio Group CFG
+    private static readonly Thickness MARGIN_RADIO_GROUP = new(5, 0, 5, 10);
+
+    public static FrameworkElement Crear(PropertyInfo prop, object entidad, ModoFormulario modo)
     {
-        // Prioridad 1: atributo explícito
-        if (prop.GetCustomAttribute<OnlyReadAttribute>() != null)
+        // Solo lectura
+        if (prop.GetCustomAttribute<OnlyReadAttribute>() != null || modo == ModoFormulario.SoloLectura)
             return CrearTextBlock(prop, entidad);
 
-        // Prioridad 2: modo del formulario
-        if (modo == ModoFormulario.SoloLectura)
-            return CrearTextBlock(prop, entidad);
-
-        // Edición normal
         var tipo = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
 
-        if (tipo == typeof(bool))
-            return CrearCheckBox(prop, entidad);
+        return tipo switch
+        {
+            Type t when t == typeof(bool) => CrearCheckBox(prop, entidad),
+            Type t when t.IsEnum => CrearCombo(prop, entidad),
+            Type t when t == typeof(DateTime) => CrearDatePicker(prop, entidad),
+            _ => prop.GetCustomAttribute<TextAreaAttribute>() != null ? CrearTextArea(prop, entidad) :
+                prop.GetCustomAttribute<RadioGroupAttribute>() is RadioGroupAttribute radioGroup ? CrearRadioGroup(prop, entidad, radioGroup) :
+                CrearTextBox(prop, entidad)
+        };
+    }
 
-        if (tipo.IsEnum)
-            return CrearCombo(prop, entidad);
-
-        if (tipo == typeof(DateTime))
-            return CrearDatePicker(prop, entidad);
-
-        if (prop.GetCustomAttribute<TextAreaAttribute>() != null)
-            return CrearTextArea(prop, entidad);
-
-        if (prop.GetCustomAttribute<RadioGroupAttribute>() is RadioGroupAttribute radioGroup)
-            return CrearRadioGroup(prop, entidad, radioGroup);
-
-        return CrearTextBox(prop, entidad);
+    private static void AplicarEstiloBaseTextBox(TextBox tb, Thickness margin, double minHeight, double? maxWidth = null)
+    {
+        tb.FontSize = FONT_SIZE;
+        tb.Margin = margin;
+        tb.TextWrapping = TextWrapping.Wrap;
+        tb.AcceptsReturn = true;
+        tb.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+        tb.HorizontalAlignment = HorizontalAlignment.Stretch;
+        tb.MinHeight = minHeight;
+        if (maxWidth.HasValue) tb.MaxWidth = maxWidth.Value;
     }
 
     private static TextBox CrearTextArea(PropertyInfo prop, object entidad)
     {
+        var tb = new TextBox();
+        AplicarEstiloBaseTextBox(tb, MARGIN_TEXTAREA, MIN_HEIGHT_TEXTAREA, MAX_WIDTH_TEXTAREA);
+
+        var binding = BindingFactory.CreateValidateBinding(prop, entidad, BindingMode.TwoWay);
+        tb.SetBinding(TextBox.TextProperty, binding);
+
+        return tb;
+    }
+
+    private static TextBox CrearTextBox(PropertyInfo prop, object entidad)
+    {
         var tb = new TextBox
         {
-            FontSize = 20,
-            Margin = new Thickness(5, 0, 5, 10),
-
-            AcceptsReturn = true,
-            TextWrapping = TextWrapping.Wrap,
-            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-
-            MinHeight = 20,
-            MaxWidth = 900,
-            HorizontalAlignment = HorizontalAlignment.Stretch
+            Width = WIDTH_TEXTBOX
         };
+        AplicarEstiloBaseTextBox(tb, MARGIN_TEXT_BOX, MIN_HEIGHT_TEXTBOX);
 
-        var binding = BindingFactory.CreateValidateBinding(
-            prop,
-            entidad,
-            BindingMode.TwoWay);
-
+        var binding = BindingFactory.CreateValidateBinding(prop, entidad, BindingMode.TwoWay);
         tb.SetBinding(TextBox.TextProperty, binding);
 
         return tb;
@@ -74,48 +93,20 @@ public static class FieldFactory
     {
         var tb = new TextBlock
         {
-            FontSize = 20,
-            MaxWidth = 600,
-            Margin = new Thickness(5, 6, 5, 10),
+            FontSize = FONT_SIZE,
+            MaxWidth = MAX_WIDTH_TEXTBLOCK,
+            Margin = MARGIN_TEXT_BLOCK,
             VerticalAlignment = VerticalAlignment.Center,
             TextWrapping = TextWrapping.Wrap
         };
 
-        var binding = BindingFactory.CreateValidateBinding(
-            prop,
-            entidad,
-            BindingMode.OneWay);
-
+        var binding = BindingFactory.CreateValidateBinding(prop, entidad, BindingMode.OneWay);
         var tipo = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+
         if (tipo == typeof(DateTime))
             binding.StringFormat = "dd/MM/yyyy";
 
         tb.SetBinding(TextBlock.TextProperty, binding);
-
-        return tb;
-    }
-
-    private static TextBox CrearTextBox(PropertyInfo prop, object entidad)
-    {
-        var tb = new TextBox
-        {
-            FontSize = 20,
-            Width = 300,
-            Margin = new Thickness(5, 0, 5, 10),
-
-            TextWrapping = TextWrapping.Wrap,
-            AcceptsReturn = true,
-            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-            MinHeight = 30
-        };
-
-        var binding = BindingFactory.CreateValidateBinding(
-            prop,
-            entidad,
-            BindingMode.TwoWay);
-
-        tb.SetBinding(TextBox.TextProperty, binding);
-
         return tb;
     }
 
@@ -123,7 +114,8 @@ public static class FieldFactory
     {
         var cb = new CheckBox
         {
-            Margin = new Thickness(5, 6, 5, 10)
+            Margin = MARGIN_CHECK_BOX,
+            FontSize = FONT_SIZE
         };
 
         var binding = BindingFactory.CreateValidateBinding(
@@ -143,7 +135,8 @@ public static class FieldFactory
                 Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType),
             Height = 30,
             Width = 300,
-            Margin = new Thickness(5, 0, 5, 10)
+            Margin = MARGIN_COMBO_BOX,
+            FontSize = FONT_SIZE
         };
 
         var binding = BindingFactory.CreateValidateBinding(
@@ -159,10 +152,10 @@ public static class FieldFactory
     {
         var dp = new DatePicker
         {
-            FontSize = 20,
+            FontSize = FONT_SIZE,
             Height = 30,
             Width = 300,
-            Margin = new Thickness(5, 0, 5, 10),
+            Margin = MARGIN_DATE_PICKER,
             SelectedDateFormat = DatePickerFormat.Short,
             Language = XmlLanguage.GetLanguage("es-ES"),
             Text = "Seleccione fecha"
@@ -183,7 +176,7 @@ public static class FieldFactory
         var panel = new StackPanel
         {
             Orientation = Orientation.Horizontal,
-            Margin = new Thickness(5, 0, 5, 10)
+            Margin = MARGIN_RADIO_GROUP
         };
 
         foreach (var (texto, valor) in radioGroup.Opciones)
@@ -192,7 +185,8 @@ public static class FieldFactory
             {
                 Content = texto,
                 GroupName = prop.Name,
-                Margin = new Thickness(0, 0, 50, 0)
+                Margin = new Thickness(0, 0, 50, 0),
+                FontSize = FONT_SIZE
             };
 
             // Binding con conversor: RadioEqualsConverter

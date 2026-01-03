@@ -107,12 +107,32 @@ public class FormularioBuilder
 
         controles[prop] = control;
 
-        return new StackPanel
+        var bloque = new StackPanel
         {
             Orientation = Orientation.Vertical,
-            Width = 310,
-            Children = { label, control }
+            Margin = new Thickness(0, 0, 0, 5)
         };
+
+        bloque.Children.Add(label);
+
+        // Si es radio button, usamos WrapPanel para que no se corte
+        if (EsRadioButton(prop) || EsTextArea(prop))
+        {
+            var wrap = new WrapPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+
+            wrap.Children.Add(control);
+            bloque.Children.Add(wrap);
+        }
+        else
+        {
+            bloque.Children.Add(control);
+        }
+
+        return bloque;
     }
 
     private GroupBox CrearGroupBox(
