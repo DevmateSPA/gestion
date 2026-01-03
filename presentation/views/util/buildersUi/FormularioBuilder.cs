@@ -77,7 +77,7 @@ public class FormularioBuilder
     {
         var props = FormularioReflectionHelper.ObtenerPropiedadesFormulario(entidad);
 
-        return props
+        return [.. props
             .GroupBy(p =>
             {
                 var grupo = p.GetCustomAttribute<GrupoAttribute>();
@@ -89,17 +89,14 @@ public class FormularioBuilder
             {
                 Nombre = g.Key.Item1,
                 Orden = g.Key.Item2,
-                Propiedades = g
-                    .OrderBy(p => p.GetCustomAttribute<OrdenAttribute>()?.Index ?? int.MaxValue)
-                    .ToList()
+                Propiedades = [.. g.OrderBy(p => p.GetCustomAttribute<OrdenAttribute>()?.Index ?? int.MaxValue)]
             })
-            .OrderBy(g => g.Orden)
-            .ToList();
+            .OrderBy(g => g.Orden)];
     }
 
-    private StackPanel CrearFila() => new() { Orientation = Orientation.Horizontal };
+    private static StackPanel CrearFila() => new() { Orientation = Orientation.Horizontal };
 
-    private StackPanel CrearBloqueCampo(
+    private static StackPanel CrearBloqueCampo(
         PropertyInfo prop,
         object entidad,
         Dictionary<PropertyInfo, FrameworkElement> controles,
@@ -125,37 +122,8 @@ public class FormularioBuilder
         int maxPorFila)
     {
         var panel = new StackPanel { Margin = new Thickness(10) };
-        StackPanel? filaActual = null;
 
-        for (int i = 0; i < grupo.Propiedades.Count; i++)
-        {
-            var prop = grupo.Propiedades[i];
-
-            // Crear bloque del campo
-            var bloque = CrearBloqueCampo(prop, entidad, controles, _modo);
-
-            // Si es TextAreaAttribute, ocupa toda la fila
-            if (prop.GetCustomAttribute<TextAreaAttribute>() != null)
-            {
-                filaActual = new StackPanel
-                {
-                    Orientation = Orientation.Vertical
-                };
-                filaActual.Children.Add(bloque);
-                panel.Children.Add(filaActual);
-                filaActual = null; // siguiente propiedad inicia nueva fila
-            }
-            else
-            {
-                // filas normales
-                if (i % maxPorFila == 0)
-                {
-                    filaActual = CrearFila(); // StackPanel Horizontal
-                    panel.Children.Add(filaActual);
-                }
-                filaActual!.Children.Add(bloque);
-            }
-        }
+        AgregarPropiedadesAGrupo(panel, grupo.Propiedades, entidad, controles, maxPorFila);
 
         return new GroupBox
         {
@@ -164,4 +132,57 @@ public class FormularioBuilder
             Content = panel
         };
     }
+
+    private void AgregarPropiedadesAGrupo(
+        StackPanel panel,
+        List<PropertyInfo> propiedades,
+        object entidad,
+        Dictionary<PropertyInfo, FrameworkElement> controles,
+        int maxPorFila)
+    {
+        StackPanel? filaActual = null;
+        int columnasEnFila = 0;
+
+        foreach (var prop in propiedades)
+        {
+            var bloque = CrearBloqueCampo(prop, entidad, controles, _modo);
+
+            if (EsTextArea(prop))
+            {
+                panel.Children.Add(CrearFilaCompleta(bloque));
+                filaActual = null;
+                columnasEnFila = 0;
+            }
+            else
+            {
+                if (filaActual == null || columnasEnFila >= maxPorFila)
+                {
+                    filaActual = CrearFilaNormal();
+                    panel.Children.Add(filaActual);
+                    columnasEnFila = 0;
+                }
+
+                filaActual.Children.Add(bloque);
+                columnasEnFila++;
+            }
+        }
+    }
+
+    private static bool EsTextArea(PropertyInfo prop) =>
+        prop.GetCustomAttribute<TextAreaAttribute>() != null;
+
+    private static StackPanel CrearFilaCompleta(UIElement elemento) =>
+        new()
+        {
+            Orientation = Orientation.Vertical,
+            Children = { elemento },
+            Margin = new Thickness(0, 5, 0, 5)
+        };
+
+    private static StackPanel CrearFilaNormal() =>
+        new()
+        {
+            Orientation = Orientation.Horizontal,
+            Margin = new Thickness(0, 5, 0, 5)
+        };
 }

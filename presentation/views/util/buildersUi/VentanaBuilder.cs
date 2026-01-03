@@ -47,6 +47,7 @@ public class VentanaBuilder<TEntidad>
             .SetContenedor(_contenedorCampos!)
             .SetControles(_controles)
             .SetModo(_modo)
+            .SetMaxFila(3)
             .Build();
 
         _detallesBuilder
