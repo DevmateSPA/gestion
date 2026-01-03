@@ -17,13 +17,12 @@ public static class FieldFactory
     private static readonly Thickness MARGIN_TEXTAREA = new(5, 0, 5, 10);
     // Text Block CFG
     private static readonly Thickness MARGIN_TEXT_BLOCK = new(5, 0, 5, 10);
-    private const double MAX_WIDTH_TEXTBLOCK = 600;
+    private const double MAX_WIDTH_TEXTBLOCK = 900;
     // Text Box CFG
     private static readonly Thickness MARGIN_TEXT_BOX = new(5, 0, 5, 10);
     // Check Box CFG
-    private static readonly Thickness MARGIN_CHECK_BOX = new(5, 6, 5, 10);
+    private static readonly Thickness MARGIN_CHECK_BOX = new(5, 15, 5, 15);
     private const double WIDTH_TEXTBOX = 300;
-    private const double MIN_HEIGHT_TEXTBOX = 30;
     // Combo Box CFG
     private static readonly Thickness MARGIN_COMBO_BOX = new(5, 0, 5, 10);
     // Date Picker CFG
@@ -50,18 +49,6 @@ public static class FieldFactory
         };
     }
 
-    private static void AplicarEstiloBaseTextBox(TextBox tb, Thickness margin, double? maxWidth = null)
-    {
-        tb.FontSize = FONT_SIZE;
-        tb.Margin = margin;
-        tb.TextWrapping = TextWrapping.Wrap;
-        tb.AcceptsReturn = true;
-        tb.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-        tb.HorizontalAlignment = HorizontalAlignment.Stretch;
-        tb.MinHeight = FONT_SIZE;
-        if (maxWidth.HasValue) tb.MaxWidth = maxWidth.Value;
-    }
-
     private static TextBox CrearTextArea(PropertyInfo prop, object entidad) 
     { 
         var tb = new TextBox 
@@ -73,7 +60,7 @@ public static class FieldFactory
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto, 
             MinHeight = FONT_SIZE,
             MaxHeight = FONT_SIZE * 10,
-            Width = 1000, 
+            Width = 900, 
             HorizontalAlignment = HorizontalAlignment.Stretch 
         }; 
         
@@ -85,17 +72,22 @@ public static class FieldFactory
     }
 
     private static TextBox CrearTextBox(PropertyInfo prop, object entidad)
-    {
-        var tb = new TextBox
-        {
-            Width = WIDTH_TEXTBOX
-        };
-        AplicarEstiloBaseTextBox(tb, MARGIN_TEXT_BOX);
-
-        var binding = BindingFactory.CreateValidateBinding(prop, entidad, BindingMode.TwoWay);
-        tb.SetBinding(TextBox.TextProperty, binding);
-
-        return tb;
+    { 
+        var tb = new TextBox 
+        { 
+            FontSize = FONT_SIZE, 
+            Width = WIDTH_TEXTBOX, Margin = MARGIN_TEXT_BOX, 
+            TextWrapping = TextWrapping.Wrap, 
+            AcceptsReturn = true, 
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto, 
+            MinHeight = FONT_SIZE 
+        }; 
+        
+        var binding = BindingFactory.CreateValidateBinding( prop, entidad, BindingMode.TwoWay); 
+        
+        tb.SetBinding(TextBox.TextProperty, binding); 
+        
+        return tb; 
     }
 
     private static TextBlock CrearTextBlock(PropertyInfo prop, object entidad)

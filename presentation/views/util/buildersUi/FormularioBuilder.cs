@@ -110,7 +110,7 @@ public class FormularioBuilder
         var bloque = new StackPanel
         {
             Orientation = Orientation.Vertical,
-            Margin = new Thickness(0, 0, 0, 5)
+            Margin = new Thickness(0, 0, 0, 10)
         };
 
         bloque.Children.Add(label);

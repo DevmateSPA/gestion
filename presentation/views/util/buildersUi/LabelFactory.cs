@@ -13,7 +13,7 @@ public static class LabelFactory
             Text = ObtenerTexto(prop),
             FontSize = 16,
             FontWeight = FontWeights.Bold,
-            Margin = new Thickness(0, 4, 0, 2),
+            Margin = new Thickness(0, 4, 175, 4),
             TextWrapping = TextWrapping.Wrap
         };
     }
