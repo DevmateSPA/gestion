@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using System.Windows;
+using Gestion.core.model;
 using Gestion.presentation.enums;
 using Gestion.presentation.views.windows;
 
@@ -12,6 +13,7 @@ public class EditorEntidadBuilder<T>
     private T? _entidad;
     private string _titulo = "Editar";
     private Func<T, Task<bool>>? _guardar;
+    private Action<OrdenTrabajo>? _imprimir;
     private Func<T, Task>? _onClose;
     private ModoFormulario _modo = ModoFormulario.Edicion;
 
@@ -36,6 +38,12 @@ public class EditorEntidadBuilder<T>
     public EditorEntidadBuilder<T> Guardar(Func<T, Task<bool>> guardar)
     {
         _guardar = guardar;
+        return this;
+    }
+
+    public EditorEntidadBuilder<T> Imprimir(Action<OrdenTrabajo> imprimir)
+    {
+        _imprimir = imprimir;
         return this;
     }
 
@@ -71,6 +79,7 @@ public class EditorEntidadBuilder<T>
         var ventana = new EntidadEditorTableWindow(
             _entidad,
             async obj => await _guardar!((T)obj),
+            _imprimir,
             _modo,
             _titulo)
         {

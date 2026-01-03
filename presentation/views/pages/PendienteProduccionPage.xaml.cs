@@ -74,6 +74,10 @@ namespace Gestion.presentation.views.pages;
             .Entidad(ordenTrabajo)
             .Titulo("Visualizar Orden de Trabajo")
             .SoloLecutra()
+            .Imprimir(orden =>
+                PrintHelper.ImprimirOrdenTrabajo(
+                    Window.GetWindow(this)!,
+                    orden))
             .Abrir();
     }
     private void BtnImprimir_Click(object sender, RoutedEventArgs e)

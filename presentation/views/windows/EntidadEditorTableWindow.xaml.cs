@@ -23,10 +23,12 @@ public partial class EntidadEditorTableWindow: Window
     public object? EntidadEditada { get; private set; }
 
     private readonly Func<object, Task<bool>>? _guardar;
+    private readonly Action<OrdenTrabajo>? _imprimir;
 
     public EntidadEditorTableWindow(
         object entidad,
         Func<object, Task<bool>> guardar,
+        Action<OrdenTrabajo>? imprimir,
         ModoFormulario modo,
         string titulo = "Ventana con tabla")
     {
@@ -35,6 +37,7 @@ public partial class EntidadEditorTableWindow: Window
 
         _entidadOriginal = entidad;
         _guardar = guardar;
+        _imprimir = imprimir;
 
         ClonarEntidad(entidad);
 
@@ -128,7 +131,13 @@ public partial class EntidadEditorTableWindow: Window
 
     private void BtnImprimir_Click(object sender, RoutedEventArgs e)
     {
-        MessageBox.Show("Funcionalidad de impresión no implementada.");
+        if (!Validar())
+            return;
+
+        if (_imprimir == null)
+            throw new InvalidOperationException("Función de impresión no proporcionada.");
+
+        _imprimir((OrdenTrabajo)EntidadEditada!);
     }
 
     private void BtnCancelar_Click(object sender, RoutedEventArgs e)
