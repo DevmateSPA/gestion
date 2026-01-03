@@ -15,21 +15,25 @@ public static class FieldFactory
 
     public static FrameworkElement Crear(PropertyInfo prop, object entidad, ModoFormulario modo)
     {
-        // Solo lectura
-        if (prop.GetCustomAttribute<OnlyReadAttribute>() != null || modo == ModoFormulario.SoloLectura)
-            return CrearTextBlock(prop, entidad);
-
         var tipo = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
 
-        return tipo switch
+        FrameworkElement control = tipo switch
         {
             Type t when t == typeof(bool) => CrearCheckBox(prop, entidad),
             Type t when t.IsEnum => CrearCombo(prop, entidad),
             Type t when t == typeof(DateTime) => CrearDatePicker(prop, entidad),
-            _ => prop.GetCustomAttribute<TextAreaAttribute>() != null ? CrearTextArea(prop, entidad) :
-                prop.GetCustomAttribute<RadioGroupAttribute>() is RadioGroupAttribute radioGroup ? CrearRadioGroup(prop, entidad, radioGroup) :
-                CrearTextBox(prop, entidad)
+            _ => prop.GetCustomAttribute<TextAreaAttribute>() != null
+                    ? CrearTextArea(prop, entidad)
+                    : prop.GetCustomAttribute<RadioGroupAttribute>() is RadioGroupAttribute radioGroup
+                        ? CrearRadioGroup(prop, entidad, radioGroup)
+                        : CrearTextBox(prop, entidad)
         };
+
+                // Solo lectura
+        if (prop.GetCustomAttribute<OnlyReadAttribute>() != null || modo == ModoFormulario.SoloLectura)
+            AplicarSoloLectura(control);
+            
+        return control;
     }
 
     private static TextBox CrearTextArea(PropertyInfo prop, object entidad) 
@@ -43,7 +47,8 @@ public static class FieldFactory
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto, 
             MinHeight = FONT_SIZE,
             MaxHeight = FONT_SIZE * 10,
-            Width = 900, 
+            MaxWidth = 900,
+            MinWidth = 300, 
             HorizontalAlignment = HorizontalAlignment.Stretch 
         }; 
         
@@ -59,7 +64,8 @@ public static class FieldFactory
         var tb = new TextBox 
         { 
             FontSize = FONT_SIZE, 
-            Width = 900, 
+            MaxWidth = 300,
+            MinWidth = 200,
             Margin = new Thickness(5, 0, 5, 10), 
             TextWrapping = TextWrapping.Wrap, 
             AcceptsReturn = true, 
@@ -72,27 +78,6 @@ public static class FieldFactory
         tb.SetBinding(TextBox.TextProperty, binding); 
         
         return tb; 
-    }
-
-    private static TextBlock CrearTextBlock(PropertyInfo prop, object entidad)
-    {
-        var tb = new TextBlock
-        {
-            FontSize = FONT_SIZE,
-            MaxWidth = 900,
-            Margin = new Thickness(5, 0, 5, 10),
-            VerticalAlignment = VerticalAlignment.Center,
-            TextWrapping = TextWrapping.Wrap
-        };
-
-        var binding = BindingFactory.CreateValidateBinding(prop, entidad, BindingMode.OneWay);
-        var tipo = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
-
-        if (tipo == typeof(DateTime))
-            binding.StringFormat = "dd/MM/yyyy";
-
-        tb.SetBinding(TextBlock.TextProperty, binding);
-        return tb;
     }
 
     private static CheckBox CrearCheckBox(PropertyInfo prop, object entidad)
@@ -188,5 +173,29 @@ public static class FieldFactory
         }
 
         return panel;
+    }
+
+    private static void AplicarSoloLectura(FrameworkElement control)
+    {
+        switch (control)
+        {
+            case TextBox tb:
+                tb.IsReadOnly = true;
+                tb.Background = SystemColors.ControlBrush;
+                break;
+            case CheckBox cb:
+                cb.IsEnabled = false;
+                break;
+            case DatePicker dp:
+                dp.IsEnabled = false;
+                break;
+            case StackPanel panel: // para RadioGroup
+                foreach (var child in panel.Children)
+                {
+                    if (child is RadioButton rb)
+                        rb.IsEnabled = false;
+                }
+                break;
+        }
     }
 }
