@@ -147,7 +147,7 @@ public class FormularioBuilder
         {
             var bloque = CrearBloqueCampo(prop, entidad, controles, _modo);
 
-            if (EsTextArea(prop))
+            if (EsTextArea(prop) || EsRadioButton(prop)) // 1 por fila
             {
                 panel.Children.Add(CrearFilaCompleta(bloque));
                 filaActual = null;
@@ -170,6 +170,9 @@ public class FormularioBuilder
 
     private static bool EsTextArea(PropertyInfo prop) =>
         prop.GetCustomAttribute<TextAreaAttribute>() != null;
+
+    private static bool EsRadioButton(PropertyInfo prop) =>
+        prop.GetCustomAttribute<RadioGroupAttribute>() != null;
 
     private static StackPanel CrearFilaCompleta(UIElement elemento) =>
         new()

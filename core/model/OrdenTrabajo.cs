@@ -194,9 +194,15 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     public bool ClienteProporcionaPapel { get; set; } = false;
 
     // -- Tipo de impresión
-    [Nombre("Tipo de Impresión (Debo Transformar en RadioButton!!)")]
+
+    [Nombre("Tipo de Impresión")]
     [Grupo("Tipo de Impresión", ORDEN_GRUPO_TIPO_IMPRESION)]
     [Orden(0)]
+    [RadioGroup(
+        "Solo tiro", "1", 
+        "T/R M.P.", "2", 
+        "T/R P.D.", "3"
+    )]
     public string TipoImpresion { get; set; } = string.Empty;
 
     // -- Datos de Máquina
@@ -235,35 +241,73 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
 
     // -- Grupo Sobres
 
-    [Nombre("Sobres Convertir en RadioButton!!")]
+    [Nombre("Sobres")]
     [Grupo("Sobres", ORDEN_GRUPO_SOBRES)]
     [Orden(0)]
+    [RadioGroup(
+        "Cte.", "1",
+        "Amer.", "2",
+        "Amer. Especial", "3",
+        "1/2 Oficio", "4",
+        "Oficio", "5",
+        "Otro", "6"
+    )]
     public string Sobres { get; set; } = string.Empty;
 
     // -- Grupo Sacos
 
-    [Nombre("Sacos Convertir en RadioButton!!")]
+    [Nombre("Sacos")]
     [Grupo("Sacos", ORDEN_GRUPO_SACOS)]
     [Orden(0)]
+    [RadioGroup(
+        "Amer.", "1",
+        "Amer. Especial", "2",
+        "1/2 Oficio", "3",
+        "Oficio", "4",
+        "Otro", "5"
+    )]
     public string Sacos { get; set; } = string.Empty;
 
     // -- Grupo Tintas
 
-    [Nombre("Tinta 1 Convertir en RadioButton!!")]
+    [Nombre("Tinta 1")]
     [Grupo("Tintas", ORDEN_GRUPO_TINTAS)]
     [Orden(0)]
+    [RadioGroup(
+        "Tricromía", "1",
+        "Pantone", "2",
+        "S/Muestra", "3"
+    )]
     public string Tintas1 { get; set; } = string.Empty;
-    [Nombre("Tinta 2 Convertir en RadioButton!!")]
+
+    [Nombre("Tinta 2")]
     [Grupo("Tintas", ORDEN_GRUPO_TINTAS)]
     [Orden(1)]
+    [RadioGroup(
+        "Tricromía", "1",
+        "Pantone", "2",
+        "S/Muestra", "3"
+    )]
     public string Tintas2 { get; set; } = string.Empty;
-    [Nombre("Tinta 3 Convertir en RadioButton!!")]
+
+    [Nombre("Tinta 3")]
     [Grupo("Tintas", ORDEN_GRUPO_TINTAS)]
     [Orden(2)]
+    [RadioGroup(
+        "Tricromía", "1",
+        "Pantone", "2",
+        "S/Muestra", "3"
+    )]
     public string Tintas3 { get; set; } = string.Empty;
-    [Nombre("Tinta 4 Convertir en RadioButton!!")]
+
+    [Nombre("Tinta 4")]
     [Grupo("Tintas", ORDEN_GRUPO_TINTAS)]
     [Orden(3)]
+    [RadioGroup(
+        "Tricromía", "1",
+        "Pantone", "2",
+        "S/Muestra", "3"
+    )]
     public string Tintas4 { get; set; } = string.Empty;
 
     // -- Grupo Block

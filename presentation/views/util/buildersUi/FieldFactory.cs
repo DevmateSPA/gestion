@@ -38,6 +38,9 @@ public static class FieldFactory
         if (prop.GetCustomAttribute<TextAreaAttribute>() != null)
             return CrearTextArea(prop, entidad);
 
+        if (prop.GetCustomAttribute<RadioGroupAttribute>() is RadioGroupAttribute radioGroup)
+            return CrearRadioGroup(prop, entidad, radioGroup);
+
         return CrearTextBox(prop, entidad);
     }
 
@@ -173,5 +176,38 @@ public static class FieldFactory
         dp.SetBinding(DatePicker.SelectedDateProperty, binding);
 
         return dp;
+    }
+
+    private static StackPanel CrearRadioGroup(PropertyInfo prop, object entidad, RadioGroupAttribute radioGroup)
+    {
+        var panel = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            Margin = new Thickness(5, 0, 5, 10)
+        };
+
+        foreach (var (texto, valor) in radioGroup.Opciones)
+        {
+            var rb = new RadioButton
+            {
+                Content = texto,
+                GroupName = prop.Name,
+                Margin = new Thickness(0, 0, 50, 0)
+            };
+
+            // Binding con conversor: RadioEqualsConverter
+            var binding = new Binding(prop.Name)
+            {
+                Source = entidad,
+                Mode = BindingMode.TwoWay,
+                Converter = (IValueConverter)Application.Current.Resources["RadioEqualsConverter"]!,
+                ConverterParameter = valor
+            };
+
+            rb.SetBinding(RadioButton.IsCheckedProperty, binding);
+            panel.Children.Add(rb);
+        }
+
+        return panel;
     }
 }
