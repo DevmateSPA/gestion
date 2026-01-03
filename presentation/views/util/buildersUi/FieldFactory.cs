@@ -165,7 +165,9 @@ public static class FieldFactory
                 Source = entidad,
                 Mode = BindingMode.TwoWay,
                 Converter = (IValueConverter)Application.Current.Resources["RadioEqualsConverter"]!,
-                ConverterParameter = valor
+                ConverterParameter = valor,
+                TargetNullValue = false,
+                FallbackValue = false
             };
 
             rb.SetBinding(RadioButton.IsCheckedProperty, binding);

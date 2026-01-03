@@ -2,12 +2,20 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Gestion"
+             xmlns:utils="clr-namespace:Gestion.presentation.views.util"
              Startup="Application_Startup">
+
     <Application.Resources>
         <ResourceDictionary>
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/presentation/views/resources/styles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- TU CONVERTER VA AQUÍ -->
+            <utils:RadioEqualsConverter x:Key="RadioEqualsConverter"/>
+
         </ResourceDictionary>
     </Application.Resources>
+
 </Application>

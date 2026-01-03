@@ -203,7 +203,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
         "T/R M.P.", "2", 
         "T/R P.D.", "3"
     )]
-    public string TipoImpresion { get; set; } = string.Empty;
+    public string? TipoImpresion { get; set; } = null;
 
     // -- Datos de Máquina
 
@@ -252,7 +252,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
         "Oficio", "5",
         "Otro", "6"
     )]
-    public string Sobres { get; set; } = string.Empty;
+    public string? Sobres { get; set; } = null;
 
     // -- Grupo Sacos
 
@@ -266,7 +266,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
         "Oficio", "4",
         "Otro", "5"
     )]
-    public string Sacos { get; set; } = string.Empty;
+    public string? Sacos { get; set; } = null;
 
     // -- Grupo Tintas
 
@@ -278,7 +278,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
         "Pantone", "2",
         "S/Muestra", "3"
     )]
-    public string Tintas1 { get; set; } = string.Empty;
+    public string? Tintas1 { get; set; } = null;
 
     [Nombre("Tinta 2")]
     [Grupo("Tintas", ORDEN_GRUPO_TINTAS)]
@@ -288,7 +288,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
         "Pantone", "2",
         "S/Muestra", "3"
     )]
-    public string Tintas2 { get; set; } = string.Empty;
+    public string? Tintas2 { get; set; } = null;
 
     [Nombre("Tinta 3")]
     [Grupo("Tintas", ORDEN_GRUPO_TINTAS)]
@@ -298,7 +298,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
         "Pantone", "2",
         "S/Muestra", "3"
     )]
-    public string Tintas3 { get; set; } = string.Empty;
+    public string? Tintas3 { get; set; } = null;
 
     [Nombre("Tinta 4")]
     [Grupo("Tintas", ORDEN_GRUPO_TINTAS)]
@@ -308,7 +308,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
         "Pantone", "2",
         "S/Muestra", "3"
     )]
-    public string Tintas4 { get; set; } = string.Empty;
+    public string? Tintas4 { get; set; } = null;
 
     // -- Grupo Block
 

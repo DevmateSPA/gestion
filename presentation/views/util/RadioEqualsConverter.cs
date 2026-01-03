@@ -6,15 +6,19 @@ namespace Gestion.presentation.views.util;
 
 public class RadioEqualsConverter : IValueConverter
 {
-    public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return value?.ToString() == parameter?.ToString();
+        if (value == null || parameter == null)
+            return false;
+
+        return value.ToString() == parameter.ToString();
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        if ((bool)value)
-            return parameter?.ToString() ?? "1"; // devuelve "1", "2" o "3"
+        if (value is bool isChecked && isChecked)
+            return parameter?.ToString();
+
         return Binding.DoNothing;
     }
 }

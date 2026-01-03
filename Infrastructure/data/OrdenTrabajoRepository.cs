@@ -14,6 +14,16 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
     public OrdenTrabajoRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "ordentrabajo", "vw_ordentrabajo") {}
 
+    public override Task<bool> Save(OrdenTrabajo entity)
+    {
+        if (entity.Sobres != null)
+        {
+            Console.WriteLine(entity.Sobres);
+            Console.WriteLine(entity.Sobres.Length);
+        }
+        return base.Save(entity);
+    }
+
     public async Task<long> ContarPendientes(long empresaId)
     {
         DbParameter[] parameters =
