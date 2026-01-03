@@ -2,10 +2,13 @@
 CREATE OR REPLACE VIEW vw_factura AS
     SELECT
         t.*,
-        e.nombre AS EmpresaNombre
+        e.nombre AS EmpresaNombre,
+        c.razon_social AS NombreCliente
     FROM FACTURA t
     JOIN EMPRESA e
-    ON t.empresa = e.id;
+    ON t.empresa = e.id
+    JOIN CLIENTE c
+    ON t.rutcliente = c.rut;
 
 -- Para Banco
 CREATE OR REPLACE VIEW vw_banco AS

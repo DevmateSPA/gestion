@@ -60,6 +60,8 @@ public partial class EntidadEditorTableWindow: Window
             .SetEntidad(entidad)
             .SetContenedorCampos(spCampos)
             .SetContenedorTablas(spTabla)
+            .SetBotonGuardar(btnGuardar)
+            .SetBotonImprimir(btnImprimir)
             .SetModo(modo);
 
         // Se genera la UI
@@ -112,17 +114,21 @@ public partial class EntidadEditorTableWindow: Window
         if (!Validar())
             return;
 
-        var ok = false;
 
-        if (_guardar != null)
-            ok = await _guardar(EntidadEditada!);
-        else
-            ok = true;
+        if (_guardar == null)
+            throw new InvalidOperationException("Función de guardado no proporcionada.");
+            
+        var ok = await _guardar(EntidadEditada!);
 
         if (!ok)
             return;
 
         DialogResult = true;
+    }
+
+    private void BtnImprimir_Click(object sender, RoutedEventArgs e)
+    {
+        MessageBox.Show("Funcionalidad de impresión no implementada.");
     }
 
     private void BtnCancelar_Click(object sender, RoutedEventArgs e)
