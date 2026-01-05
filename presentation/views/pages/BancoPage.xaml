@@ -33,18 +33,34 @@
         <!-- Tabla -->
         <DataGrid x:Name="dgBancos"
                 Grid.Row="1"
+                ItemsSource="{Binding EntidadesView}"
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding EntidadesView}"
-                FontSize="16"
                 IsReadOnly="True"
-                MouseDoubleClick="DgBancos_MouseDoubleClick" 
-                PreviewKeyDown="DgBancos_PreviewKeyDown"> 
+                FontSize="16"
+
+                EnableRowVirtualization="True"
+                EnableColumnVirtualization="True"
+                VirtualizingPanel.IsVirtualizing="True"
+                VirtualizingPanel.VirtualizationMode="Recycling"
+                ScrollViewer.CanContentScroll="True"
+                ScrollViewer.IsDeferredScrollingEnabled="True"
+
+                MouseDoubleClick="DgBancos_MouseDoubleClick"
+                PreviewKeyDown="DgBancos_PreviewKeyDown">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Código" Binding="{Binding Codigo}" Width="*" />
-                    <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}" Width="*" />
-                    <DataGridTextColumn Header="Direccion" Binding="{Binding Direccion}" Width="*" />
+                    <DataGridTextColumn Header="Código"
+                                        Binding="{Binding Codigo}"
+                                        Width="120"/>
+
+                    <DataGridTextColumn Header="Nombre"
+                                        Binding="{Binding Nombre}"
+                                        Width="2*"/>
+
+                    <DataGridTextColumn Header="Dirección"
+                                        Binding="{Binding Direccion}"
+                                        Width="3*"/>
                 </DataGrid.Columns>
         </DataGrid>
 

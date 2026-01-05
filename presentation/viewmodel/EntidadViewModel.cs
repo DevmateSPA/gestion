@@ -17,14 +17,27 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
     protected readonly string _emptyMessage;
     protected readonly string _errorMessage;
 
-    public ObservableCollection<T> Entidades { get; set; } = [];
-    public ICollectionView EntidadesView { get; }
+    private ObservableCollection<T> _entidades = [];
+    public ObservableCollection<T> Entidades
+    {
+        get => _entidades;
+        private set
+        {
+            _entidades = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(EntidadesView));
+        }
+    }
+    public ICollectionView EntidadesView => CollectionViewSource.GetDefaultView(Entidades);
     private string _filtro = "";
     public string Filtro
     {
         get => _filtro;
         set { _filtro = value; OnPropertyChanged(); }
     }
+
+    private readonly Dictionary<T, string> _searchCache = new();
+
     private bool _isLoading;
     public bool IsLoading
     {
@@ -35,6 +48,9 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
             OnPropertyChanged();
         }
     }
+
+    private bool _isBusy;
+    
     public event PropertyChangedEventHandler? PropertyChanged;
     protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
@@ -74,8 +90,6 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         }
     }
 
-    // Constructor
-
     protected EntidadViewModel(
         IBaseService<T> baseService, 
         IDialogService dialogService, 
@@ -84,7 +98,6 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
     {
         _dialogService = dialogService;
         _service = baseService;
-        EntidadesView = CollectionViewSource.GetDefaultView(Entidades);
         _emptyMessage = emptyMessage ?? $"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}";
         _errorMessage = errorMessage ?? $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}";
     }
@@ -95,33 +108,33 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
             .Where(p => p.PropertyType == typeof(string))
             .ToArray();
 
+    private string BuildSearchText(T entidad)
+    {
+        return string.Join(" ",
+            _stringProps
+                .Select(p => p.GetValue(entidad) as string)
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+        ).ToLowerInvariant();
+    }
+
     public virtual void Buscar(string filtro)
     {
         if (string.IsNullOrWhiteSpace(filtro))
         {
             EntidadesView.Filter = null;
-            EntidadesView.Refresh();
             return;
         }
 
-        var lower = filtro.ToLower();
+        var lower = filtro.ToLowerInvariant();
 
         EntidadesView.Filter = item =>
         {
-            if (item is not T entidad) 
+            if (item is not T entidad)
                 return false;
 
-            foreach (var prop in _stringProps)
-            {
-                var value = prop.GetValue(entidad) as string;
-                if (value?.ToLower().Contains(lower) == true)
-                    return true;
-            }
-
-            return false;
+            return _searchCache.TryGetValue(entidad, out var text)
+                && text.Contains(lower);
         };
-
-        EntidadesView.Refresh();
     }
 
     private protected void RemoveEntityById(long id)
@@ -154,11 +167,18 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         Action? onSuccess = null,
         Action? onEmpty = null)
     {
-        this.IsLoading = true;
+        if (_isBusy)
+            return;
+
+        _isBusy = true;
+        IsLoading = true;
+
         try
         {
-            // Variante con retorno
-            var lista = await SafeExecutor.RunAsyncList(action, _dialogService, errorMessage);
+            var lista = await SafeExecutor.RunAsyncList(
+                action,
+                _dialogService,
+                errorMessage);
 
             if (lista.Count == 0)
                 onEmpty?.Invoke();
@@ -168,7 +188,8 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         }
         finally
         {
-            this.IsLoading = false;
+            IsLoading = false;
+            _isBusy = false;
         }
     }
 
@@ -185,8 +206,13 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
             lista = [.. lista.OrderByDescending(x => dateProp.GetValue(x))];
 
         Entidades.Clear();
+        _searchCache.Clear();
+
         foreach (var entidad in lista)
-            AddEntity(entidad);
+        {
+            _searchCache[entidad] = BuildSearchText(entidad);
+            Entidades.Add(entidad);
+        }
     }
 
     public virtual async Task LoadAll()
@@ -210,29 +236,40 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         int page,
         string emptyMessage,
         string errorMessage,
-        Func<Task<long>>? totalCountCall = null,       // opcional: cómo calcular el total
-        Func<Task<List<T>>>? allItemsCall = null)      // opcional: cómo cargar todo si PageSize = 0
+        Func<Task<long>>? totalCountCall = null,
+        Func<Task<List<T>>>? allItemsCall = null)
     {
         if (PageSize == 0)
         {
-            if (allItemsCall != null)
-                await allItemsCall();
-            else
-                await LoadAllByEmpresa();
+            await RunWithLoading(
+                action: async () =>
+                {
+                    if (allItemsCall != null)
+                        return await allItemsCall();
+                    else
+                        return await _service.FindAllByEmpresa(SesionApp.IdEmpresa);
+                },
+                errorMessage: errorMessage,
+                onEmpty: () => _dialogService.ShowMessage(emptyMessage)
+            );
 
             PageNumber = 1;
             TotalRegistros = 1;
             return;
         }
 
+        // Validación defensiva
+        if (page < 1)
+            page = 1;
+
         PageNumber = page;
 
-        // Calcular el total usando el callback o por defecto
         long total = totalCountCall != null
-            ? await totalCountCall.Invoke()
+            ? await totalCountCall()
             : await _service.ContarPorEmpresa(SesionApp.IdEmpresa);
 
-        TotalRegistros = (int)Math.Ceiling(total / (double)PageSize);
+        TotalRegistros = Math.Max(1,
+            (int)Math.Ceiling(total / (double)PageSize));
 
         await RunWithLoading(
             action: () => serviceCall(PageNumber),

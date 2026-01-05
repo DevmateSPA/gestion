@@ -37,13 +37,21 @@
         <!-- Tabla -->
         <DataGrid x:Name="dgOrdenTrabajo"
                 Grid.Row="1"
+                ItemsSource="{Binding EntidadesView}"
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 SelectionMode="Single"
-                ItemsSource="{Binding EntidadesView}"
-                FontSize="16"
                 IsReadOnly="True"
-                MouseDoubleClick="dgOrdenTrabajo_MouseDoubleClick" 
+                FontSize="16"
+
+                EnableRowVirtualization="True"
+                EnableColumnVirtualization="True"
+                VirtualizingPanel.IsVirtualizing="True"
+                VirtualizingPanel.VirtualizationMode="Recycling"
+                ScrollViewer.CanContentScroll="True"
+                ScrollViewer.IsDeferredScrollingEnabled="True"
+
+                MouseDoubleClick="dgOrdenTrabajo_MouseDoubleClick"
                 PreviewKeyDown="dgOrdenTrabajo_PreviewKeyDown">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Folio" Binding="{Binding Folio}" Width="*" />
