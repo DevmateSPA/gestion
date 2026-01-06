@@ -11,6 +11,7 @@ using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.database;
 using Gestion.presentation.views.util;
 using Gestion.presentation.config;
+using Serilog;
 
 namespace Gestion;
 
@@ -20,10 +21,21 @@ public partial class App : Application
 
     private void Application_Startup(object sender, StartupEventArgs e)
     {
+        Log.Logger = new LoggerConfiguration()
+        .MinimumLevel.Debug()
+        .WriteTo.Debug()
+        .WriteTo.File(
+            "logs/app-.log",
+            rollingInterval: RollingInterval.Day,
+            retainedFileCountLimit: 7)
+        .CreateLogger();
+
         UiConfig.Register(); // Llama los registros de los dg personalziados
 
         DispatcherUnhandledException += (s, ex) =>
         {
+            Log.Fatal(ex.Exception, "Excepción no controlada en UI Thread");
+
             var dialog = ServiceProvider?
                 .GetService<IDialogService>();
 
@@ -165,5 +177,12 @@ public partial class App : Application
 
         var login = ServiceProvider.GetRequiredService<LoginWindow>();
         login.Show();
+    }
+
+    // Libera al cerrar
+    protected override void OnExit(ExitEventArgs e)
+    {
+        Log.CloseAndFlush();
+        base.OnExit(e);
     }
 }

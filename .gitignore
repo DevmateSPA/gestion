@@ -17,3 +17,6 @@ obj/
 *.user
 
 .env
+
+# Logs
+*.log

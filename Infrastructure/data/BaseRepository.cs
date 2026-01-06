@@ -8,6 +8,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Gestion.core.attributes;
 using System.Text;
 using MySql.Data.MySqlClient;
+using Serilog;
+using System.Windows;
+using System.Diagnostics;
+using Gestion.Infrastructure.Logging;
 
 namespace Gestion.Infrastructure.data;
 
@@ -220,7 +224,6 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         if (!string.IsNullOrWhiteSpace(orderBy))
             sql.Append($" ORDER BY {orderBy}");
 
-        // Agregar LIMIT y OFFSET si existen
         if (limit.HasValue)
         {
             sql.Append(" LIMIT @limit");
@@ -243,19 +246,25 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
 
         cmd.CommandText = sql.ToString();
 
-        // Agregar los parámetros del WHERE
         foreach (var p in parameters)
             cmd.Parameters.Add(p);
 
-        using var reader = await cmd.ExecuteReaderAsync();
+        return await SqlLogger.LogAsync(
+            operation: typeof(T).Name,
+            sql: cmd.CommandText,
+            action: async () =>
+            {
+                using var reader = await cmd.ExecuteReaderAsync();
+                var list = new List<T>();
 
-        var list = new List<T>();
-        while (await reader.ReadAsync())
-            list.Add(MapEntity(reader: reader));
+                while (await reader.ReadAsync())
+                    list.Add(MapEntity(reader));
 
-        return list;
+                return list;
+            },
+            countSelector: list => list.Count
+        );
     }
-
     /// <summary>
     /// Elimina una entidad por su identificador.
     /// </summary>
@@ -513,5 +522,67 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
             LIMIT 1";
 
         return await cmd.ExecuteScalarAsync() != null;
+    }
+
+    protected async Task<TResult> LogSqlAsync<TResult>(
+        string operation,
+        string sql,
+        Func<Task<TResult>> action,
+        Func<TResult, int>? countSelector = null)
+    {
+        var sw = Stopwatch.StartNew();
+        bool isUiThread = Application.Current?.Dispatcher.CheckAccess() ?? false;
+
+        Log.Debug(
+            "────────────────────────────────────────────\n" +
+            "SQL START | {Operation} | UI={UI} | Thread={Thread}\n{Sql}",
+            operation,
+            isUiThread,
+            Environment.CurrentManagedThreadId,
+            sql);
+
+        try
+        {
+            var result = await action();
+
+            sw.Stop();
+
+            if (countSelector != null)
+            {
+                Log.Information(
+                    "SQL END | {Operation} | {Count} rows | {Elapsed}ms | UI={UI}",
+                    operation,
+                    countSelector(result),
+                    sw.ElapsedMilliseconds,
+                    isUiThread);
+            }
+            else
+            {
+                Log.Information(
+                    "SQL END | {Operation} | {Elapsed}ms | UI={UI}",
+                    operation,
+                    sw.ElapsedMilliseconds,
+                    isUiThread);
+            }
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            sw.Stop();
+
+            Log.Error(
+                ex,
+                "SQL ERROR | {Operation} | {Elapsed}ms\n{Sql}",
+                operation,
+                sw.ElapsedMilliseconds,
+                sql);
+
+            throw;
+        }
+        finally
+        {
+            Log.Debug("────────────────────────────────────────────");
+        }
     }
 }
