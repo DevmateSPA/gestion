@@ -103,6 +103,11 @@ public partial class OrdenTrabajoPage : Page
             .Entidad(ordenTrabajo)
             .Titulo("Editar Orden de Trabajo")
             .Guardar(_viewModel.Update)
+            .SoloLecutra()
+            .Imprimir(orden =>
+                PrintHelper.ImprimirOrdenTrabajo(
+                    Window.GetWindow(this)!,
+                    orden))
             .OnClose(async facturaEditada =>
                 await _viewModel.SincronizarDetalles(
                     ordenTrabajo.Detalles,

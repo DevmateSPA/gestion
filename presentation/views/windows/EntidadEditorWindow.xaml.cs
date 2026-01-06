@@ -1,3 +1,4 @@
+using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -6,7 +7,9 @@ using System.Windows.Input;
 using System.Windows.Markup;
 using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
+using Gestion.core.model;
 using Gestion.helpers;
+using Gestion.presentation.utils;
 using Gestion.presentation.views.util;
 using Gestion.presentation.views.util.buildersUi;
 
@@ -148,5 +151,30 @@ private void CargarMemoSiAplica(object entidad)
     {
         DialogResult = false;
         Close();
+    }
+
+
+    private void BtnImprimir_Click(object sender, RoutedEventArgs e)
+    {
+        var errores = ValidationHelper.GetValidationErrors(this);
+        if (errores.Count != 0)
+        {
+            DialogUtils.MostrarErroresValidacion(errores);
+            return;
+        }
+        var modal = new ImpresoraModal
+        {
+            Owner = this 
+        };
+
+        if (modal.ShowDialog() == true)
+        {
+            string impresora = modal.ImpresoraSeleccionada;
+            MessageBox.Show("Impresora seleccionada: " + impresora);
+            string pdfPath = PrintUtils.GenerarOrdenTrabajoPrint(_entidadOriginal as OrdenTrabajo);
+            string sumatra = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SumatraPDF.exe");
+            PrintUtils.PrintFile(pdfPath, impresora, sumatra);
+        }
+       
     }
 }
