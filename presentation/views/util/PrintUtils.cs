@@ -3,10 +3,13 @@ using System.IO;
 using System.Windows;
 using Gestion.core.model;
 using iText.IO.Font.Constants;
+using iText.IO.Image;
+using iText.Kernel.Colors;
 using iText.Kernel.Font;
 using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
 using iText.Layout;
+using iText.Layout.Borders;
 using iText.Layout.Element;
 
 namespace Gestion.presentation.utils
@@ -46,7 +49,7 @@ namespace Gestion.presentation.utils
             p.WaitForExit();
         }
 
-        public static string GenerarOrdenTrabajoPrint(OrdenTrabajo ot)
+        public static string GenerarOrdenTrabajoPrint_old(OrdenTrabajo ot)
         {
            return GeneratePdf("orden_trabajo_"+ot.Folio+".pdf", doc =>
             {
@@ -149,7 +152,157 @@ namespace Gestion.presentation.utils
             });
         }
     
+        public static string GenerarOrdenTrabajoPrint(OrdenTrabajo ot)
+        {
+            return GeneratePdf($"orden_trabajo_{ot.Folio}.pdf", doc =>
+            {
+                var font = PdfFontFactory.CreateFont(StandardFonts.COURIER);
+                var bold = PdfFontFactory.CreateFont(StandardFonts.COURIER_BOLD);
 
+                doc.SetFont(font).SetFontSize(8);
+
+                var logo = new Image(ImageDataFactory.Create("C:\\Users\\Jose\\Desktop\\DevMate\\DISEÑOS\\devmate-removebg-preview.png")).ScaleToFit(60, 40);
+                // ===== ENCABEZADO =====
+                Table header = new Table(new float[] { 1.2f, 4.5f, 2f, 1f, 1f, 1f })
+                    .UseAllAvailableWidth()
+                    .SetFixedLayout();
+
+                // ALTURA COMÚN
+                float headerHeight = 28;
+
+                // LOGO
+                header.AddCell(
+                    new Cell()
+                        .Add(logo)
+                        .SetHeight(headerHeight)
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+                        .SetVerticalAlignment(iText.Layout.Properties.VerticalAlignment.BOTTOM)
+                        .SetBorder(Border.NO_BORDER)
+                );
+
+                // TITULO
+                header.AddCell(
+                    new Cell()
+                        .Add(new Paragraph("ORDEN DE TRABAJO")
+                            .SetFont(bold)
+                            .SetFontSize(11))
+                        .SetHeight(headerHeight)
+                        .SetBorderTop(new SolidBorder(1))     
+                        .SetBorderLeft(new SolidBorder(1))    
+                        .SetBorderRight(new SolidBorder(1))
+                        .SetBorderBottom(Border.NO_BORDER)
+                        .SetVerticalAlignment(iText.Layout.Properties.VerticalAlignment.MIDDLE)
+                );
+
+                // N°
+                header.AddCell(
+                    new Cell()
+                        .Add(new Paragraph($"N° {ot.Folio}")
+                            .SetFont(bold)
+                            .SetFontSize(10)
+                            .SetFontColor(new DeviceRgb(0, 120, 0))) // verde similar
+                        .SetHeight(headerHeight)
+                        .SetBorderTop(new SolidBorder(1))     
+                        .SetBorderLeft(new SolidBorder(1))    
+                        .SetBorderRight(new SolidBorder(1))
+                        .SetBorderBottom(Border.NO_BORDER)
+                        .SetVerticalAlignment(iText.Layout.Properties.VerticalAlignment.MIDDLE)
+                );
+
+                // DIA
+                header.AddCell(HeaderDateCell("DIA", ot.Fecha.Day.ToString(), headerHeight));
+                // MES
+                header.AddCell(HeaderDateCell("MES", ot.Fecha.Month.ToString(), headerHeight));
+                // AÑO
+                header.AddCell(HeaderDateCell("AÑO", ot.Fecha.Year.ToString(), headerHeight));
+
+                doc.Add(header);
+
+                // ===== DATOS CLIENTE =====
+                Table datos = new Table(4).UseAllAvailableWidth();
+
+                datos.AddCell(CellBox("CLIENTE"));
+                datos.AddCell(CellBox(ot.RazonSocial));
+                datos.AddCell(CellBox("RUT"));
+                datos.AddCell(CellBox(ot.RutCliente));
+
+                datos.AddCell(CellBox("TRABAJO"));
+                datos.AddCell(CellBox(ot.Descripcion));
+                datos.AddCell(CellBox("FECHA"));
+                datos.AddCell(CellBox(ot.Fecha.ToString("dd/MM/yyyy")));
+
+                doc.Add(datos);
+
+                // ===== MEDIDAS =====
+                Table medidas = new Table(4).UseAllAvailableWidth();
+
+                medidas.AddCell(CellBox("CANTIDAD"));
+                medidas.AddCell(CellBox(ot.Cantidad.ToString()));
+                medidas.AddCell(CellBox("TOTAL IMPRESIONES"));
+                medidas.AddCell(CellBox(ot.TotalImpresion.ToString()));
+
+                medidas.AddCell(CellBox("CORTAR A TAMAÑO"));
+                medidas.AddCell(CellBox($"{ot.CortarTamanioLargo} x {ot.CortarTamanion} cm"));
+                medidas.AddCell(CellBox("TAMAÑO FINAL"));
+                medidas.AddCell(CellBox($"{ot.TamanioFinalAncho} x {ot.TamanioFinalLargo} cm"));
+
+                doc.Add(medidas);
+
+                // ===== CLIENTE PROPORCIONA =====
+                Table proporciona = new Table(5).UseAllAvailableWidth();
+
+                proporciona.AddCell(CellBox("CLIENTE PROPORCIONA", true, 5));
+                proporciona.AddCell(Check("Nada", ot.ClienteProporcionanada == "1" ? true : false));
+                proporciona.AddCell(Check("Original", ot.ClienteProporcionaOriginal == "1"  ? true : false));
+                proporciona.AddCell(Check("Planchas", ot.ClienteProporcionaPlancha));
+                proporciona.AddCell(Check("Papel", ot.ClienteProporcionaPapel));
+                proporciona.AddCell(Check("Películas", ot.ClienteProporcionaPelicula));
+
+                doc.Add(proporciona);
+
+                // ===== IMPRESIÓN =====
+                Table impresion = new Table(4).UseAllAvailableWidth();
+
+                impresion.AddCell(CellBox("TIPO IMPRESIÓN"));
+                impresion.AddCell(CellBox(ot.TipoImpresion));
+                impresion.AddCell(CellBox("PINZA"));
+                impresion.AddCell(CellBox(ot.Pin));
+
+                impresion.AddCell(CellBox("MÁQUINA"));
+                impresion.AddCell(CellBox(ot.Maquina1));
+                impresion.AddCell(CellBox("PLANCHAS NUEVAS"));
+                impresion.AddCell(CellBox(ot.Nva.ToString()));
+
+                doc.Add(impresion);
+
+                // ===== TINTAS =====
+                Table tintas = new Table(4).UseAllAvailableWidth();
+                tintas.AddCell(CellBox("TINTAS", true,4));
+                tintas.AddCell(CellBox("1 " + ot.Tintas1));
+                tintas.AddCell(CellBox("2 " + ot.Tintas2));
+                tintas.AddCell(CellBox("3 " + ot.Tintas3));
+                tintas.AddCell(CellBox("4 " + ot.Tintas4));
+
+                doc.Add(tintas);
+
+                // ===== OBSERVACIONES =====
+                Table obs = new Table(1).UseAllAvailableWidth();
+                obs.AddCell(
+                    new Cell().Add(new Paragraph("OBSERVACIONES\n\n\n\n"))
+                    .SetHeight(120)
+                    .SetBorder(new SolidBorder(1))
+                );
+
+                doc.Add(obs);
+
+                // ===== FIRMA =====
+                Table firma = new Table(2).UseAllAvailableWidth();
+                firma.AddCell(CellBox("FIRMA CLIENTE\n\n\n", true));
+                firma.AddCell(CellBox("RUT\n\n\n", true));
+
+                doc.Add(firma);
+            });
+        }
         public static string GenerarListadoOTPendientes(List<OrdenTrabajo> lista)
         {
             return GeneratePdf("reporte_ordenes_trabajo.pdf", doc =>
@@ -223,5 +376,43 @@ namespace Gestion.presentation.utils
             if (text == null) text = "";
             return text.Length > width ? text.Substring(0, width) : text.PadRight(width);
         }
+    
+
+
+    static Cell CellBox(string text, bool bold = false, int colSpan = 1)
+    {
+        var font = PdfFontFactory.CreateFont(StandardFonts.COURIER);
+        var boldFont = PdfFontFactory.CreateFont(StandardFonts.COURIER_BOLD);
+
+        return new Cell(1, colSpan)
+            .Add(new Paragraph(text)
+                .SetFont(bold ? boldFont : font)
+                .SetFontSize(8))
+            .SetPadding(4)
+            .SetBorder(new SolidBorder(1));
+    }
+
+    static Cell Check(string label, bool value)
+    {
+        return CellBox($"{(value ? "[X]" : "[ ]")} {label}");
+    }
+
+    static Cell HeaderDateCell(string label, string value, float height)
+    {
+        var boldFont = PdfFontFactory.CreateFont(StandardFonts.COURIER_BOLD);
+        return new Cell()
+            .Add(new Paragraph(label)
+                .SetFontSize(6))
+            .Add(new Paragraph(value)
+                .SetFontSize(8)
+                .SetFont(boldFont))
+            .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+            .SetVerticalAlignment(iText.Layout.Properties.VerticalAlignment.MIDDLE)
+            .SetHeight(height)
+            .SetBorderTop(new SolidBorder(1))     
+            .SetBorderLeft(new SolidBorder(1))    
+            .SetBorderRight(new SolidBorder(1))
+            .SetBorderBottom(Border.NO_BORDER);
+    }
     }
 }
