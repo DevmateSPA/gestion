@@ -91,6 +91,13 @@ public class VentanaBuilder<TEntidad>
                 _shouldImprimir == true 
                 ? Visibility.Visible 
                 : Visibility.Collapsed;
+
+            // Cambia el texto a "Guardar e Imprimir" Si la ventana esta en modo Edición y tiene el boton imprimir activado
+            bool guardarEImprimir = _shouldImprimir == true && _modo == ModoFormulario.Edicion;
+
+            _btnImprimir.Content = guardarEImprimir
+                ? "Guardar e Imprimir"
+                : "Imprimir";
         }
     }
 
