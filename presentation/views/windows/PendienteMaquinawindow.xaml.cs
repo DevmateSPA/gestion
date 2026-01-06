@@ -77,6 +77,7 @@ namespace Gestion.presentation.views.pages;
                 PrintHelper.ImprimirOrdenTrabajo(
                     Window.GetWindow(this)!,
                     orden))
+            .ShouldBtnImpresion()
             .Abrir();
     }
     

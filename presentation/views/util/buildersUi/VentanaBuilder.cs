@@ -15,6 +15,7 @@ public class VentanaBuilder<TEntidad>
     private Panel? _contenedorTablas;
     private Button? _btnGuardar;
     private Button? _btnImprimir;
+    private bool? _shouldImprimir;
     private TEntidad? _entidad;
     private ModoFormulario _modo = ModoFormulario.Edicion;
 
@@ -42,9 +43,10 @@ public class VentanaBuilder<TEntidad>
         return this;
     }
 
-    public VentanaBuilder<TEntidad> SetBotonImprimir(Button btn)
+    public VentanaBuilder<TEntidad> SetBotonImprimir(Button btn, bool shouldImprimir)
     {
         _btnImprimir = btn;
+        _shouldImprimir = shouldImprimir;
         return this;
     }
 
@@ -86,9 +88,9 @@ public class VentanaBuilder<TEntidad>
         if (_btnImprimir != null)
         {
             _btnImprimir.Visibility =
-                _modo == ModoFormulario.SoloLectura
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
+                _shouldImprimir == true 
+                ? Visibility.Visible 
+                : Visibility.Collapsed;
         }
     }
 

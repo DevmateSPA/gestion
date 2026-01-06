@@ -203,7 +203,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
         "T/R M.P.", "2", 
         "T/R P.D.", "3"
     )]
-    public string? TipoImpresion { get; set; } = null;
+    public string TipoImpresion { get; set; } = "1";
 
     // -- Datos de Máquina
 
@@ -246,13 +246,13 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     [Orden(0)]
     [RadioGroup(
         "Cte.", "1",
-        "Amer.", "2",
-        "Amer. Especial", "3",
+        "Americano", "2",
+        "Americano Especial", "3",
         "1/2 Oficio", "4",
         "Oficio", "5",
         "Otro", "6"
     )]
-    public string? Sobres { get; set; } = null;
+    public string Sobres { get; set; } = "1";
 
     // -- Grupo Sacos
 
@@ -260,13 +260,14 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     [Grupo("Sacos", ORDEN_GRUPO_SACOS)]
     [Orden(0)]
     [RadioGroup(
-        "Amer.", "1",
-        "Amer. Especial", "2",
-        "1/2 Oficio", "3",
-        "Oficio", "4",
-        "Otro", "5"
+        "Cte.", "1",
+        "Americano", "2",
+        "Americano Especial", "3",
+        "1/2 Oficio", "4",
+        "Oficio", "5",
+        "Otro", "6"
     )]
-    public string? Sacos { get; set; } = null;
+    public string Sacos { get; set; } = "1";
 
     // -- Grupo Tintas
 
@@ -278,7 +279,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
         "Pantone", "2",
         "S/Muestra", "3"
     )]
-    public string? Tintas1 { get; set; } = null;
+    public string Tintas1 { get; set; } = "3";
 
     [Nombre("Tinta 2")]
     [Grupo("Tintas", ORDEN_GRUPO_TINTAS)]
@@ -288,7 +289,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
         "Pantone", "2",
         "S/Muestra", "3"
     )]
-    public string? Tintas2 { get; set; } = null;
+    public string Tintas2 { get; set; } = "3";
 
     [Nombre("Tinta 3")]
     [Grupo("Tintas", ORDEN_GRUPO_TINTAS)]
@@ -298,7 +299,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
         "Pantone", "2",
         "S/Muestra", "3"
     )]
-    public string? Tintas3 { get; set; } = null;
+    public string Tintas3 { get; set; } = "3";
 
     [Nombre("Tinta 4")]
     [Grupo("Tintas", ORDEN_GRUPO_TINTAS)]
@@ -308,7 +309,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
         "Pantone", "2",
         "S/Muestra", "3"
     )]
-    public string? Tintas4 { get; set; } = null;
+    public string Tintas4 { get; set; } = "3";
 
     // -- Grupo Block
 

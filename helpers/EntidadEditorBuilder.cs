@@ -16,6 +16,7 @@ public class EditorEntidadBuilder<T>
     private Action<OrdenTrabajo>? _imprimir;
     private Func<T, Task>? _onClose;
     private ModoFormulario _modo = ModoFormulario.Edicion;
+    private bool _ShouldImpresion = false;
 
     public EditorEntidadBuilder<T> Owner(Window owner)
     {
@@ -44,6 +45,12 @@ public class EditorEntidadBuilder<T>
     public EditorEntidadBuilder<T> Imprimir(Action<OrdenTrabajo> imprimir)
     {
         _imprimir = imprimir;
+        return this;
+    }
+
+    public EditorEntidadBuilder<T> ShouldBtnImpresion()
+    {
+        _ShouldImpresion = true;
         return this;
     }
 
@@ -81,6 +88,7 @@ public class EditorEntidadBuilder<T>
             async obj => await _guardar!((T)obj),
             _imprimir,
             _modo,
+            _ShouldImpresion,
             _titulo)
         {
             Owner = _owner

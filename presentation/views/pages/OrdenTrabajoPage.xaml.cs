@@ -103,7 +103,7 @@ public partial class OrdenTrabajoPage : Page
             .Entidad(ordenTrabajo)
             .Titulo("Editar Orden de Trabajo")
             .Guardar(_viewModel.Update)
-            .SoloLecutra()
+            .Edicion()
             .Imprimir(orden =>
                 PrintHelper.ImprimirOrdenTrabajo(
                     Window.GetWindow(this)!,
@@ -113,6 +113,7 @@ public partial class OrdenTrabajoPage : Page
                     ordenTrabajo.Detalles,
                     facturaEditada.Detalles.Cast<DetalleOrdenTrabajo>(),
                     facturaEditada))
+            .ShouldBtnImpresion()
             .Abrir();
     }
 

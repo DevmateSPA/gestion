@@ -78,6 +78,7 @@ namespace Gestion.presentation.views.pages;
                 PrintHelper.ImprimirOrdenTrabajo(
                     Window.GetWindow(this)!,
                     orden))
+            .ShouldBtnImpresion()
             .Abrir();
     }
     private void BtnImprimir_Click(object sender, RoutedEventArgs e)

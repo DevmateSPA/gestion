@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -30,6 +31,7 @@ public partial class EntidadEditorTableWindow: Window
         Func<object, Task<bool>> guardar,
         Action<OrdenTrabajo>? imprimir,
         ModoFormulario modo,
+        bool shouldImprimir,
         string titulo = "Ventana con tabla")
     {
         InitializeComponent();
@@ -41,7 +43,7 @@ public partial class EntidadEditorTableWindow: Window
 
         ClonarEntidad(entidad);
 
-        InicializarUI(EntidadEditada!, modo);
+        InicializarUI(EntidadEditada!, modo, shouldImprimir);
         InicializarEventos();
     }
 
@@ -56,7 +58,7 @@ public partial class EntidadEditorTableWindow: Window
         }
     }
 
-    private void InicializarUI(object entidad, ModoFormulario modo)
+    private void InicializarUI(object entidad, ModoFormulario modo, bool shouldImprimir)
     {
         // Crear el builder para la entidad
         var builder = new VentanaBuilder<object>()
@@ -64,7 +66,7 @@ public partial class EntidadEditorTableWindow: Window
             .SetContenedorCampos(spCampos)
             .SetContenedorTablas(spTabla)
             .SetBotonGuardar(btnGuardar)
-            .SetBotonImprimir(btnImprimir)
+            .SetBotonImprimir(btnImprimir, shouldImprimir)
             .SetModo(modo);
 
         // Se genera la UI
@@ -129,10 +131,13 @@ public partial class EntidadEditorTableWindow: Window
         DialogResult = true;
     }
 
-    private void BtnImprimir_Click(object sender, RoutedEventArgs e)
+    private async void BtnImprimir_Click(object sender, RoutedEventArgs e)
     {
         if (!Validar())
             return;
+
+        if (_guardar != null)
+            await _guardar(EntidadEditada!);
 
         if (_imprimir == null)
             throw new InvalidOperationException("Función de impresión no proporcionada.");
