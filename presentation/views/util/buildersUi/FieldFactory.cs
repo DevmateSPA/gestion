@@ -5,6 +5,7 @@ using System.Windows.Data;
 using System.Windows.Markup;
 using Gestion.core.attributes;
 using Gestion.presentation.enums;
+using Gestion.presentation.views.util.buildersUi.data;
 
 namespace Gestion.presentation.views.util.buildersUi;
 
@@ -13,27 +14,55 @@ public static class FieldFactory
     // --- Constantes de configuración ---
     private const int FONT_SIZE = 20;
 
-    public static FrameworkElement Crear(PropertyInfo prop, object entidad, ModoFormulario modo)
+    public static FrameworkElement Crear(
+        PropertyInfo prop,
+        object entidad,
+        ModoFormulario modo)
     {
-        var tipo = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+        var tipo = Nullable.GetUnderlyingType(prop.PropertyType)
+                ?? prop.PropertyType;
 
-        FrameworkElement control = tipo switch
-        {
-            Type t when t == typeof(bool) => CrearCheckBox(prop, entidad),
-            Type t when t.IsEnum => CrearCombo(prop, entidad),
-            Type t when t == typeof(DateTime) => CrearDatePicker(prop, entidad),
-            _ => prop.GetCustomAttribute<TextAreaAttribute>() != null
-                    ? CrearTextArea(prop, entidad)
-                    : prop.GetCustomAttribute<RadioGroupAttribute>() is RadioGroupAttribute radioGroup
-                        ? CrearRadioGroup(prop, entidad, radioGroup)
-                        : CrearTextBox(prop, entidad)
-        };
+        var control = CrearControl(prop, entidad, tipo);
 
-                // Solo lectura
-        if (prop.GetCustomAttribute<OnlyReadAttribute>() != null || modo == ModoFormulario.SoloLectura)
+        if (EsSoloLectura(prop, modo))
             AplicarSoloLectura(control);
-            
+
         return control;
+    }
+
+    private static FrameworkElement CrearControl(
+        PropertyInfo prop,
+        object entidad,
+        Type tipo)
+    {
+        // Atributos especiales primero
+        if (prop.GetCustomAttribute<TextAreaAttribute>() != null)
+            return CrearTextArea(prop, entidad);
+
+        if (prop.GetCustomAttribute<ComboSourceAttribute>() is ComboSourceAttribute combo)
+            return CrearComboDinamico(prop, entidad, combo);
+
+        if (prop.GetCustomAttribute<RadioGroupAttribute>() is RadioGroupAttribute radioGroup)
+            return CrearRadioGroup(prop, entidad, radioGroup);
+
+        // Por tipo
+        if (tipo == typeof(bool))
+            return CrearCheckBox(prop, entidad);
+
+        if (tipo.IsEnum)
+            return CrearCombo(prop, entidad);
+
+        if (tipo == typeof(DateTime))
+            return CrearDatePicker(prop, entidad);
+
+        // Fallback
+        return CrearTextBox(prop, entidad);
+    }
+
+    private static bool EsSoloLectura(PropertyInfo prop, ModoFormulario modo)
+    {
+        return modo == ModoFormulario.SoloLectura
+            || prop.GetCustomAttribute<OnlyReadAttribute>() != null;
     }
 
     private static TextBox CrearTextArea(PropertyInfo prop, object entidad) 
@@ -68,7 +97,7 @@ public static class FieldFactory
             MinWidth = 200,
             Margin = new Thickness(5, 0, 5, 10), 
             TextWrapping = TextWrapping.Wrap, 
-            AcceptsReturn = true, 
+            AcceptsReturn = false, 
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto, 
             MinHeight = FONT_SIZE 
         }; 
@@ -114,6 +143,34 @@ public static class FieldFactory
             entidad,
             BindingMode.TwoWay);
         combo.SetBinding(ComboBox.SelectedItemProperty, binding);
+
+        return combo;
+    }
+
+    private static ComboBox CrearComboDinamico(
+        PropertyInfo prop,
+        object entidad,
+        ComboSourceAttribute comboAttr)
+    {
+        var combo = new ComboBox
+        {
+            ItemsSource = ComboDataProvider.Get(comboAttr.SourceKey),
+            DisplayMemberPath = string.IsNullOrEmpty(comboAttr.Display) ? comboAttr.SourceKey : comboAttr.Display,
+            SelectedValuePath = string.IsNullOrEmpty(comboAttr.Value) ? comboAttr.SourceKey : comboAttr.Value,
+            Height = 30,
+            Width = 300,
+            Margin = new Thickness(5, 0, 5, 10),
+            FontSize = FONT_SIZE
+        };
+
+        var binding = new Binding(prop.Name)
+        {
+            Source = entidad,
+            Mode = BindingMode.TwoWay,
+            UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+        };
+
+        combo.SetBinding(ComboBox.SelectedValueProperty, binding);
 
         return combo;
     }
@@ -191,7 +248,10 @@ public static class FieldFactory
             case DatePicker dp:
                 dp.IsEnabled = false;
                 break;
-            case StackPanel panel: // para RadioGroup
+            case ComboBox combo:
+                combo.IsEnabled = false;
+                break;
+            case StackPanel panel:
                 foreach (var child in panel.Children)
                 {
                     if (child is RadioButton rb)

@@ -212,6 +212,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     [Nombre("Máquina 1")]
     [Grupo("Datos de Máquina", ORDEN_GRUPO_DATOS_MAQUINA)]
     [Orden(0)]
+    [ComboSource("MAQUINAS", Display = "Descripcion", Value = "Codigo")]
     public string Maquina1 { get; set; } = string.Empty;
     [NoSaveDb]
     [Visible(false)]
@@ -219,6 +220,7 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     [Nombre("Máquina 2")]
     [Grupo("Datos de Máquina", ORDEN_GRUPO_DATOS_MAQUINA)]
     [Orden(1)]
+    [ComboSource("MAQUINAS", Display = "Descripcion", Value = "Codigo")]
     public string Maquina2 { get; set; } = string.Empty;
     [Nombre("Pin")]
     [Grupo("Datos de Máquina", ORDEN_GRUPO_DATOS_MAQUINA)]
@@ -406,10 +408,12 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     [Nombre("Operador 1")]
     [Grupo("Operarios", ORDEN_GRUPO_OPERARIOS)]
     [Orden(0)]
+    [ComboSource("OPERADORES", Display = "Nombre", Value = "Codigo")]
     public string Operador1 { get; set; } = string.Empty;
     [Nombre("Operador 2")]
     [Grupo("Operarios", ORDEN_GRUPO_OPERARIOS)]
     [Orden(1)]
+    [ComboSource("OPERADORES", Display = "Nombre", Value = "Codigo")]
     public string Operador2 { get; set; } = string.Empty;
 
     [Visible(false)]
