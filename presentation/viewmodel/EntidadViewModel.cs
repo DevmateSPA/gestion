@@ -49,7 +49,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         }
     }
 
-    private bool _isBusy;
+    private CancellationTokenSource? _loadCts;
     
     public event PropertyChangedEventHandler? PropertyChanged;
     protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
@@ -100,6 +100,15 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         _service = baseService;
         _emptyMessage = emptyMessage ?? $"No hay {typeof(T).Name} para la empresa {SesionApp.NombreEmpresa}";
         _errorMessage = errorMessage ?? $"Error al cargar {typeof(T).Name} de la empresa {SesionApp.NombreEmpresa}";
+    }
+
+    private CancellationToken RenewLoadToken()
+    {
+        _loadCts?.Cancel();
+        _loadCts?.Dispose();
+
+        _loadCts = new CancellationTokenSource();
+        return _loadCts.Token;
     }
 
     private readonly PropertyInfo[] _stringProps =
@@ -167,18 +176,25 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
         Action? onSuccess = null,
         Action? onEmpty = null)
     {
-        if (_isBusy)
-            return;
-
-        _isBusy = true;
         IsLoading = true;
+
+        var token = RenewLoadToken();
 
         try
         {
             var lista = await SafeExecutor.RunAsyncList(
-                action,
+                async () =>
+                {
+                    token.ThrowIfCancellationRequested();
+                    var result = await action();
+                    token.ThrowIfCancellationRequested();
+                    return result;
+                },
                 _dialogService,
                 errorMessage);
+
+            if (token.IsCancellationRequested)
+                return;
 
             if (lista.Count == 0)
                 onEmpty?.Invoke();
@@ -186,10 +202,14 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
             await LoadEntitiesIntoCollection(lista);
             onSuccess?.Invoke();
         }
+        catch (OperationCanceledException)
+        {
+            // silencioso y limpio
+        }
         finally
         {
-            IsLoading = false;
-            _isBusy = false;
+            if (!token.IsCancellationRequested)
+                IsLoading = false;
         }
     }
 
