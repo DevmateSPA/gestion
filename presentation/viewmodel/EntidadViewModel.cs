@@ -183,7 +183,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
             if (lista.Count == 0)
                 onEmpty?.Invoke();
 
-            LoadEntitiesIntoCollection(lista);
+            await LoadEntitiesIntoCollection(lista);
             onSuccess?.Invoke();
         }
         finally
@@ -199,26 +199,37 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
             BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
     }
 
-    protected void LoadEntitiesIntoCollection(List<T> lista)
+    protected async Task LoadEntitiesIntoCollection(List<T> lista)
     {
-        var dateProp = GetDateProperty(typeof(T));
-        if (dateProp != null)
-            lista = [.. lista.OrderByDescending(x => dateProp.GetValue(x))];
+        // NO UI THREAD
+        var procesadas = await Task.Run(() =>
+        {
+            var dateProp = GetDateProperty(typeof(T));
 
+            if (dateProp != null)
+                lista = [.. lista.OrderByDescending(x => dateProp.GetValue(x))];
+
+            var cache = new Dictionary<T, string>();
+            foreach (var entidad in lista)
+                cache[entidad] = BuildSearchText(entidad);
+
+            return (lista, cache);
+        });
+
+        // UI THREAD (rápido)
         Entidades.Clear();
         _searchCache.Clear();
 
-        foreach (var entidad in lista)
-        {
-            _searchCache[entidad] = BuildSearchText(entidad);
-            Entidades.Add(entidad);
-        }
+        foreach (var kv in procesadas.cache)
+            _searchCache[kv.Key] = kv.Value;
+
+        Entidades = new ObservableCollection<T>(procesadas.lista);
     }
 
     public virtual async Task LoadAll()
     {
         await RunWithLoading(
-            action: async () => await _service.FindAll(),
+            action: _service.FindAll,
             errorMessage: _errorMessage,
             onEmpty: () => _dialogService.ShowMessage(_emptyMessage));
     }
@@ -226,7 +237,12 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
     public virtual async Task LoadAllByEmpresa()
     {
         await RunWithLoading(
-            action: async () => await _service.FindAllByEmpresa(SesionApp.IdEmpresa),
+            action: async () =>
+            {
+                return await Task.Run(() =>
+                    _service.FindAllByEmpresa(SesionApp.IdEmpresa)
+                );
+            },
             errorMessage: _errorMessage,
             onEmpty: () => _dialogService.ShowMessage(_emptyMessage));
     }
@@ -280,7 +296,12 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
     public virtual async Task LoadPageByEmpresa(int page)
     {
         await LoadPagedEntities(
-            serviceCall: async (p) => await _service.FindPageByEmpresa(SesionApp.IdEmpresa, p, PageSize),
+            serviceCall: async (p) =>
+            {
+                return await Task.Run(() =>
+                    _service.FindPageByEmpresa(SesionApp.IdEmpresa, p, PageSize)
+                );
+            },
             page: page,
             emptyMessage: _emptyMessage,
             errorMessage: _errorMessage);
