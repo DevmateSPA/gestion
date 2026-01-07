@@ -8,9 +8,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Gestion.core.attributes;
 using System.Text;
 using MySql.Data.MySqlClient;
-using Serilog;
-using System.Windows;
-using System.Diagnostics;
 using Gestion.Infrastructure.Logging;
 
 namespace Gestion.Infrastructure.data;
@@ -522,67 +519,5 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
             LIMIT 1";
 
         return await cmd.ExecuteScalarAsync() != null;
-    }
-
-    protected async Task<TResult> LogSqlAsync<TResult>(
-        string operation,
-        string sql,
-        Func<Task<TResult>> action,
-        Func<TResult, int>? countSelector = null)
-    {
-        var sw = Stopwatch.StartNew();
-        bool isUiThread = Application.Current?.Dispatcher.CheckAccess() ?? false;
-
-        Log.Debug(
-            "────────────────────────────────────────────\n" +
-            "SQL START | {Operation} | UI={UI} | Thread={Thread}\n{Sql}",
-            operation,
-            isUiThread,
-            Environment.CurrentManagedThreadId,
-            sql);
-
-        try
-        {
-            var result = await action();
-
-            sw.Stop();
-
-            if (countSelector != null)
-            {
-                Log.Information(
-                    "SQL END | {Operation} | {Count} rows | {Elapsed}ms | UI={UI}",
-                    operation,
-                    countSelector(result),
-                    sw.ElapsedMilliseconds,
-                    isUiThread);
-            }
-            else
-            {
-                Log.Information(
-                    "SQL END | {Operation} | {Elapsed}ms | UI={UI}",
-                    operation,
-                    sw.ElapsedMilliseconds,
-                    isUiThread);
-            }
-
-            return result;
-        }
-        catch (Exception ex)
-        {
-            sw.Stop();
-
-            Log.Error(
-                ex,
-                "SQL ERROR | {Operation} | {Elapsed}ms\n{Sql}",
-                operation,
-                sw.ElapsedMilliseconds,
-                sql);
-
-            throw;
-        }
-        finally
-        {
-            Log.Debug("────────────────────────────────────────────");
-        }
     }
 }
