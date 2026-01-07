@@ -162,7 +162,7 @@ namespace Gestion.presentation.utils
 
                 doc.SetFont(font).SetFontSize(8);
 
-                var logo = new Image(ImageDataFactory.Create("C:\\Users\\Jose\\Desktop\\DevMate\\DISEÑOS\\devmate-removebg-preview.png")).ScaleToFit(60, 40);
+                var logo = new Image(ImageDataFactory.Create("C:\\Users\\elthe\\Desktop\\devmate\\gestion\\resources\\devmate-logo.jpeg")).ScaleToFit(60, 40);
                 // ===== ENCABEZADO =====
                 Table header = new Table(new float[] { 1.2f, 4.5f, 2f, 1f, 1f, 1f })
                     .UseAllAvailableWidth()

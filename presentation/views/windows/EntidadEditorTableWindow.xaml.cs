@@ -28,7 +28,7 @@ public partial class EntidadEditorTableWindow: Window
 
     public EntidadEditorTableWindow(
         object entidad,
-        Func<object, Task<bool>> guardar,
+        Func<object, Task<bool>>? guardar,
         Action<OrdenTrabajo>? imprimir,
         ModoFormulario modo,
         bool shouldImprimir,
@@ -43,7 +43,10 @@ public partial class EntidadEditorTableWindow: Window
 
         ClonarEntidad(entidad);
 
-        InicializarUI(EntidadEditada!, modo, shouldImprimir);
+        if (EntidadEditada == null)
+            throw new InvalidOperationException("Entidad clonada no definida.");
+
+        InicializarUI(EntidadEditada, modo, shouldImprimir);
         InicializarEventos();
     }
 
@@ -119,11 +122,13 @@ public partial class EntidadEditorTableWindow: Window
         if (!Validar())
             return;
 
+        if (EntidadEditada == null)
+            throw new InvalidOperationException("Entidad clonada no definida.");
 
         if (_guardar == null)
             throw new InvalidOperationException("Función de guardado no proporcionada.");
             
-        var ok = await _guardar(EntidadEditada!);
+        var ok = await _guardar(EntidadEditada);
 
         if (!ok)
             return;
@@ -136,13 +141,16 @@ public partial class EntidadEditorTableWindow: Window
         if (!Validar())
             return;
 
+        if (EntidadEditada == null)
+            throw new InvalidOperationException("Entidad clonada no definida.");
+
         if (_guardar != null)
-            await _guardar(EntidadEditada!);
+            await _guardar(EntidadEditada);
 
         if (_imprimir == null)
             throw new InvalidOperationException("Función de impresión no proporcionada.");
 
-        _imprimir((OrdenTrabajo)EntidadEditada!);
+        _imprimir((OrdenTrabajo)EntidadEditada);
     }
 
     private void BtnCancelar_Click(object sender, RoutedEventArgs e)
