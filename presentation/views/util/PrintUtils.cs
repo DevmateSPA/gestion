@@ -11,6 +11,7 @@ using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Borders;
 using iText.Layout.Element;
+using iText.Layout.Properties;
 
 namespace Gestion.presentation.utils
 {
@@ -62,23 +63,23 @@ namespace Gestion.presentation.utils
 
                 // ENCABEZADO
                 doc.Add(new Paragraph("IMPRENTA MORIS")
-                    .SetTextAlignment((iText.Layout.Properties.TextAlignment?)TextAlignment.Center)
+                    .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
                     .SetFont(boldFont)
                     .SetFontSize(12));
 
                 doc.Add(new Paragraph("ADMINISTRADOR DE SERVICIOS  V1.0")
-                    .SetTextAlignment((iText.Layout.Properties.TextAlignment?)TextAlignment.Center)
+                    .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
                     .SetFontSize(10));
 
                 doc.Add(new Paragraph($"Emitido : {DateTime.Now:dd/MM/yyyy}       Página : 1")
-                    .SetTextAlignment((iText.Layout.Properties.TextAlignment?)TextAlignment.Center));
+                    .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
 
                 doc.Add(new Paragraph("\nORDEN DE TRABAJO")
-                    .SetTextAlignment((iText.Layout.Properties.TextAlignment?)TextAlignment.Center)
+                    .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
                     .SetFont(boldFont));
 
                 doc.Add(new Paragraph("============================================")
-                    .SetTextAlignment((iText.Layout.Properties.TextAlignment?)TextAlignment.Center));
+                    .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
 
                 // DATOS GENERALES
                 doc.Add(new Paragraph(
@@ -279,15 +280,15 @@ namespace Gestion.presentation.utils
                 // ===== IMPRESIÓN =====
                 Table impresion = new Table(4).UseAllAvailableWidth();
 
-                impresion.AddCell(CellBox("IMPRESIÓN"));
-                impresion.AddCell(Check("SOLO TIRO", ot.TipoImpresion == "1" ? true : false,leftBorder:false,rightBorder:false));
+                impresion.AddCell(CellBox("IMPRESIÓN",rightBorder:false));
+                impresion.AddCell(Check("SOLO TIRO", ot.TipoImpresion == "1" ? true : false,rightBorder:false));
                 impresion.AddCell(Check("T/R M.P.", ot.TipoImpresion == "2" ? true : false,leftBorder:false,rightBorder:false));
                 impresion.AddCell(Check("T/R P.D.",  ot.TipoImpresion == "3" ? true : false,leftBorder:false));
 
-                impresion.AddCell(CellBox("MÁQUINA1 "));
-                impresion.AddCell(CellBox(ot.Maquina1));
-                impresion.AddCell(CellBox("MÁQUINA 2"));
-                impresion.AddCell(CellBox(ot.Maquina2));
+                impresion.AddCell(CellBox("MÁQUINA1 ",rightBorder:false));
+                impresion.AddCell(CellBox(ot.Maquina1,leftBorder:false,rightBorder:false));
+                impresion.AddCell(CellBox("MÁQUINA 2",leftBorder:false,rightBorder:false));
+                impresion.AddCell(CellBox(ot.Maquina2,leftBorder:false));
 
                 doc.Add(impresion);
 
@@ -322,31 +323,146 @@ namespace Gestion.presentation.utils
 
                 doc.Add(detalle);
 
+                Table sobre = new Table(12).UseAllAvailableWidth();
+                sobre.AddCell(CellBox("SOBRES",rightBorder:false));
+                sobre.AddCell(Check("CTE", ot.Sobres == "1" ? true : false,leftBorder:false,rightBorder:false));
+                sobre.AddCell(Check("AMERICANO", ot.Sobres == "2" ? true : false,leftBorder:false,rightBorder:false));
+                sobre.AddCell(Check("AMERICANO ESPECIAL",  ot.Sobres == "3" ? true : false,leftBorder:false,rightBorder:false));
+                sobre.AddCell(Check("1/2 OFICIO", ot.Sobres == "4" ? true : false,leftBorder:false,rightBorder:false));
+                sobre.AddCell(Check("OFICIO", ot.Sobres == "5" ? true : false,leftBorder:false,rightBorder:false));
+                sobre.AddCell(Check("OTRO",  ot.Sobres == "6" ? true : false,leftBorder:false));
 
-                // ===== TINTAS =====
-                /*Table tintas = new Table(4).UseAllAvailableWidth();
-                tintas.AddCell(CellBox("TINTAS", true,4));
-                tintas.AddCell(CellBox("1 " + ot.Tintas1));
-                tintas.AddCell(CellBox("2 " + ot.Tintas2));
-                tintas.AddCell(CellBox("3 " + ot.Tintas3));
-                tintas.AddCell(CellBox("4 " + ot.Tintas4));
+                doc.Add(sobre);
 
-                doc.Add(tintas);*/
+                Table saco = new Table(12).UseAllAvailableWidth();
+                saco.AddCell(CellBox("SACOS",rightBorder:false));
+                saco.AddCell(Check("CTE", ot.Sacos == "1" ? true : false,leftBorder:false,rightBorder:false));
+                saco.AddCell(Check("AMERICANO", ot.Sacos == "2" ? true : false,leftBorder:false,rightBorder:false));
+                saco.AddCell(Check("AMERICANO ESPECIAL",  ot.Sacos == "3" ? true : false,leftBorder:false,rightBorder:false));
+                saco.AddCell(Check("1/2 OFICIO", ot.Sacos == "4" ? true : false,leftBorder:false,rightBorder:false));
+                saco.AddCell(Check("OFICIO", ot.Sacos == "5" ? true : false,leftBorder:false,rightBorder:false));
+                saco.AddCell(Check("OTRO",  ot.Sacos == "6" ? true : false,leftBorder:false));
 
-                // ===== OBSERVACIONES =====
-                Table obs = new Table(1).UseAllAvailableWidth();
-                obs.AddCell(
-                    new Cell().Add(new Paragraph("OBSERVACIONES\n\n\n\n"))
-                    .SetHeight(120)
-                    .SetBorder(new SolidBorder(0.5f))
-                );
+                doc.Add(saco);
 
-                doc.Add(obs);
+                Table tinta1 = new Table(4).UseAllAvailableWidth();
+                tinta1.AddCell(CellBox("TINTA",rightBorder:false));
+                tinta1.AddCell(Check("TRICOMÍA", ot.Tintas1 == "1" ? true : false,leftBorder:false,rightBorder:false));
+                tinta1.AddCell(Check("PANTONE", ot.Tintas1 == "2" ? true : false,leftBorder:false,rightBorder:false));
+                tinta1.AddCell(Check("S/MUESTRA",  ot.Tintas1 == "3" ? true : false,leftBorder:false));
+
+                doc.Add(tinta1);
+
+                Table tinta2 = new Table(4).UseAllAvailableWidth();
+                tinta2.AddCell(CellBox("TINTA",rightBorder:false));
+                tinta2.AddCell(Check("TRICOMÍA", ot.Tintas2 == "1" ? true : false,leftBorder:false,rightBorder:false));
+                tinta2.AddCell(Check("PANTONE", ot.Tintas2 == "2" ? true : false,leftBorder:false,rightBorder:false));
+                tinta2.AddCell(Check("S/MUESTRA",  ot.Tintas2 == "3" ? true : false,leftBorder:false));
+
+                doc.Add(tinta2);
+
+                Table tinta3 = new Table(4).UseAllAvailableWidth();
+                tinta3.AddCell(CellBox("TINTA",rightBorder:false));
+                tinta3.AddCell(Check("TRICOMÍA", ot.Tintas3 == "1" ? true : false,leftBorder:false,rightBorder:false));
+                tinta3.AddCell(Check("PANTONE", ot.Tintas3 == "2" ? true : false,leftBorder:false,rightBorder:false));
+                tinta3.AddCell(Check("S/MUESTRA",  ot.Tintas3 == "3" ? true : false,leftBorder:false));
+
+                doc.Add(tinta3);
+
+                Table tinta4 = new Table(4).UseAllAvailableWidth();
+                tinta4.AddCell(CellBox("TINTA",rightBorder:false));
+                tinta4.AddCell(Check("TRICOMÍA", ot.Tintas4 == "1" ? true : false,leftBorder:false,rightBorder:false));
+                tinta4.AddCell(Check("PANTONE", ot.Tintas4 == "2" ? true : false,leftBorder:false,rightBorder:false));
+                tinta4.AddCell(Check("S/MUESTRA",  ot.Tintas4 == "3" ? true : false,leftBorder:false));
+
+                doc.Add(tinta4);
+
+                Table block = new Table(UnitValue.CreatePercentArray([1,2, 0.5f, 0.5f, 1, 2, 5])).UseAllAvailableWidth();
+                block.AddCell(CellBox(ot.Blockde+"",rightBorder:false));
+                block.AddCell(CellBox("BLOCK DE",leftBorder:false,rightBorder:false));
+                block.AddCell(CellBox(ot.BlockAncho+"",leftBorder:false,rightBorder:false));
+                block.AddCell(CellBox("X",leftBorder:false,rightBorder:false));
+                block.AddCell(CellBox(ot.BlockLargo+"",leftBorder:false,rightBorder:false));
+                block.AddCell(CellBox("OBS : ",leftBorder:false,rightBorder:false));
+                block.AddCell(CellBox(ot.Observacion1+"",leftBorder:false));
+
+                doc.Add(block);
+
+                Table talonario = new Table(UnitValue.CreatePercentArray([1,2, 0.5f, 0.5f, 1, 2, 5])).UseAllAvailableWidth();
+                talonario.AddCell(CellBox(ot.Talonariode+"",rightBorder:false));
+                talonario.AddCell(CellBox("TALONARIO DE",leftBorder:false,rightBorder:false));
+                talonario.AddCell(CellBox(ot.TalonarioAncho+"",leftBorder:false,rightBorder:false));
+                talonario.AddCell(CellBox("X",leftBorder:false,rightBorder:false));
+                talonario.AddCell(CellBox(ot.TalonarioLargo+"",leftBorder:false,rightBorder:false));
+                talonario.AddCell(CellBox("OBS : ",leftBorder:false,rightBorder:false));
+                talonario.AddCell(CellBox(ot.Observacion2+"",leftBorder:false));
+
+                doc.Add(talonario);
+
+                Table paquete = new Table(UnitValue.CreatePercentArray([1,2, 1, 1, 5])).UseAllAvailableWidth();
+                paquete.AddCell(CellBox(ot.Paquetede+"",rightBorder:false));
+                paquete.AddCell(CellBox("PAQUETES DE",leftBorder:false,rightBorder:false));
+                paquete.AddCell(CellBox(ot.Paqueteca+"",leftBorder:false,rightBorder:false));
+                paquete.AddCell(CellBox("OBS : ",leftBorder:false,rightBorder:false));
+                paquete.AddCell(CellBox(ot.Observacion3+"",leftBorder:false));
+
+                doc.Add(paquete);
+
+                Table resma = new Table(UnitValue.CreatePercentArray([1,2, 1, 1, 5])).UseAllAvailableWidth();
+                resma.AddCell(CellBox(ot.Resmade+"",rightBorder:false));
+                resma.AddCell(CellBox("RESMAS DE",leftBorder:false,rightBorder:false));
+                resma.AddCell(CellBox(ot.Resmaca+"",leftBorder:false,rightBorder:false));
+                resma.AddCell(CellBox("OBS : ",leftBorder:false,rightBorder:false));
+                resma.AddCell(CellBox(ot.Observacion4+"",leftBorder:false));
+
+                doc.Add(resma);
+
+                Table fajado = new Table(UnitValue.CreatePercentArray([1,2, 1, 1, 5])).UseAllAvailableWidth();
+                fajado.AddCell(CellBox(ot.Fajadode+"",rightBorder:false));
+                fajado.AddCell(CellBox("FAJADOS DE",leftBorder:false,rightBorder:false));
+                fajado.AddCell(CellBox(ot.Fajadoca+"",leftBorder:false,rightBorder:false));
+                fajado.AddCell(CellBox("OBS : ",leftBorder:false,rightBorder:false));
+                fajado.AddCell(CellBox(ot.Observacion5+"",leftBorder:false));
+
+                doc.Add(fajado);
+
+                Table fechaT = new Table(UnitValue.CreatePercentArray([2,2,1, 5])).UseAllAvailableWidth();
+                fechaT.AddCell(CellBox("TRABAJO TERMINADO:",rightBorder:false));
+                fechaT.AddCell(CellBox(ot.FechaTermino.ToString("dd/MM/yyyy"),leftBorder:false,rightBorder:false));
+                fechaT.AddCell(CellBox("OBS : ",leftBorder:false,rightBorder:false));
+                fechaT.AddCell(CellBox(ot.Observacion6+"",leftBorder:false));
+                doc.Add(fechaT);
+
+                Table fechaE = new Table(UnitValue.CreatePercentArray([2,2,1, 5])).UseAllAvailableWidth();
+                fechaE.AddCell(CellBox("TRABAJO ENTREGADO:",rightBorder:false));
+                fechaE.AddCell(CellBox(ot.FechaEntrega.ToString("dd/MM/yyyy"),leftBorder:false,rightBorder:false));
+                fechaE.AddCell(CellBox("OBS : ",leftBorder:false,rightBorder:false));
+                fechaE.AddCell(CellBox(ot.Observacion7+"",leftBorder:false));
+                doc.Add(fechaE);
+
+                Table guia = new Table(UnitValue.CreatePercentArray([3,1,0.5f,1,1,6])).UseAllAvailableWidth();
+                guia.AddCell(CellBox("GUÍA DE DESPACHO N°",rightBorder:false));
+                guia.AddCell(CellBox(ot.GuiaDesde,leftBorder:false,rightBorder:false));
+                guia.AddCell(CellBox("AL",leftBorder:false,rightBorder:false));
+                guia.AddCell(CellBox(ot.GuiaHasta,leftBorder:false,rightBorder:false));
+                guia.AddCell(CellBox("OBS : ",leftBorder:false,rightBorder:false));
+                guia.AddCell(CellBox(ot.Observacion8+"",leftBorder:false));
+                doc.Add(guia);
+
+                Table factura = new Table(UnitValue.CreatePercentArray([3,1,0.5f,1,1,6])).UseAllAvailableWidth();
+                factura.AddCell(CellBox("FACTURA N°",rightBorder:false));
+                factura.AddCell(CellBox(ot.FacturaDesde,leftBorder:false,rightBorder:false));
+                factura.AddCell(CellBox("AL",leftBorder:false,rightBorder:false));
+                factura.AddCell(CellBox(ot.FacturaHasta,leftBorder:false,rightBorder:false));
+                factura.AddCell(CellBox("OBS : ",leftBorder:false,rightBorder:false));
+                factura.AddCell(CellBox(ot.Observacion9+"",leftBorder:false));
+                doc.Add(factura);
+
 
                 // ===== FIRMA =====
                 Table firma = new Table(2).UseAllAvailableWidth();
-                firma.AddCell(CellBox("FIRMA CLIENTE\n\n\n", true));
-                firma.AddCell(CellBox("RUT\n\n\n", true));
+                firma.AddCell(CellBox("FIRMA CLIENTE\n\n\n", true, bottomBorder: true));
+                firma.AddCell(CellBox("RUT\n\n\n", true, bottomBorder: true));
 
                 doc.Add(firma);
             });
@@ -433,6 +549,7 @@ namespace Gestion.presentation.utils
     int colSpan = 1,
     bool leftBorder = true,
     bool rightBorder = true,
+    bool bottomBorder = false,
     bool header = false,
     bool subheader = false
     )
@@ -446,7 +563,8 @@ namespace Gestion.presentation.utils
 
         var cell = new Cell(1, colSpan)
             .Add(paragraph)
-            .SetPadding(4);
+            .SetPadding(5)      
+            .SetMinHeight(12); 
 
         // === HEADER (negro) ===
         if (header)
@@ -463,7 +581,7 @@ namespace Gestion.presentation.utils
 
         // Bordes base
         cell.SetBorderTop(new SolidBorder(0.5f));
-        cell.SetBorderBottom(Border.NO_BORDER);
+        cell.SetBorderBottom(bottomBorder ? new SolidBorder(0.5f) : Border.NO_BORDER);
 
         // Borde izquierdo
         cell.SetBorderLeft(leftBorder ? new SolidBorder(0.5f) : Border.NO_BORDER);
