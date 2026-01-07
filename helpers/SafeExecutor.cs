@@ -1,4 +1,5 @@
 using System.Windows;
+using Gestion.core.attributes;
 using Gestion.core.interfaces.service;
 
 namespace Gestion.helpers;
@@ -51,7 +52,20 @@ public static class SafeExecutor
     {
         try
         {
-            return await action();
+            var method = action.Method;
+            var isUiThread = Application.Current.Dispatcher.CheckAccess();
+            var isUiSafe = method.IsDefined(typeof(UiSafeAttribute), true);
+
+            if (isUiThread && !isUiSafe)
+            {
+                // LOG EARLY WARNING
+                System.Diagnostics.Debug.WriteLine(
+                    $"[UiDanger] {method.Name} ejecutado en UI Thread");
+            }
+
+            return isUiSafe
+                ? await action()           // corre en UI
+                : await Task.Run(action);  // corre en background
         }
         catch (Exception ex)
         {
