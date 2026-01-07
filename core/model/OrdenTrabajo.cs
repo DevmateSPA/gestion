@@ -82,41 +82,41 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
 
     [Fecha]
     [Nombre("Fecha Entrega")]
-    [Grupo("Fechas", ORDEN_GRUPO_PRODUCCION+1)]
+    [Grupo("Fechas", ORDEN_GRUPO_FAJADO+1)]
     [Orden(0)]
     public DateTime FechaEntrega { get; set; } = DateTime.Now;
 
 
     [Fecha]
     [Nombre("Fecha Término")]
-    [Grupo("Fechas", ORDEN_GRUPO_PRODUCCION+1)]
+    [Grupo("Fechas", ORDEN_GRUPO_FAJADO+1)]
     [Orden(1)]
     public DateTime FechaTermino { get; set; } = DateTime.Now;
 
     [Nombre("Observaciones Entrega")]
-    [Grupo("Fechas", ORDEN_GRUPO_PRODUCCION+1)]
+    [Grupo("Fechas", ORDEN_GRUPO_FAJADO+1)]
     [Orden(2)]
     [TextArea]
     public string Observacion7 { get; set; } = string.Empty;
 
     [Nombre("Observaciones Termino")]
-    [Grupo("Fechas", ORDEN_GRUPO_PRODUCCION+1)]
+    [Grupo("Fechas", ORDEN_GRUPO_FAJADO+1)]
     [Orden(3)]
     [TextArea]
     public string Observacion6 { get; set; } = string.Empty;
 
     // Guías de Despacho
     [Nombre("Guía Desde")]
-    [Grupo("Guías de Despacho", ORDEN_GRUPO_PRODUCCION+2)]
+    [Grupo("Guías de Despacho", ORDEN_GRUPO_FAJADO+2)]
     [Orden(0)]
     public string GuiaDesde { get; set; } = string.Empty;
     [Nombre("Guía Hasta")]
-    [Grupo("Guías de Despacho", ORDEN_GRUPO_PRODUCCION+2)]
+    [Grupo("Guías de Despacho", ORDEN_GRUPO_FAJADO+2)]
     [Orden(1)]
     public string GuiaHasta { get; set; } = string.Empty;
 
     [Nombre("Observaciones Guía")]
-    [Grupo("Guías de Despacho", ORDEN_GRUPO_PRODUCCION+2)]
+    [Grupo("Guías de Despacho", ORDEN_GRUPO_FAJADO+2)]
     [Orden(2)]
     [TextArea]
     public string Observacion8 { get; set; } = string.Empty;
@@ -124,17 +124,17 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     // Facturas
 
     [Nombre("Factura Desde")]
-    [Grupo("Facturas", ORDEN_GRUPO_PRODUCCION+3)]
+    [Grupo("Facturas", ORDEN_GRUPO_FAJADO+3)]
     [Orden(0)]
     public string FacturaDesde { get; set; } = string.Empty;
 
     [Nombre("Factura Hasta")]
-    [Grupo("Facturas", ORDEN_GRUPO_PRODUCCION+3)]
+    [Grupo("Facturas", ORDEN_GRUPO_FAJADO+3)]
     [Orden(1)]
     public string FacturaHasta { get; set; } = string.Empty;
 
     [Nombre("Observaciones Factura")]
-    [Grupo("Facturas", ORDEN_GRUPO_PRODUCCION+3)]
+    [Grupo("Facturas", ORDEN_GRUPO_FAJADO+3)]
     [Orden(2)]
     [TextArea]
     public string Observacion9 { get; set; } = string.Empty;
@@ -174,23 +174,25 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     public string TamanioFinalLargo { get; set; } = string.Empty;
 
     // -- Cliente Proporciona
-    [Visible(false)]
-    [NotMapped]
-    public string ClienteProporcionanada { get; set; } = string.Empty;
-    [Visible(false)]
-    [NotMapped]
-    public string ClienteProporcionaOriginal { get; set; } = string.Empty;
-    [Nombre("Película")]
+    [Nombre("Nada")]
     [Grupo("Cliente Proporciona", ORDEN_GRUPO_CLIENTE_PROPORCIONA)]
     [Orden(0)]
+    public bool ClienteProporcionanada { get; set; } = true;
+    [Nombre("Original")]
+    [Grupo("Cliente Proporciona", ORDEN_GRUPO_CLIENTE_PROPORCIONA)]
+    [Orden(1)]
+    public bool ClienteProporcionaOriginal { get; set; } = false;
+    [Nombre("Película")]
+    [Grupo("Cliente Proporciona", ORDEN_GRUPO_CLIENTE_PROPORCIONA)]
+    [Orden(2)]
     public bool ClienteProporcionaPelicula { get; set; } = false;
     [Nombre("Plancha")]
     [Grupo("Cliente Proporciona", ORDEN_GRUPO_CLIENTE_PROPORCIONA)]
-    [Orden(1)]
+    [Orden(3)]
     public bool ClienteProporcionaPlancha { get; set; } = false;
     [Nombre("Papel")]
     [Grupo("Cliente Proporciona", ORDEN_GRUPO_CLIENTE_PROPORCIONA)]
-    [Orden(2)]
+    [Orden(4)]
     public bool ClienteProporcionaPapel { get; set; } = false;
 
     // -- Tipo de impresión

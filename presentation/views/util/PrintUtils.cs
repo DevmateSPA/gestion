@@ -187,9 +187,9 @@ namespace Gestion.presentation.utils
                             .SetFont(bold)
                             .SetFontSize(11))
                         .SetHeight(headerHeight)
-                        .SetBorderTop(new SolidBorder(1))     
-                        .SetBorderLeft(new SolidBorder(1))    
-                        .SetBorderRight(new SolidBorder(1))
+                        .SetBorderTop(new SolidBorder(0.5f))     
+                        .SetBorderLeft(new SolidBorder(0.5f))    
+                        .SetBorderRight(new SolidBorder(0.5f))
                         .SetBorderBottom(Border.NO_BORDER)
                         .SetVerticalAlignment(iText.Layout.Properties.VerticalAlignment.MIDDLE)
                 );
@@ -202,9 +202,9 @@ namespace Gestion.presentation.utils
                             .SetFontSize(10)
                             .SetFontColor(new DeviceRgb(0, 120, 0))) // verde similar
                         .SetHeight(headerHeight)
-                        .SetBorderTop(new SolidBorder(1))     
-                        .SetBorderLeft(new SolidBorder(1))    
-                        .SetBorderRight(new SolidBorder(1))
+                        .SetBorderTop(new SolidBorder(0.5f))     
+                        .SetBorderLeft(new SolidBorder(0.5f))    
+                        .SetBorderRight(new SolidBorder(0.5f))
                         .SetBorderBottom(Border.NO_BORDER)
                         .SetVerticalAlignment(iText.Layout.Properties.VerticalAlignment.MIDDLE)
                 );
@@ -221,76 +221,124 @@ namespace Gestion.presentation.utils
                 // ===== DATOS CLIENTE =====
                 Table datos = new Table(4).UseAllAvailableWidth();
 
-                datos.AddCell(CellBox("CLIENTE"));
-                datos.AddCell(CellBox(ot.RazonSocial));
-                datos.AddCell(CellBox("RUT"));
-                datos.AddCell(CellBox(ot.RutCliente));
+                datos.AddCell(CellBox("CLIENTE",rightBorder:false));
+                datos.AddCell(CellBox(ot.RazonSocial,leftBorder:false,rightBorder:false));
+                datos.AddCell(CellBox("RUT",leftBorder:false,rightBorder:false));
+                datos.AddCell(CellBox(ot.RutCliente,leftBorder:false));
 
-                datos.AddCell(CellBox("TRABAJO"));
-                datos.AddCell(CellBox(ot.Descripcion));
-                datos.AddCell(CellBox("FECHA"));
-                datos.AddCell(CellBox(ot.Fecha.ToString("dd/MM/yyyy")));
+                datos.AddCell(CellBox("TRABAJO",rightBorder:false));
+                datos.AddCell(CellBox(ot.Descripcion,leftBorder:false, colSpan: 3));
+               
 
                 doc.Add(datos);
 
                 // ===== MEDIDAS =====
-                Table medidas = new Table(4).UseAllAvailableWidth();
+                Table medidas = new Table(8).UseAllAvailableWidth();
 
-                medidas.AddCell(CellBox("CANTIDAD"));
-                medidas.AddCell(CellBox(ot.Cantidad.ToString()));
-                medidas.AddCell(CellBox("TOTAL IMPRESIONES"));
-                medidas.AddCell(CellBox(ot.TotalImpresion.ToString()));
+                medidas.AddCell(CellBox("CANTIDAD",rightBorder:false));
+                medidas.AddCell(CellBox(ot.Cantidad.ToString(),leftBorder:false,rightBorder:false));
+                medidas.AddCell(CellBox("TOTAL IMPRESIONES",leftBorder:false,rightBorder:false));
+                medidas.AddCell(CellBox(ot.TotalImpresion.ToString(),leftBorder:false,rightBorder:false));
+                medidas.AddCell(CellBox("FOLIO DEL N°",leftBorder:false,rightBorder:false));
+                medidas.AddCell(CellBox(ot.FolioDesde,leftBorder:false,rightBorder:false));
+                medidas.AddCell(CellBox("AL N°",leftBorder:false,rightBorder:false));
+                medidas.AddCell(CellBox(ot.FolioHasta,leftBorder:false));
 
-                medidas.AddCell(CellBox("CORTAR A TAMAÑO"));
-                medidas.AddCell(CellBox($"{ot.CortarTamanioLargo} x {ot.CortarTamanion} cm"));
-                medidas.AddCell(CellBox("TAMAÑO FINAL"));
-                medidas.AddCell(CellBox($"{ot.TamanioFinalAncho} x {ot.TamanioFinalLargo} cm"));
+                medidas.AddCell(CellBox("CORTAR A TAMAÑO",rightBorder:false));
+                medidas.AddCell(CellBox($"{ot.CortarTamanio}",leftBorder:false,rightBorder:false));
+                medidas.AddCell(CellBox("DE",leftBorder:false,rightBorder:false));
+                medidas.AddCell(CellBox($"{ot.CortarTamanion}",leftBorder:false,rightBorder:false));
+                medidas.AddCell(CellBox("x",leftBorder:false,rightBorder:false));
+                medidas.AddCell(CellBox($"{ot.CortarTamanioLargo}",leftBorder:false,rightBorder:false));
+                medidas.AddCell(CellBox("CM.",leftBorder:false,rightBorder:false));
+                medidas.AddCell(CellBox("",leftBorder:false));
+
+                medidas.AddCell(CellBox("MONTAR DE:",rightBorder:false));
+                medidas.AddCell(CellBox($"{ot.Montar}",leftBorder:false,rightBorder:false));
+                medidas.AddCell(CellBox("MOLDES POR TAMAÑO",leftBorder:false,rightBorder:false));
+                medidas.AddCell(CellBox($"{ot.MoldeTamanio}",leftBorder:false,rightBorder:false));
+                medidas.AddCell(CellBox("TAMAÑO FINAL:",leftBorder:false,rightBorder:false));
+                medidas.AddCell(CellBox($"{ot.TamanioFinalAncho}",leftBorder:false,rightBorder:false));
+                medidas.AddCell(CellBox("X",leftBorder:false,rightBorder:false));
+                medidas.AddCell(CellBox($"{ot.TamanioFinalAncho} CM.",leftBorder:false));
 
                 doc.Add(medidas);
 
                 // ===== CLIENTE PROPORCIONA =====
-                Table proporciona = new Table(5).UseAllAvailableWidth();
+                Table proporciona = new Table(7).UseAllAvailableWidth();
 
-                proporciona.AddCell(CellBox("CLIENTE PROPORCIONA", true, 5));
-                proporciona.AddCell(Check("Nada", ot.ClienteProporcionanada == "1" ? true : false));
-                proporciona.AddCell(Check("Original", ot.ClienteProporcionaOriginal == "1"  ? true : false));
-                proporciona.AddCell(Check("Planchas", ot.ClienteProporcionaPlancha));
-                proporciona.AddCell(Check("Papel", ot.ClienteProporcionaPapel));
-                proporciona.AddCell(Check("Películas", ot.ClienteProporcionaPelicula));
+                proporciona.AddCell(CellBox("CLIENTE PROPORCIONA", colSpan: 2,rightBorder:false,subheader:true));
+                proporciona.AddCell(Check("Nada", ot.ClienteProporcionanada,leftBorder:false,rightBorder:false,subheader:true));
+                proporciona.AddCell(Check("Original", ot.ClienteProporcionaOriginal,leftBorder:false,rightBorder:false,subheader:true));
+                proporciona.AddCell(Check("Planchas", ot.ClienteProporcionaPlancha,leftBorder:false,rightBorder:false,subheader:true));
+                proporciona.AddCell(Check("Papel", ot.ClienteProporcionaPapel,leftBorder:false,rightBorder:false,subheader:true));
+                proporciona.AddCell(Check("Películas", ot.ClienteProporcionaPelicula,leftBorder:false,subheader:true));
 
                 doc.Add(proporciona);
 
                 // ===== IMPRESIÓN =====
                 Table impresion = new Table(4).UseAllAvailableWidth();
 
-                impresion.AddCell(CellBox("TIPO IMPRESIÓN"));
-                impresion.AddCell(CellBox(ot.TipoImpresion));
-                impresion.AddCell(CellBox("PINZA"));
-                impresion.AddCell(CellBox(ot.Pin));
+                impresion.AddCell(CellBox("IMPRESIÓN"));
+                impresion.AddCell(Check("SOLO TIRO", ot.TipoImpresion == "1" ? true : false,leftBorder:false,rightBorder:false));
+                impresion.AddCell(Check("T/R M.P.", ot.TipoImpresion == "2" ? true : false,leftBorder:false,rightBorder:false));
+                impresion.AddCell(Check("T/R P.D.",  ot.TipoImpresion == "3" ? true : false,leftBorder:false));
 
-                impresion.AddCell(CellBox("MÁQUINA"));
+                impresion.AddCell(CellBox("MÁQUINA1 "));
                 impresion.AddCell(CellBox(ot.Maquina1));
-                impresion.AddCell(CellBox("PLANCHAS NUEVAS"));
-                impresion.AddCell(CellBox(ot.Nva.ToString()));
+                impresion.AddCell(CellBox("MÁQUINA 2"));
+                impresion.AddCell(CellBox(ot.Maquina2));
 
                 doc.Add(impresion);
 
+                // ===== DETALLE =====
+                
+                Table detalle = new Table(6).UseAllAvailableWidth();
+                detalle.AddCell(CellBox("TIPO DE PAPEL", header: true));
+                detalle.AddCell(CellBox("CANTIDAD", header: true));
+                detalle.AddCell(CellBox("SOBRANTE", header: true));
+                detalle.AddCell(CellBox("TOTAL", header: true));
+                detalle.AddCell(CellBox("TAMAÑO", header: true));
+                detalle.AddCell(CellBox("CANT. PLIEGOS", header: true));
+                //detalle.AddCell(CellBox("V° B° IMP"));
+
+                for(int i = 0; i < ot.Detalles.Count; i++)
+                {
+                    detalle.AddCell(CellBox(ot.Detalles[i].TipoPapel));
+                    detalle.AddCell(CellBox(ot.Detalles[i].Cantidad+""));
+                    detalle.AddCell(CellBox(ot.Detalles[i].Sobr+""));
+                    detalle.AddCell(CellBox(ot.Detalles[i].Total+""));
+                    detalle.AddCell(CellBox(ot.Detalles[i].Tamanio+""));
+                    detalle.AddCell(CellBox(ot.Detalles[i].Cplie+""));
+
+                }
+
+                detalle.AddCell(CellBox(" "));
+                detalle.AddCell(CellBox(" "));
+                detalle.AddCell(CellBox(" "));
+                detalle.AddCell(CellBox(" "));
+                detalle.AddCell(CellBox(" "));
+                detalle.AddCell(CellBox(" "));
+
+                doc.Add(detalle);
+
+
                 // ===== TINTAS =====
-                Table tintas = new Table(4).UseAllAvailableWidth();
+                /*Table tintas = new Table(4).UseAllAvailableWidth();
                 tintas.AddCell(CellBox("TINTAS", true,4));
                 tintas.AddCell(CellBox("1 " + ot.Tintas1));
                 tintas.AddCell(CellBox("2 " + ot.Tintas2));
                 tintas.AddCell(CellBox("3 " + ot.Tintas3));
                 tintas.AddCell(CellBox("4 " + ot.Tintas4));
 
-                doc.Add(tintas);
+                doc.Add(tintas);*/
 
                 // ===== OBSERVACIONES =====
                 Table obs = new Table(1).UseAllAvailableWidth();
                 obs.AddCell(
                     new Cell().Add(new Paragraph("OBSERVACIONES\n\n\n\n"))
                     .SetHeight(120)
-                    .SetBorder(new SolidBorder(1))
+                    .SetBorder(new SolidBorder(0.5f))
                 );
 
                 doc.Add(obs);
@@ -379,22 +427,55 @@ namespace Gestion.presentation.utils
     
 
 
-    static Cell CellBox(string text, bool bold = false, int colSpan = 1)
+    static Cell CellBox(
+    string text,
+    bool bold = false,
+    int colSpan = 1,
+    bool leftBorder = true,
+    bool rightBorder = true,
+    bool header = false,
+    bool subheader = false
+    )
     {
         var font = PdfFontFactory.CreateFont(StandardFonts.COURIER);
         var boldFont = PdfFontFactory.CreateFont(StandardFonts.COURIER_BOLD);
 
-        return new Cell(1, colSpan)
-            .Add(new Paragraph(text)
-                .SetFont(bold ? boldFont : font)
-                .SetFontSize(8))
-            .SetPadding(4)
-            .SetBorder(new SolidBorder(1));
-    }
+        var paragraph = new Paragraph(text)
+            .SetFont((bold || header || subheader) ? boldFont : font)
+            .SetFontSize(8);
 
-    static Cell Check(string label, bool value)
+        var cell = new Cell(1, colSpan)
+            .Add(paragraph)
+            .SetPadding(4);
+
+        // === HEADER (negro) ===
+        if (header)
+        {
+            paragraph.SetFontColor(ColorConstants.WHITE);
+            cell.SetBackgroundColor(ColorConstants.BLACK);
+        }
+        // === SUBHEADER (plomo) ===
+        else if (subheader)
+        {
+            paragraph.SetFontColor(ColorConstants.BLACK);
+            cell.SetBackgroundColor(ColorConstants.LIGHT_GRAY);
+        }
+
+        // Bordes base
+        cell.SetBorderTop(new SolidBorder(0.5f));
+        cell.SetBorderBottom(Border.NO_BORDER);
+
+        // Borde izquierdo
+        cell.SetBorderLeft(leftBorder ? new SolidBorder(0.5f) : Border.NO_BORDER);
+
+        // Borde derecho
+        cell.SetBorderRight(rightBorder ? new SolidBorder(0.5f) : Border.NO_BORDER);
+
+        return cell;
+    }
+    static Cell Check(string label, bool value,bool leftBorder = true, bool rightBorder = true, bool subheader = false )
     {
-        return CellBox($"{(value ? "[X]" : "[ ]")} {label}");
+        return CellBox($"{(value ? "[X]" : "[ ]")} {label}",leftBorder: leftBorder, rightBorder: rightBorder,subheader: subheader);
     }
 
     static Cell HeaderDateCell(string label, string value, float height)
@@ -409,9 +490,9 @@ namespace Gestion.presentation.utils
             .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
             .SetVerticalAlignment(iText.Layout.Properties.VerticalAlignment.MIDDLE)
             .SetHeight(height)
-            .SetBorderTop(new SolidBorder(1))     
-            .SetBorderLeft(new SolidBorder(1))    
-            .SetBorderRight(new SolidBorder(1))
+            .SetBorderTop(new SolidBorder(0.5f))     
+            .SetBorderLeft(new SolidBorder(0.5f))    
+            .SetBorderRight(new SolidBorder(0.5f))
             .SetBorderBottom(Border.NO_BORDER);
     }
     }
