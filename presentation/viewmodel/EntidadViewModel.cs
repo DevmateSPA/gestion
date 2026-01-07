@@ -237,12 +237,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
     public virtual async Task LoadAllByEmpresa()
     {
         await RunWithLoading(
-            action: async () =>
-            {
-                return await Task.Run(() =>
-                    _service.FindAllByEmpresa(SesionApp.IdEmpresa)
-                );
-            },
+            action: async () => await _service.FindAllByEmpresa(SesionApp.IdEmpresa),
             errorMessage: _errorMessage,
             onEmpty: () => _dialogService.ShowMessage(_emptyMessage));
     }
@@ -296,12 +291,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged where T : IEm
     public virtual async Task LoadPageByEmpresa(int page)
     {
         await LoadPagedEntities(
-            serviceCall: async (p) =>
-            {
-                return await Task.Run(() =>
-                    _service.FindPageByEmpresa(SesionApp.IdEmpresa, p, PageSize)
-                );
-            },
+            serviceCall: async (p) => await _service.FindPageByEmpresa(SesionApp.IdEmpresa, p, PageSize),
             page: page,
             emptyMessage: _emptyMessage,
             errorMessage: _errorMessage);
