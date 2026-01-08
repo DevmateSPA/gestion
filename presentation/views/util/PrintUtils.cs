@@ -59,7 +59,7 @@ public static class PrintUtils
 
             doc.SetFont(font).SetFontSize(8);
 
-            var logo = new Image(ImageDataFactory.Create("C:\\Users\\Jose\\Desktop\\devmate\\gestion\\resources\\devmate-logo.jpeg")).ScaleToFit(60, 40);
+            var logo = new Image(ImageDataFactory.Create(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logo.png"))).ScaleToFit(60, 40);
             // ===== ENCABEZADO =====
             Table header = new Table(new float[] { 1.2f, 4.5f, 2f, 1f, 1f, 1f })
                 .UseAllAvailableWidth()
