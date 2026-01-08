@@ -9,7 +9,6 @@ using Gestion.core.model;
 using Gestion.core.model.detalles;
 using Gestion.core.session;
 using Gestion.helpers;
-using Gestion.presentation.utils;
 using Gestion.presentation.views.util;
 using Gestion.presentation.views.windows;
 
