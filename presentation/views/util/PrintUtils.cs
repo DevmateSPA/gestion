@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
 using System.Windows;
 using Gestion.core.model;
 using iText.IO.Font.Constants;
@@ -162,7 +163,11 @@ namespace Gestion.presentation.utils
 
                 doc.SetFont(font).SetFontSize(8);
 
-                var logo = new Image(ImageDataFactory.Create("C:\\Users\\Jose\\Desktop\\DevMate\\DISEÑOS\\devmate-removebg-preview.png")).ScaleToFit(60, 40);
+                //var logo = new Image(ImageDataFactory.Create("C:\\Users\\Jose\\Desktop\\DevMate\\DISEÑOS\\devmate-removebg-preview.png")).ScaleToFit(60, 40);
+                using var http = new HttpClient();
+                var bytes = http.GetByteArrayAsync("https://www.devmate.cl/logo2.png").Result;
+
+                var logo = new Image(ImageDataFactory.Create(bytes)).ScaleToFit(60, 40);
                 // ===== ENCABEZADO =====
                 Table header = new Table(new float[] { 1.2f, 4.5f, 2f, 1f, 1f, 1f })
                     .UseAllAvailableWidth()
