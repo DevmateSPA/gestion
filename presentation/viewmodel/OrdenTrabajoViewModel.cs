@@ -4,6 +4,8 @@ using Gestion.core.model;
 using Gestion.core.model.detalles;
 using Gestion.core.session;
 using Gestion.helpers;
+using Gestion.presentation.views.util.buildersUi;
+using Gestion.presentation.views.util.buildersUi.data;
 
 namespace Gestion.presentation.viewmodel; 
 
@@ -11,11 +13,22 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
 {
     private readonly IOrdenTrabajoService _ordenTrabajoService;
     private readonly IDetalleOTService _detalleOTService;
-    public OrdenTrabajoViewModel(IOrdenTrabajoService ordenTrabajoService, IDialogService dialogService, IDetalleOTService detalleOTService)
+    private readonly IMaquinaService _maquinaService;
+    private readonly IOperarioService _operarioService;
+    public OrdenTrabajoViewModel(
+        IOrdenTrabajoService ordenTrabajoService, 
+        IDialogService dialogService, 
+        IDetalleOTService detalleOTService,
+        IMaquinaService maquinaService,
+        IOperarioService operarioService)
         : base(ordenTrabajoService, dialogService)
     {
         _ordenTrabajoService = ordenTrabajoService;
         _detalleOTService = detalleOTService;
+        _maquinaService = maquinaService;
+        _operarioService = operarioService;
+
+        _ = ComboBootstrapper.LoadOrdenTrabajoCombos(_maquinaService, _operarioService, SesionApp.IdEmpresa);
     }
 
     public virtual async Task<List<DetalleOrdenTrabajo>> LoadDetailsByFolio(string folio)

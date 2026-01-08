@@ -23,14 +23,13 @@ public class NotaCredito : TotalBase
     [Orden(1)]
     public string Factura { get; set; } = string.Empty;
 
-    [Nombre("Rut Cliente")]
+    [Nombre("Rut")]
     [Rut]
     [Grupo("Cliente", 1)]
     [Orden(2)]
     public string RutCliente { get; set; } = string.Empty;
 
-    [Nombre("Rut Cliente")]
-    [Rut]
+    [Nombre("Nombre")]
     [Grupo("Cliente", 1)]
     [Orden(2)]
     [NoSaveDb]

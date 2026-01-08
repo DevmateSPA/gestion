@@ -12,7 +12,7 @@ public class EditorEntidadBuilder<T>
     private Window? _owner;
     private T? _entidad;
     private string _titulo = "Editar";
-    private Func<T, Task<bool>>? _guardar;
+    private Func<T, Task<bool>>? _guardar = _ => Task.FromResult(true);
     private Action<OrdenTrabajo>? _imprimir;
     private Func<T, Task>? _onClose;
     private ModoFormulario _modo = ModoFormulario.Edicion;
@@ -85,7 +85,7 @@ public class EditorEntidadBuilder<T>
 
         var ventana = new EntidadEditorTableWindow(
             _entidad,
-            async obj => await _guardar!((T)obj),
+            async obj => _guardar == null || await _guardar((T)obj),
             _imprimir,
             _modo,
             _ShouldImpresion,
