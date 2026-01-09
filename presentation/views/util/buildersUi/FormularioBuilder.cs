@@ -94,8 +94,6 @@ public class FormularioBuilder
             .OrderBy(g => g.Orden)];
     }
 
-    private static StackPanel CrearFila() => new() { Orientation = Orientation.Horizontal };
-
     private static StackPanel CrearBloqueCampo(
         PropertyInfo prop,
         object entidad,
@@ -104,6 +102,8 @@ public class FormularioBuilder
     {
         var label = LabelFactory.Crear(prop);
         var control = FieldFactory.Crear(prop, entidad, modo);
+        // Asignamos lo más a la izquierda de su contenedor
+        control.HorizontalAlignment = HorizontalAlignment.Left;
 
         controles[prop] = control;
 

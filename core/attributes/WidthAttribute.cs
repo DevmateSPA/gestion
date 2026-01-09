@@ -10,6 +10,16 @@ public sealed class WidthAttribute : Attribute
     public bool HasMinWidth => MinWidth >= 0;
     public bool HasMaxWidth => MaxWidth >= 0;
 
+    private const int RANGO = 50;
+
+    public int EffectiveMinWidth => HasMinWidth
+        ? MinWidth
+        : Math.Max(0, Width - RANGO);
+
+    public int EffectiveMaxWidth => HasMaxWidth
+        ? MaxWidth
+        : Width + RANGO;
+
     public WidthAttribute(int width)
     {
         Width = width;
