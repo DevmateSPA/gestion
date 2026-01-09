@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using Gestion.core.attributes;
 
 namespace Gestion.presentation.views.util.buildersUi;
 
