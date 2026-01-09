@@ -1,6 +1,7 @@
 namespace Gestion.core.attributes;
 
-public class GrupoAttribute : Attribute
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class GrupoAttribute : Attribute
 {
     public string Nombre { get; set; } = "Sin asignar";
     public int Index { get; set;}

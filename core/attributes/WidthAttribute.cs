@@ -1,6 +1,7 @@
 namespace Gestion.core.attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public sealed class TextAreaAttribute : Attribute
+public sealed class WidthAttribute : Attribute
 {
+    
 }

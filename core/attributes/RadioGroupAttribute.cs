@@ -1,7 +1,7 @@
 namespace Gestion.core.attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class RadioGroupAttribute : Attribute
+public sealed class RadioGroupAttribute : Attribute
 {
     public (string Texto, string Valor)[] Opciones { get; }
 

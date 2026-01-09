@@ -1,7 +1,7 @@
 namespace Gestion.core.attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class ComboSourceAttribute : Attribute
+public sealed class ComboSourceAttribute : Attribute
 {
     public string SourceKey { get; }
     public string Display { get; set; } = string.Empty;

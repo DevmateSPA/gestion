@@ -1,7 +1,7 @@
 namespace Gestion.core.attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class NoSaveDbAttribute : Attribute
+public sealed class NoSaveDbAttribute : Attribute
 {
     
 }
