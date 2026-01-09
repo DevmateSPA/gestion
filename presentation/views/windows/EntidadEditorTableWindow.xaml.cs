@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.core.services;
 using Gestion.helpers;
 using Gestion.presentation.enums;
 using Gestion.presentation.views.util;
@@ -25,6 +27,8 @@ public partial class EntidadEditorTableWindow: Window
 
     private readonly Func<object, Task<bool>>? _guardar;
     private readonly Action<OrdenTrabajo>? _imprimir;
+
+    private readonly IDialogService _dialogService = new DialogService();
 
     public EntidadEditorTableWindow(
         object entidad,
@@ -133,7 +137,7 @@ public partial class EntidadEditorTableWindow: Window
         if (!ok)
             return;
 
-        DialogResult = true;
+        _dialogService.ShowMessage("Los datos se han guardado correctamente.", $"{EntidadEditada.GetType().Name} guardada");
     }
 
     private async void BtnImprimir_Click(object sender, RoutedEventArgs e)
@@ -151,6 +155,8 @@ public partial class EntidadEditorTableWindow: Window
             throw new InvalidOperationException("Función de impresión no proporcionada.");
 
         _imprimir((OrdenTrabajo)EntidadEditada);
+
+        _dialogService.ShowMessage("Se ha impreso correctamente.", $"{EntidadEditada.GetType().Name} impresa");
     }
 
     private void BtnCancelar_Click(object sender, RoutedEventArgs e)
