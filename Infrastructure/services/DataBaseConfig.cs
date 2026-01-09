@@ -24,7 +24,7 @@ static DatabaseConfig()
             Environment.SetEnvironmentVariable("DB_HOST", "localhost");
             Environment.SetEnvironmentVariable("DB_PORT", "3306");
             Environment.SetEnvironmentVariable("DB_USER", "root");
-            Environment.SetEnvironmentVariable("DB_PASSWORD", "12345");
+            Environment.SetEnvironmentVariable("DB_PASSWORD", "Devmate.2025@");
             Environment.SetEnvironmentVariable("DB_NAME", "imprenta");
         }
     }

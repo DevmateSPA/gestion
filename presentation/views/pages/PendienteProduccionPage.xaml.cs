@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Gestion.core.model.detalles;
 using System.Collections.ObjectModel;
 using Gestion.helpers;
+using System.Drawing.Printing;
 
 namespace Gestion.presentation.views.pages;
     public partial class PendienteProduccionPage : Page
@@ -82,22 +83,41 @@ namespace Gestion.presentation.views.pages;
     }
     private void BtnImprimir_Click(object sender, RoutedEventArgs e)
     {
-        var modal = new ImpresoraModal
-        {
-            //Owner = this 
-        };
+        // 1️⃣ Leer impresora guardada
+        string impresora = LocalConfig.ObtenerImpresora();
 
-        if (modal.ShowDialog() == true)
+        // 2️⃣ Validar si existe o es válida
+        bool impresoraValida =
+            !string.IsNullOrWhiteSpace(impresora) &&
+            impresora != "" &&
+            PrinterSettings.InstalledPrinters.Cast<string>()
+                .Any(p => p == impresora);
+
+        // 3️⃣ Si no hay impresora válida, pedirla
+        if (!impresoraValida)
         {
-            string impresora = modal.ImpresoraSeleccionada;
-            MessageBox.Show("Impresora seleccionada: " + impresora);
-            string pdfPath = PrintUtils.GenerarListadoOTPendientes(_viewModel.Entidades.ToList());
-            string sumatra = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SumatraPDF.exe");
-            PrintUtils.PrintFile(pdfPath, impresora, sumatra);
+            var modal = new ImpresoraModal();
+
+            if (modal.ShowDialog() != true)
+                return; // usuario canceló
+
+            impresora = modal.ImpresoraSeleccionada;
+
+            if (string.IsNullOrWhiteSpace(impresora))
+                return;
         }
-       
-    }
 
+        // 4️⃣ Imprimir directo
+        string pdfPath =
+            PrintUtils.GenerarListadoOTPendientes(_viewModel.Entidades.ToList());
+
+        string sumatra = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory,
+            "SumatraPDF.exe"
+        );
+
+        PrintUtils.PrintFile(pdfPath, impresora, sumatra);
+    }
     private async void BtnBuscar_Click(object sender, RoutedEventArgs e)
     {
         string? filtro = txtBuscar.Text?.Trim();

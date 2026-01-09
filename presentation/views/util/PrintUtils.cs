@@ -19,9 +19,14 @@ public static class PrintUtils
 {
     public static string GeneratePdf(string fileName, Action<Document> builder)
     {
-        string path = System.IO.Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-            fileName);
+        string baseDir = AppContext.BaseDirectory;
+
+        string outputDir = System.IO.Path.Combine(baseDir, "ordenes_de_trabajo");
+
+        if (!Directory.Exists(outputDir))
+            Directory.CreateDirectory(outputDir);
+
+        string path = System.IO.Path.Combine(outputDir, fileName);
 
         using var writer = new iText.Kernel.Pdf.PdfWriter(path);
         using var pdf = new iText.Kernel.Pdf.PdfDocument(writer);
@@ -54,12 +59,11 @@ public static class PrintUtils
     {
         return GeneratePdf($"orden_trabajo_{ot.Folio}.pdf", doc =>
         {
-            var font = PdfFontFactory.CreateFont(StandardFonts.COURIER);
-            var bold = PdfFontFactory.CreateFont(StandardFonts.COURIER_BOLD);
+            var font = PdfFontFactory.CreateFont(StandardFonts.HELVETICA);
+            var bold = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
 
             doc.SetFont(font).SetFontSize(8);
-
-            var logo = new Image(ImageDataFactory.Create(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logo.png"))).ScaleToFit(60, 40);
+            var logo = new Image(ImageDataFactory.Create(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"resources","logo.png"))).ScaleToFit(60, 40);
             // ===== ENCABEZADO =====
             Table header = new Table(new float[] { 1.2f, 4.5f, 2f, 1f, 1f, 1f })
                 .UseAllAvailableWidth()
@@ -89,6 +93,7 @@ public static class PrintUtils
                     .SetBorderLeft(new SolidBorder(0.5f))
                     .SetBorderRight(new SolidBorder(0.5f))
                     .SetBorderBottom(Border.NO_BORDER)
+                    .SetHorizontalAlignment(iText.Layout.Properties.HorizontalAlignment.CENTER)
                     .SetVerticalAlignment(iText.Layout.Properties.VerticalAlignment.MIDDLE)
             );
 
@@ -451,8 +456,8 @@ public static class PrintUtils
     bool subheader = false
     )
     {
-        var font = PdfFontFactory.CreateFont(StandardFonts.COURIER);
-        var boldFont = PdfFontFactory.CreateFont(StandardFonts.COURIER_BOLD);
+        var font = PdfFontFactory.CreateFont(StandardFonts.HELVETICA);
+        var boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
 
         var paragraph = new Paragraph(text)
             .SetFont((bold || header || subheader) ? boldFont : font)
@@ -495,7 +500,7 @@ public static class PrintUtils
 
     static Cell HeaderDateCell(string label, string value, float height)
     {
-        var boldFont = PdfFontFactory.CreateFont(StandardFonts.COURIER_BOLD);
+        var boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
         return new Cell()
             .Add(new Paragraph(label)
                 .SetFontSize(6))

@@ -100,6 +100,9 @@
                 <MenuItem Header="Pendientes por Maquina" Click="MenuItemReportes_Click" Tag="ModuloMaquina"/>
             </MenuItem>
             <!--<MenuItem Header="Procesos"/>-->
+            <MenuItem Header="Configuración">
+                <MenuItem Header="Impresoras" Click="MenuItemImpresora_Click" Tag="ModuloImpresion"/>
+            </MenuItem>
             <MenuItem Header="Salir" Click="BtnSalir_Click"/>
             <MenuItem Header="Inicio" Click="BtnInicio_Click"/>
             <!--<MenuItem Header="Prueba OT" Click="BtnOT_Click"/>-->

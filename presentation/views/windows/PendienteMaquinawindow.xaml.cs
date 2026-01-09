@@ -8,6 +8,8 @@ using Gestion.presentation.views.util;
 using System.Collections.ObjectModel;
 using Gestion.core.model.detalles;
 using Gestion.helpers;
+using System.IO;
+using System.Drawing.Printing;
 
 namespace Gestion.presentation.views.pages;
     public partial class PendienteMaquinaWindow : Window
@@ -93,7 +95,7 @@ namespace Gestion.presentation.views.pages;
     }
     private void BtnCancelar_Click(object sender, RoutedEventArgs e)
     {
-        
+        this.Close();
     }
 
     private void BtnOT_Click(object sender, RoutedEventArgs e)
@@ -185,9 +187,42 @@ namespace Gestion.presentation.views.pages;
         }
     }
     
-    private void BtnImprimir_Click(object sender, RoutedEventArgs  e)
+    private void BtnImprimir_Click(object sender, RoutedEventArgs e)
     {
-        
+        // 1️⃣ Leer impresora guardada
+        string impresora = LocalConfig.ObtenerImpresora();
+
+        // 2️⃣ Validar si existe o es válida
+        bool impresoraValida =
+            !string.IsNullOrWhiteSpace(impresora) &&
+            impresora != "" &&
+            PrinterSettings.InstalledPrinters.Cast<string>()
+                .Any(p => p == impresora);
+
+        // 3️⃣ Si no hay impresora válida, pedirla
+        if (!impresoraValida)
+        {
+            var modal = new ImpresoraModal();
+
+            if (modal.ShowDialog() != true)
+                return; // usuario canceló
+
+            impresora = modal.ImpresoraSeleccionada;
+
+            if (string.IsNullOrWhiteSpace(impresora))
+                return;
+        }
+
+        // 4️⃣ Imprimir directo
+        string pdfPath =
+            PrintUtils.GenerarListadoOTPendientes(_viewModel.Entidades.ToList());
+
+        string sumatra = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory,
+            "SumatraPDF.exe"
+        );
+
+        PrintUtils.PrintFile(pdfPath, impresora, sumatra);
     }
     private void TxtBuscar_KeyDown(object sender, KeyEventArgs e)
     {

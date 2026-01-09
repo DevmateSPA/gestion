@@ -1,4 +1,3 @@
-using System;
 using System.Drawing.Printing;
 using System.Linq;
 using System.Windows;
@@ -13,6 +12,7 @@ namespace Gestion.presentation.views.windows
         {
             InitializeComponent();
             CargarImpresoras();
+            CargarImpresoraGuardada();
         }
 
         private void CargarImpresoras()
@@ -20,6 +20,23 @@ namespace Gestion.presentation.views.windows
             foreach (string printer in PrinterSettings.InstalledPrinters)
             {
                 lvImpresoras.Items.Add(printer);
+            }
+        }
+
+        private void CargarImpresoraGuardada()
+        {
+            var aux = LocalConfig.ObtenerImpresora();
+            var guardada = aux == "" ? "No seleccionada" : aux;
+
+            txtImpresoraSeleccionada.Text =
+                $"Impresora seleccionada: {guardada}";
+
+            if (guardada != "No seleccionada")
+            {
+                lvImpresoras.SelectedItem =
+                    lvImpresoras.Items
+                        .Cast<string>()
+                        .FirstOrDefault(p => p == guardada);
             }
         }
 
@@ -32,6 +49,13 @@ namespace Gestion.presentation.views.windows
             }
 
             ImpresoraSeleccionada = lvImpresoras.SelectedItem.ToString();
+
+            // Guardar en JSON
+            LocalConfig.GuardarImpresora(ImpresoraSeleccionada);
+
+            txtImpresoraSeleccionada.Text =
+                $"Impresora seleccionada: {ImpresoraSeleccionada}";
+
             DialogResult = true;
             Close();
         }

@@ -124,10 +124,6 @@ namespace Gestion.presentation.views.pages;
         _viewModel.Buscar(filtro);
     }
 
-    private void BtnImprimir_Click(object sender, RoutedEventArgs e)
-    {
-        MessageBox.Show("Imprimir listado...");
-    }
 
     private void DataGrid_StatusChanged(object? sender, EventArgs e)
     {
@@ -178,10 +174,6 @@ namespace Gestion.presentation.views.pages;
 
             case Key.F2:
                 BtnBuscar_Click(sender, e);
-                break;
-
-            case Key.F4:
-                BtnImprimir_Click(sender, e);
                 break;
         }
     }

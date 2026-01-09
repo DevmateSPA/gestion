@@ -61,7 +61,7 @@
         <!-- Botones -->
         <StackPanel Orientation="Horizontal" Grid.Row="3" HorizontalAlignment="Center" Margin="0,5,0,0">
             <Button Width="150" Height="50"  Content="Imprimir (F4)" Click="BtnImprimir_Click" Margin="5"/>
-            <Button Width="150" Height="50"  Content="Retorno (ESC)" Click="BtnImprimir_Click" Margin="5"/>
+            <Button Width="150" Height="50"  Content="Retorno (ESC)" Click="BtnCancelar_Click" Margin="5"/>
         </StackPanel>
     </Grid>
 </Window>

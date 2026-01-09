@@ -89,6 +89,7 @@ public partial class MaquinasConOTPendientesPage : Page
             {
                 var ordenTrabajoVM = App.ServiceProvider.GetRequiredService<OrdenTrabajoViewModel>();
                 Window window = new PendienteMaquinaWindow(ordenTrabajoVM, maquinaSeleccionada);
+                window.Owner = Window.GetWindow(this)!;
                 window.ShowDialog();
             }
         }

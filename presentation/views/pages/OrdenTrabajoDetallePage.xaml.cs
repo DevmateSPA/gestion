@@ -119,6 +119,7 @@ public partial class OrdenTrabajoDetallePage : Window
     // =========================
     // IMPRIMIR
     // =========================
+
     private void BtnImprimir_Click(object sender, RoutedEventArgs e)
     {
         var errores = ValidationHelper.GetValidationErrors(this);
@@ -127,20 +128,36 @@ public partial class OrdenTrabajoDetallePage : Window
             DialogUtils.MostrarErroresValidacion(errores);
             return;
         }
-        var modal = new ImpresoraModal
-        {
-            Owner = this 
-        };
 
-        if (modal.ShowDialog() == true)
+        // 1️⃣ Leer impresora guardada
+        string impresora = LocalConfig.ObtenerImpresora();
+
+        // 2️⃣ Si no hay impresora válida, abrir modal
+        if (string.IsNullOrWhiteSpace(impresora) || impresora == "")
         {
-            string impresora = modal.ImpresoraSeleccionada;
-            MessageBox.Show("Impresora seleccionada: " + impresora);
-            string pdfPath = PrintUtils.GenerarOrdenTrabajoPrint(_entidadOriginal as OrdenTrabajo);
-            string sumatra = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SumatraPDF.exe");
-            PrintUtils.PrintFile(pdfPath, impresora, sumatra);
+            var modal = new ImpresoraModal
+            {
+                Owner = this
+            };
+
+            if (modal.ShowDialog() != true)
+                return; // Usuario canceló
+
+            impresora = modal.ImpresoraSeleccionada;
+
+            if (string.IsNullOrWhiteSpace(impresora))
+                return;
         }
-       
+
+        // 3️⃣ Continuar impresión
+        string pdfPath = PrintUtils.GenerarOrdenTrabajoPrint(_entidadOriginal as OrdenTrabajo);
+
+        string sumatra = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory,
+            "SumatraPDF.exe"
+        );
+
+        PrintUtils.PrintFile(pdfPath, impresora, sumatra);
     }
 
     // =========================

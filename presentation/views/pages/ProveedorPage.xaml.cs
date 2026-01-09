@@ -124,10 +124,6 @@ namespace Gestion.presentation.views.pages
             _viewModel.Buscar(filtro);
         }
 
-        private void BtnImprimir_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Imprimir listado...");
-        }
 
         private async void dgProveedores_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -157,7 +153,6 @@ namespace Gestion.presentation.views.pages
             else if (e.Key == Key.Insert) BtnAgregar_Click(sender, e);
             else if (e.Key == Key.Delete) BtnEliminar_Click(sender, e);
             else if (e.Key == Key.F2) BtnBuscar_Click(sender, e);
-            else if (e.Key == Key.F4) BtnImprimir_Click(sender, e);
         }
 
         private void DgProveedores_StatusChanged(object? sender, EventArgs e)

@@ -292,6 +292,20 @@ namespace Gestion.presentation.views.windows
             }
         }
 
+        private void MenuItemImpresora_Click(object sender, RoutedEventArgs e)
+        {
+            var modal = new ImpresoraModal
+            {
+                Owner = this 
+            };
+
+            if (modal.ShowDialog() == true)
+            {
+                string impresora = modal.ImpresoraSeleccionada;
+                MessageBox.Show("Impresora seleccionada: " + impresora);
+            }
+        }
+
         private void BtnSalir_Click(object sender, RoutedEventArgs e)
         {
             var login = App.ServiceProvider.GetRequiredService<LoginWindow>();

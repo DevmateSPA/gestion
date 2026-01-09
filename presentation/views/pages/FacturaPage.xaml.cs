@@ -129,15 +129,6 @@ public partial class FacturaPage : Page
 
         _viewModel.Buscar(filtro);
     }
-
-    private void BtnImprimir_Click(object sender, RoutedEventArgs e)
-    {
-        //SeleccionarImpresora();
-        //ImprimirDataGrid(dgBancos);
-        //ImprimirDirecto(_dataGrid,"Microsoft Print to PDF");
-        //ImprimirDataGridCompleto(_dataGrid,"Microsoft Print to PDF");
-    }
-
     private void DgFacturas_StatusChanged(object? sender, EventArgs e)
     {
         GridFocus(_dataGrid); 
@@ -190,9 +181,6 @@ public partial class FacturaPage : Page
                 BtnBuscar_Click(sender, e);
                 break;
 
-            case Key.F4:
-                BtnImprimir_Click(sender, e);
-                break;
         }
     }
 
@@ -225,46 +213,7 @@ public partial class FacturaPage : Page
             dlg.PrintDocument(idp.DocumentPaginator, "Impresión WPF");
         }
     }
-    public void ImprimirDataGrid(DataGrid grid)
-    {
-        PrintDialog pd = new PrintDialog();
 
-        if (pd.ShowDialog() == true)
-        {
-            // Ajustar tamaño del DataGrid a la página
-            grid.Measure(new Size(pd.PrintableAreaWidth, pd.PrintableAreaHeight));
-            grid.Arrange(new Rect(new Point(0, 0), grid.DesiredSize));
-
-            pd.PrintVisual(grid, "Impresión de DataGrid");
-        }
-    }
-
-    public void ImprimirDirecto(DataGrid grid, string nombreImpresora)
-    {
-        // Obtener impresora
-        LocalPrintServer printServer = new LocalPrintServer();
-        PrintQueue cola = printServer.GetPrintQueue(nombreImpresora);
-
-        // Si no existe, mostrar mensaje
-        if (cola == null)
-        {
-            MessageBox.Show($"La impresora '{nombreImpresora}' no existe.");
-            return;
-        }
-
-        // Preparar PrintDialog usando esa impresora
-        PrintDialog pd = new PrintDialog
-        {
-            PrintQueue = cola
-        };
-
-        // Ajustar el DataGrid
-        grid.Measure(new Size(pd.PrintableAreaWidth, pd.PrintableAreaHeight));
-        grid.Arrange(new Rect(new Point(0, 0), grid.DesiredSize));
-
-        // Imprimir sin mostrar dialogo
-        pd.PrintVisual(grid, "Impresión directa");
-    }
 
     
 }
