@@ -1,3 +1,4 @@
+using Gestion.core.attributes;
 using Gestion.core.interfaces.model;
 
 namespace Gestion.core.model;

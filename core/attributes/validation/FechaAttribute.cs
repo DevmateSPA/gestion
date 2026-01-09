@@ -3,6 +3,10 @@ using System.Globalization;
 
 namespace Gestion.core.attributes.validation;
 
+
+/// <summary>
+/// No se usa quedo de legado, antes de usar DatePickers dinamicos
+/// </summary>
 public class FechaAttribute : ValidationAttribute
 {
     public string Formato { get; }

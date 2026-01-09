@@ -50,7 +50,8 @@ public class FacturaCompra : TotalBase, IConDetalles<FacturaCompraProducto>, INo
     [Orden(1)]
     [NoSaveDb]
     [OnlyRead]
-    public string NombreProveedor { get; set; } = string.Empty;
+    [TextArea]
+    public string NombreProveedor { get; set; } = "Sin asignar";
 
     [Nombre("Haber")]
     [Grupo("Totales", GRUPO_TOTALES)]

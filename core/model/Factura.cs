@@ -40,7 +40,8 @@ public class Factura : TotalBase
     [Orden(1)]
     [NoSaveDb]
     [OnlyRead]
-    public string NombreCliente { get; set; } = string.Empty;
+    [TextArea]
+    public string NombreCliente { get; set; } = "Sin asignar";
 
     [Nombre("Crédito")]
     [Grupo("Totales", GRUPO_TOTALES)]
