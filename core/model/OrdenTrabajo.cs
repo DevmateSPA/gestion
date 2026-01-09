@@ -51,7 +51,8 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     [Nombre("Razón Social")]
     [Grupo("Cliente", ORDEN_GRUPO_CLIENTE)]
     [Orden(1)]
-    public string RazonSocial { get; set; } = "Por asignar";
+    [TextArea]
+    public string RazonSocial { get; set; } = "Sin asignar";
 
     // -- Grupo Trabajo
 
