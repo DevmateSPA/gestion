@@ -1,5 +1,23 @@
 namespace Gestion.core.attributes;
 
+/// <summary>
+/// Define el ancho preferido de un TextBox (No afecta a TextArea) generado dinámicamente.
+/// </summary>
+/// <remarks>
+/// - <see cref="Width"/> es obligatorio.
+/// - Si <see cref="MinWidth"/> no se define, se calcula como Width - 50.
+/// - Si <see cref="MaxWidth"/> no se define, se calcula como Width + 50.
+/// - Los valores efectivos nunca son negativos.
+/// </remarks>
+/// <example>
+/// <code>
+/// [Width(250)]
+/// public string Nombre { get; set; }
+///
+/// [Width(300, MinWidth = 200, MaxWidth = 400)]
+/// public string Descripcion { get; set; }
+/// </code>
+/// </example>
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class WidthAttribute : Attribute
 {
