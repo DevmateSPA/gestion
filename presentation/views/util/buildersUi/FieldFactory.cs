@@ -94,6 +94,7 @@ public static class FieldFactory
         { 
             FontSize = FONT_SIZE, 
             MaxWidth = 300,
+            Width = 250,
             MinWidth = 200,
             Margin = new Thickness(5, 0, 5, 10), 
             TextWrapping = TextWrapping.Wrap, 
@@ -101,6 +102,16 @@ public static class FieldFactory
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto, 
             MinHeight = FONT_SIZE 
         }; 
+
+        var widthAttr = prop.GetCustomAttribute<WidthAttribute>();
+        if (widthAttr != null)
+        {
+            tb.Width = widthAttr.Width;
+
+            tb.MinWidth = widthAttr.HasMinWidth ? widthAttr.MinWidth : (widthAttr.Width - 50);
+
+            tb.MaxWidth = widthAttr.HasMaxWidth ? widthAttr.MaxWidth : (widthAttr.Width + 50);
+        }
         
         var binding = BindingFactory.CreateValidateBinding( prop, entidad, BindingMode.TwoWay); 
         
