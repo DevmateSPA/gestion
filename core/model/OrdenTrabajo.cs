@@ -67,18 +67,25 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     [Nombre("Cantidad")]
     [Grupo("Producción", ORDEN_GRUPO_PRODUCCION)]
     [Orden(0)]
+    [Width(50)]
     public int Cantidad { get; set; } = 0;
+
     [Nombre("Total Impresión")]
     [Grupo("Producción", ORDEN_GRUPO_PRODUCCION)]
     [Orden(1)]
+    [Width(50)]
     public int TotalImpresion { get; set; } = 0;
+
     [Nombre("Folio Inicio")]
     [Grupo("Producción", ORDEN_GRUPO_PRODUCCION)]
     [Orden(2)]
+    [Width(50)]
     public string FolioDesde { get; set; } = string.Empty;
+    
     [Nombre("Folio Hasta")]
     [Grupo("Producción", ORDEN_GRUPO_PRODUCCION)]
     [Orden(3)]
+    [Width(50)]
     public string FolioHasta { get; set; } = string.Empty;
 
     [Fecha]
