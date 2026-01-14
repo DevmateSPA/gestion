@@ -28,7 +28,7 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
         _maquinaService = maquinaService;
         _operarioService = operarioService;
 
-        _ = ComboBootstrapper.LoadOrdenTrabajoCombos(_maquinaService, _operarioService, SesionApp.IdEmpresa);
+        _ = DataBootstrapper.LoadOrdenTrabajoCombos(_maquinaService, _operarioService, SesionApp.IdEmpresa);
     }
 
     public virtual async Task<List<DetalleOrdenTrabajo>> LoadDetailsByFolio(string folio)

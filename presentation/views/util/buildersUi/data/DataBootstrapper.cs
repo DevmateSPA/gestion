@@ -2,7 +2,7 @@ using Gestion.core.interfaces.service;
 
 namespace Gestion.presentation.views.util.buildersUi.data;
 
-public static class ComboBootstrapper
+public static class DataBootstrapper
 {
     public static async Task LoadOrdenTrabajoCombos(
         IMaquinaService maquinaService,
