@@ -102,9 +102,10 @@ public partial class SearchBox : UserControl
 
         var filtered = source
             .Cast<object>()
-            .Where(x =>
-                GetItemText(x)
-                    .Contains(text, StringComparison.OrdinalIgnoreCase))
+            .Select(x => GetItemText(x))
+            .Where(s =>
+                s.Contains(text, StringComparison.OrdinalIgnoreCase))
+            .Select(s => new HighlightItem(s, text))
             .ToList();
 
         // Si ya es match exacto único → cerrar
@@ -185,7 +186,10 @@ public partial class SearchBox : UserControl
         if (PART_List.SelectedItem == null)
             return;
 
-        Text = GetItemText(PART_List.SelectedItem);
+        if (PART_List.SelectedItem is HighlightItem item)
+        {
+            Text = item.Original;
+        }
 
         Hide();
         PART_Input.CaretIndex = Text.Length;

@@ -26,7 +26,23 @@
                 <ListBox x:Name="PART_List"
                          MaxHeight="250"
                          IsTabStop="False"
-                         Focusable="False"/>
+                         Focusable="False"         
+                        ScrollViewer.CanContentScroll="True"
+                        VirtualizingStackPanel.IsVirtualizing="True"
+                        VirtualizingStackPanel.VirtualizationMode="Recycling">
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                                <Run Text="{Binding Prefix, Mode=OneWay}" />
+                                <Run Text="{Binding Match, Mode=OneWay}"
+                                    FontWeight="Bold"
+                                    Foreground="DarkBlue"/>
+                                <Run Text="{Binding Suffix, Mode=OneWay}" />
+                            </TextBlock>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </Border>
         </Popup>
     </Grid>
