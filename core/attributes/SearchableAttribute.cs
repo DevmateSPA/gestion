@@ -4,13 +4,10 @@ namespace Gestion.core.attributes;
 public class SearchableAttribute : Attribute
 {
     public string? SourceKey { get; }
-    public string? DisplayMember { get; }
 
     public SearchableAttribute(
-        string? sourceKey = null,
-        string? displayMember = null)
+        string? sourceKey = null)
     {
         SourceKey = sourceKey;
-        DisplayMember = displayMember;
     }
 }
