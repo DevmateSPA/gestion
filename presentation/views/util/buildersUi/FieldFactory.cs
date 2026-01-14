@@ -5,6 +5,7 @@ using System.Windows.Data;
 using System.Windows.Markup;
 using Gestion.core.attributes;
 using Gestion.presentation.enums;
+using Gestion.presentation.views.resources.searchbox;
 using Gestion.presentation.views.util.buildersUi.data;
 
 namespace Gestion.presentation.views.util.buildersUi;
@@ -36,6 +37,10 @@ public static class FieldFactory
         Type tipo)
     {
         // Atributos especiales primero
+        if (prop.GetCustomAttribute<SearchableAttribute>() is SearchableAttribute search)
+            return CrearSearchBox(prop, entidad, search);
+
+
         if (prop.GetCustomAttribute<TextAreaAttribute>() != null)
             return CrearTextArea(prop, entidad);
 
@@ -48,9 +53,6 @@ public static class FieldFactory
         // Por tipo
         if (tipo == typeof(bool))
             return CrearCheckBox(prop, entidad);
-
-        if (tipo.IsEnum)
-            return CrearCombo(prop, entidad);
 
         if (tipo == typeof(DateTime))
             return CrearDatePicker(prop, entidad);
@@ -92,15 +94,7 @@ public static class FieldFactory
     { 
         var tb = new TextBox 
         { 
-            FontSize = FONT_SIZE, 
-            MaxWidth = 300,
-            Width = 250,
-            MinWidth = 200,
-            Margin = new Thickness(5, 0, 5, 10), 
-            TextWrapping = TextWrapping.Wrap, 
-            AcceptsReturn = false, 
-            VerticalScrollBarVisibility = ScrollBarVisibility.Auto, 
-            MinHeight = FONT_SIZE 
+            Style = (Style)Application.Current.Resources["BaseTextBoxStyle"]
         }; 
 
         var widthAttr = prop.GetCustomAttribute<WidthAttribute>();
@@ -135,25 +129,40 @@ public static class FieldFactory
         return cb;
     }
 
-    private static ComboBox CrearCombo(PropertyInfo prop, object entidad)
+    private static SearchBox CrearSearchBox(
+        PropertyInfo prop,
+        object entidad,
+        SearchableAttribute attr)
     {
-        var combo = new ComboBox
+        var searchBox = new SearchBox
         {
-            ItemsSource = Enum.GetValues(
-                Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType),
-            Height = 30,
-            Width = 300,
             Margin = new Thickness(5, 0, 5, 10),
-            FontSize = FONT_SIZE
+            MinWidth = 250,
+            MaxWidth = 400
         };
 
+        // ItemsSource (catálogo)
+        if (!string.IsNullOrEmpty(attr.SourceKey))
+        {
+            searchBox.ItemsSource =
+                ComboDataProvider.Get(attr.SourceKey);
+        }
+
+        // DisplayMember (si es objeto complejo)
+        if (!string.IsNullOrEmpty(attr.DisplayMember))
+        {
+            searchBox.DisplayMember = attr.DisplayMember;
+        }
+
+        // Binding al texto final
         var binding = BindingFactory.CreateValidateBinding(
-            prop, 
+            prop,
             entidad,
             BindingMode.TwoWay);
-        combo.SetBinding(ComboBox.SelectedItemProperty, binding);
 
-        return combo;
+        searchBox.SetBinding(SearchBox.TextProperty, binding);
+
+        return searchBox;
     }
 
     private static ComboBox CrearComboDinamico(

@@ -6,8 +6,8 @@
     <Grid>
         <!-- INPUT -->
         <TextBox x:Name="PART_Input"
-                 FontSize="16"
-                 Text="{Binding Text,
+                Style="{StaticResource BaseTextBoxStyle}"
+                Text="{Binding Text,
                                 RelativeSource={RelativeSource AncestorType=UserControl},
                                 UpdateSourceTrigger=PropertyChanged}"/>
 
