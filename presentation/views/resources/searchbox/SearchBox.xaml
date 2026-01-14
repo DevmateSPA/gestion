@@ -9,7 +9,10 @@
                 Style="{StaticResource BaseTextBoxStyle}"
                 Text="{Binding Text,
                                 RelativeSource={RelativeSource AncestorType=UserControl},
-                                UpdateSourceTrigger=PropertyChanged}"/>
+                                UpdateSourceTrigger=PropertyChanged,
+                                ValidatesOnDataErrors=True,
+                                ValidatesOnExceptions=True,
+                                NotifyOnValidationError=True}" />
 
         <!-- POPUP -->
         <Popup x:Name="PART_Popup"

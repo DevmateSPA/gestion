@@ -37,6 +37,7 @@ public class GuiaDespacho : IEmpresa
     [Nombre("Rut")]
     [Grupo("Datos del Cliente", 2)]
     [Orden(0)]
+    //[Searchable("RUT_CLIENTE")]
     public string RutCliente { get; set; } = string.Empty;
 
     [Nombre("Nombre")]

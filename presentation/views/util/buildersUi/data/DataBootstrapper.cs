@@ -24,7 +24,7 @@ public static class DataBootstrapper
             operadores.Select(o => new { o.Codigo, o.Nombre }));
     }
 
-    public static async Task LoadOrdenTrabajoSearch(
+    public static async Task LoadClientesSearch(
         IClienteService clienteService,
         long empresaId)
     {
