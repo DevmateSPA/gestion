@@ -17,12 +17,10 @@ public static class ComboBootstrapper
 
         ComboDataProvider.Register(
             "MAQUINAS",
-            maquinas.Select(m => new { m.Codigo, m.Descripcion })
-        );
+            maquinas.Select(m => new { m.Codigo, m.Descripcion }));
 
         ComboDataProvider.Register(
             "OPERADORES",
-            operadores.Select(o => new { o.Codigo, o.Nombre }) // si quieres guardar Id en lugar de nombre
-        );
+            operadores.Select(o => new { o.Codigo, o.Nombre }));
     }
 }
