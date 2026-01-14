@@ -13,6 +13,11 @@ public class ClienteService : BaseService<Cliente>, IClienteService
         _clienteRepository = clienteRepository;
     }
 
+    public async Task<List<string>> GetRutList(string busquedaRut, long empresaId)
+    {
+        return await _clienteRepository.GetRutList(busquedaRut, empresaId);
+    }
+
     protected override async Task<List<string>> ValidarReglasNegocio(
         Cliente entity,
         long? excludeId = null)

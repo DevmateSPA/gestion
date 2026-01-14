@@ -520,4 +520,24 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
 
         return await cmd.ExecuteScalarAsync() != null;
     }
+
+    public async Task<List<TData>> GetColumnList<TData>(string columnName, string where, params DbParameter[] parameters)
+    {
+        using var conn = await _connectionFactory.CreateConnection();
+        using var cmd = (DbCommand)conn.CreateCommand();
+
+        cmd.CommandText = $"SELECT {columnName} FROM {_viewName} WHERE {where}";
+        foreach (var p in parameters)
+            cmd.Parameters.Add(p);
+
+        var list = new List<TData>();
+        using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            var value = reader[columnName];
+            list.Add((TData?)ConvertValue(value, typeof(TData))!);
+        }
+
+        return list;
+    }
 }
