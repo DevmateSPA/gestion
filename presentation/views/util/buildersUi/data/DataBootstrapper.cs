@@ -23,4 +23,14 @@ public static class DataBootstrapper
             "OPERADORES",
             operadores.Select(o => new { o.Codigo, o.Nombre }));
     }
+
+    public static async Task LoadOrdenTrabajoSearch(
+        IClienteService clienteService,
+        long empresaId)
+    {
+        SearchDataProvider.Register(
+            "RUT_CLIENTE",
+            async query =>
+                await clienteService.GetRutList(query, empresaId));
+    }
 }

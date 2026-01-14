@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using Gestion.presentation.views.util.buildersUi.data;
 
 namespace Gestion.presentation.views.resources.searchbox;
 
@@ -21,6 +22,8 @@ public partial class SearchBox : UserControl
         "Orden 500",
         "Orden 501"
     ];
+
+    public string? SourceKey { get; set; }
 
     public SearchBox()
     {
@@ -47,7 +50,29 @@ public partial class SearchBox : UserControl
             typeof(SearchBox),
             new FrameworkPropertyMetadata(
                 string.Empty,
-                FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+                FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                OnTextChanged));
+
+    private static void OnTextChanged(
+        DependencyObject d,
+        DependencyPropertyChangedEventArgs e)
+    {
+        ((SearchBox)d).OnSearchTextChanged();
+    }
+
+    private async void OnSearchTextChanged()
+    {
+        if (string.IsNullOrWhiteSpace(Text))
+        {
+            ItemsSource = null;
+            return;
+        }
+
+        if (string.IsNullOrEmpty(SourceKey))
+            return;
+
+        ItemsSource = await SearchDataProvider.Search(SourceKey, Text);
+    }
 
     public string Text
     {

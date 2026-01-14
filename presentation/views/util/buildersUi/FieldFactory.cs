@@ -138,23 +138,10 @@ public static class FieldFactory
         {
             Margin = new Thickness(5, 0, 5, 10),
             MinWidth = 200,
-            MaxWidth = 300
+            MaxWidth = 300,
+            SourceKey = attr.SourceKey
         };
 
-        // ItemsSource (catálogo)
-        if (!string.IsNullOrEmpty(attr.SourceKey))
-        {
-            searchBox.ItemsSource =
-                ComboDataProvider.Get(attr.SourceKey);
-        }
-
-        // DisplayMember (si es objeto complejo)
-        if (!string.IsNullOrEmpty(attr.DisplayMember))
-        {
-            searchBox.DisplayMember = attr.DisplayMember;
-        }
-
-        // Binding al texto final
         var binding = BindingFactory.CreateValidateBinding(
             prop,
             entidad,

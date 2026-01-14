@@ -15,20 +15,25 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
     private readonly IDetalleOTService _detalleOTService;
     private readonly IMaquinaService _maquinaService;
     private readonly IOperarioService _operarioService;
+    private readonly IClienteService _clienteService;
     public OrdenTrabajoViewModel(
         IOrdenTrabajoService ordenTrabajoService, 
         IDialogService dialogService, 
         IDetalleOTService detalleOTService,
         IMaquinaService maquinaService,
-        IOperarioService operarioService)
+        IOperarioService operarioService,
+        IClienteService clienteService)
         : base(ordenTrabajoService, dialogService)
     {
         _ordenTrabajoService = ordenTrabajoService;
         _detalleOTService = detalleOTService;
         _maquinaService = maquinaService;
         _operarioService = operarioService;
+        _clienteService = clienteService;
 
         _ = DataBootstrapper.LoadOrdenTrabajoCombos(_maquinaService, _operarioService, SesionApp.IdEmpresa);
+
+        _ = DataBootstrapper.LoadOrdenTrabajoSearch(clienteService, SesionApp.IdEmpresa);
     }
 
     public virtual async Task<List<DetalleOrdenTrabajo>> LoadDetailsByFolio(string folio)
