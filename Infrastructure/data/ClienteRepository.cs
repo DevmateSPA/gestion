@@ -27,7 +27,7 @@ public class ClienteRepository : BaseRepository<Cliente>, IClienteRepository
         if (_viewName == null)
             throw new InvalidOperationException("La vista no está asignada para este repositorio.");
 
-        if (string.IsNullOrWhiteSpace(busquedaRut) || busquedaRut.Length < 2)
+        if (string.IsNullOrWhiteSpace(busquedaRut) || busquedaRut.Length < 1)
             return [];
 
         var busquedaParam = $"{busquedaRut}%";

@@ -9,20 +9,6 @@ namespace Gestion.presentation.views.resources.searchbox;
 
 public partial class SearchBox : UserControl
 {
-    // ========================
-    // Datos de prueba
-    // ========================
-    private readonly List<string> _data =
-    [
-        "Cliente A",
-        "Cliente B",
-        "Cliente C",
-        "Factura 1001",
-        "Factura 1002",
-        "Orden 500",
-        "Orden 501"
-    ];
-
     public string? SourceKey { get; set; }
 
     public SearchBox()
@@ -35,8 +21,6 @@ public partial class SearchBox : UserControl
         PART_Input.LostKeyboardFocus += OnInputLostFocus;
 
         PART_List.MouseLeftButtonUp += (_, _) => CommitSelection();
-
-        PART_List.ItemsSource = _data;
     }
 
     // ========================
@@ -87,7 +71,7 @@ public partial class SearchBox : UserControl
             typeof(SearchBox),
             new PropertyMetadata(null));
 
-    public IEnumerable ItemsSource
+    public IEnumerable? ItemsSource
     {
         get => (IEnumerable)GetValue(ItemsSourceProperty);
         set => SetValue(ItemsSourceProperty, value);
@@ -124,13 +108,13 @@ public partial class SearchBox : UserControl
             return;
         }
 
-        var source = ItemsSource ?? _data;
+        var source = ItemsSource ?? Enumerable.Empty<object>();
 
         var filtered = source
             .Cast<object>()
             .Select(x => GetItemText(x))
             .Where(s =>
-                s.Contains(text, StringComparison.OrdinalIgnoreCase))
+                s.StartsWith(text, StringComparison.OrdinalIgnoreCase))
             .Select(s => new HighlightItem(s, text))
             .ToList();
 
