@@ -45,7 +45,6 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     [Nombre("Rut")]
     [Grupo("Cliente", ORDEN_GRUPO_CLIENTE)]
     [Orden(0)]
-    [Searchable]
     public string RutCliente { get; set; } = string.Empty;
     [NoSaveDb]
     [OnlyRead]

@@ -137,8 +137,8 @@ public static class FieldFactory
         var searchBox = new SearchBox
         {
             Margin = new Thickness(5, 0, 5, 10),
-            MinWidth = 250,
-            MaxWidth = 400
+            MinWidth = 200,
+            MaxWidth = 300
         };
 
         // ItemsSource (catálogo)
