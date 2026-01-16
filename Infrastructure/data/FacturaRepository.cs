@@ -43,4 +43,21 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
                 ["empresa"] = empresaId
             },
             excludeId);
+
+    public async Task<List<string>> GetFolioList(string numero, long empresaId)
+    {
+        if (string.IsNullOrWhiteSpace(numero))
+            return [];
+
+        DbParameter[] parameters =
+        [
+            new MySqlParameter("@numero", $"%{numero}"),
+            new MySqlParameter("@empresa", empresaId),
+        ];
+
+        return await GetColumnList<string>(
+            columnName: "folio",
+            where: "empresa = @empresa AND folio LIKE @numero",
+            parameters: parameters);
+    }
 }

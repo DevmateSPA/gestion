@@ -18,6 +18,36 @@ public class FacturaService : BaseService<Factura>, IFacturaService
         return await _facturaRepository.FindAllByRutBetweenFecha(empresaId, rutCliente, fechaDesde, fechaHasta);
     }
 
+    public static string Normalizar(string input)
+    {
+        return NormalizeFacturaSearch(input);
+    }
+
+    private static string NormalizeFacturaSearch(string input)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+            return string.Empty;
+
+        input = input.Trim().ToUpper();
+
+        // Quitar todo lo que no sea número
+        var digits = new string(input.Where(char.IsDigit).ToArray());
+
+        if (digits.Length == 0)
+            return string.Empty;
+
+        return digits;
+    }
+
+    public async Task<List<string>> GetFolioList(string input, long empresaId)
+    {
+        var folioNormalizado = Normalizar(input);
+
+        return await _facturaRepository.GetFolioList(
+            folioNormalizado,
+            empresaId);
+    }
+
     protected override async Task<List<string>> ValidarReglasNegocio(
         Factura entity,
         long? excludeId = null)
