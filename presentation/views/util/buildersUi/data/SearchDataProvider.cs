@@ -35,10 +35,12 @@ public static class SearchDataProvider
 
         if (_cache.TryGetValue(key, out var cache))
         {
-            if (query.StartsWith(cache.BaseQuery, StringComparison.OrdinalIgnoreCase))
+            // Solo si el usuario sigue escribiendo
+            if (query.Length > cache.BaseQuery.Length &&
+                query.StartsWith(cache.BaseQuery, StringComparison.OrdinalIgnoreCase))
             {
-                //Debug.WriteLine($"[CACHE HIT] {key} → {query}");
-                return [.. cache.Results.Where(r => r.StartsWith(query, StringComparison.OrdinalIgnoreCase))];
+                // NO filtrar, devolver tal cual
+                return cache.Results;
             }
         }
 
@@ -46,11 +48,15 @@ public static class SearchDataProvider
 
         var results = (await provider(query)).ToList();
 
-        _cache[key] = new SearchCacheEntry
+        // No cachear resultados vacíos
+        if (results.Count > 0)
         {
-            BaseQuery = query,
-            Results = results
-        };
+            _cache[key] = new SearchCacheEntry
+            {
+                BaseQuery = query,
+                Results = results
+            };
+        }
 
         return results;
     }

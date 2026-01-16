@@ -33,4 +33,14 @@ public static class DataBootstrapper
             async query =>
                 await clienteService.GetRutList(query, empresaId));
     }
+
+    public static async Task LoadFoliosSearch(
+        IFacturaService facturaService,
+        long empresaId)
+    {
+        SearchDataProvider.Register(
+            "FOLIO_FACTURA",
+            async query =>
+                await facturaService.GetFolioList(query, empresaId));
+    }
 }

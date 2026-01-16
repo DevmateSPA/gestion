@@ -51,7 +51,7 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
 
         DbParameter[] parameters =
         [
-            new MySqlParameter("@numero", $"%{numero}"),
+            new MySqlParameter("@numero", $"%{numero}%"),
             new MySqlParameter("@empresa", empresaId),
         ];
 

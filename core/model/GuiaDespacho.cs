@@ -31,6 +31,7 @@ public class GuiaDespacho : IEmpresa
     [Nombre("Factura")]
     [Grupo("Datos Internos", 2)]
     [Orden(1)]
+    [Searchable("FOLIO_FACTURA")]
     public string Factura { get; set; } = string.Empty;
 
     [Rut]

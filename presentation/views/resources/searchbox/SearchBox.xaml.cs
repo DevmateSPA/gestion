@@ -114,17 +114,14 @@ public partial class SearchBox : UserControl
             .Cast<object>()
             .Select(x => GetItemText(x))
             .Where(s =>
-                s.StartsWith(text, StringComparison.OrdinalIgnoreCase))
+                s.Contains(text, StringComparison.OrdinalIgnoreCase))
             .Select(s => new HighlightItem(s, text))
             .ToList();
 
-        // Si ya es match exacto único → cerrar
-        if (filtered.Count == 1 &&
-            string.Equals(
-                GetItemText(filtered[0]),
-                text,
-                StringComparison.OrdinalIgnoreCase))
+        // Si hay un único resultado → autocompletar
+        if (filtered.Count == 1)
         {
+            Text = filtered[0].Original;
             Hide();
             return;
         }
