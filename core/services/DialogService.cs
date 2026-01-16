@@ -17,4 +17,22 @@ public class DialogService : IDialogService
     public bool Confirm(string message, string title = "Confirmar acción")
         => MessageBox.Show(message, title, MessageBoxButton.YesNo, MessageBoxImage.Question)
            == MessageBoxResult.Yes;
+
+    public void ShowToast(Window referenceWindow, string message)
+    {
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            var toast = new ToastWindow(message);
+
+            // Posicionarlo visualmente sobre la ventana
+            toast.PositionOver(referenceWindow);
+
+            toast.Topmost = true;
+            toast.ShowInTaskbar = false;
+            toast.ShowActivated = false;
+
+            toast.Show();
+            toast.AutoClose(1500);
+        });
+    }
 }
