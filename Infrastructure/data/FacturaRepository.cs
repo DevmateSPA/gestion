@@ -46,6 +46,9 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
 
     public async Task<List<string>> GetFolioList(string numero, long empresaId)
     {
+        if (_viewName == null)
+            throw new InvalidOperationException("La vista no está asignada para este repositorio.");
+
         if (string.IsNullOrWhiteSpace(numero))
             return [];
 

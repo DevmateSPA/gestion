@@ -26,6 +26,7 @@ public class GuiaDespacho : IEmpresa
     [Nombre("Orden de Trabajo")]
     [Grupo("Datos Internos", 2)]
     [Orden(0)]
+    [Searchable("FOLIO_OT")]
     public string OrdenTrabajo { get; set; } = string.Empty;
 
     [Nombre("Factura")]
