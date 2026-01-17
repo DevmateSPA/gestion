@@ -28,23 +28,25 @@ public static class SearchDataProvider
         string query)
     {
         if (string.IsNullOrWhiteSpace(query))
-            return Enumerable.Empty<string>();
+            return [];
 
         if (!_sources.TryGetValue(key, out var provider))
             return [];
 
-        if (_cache.TryGetValue(key, out var cache))
+    if (_cache.TryGetValue(key, out var cache))
+    {
+        if (query.Length > cache.BaseQuery.Length &&
+            query.StartsWith(cache.BaseQuery, StringComparison.OrdinalIgnoreCase))
         {
-            // Solo si el usuario sigue escribiendo
-            if (query.Length > cache.BaseQuery.Length &&
-                query.StartsWith(cache.BaseQuery, StringComparison.OrdinalIgnoreCase))
-            {
-                // NO filtrar, devolver tal cual
-                return cache.Results;
-            }
+            return cache.Results;
         }
 
-        //Debug.WriteLine($"[DB QUERY] {key} → {query}");
+        // borrar cache si el usuario retrocede
+        if (query.Length < cache.BaseQuery.Length)
+        {
+            _cache.Remove(key);
+        }
+    }
 
         var results = (await provider(query)).ToList();
 
