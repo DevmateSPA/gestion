@@ -13,6 +13,11 @@ public class GuiaDespachoService : BaseService<GuiaDespacho>, IGuiaDespachoServi
         _guiaDespachoRepository = guiaDespachoRepository;
     }
 
+    public async Task<List<string>> GetFolioList(string busquedaFolio, long empresaId)
+    {
+        return await _guiaDespachoRepository.GetFolioList(busquedaFolio, empresaId);
+    }
+
     protected override async Task<List<string>> ValidarReglasNegocio(
         GuiaDespacho entity,
         long? excludeId = null)

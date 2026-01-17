@@ -76,23 +76,28 @@ public class Factura : TotalBase
     [Nombre("Orden 1")]
     [Grupo(OrdenesDeTrabajo, GRUPO_ORDENES)]
     [Orden(0)]
+    [Searchable("FOLIO_OT")]
     public string Ot01 { get; set; } = string.Empty;
 
     [Nombre("Orden 2")]
     [Grupo(OrdenesDeTrabajo, GRUPO_ORDENES)]
     [Orden(1)]
+    [Searchable("FOLIO_OT")]
     public string Ot02 { get; set; } = string.Empty;
     [Nombre("Orden 3")]
     [Grupo(OrdenesDeTrabajo, GRUPO_ORDENES)]
     [Orden(2)]
+    [Searchable("FOLIO_OT")]
     public string Ot03 { get; set; } = string.Empty;
     [Nombre("Orden 4")]
     [Grupo(OrdenesDeTrabajo, GRUPO_ORDENES)]
     [Orden(3)]
+    [Searchable("FOLIO_OT")]
     public string Ot04 { get; set; } = string.Empty;
     [Nombre("Orden 5")]
     [Grupo(OrdenesDeTrabajo, GRUPO_ORDENES)]
     [Orden(4)]
+    [Searchable("FOLIO_OT")]
     public string Ot05 { get; set; } = string.Empty;
 
     [Visible(false)] public string Op01 { get; set; } = string.Empty;
@@ -106,26 +111,31 @@ public class Factura : TotalBase
     [Nombre("Guía 1")]
     [Grupo(GuiasDespacho, GRUPO_GUIAS)]
     [Orden(0)]
+    [Searchable("FOLIO_GD")]
     public string Guia1 { get; set; } = string.Empty;
 
     [Nombre("Guía 2")]
     [Grupo(GuiasDespacho, GRUPO_GUIAS)]
     [Orden(1)]
+    [Searchable("FOLIO_GD")]
     public string Guia2 { get; set; } = string.Empty;
 
     [Nombre("Guía 3")]
     [Grupo(GuiasDespacho, GRUPO_GUIAS)]
     [Orden(2)]
+    [Searchable("FOLIO_GD")]
     public string Guia3 { get; set; } = string.Empty;
 
     [Nombre("Guía 4")]
     [Grupo(GuiasDespacho, GRUPO_GUIAS)]
     [Orden(3)]
+    [Searchable("FOLIO_GD")]
     public string Guia4 { get; set; } = string.Empty;
 
     [Nombre("Guía 5")]
     [Grupo(GuiasDespacho, GRUPO_GUIAS)]
     [Orden(4)]
+    [Searchable("FOLIO_GD")]
     public string Guia5 { get; set; } = string.Empty;
 
     [Nombre("Película")]

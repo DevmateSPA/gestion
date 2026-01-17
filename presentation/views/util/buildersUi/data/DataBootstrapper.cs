@@ -53,4 +53,14 @@ public static class DataBootstrapper
             async query =>
                 await ordenTrabajoService.GetFolioList(query, empresaId));
     }
+
+    public static async Task LoadFoliosGuiaDespachoSearch(
+        IGuiaDespachoService guiaDespachoService,
+        long empresaId)
+    {
+        SearchDataProvider.Register(
+            "FOLIO_GD",
+            async query =>
+                await guiaDespachoService.GetFolioList(query, empresaId));
+    }
 }

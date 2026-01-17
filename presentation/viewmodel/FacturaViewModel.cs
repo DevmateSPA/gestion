@@ -1,15 +1,23 @@
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
 using Gestion.core.session;
+using Gestion.presentation.views.util.buildersUi.data;
 namespace Gestion.presentation.viewmodel;
 
 public class FacturaViewModel : EntidadViewModel<Factura>
 {
     private readonly IFacturaService _facturaService;
-    public FacturaViewModel(IFacturaService facturaService, IDialogService dialogService)
+    public FacturaViewModel(
+        IFacturaService facturaService, 
+        IDialogService dialogService,
+        IOrdenTrabajoService ordenTrabajoService,
+        IGuiaDespachoService guiaDespachoService)
         : base(facturaService, dialogService)
     {
         _facturaService = facturaService;
+
+        _ = DataBootstrapper.LoadFoliosOTSearch(ordenTrabajoService, SesionApp.IdEmpresa);
+        _ = DataBootstrapper.LoadFoliosGuiaDespachoSearch(guiaDespachoService, SesionApp.IdEmpresa);
     }
 
     public async Task LoadAllByRutClienteBetweenFecha(string rutCliente, DateTime fechaDesde, DateTime fechaHasta)

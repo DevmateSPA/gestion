@@ -21,6 +21,7 @@ public class DocumentoNulo : IEmpresa
     [Required]
     [Nombre("Folio")]
     [Orden(1)]
+    [Searchable("FOLIO_FACTURA")]
     public string Folio { get; set; } = string.Empty;
 
     [Nombre("Glosa")]
