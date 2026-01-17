@@ -9,15 +9,36 @@
       Title="MainPage">
 
     <Grid Style="{StaticResource GridStyle}">
-        <Border Style="{StaticResource MainBorderStyle}">
+    <Border Style="{StaticResource MainBorderStyle}">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock
-                x:Name="txtTitulo"
+                x:Name="txtEmpresa"
                 Text="Pantalla Principal"
                 Background="#fff"
-                Height="20"
+                Height="40"
                 Width="350"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center" />
-        </Border>
-    </Grid>
+                TextAlignment="Center"
+                FontSize="24"
+                FontWeight="Bold"/>
+            <TextBlock
+                x:Name="txtUsuario"
+                Text="Pantalla Principal"
+                Background="#fff"
+                Height="40"
+                Width="350"
+                TextAlignment="Center"
+                FontSize="24"
+                FontWeight="Bold"/>
+            <TextBlock
+                x:Name="txtFecha"
+                Text="Pantalla Principal"
+                Background="#fff"
+                Height="40"
+                Width="350"
+                TextAlignment="Center"
+                FontSize="24"
+                FontWeight="Bold"/>
+        </StackPanel>
+    </Border>
+</Grid>
 </Page>

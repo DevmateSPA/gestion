@@ -24,7 +24,9 @@ namespace Gestion.presentation.views.pages
         public MainPage()
         {
             InitializeComponent();
-            txtTitulo.Text = $"Empresa: {SesionApp.NombreEmpresa}";
+            txtEmpresa.Text = $"Empresa: {SesionApp.NombreEmpresa}";
+            txtUsuario.Text = $"Usuario: {SesionApp.NombreUsuario}";
+            txtFecha.Text = $"Fecha: {DateTime.Now.ToString("dd/MM/yyyy")}";
         }
     }
 }

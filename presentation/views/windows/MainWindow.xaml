@@ -102,6 +102,7 @@
             <!--<MenuItem Header="Procesos"/>-->
             <MenuItem Header="Configuración">
                 <MenuItem Header="Impresoras" Click="MenuItemImpresora_Click" Tag="ModuloImpresion"/>
+                <MenuItem Header="Usuarios" x:Name="menuUsuarios" Click="MenuItemUsuarios_Click" Tag="ModuloUsuarios"/>
             </MenuItem>
             <MenuItem Header="Salir" Click="BtnSalir_Click"/>
             <MenuItem Header="Inicio" Click="BtnInicio_Click"/>

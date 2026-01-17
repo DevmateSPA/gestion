@@ -35,7 +35,7 @@ public partial class LoginWindow : Window
         cmbEmpresa.SelectedIndex = 0;
     }
 
-    private void BtnIniciarSesion_Click(object sender, RoutedEventArgs e)
+    private async void BtnIniciarSesion_Click(object sender, RoutedEventArgs e)
     {
         DateTime fechaLimite = new DateTime(2026, 2, 2, 0, 0, 0);
         if (DateTime.Now > fechaLimite)
@@ -51,21 +51,24 @@ public partial class LoginWindow : Window
             return;
         }
 
-        /*string nombreUsuario = txtUsuario.Text;
-        string contraseña = txtContraseña.Password;
+        string nombreUsuario = txtUsuario.Text;
+        string clave = txtClave.Password;
 
-        string mensaje = await _viewModel.IniciarSesion(nombreUsuario, contraseña);
+        Usuario usuario = await _viewModel.IniciarSesion(nombreUsuario, clave);
+        string mensaje = usuario != null ? "Bienvenido, {usuario.Nombre}!" : "Usuario o clave incorrecta" ;
 
         if (mensaje.StartsWith("Bienvenido"))
-        {*/
+        {
             SesionApp.IdEmpresa = _viewModel.EmpresaSeleccionada.Id;
             SesionApp.NombreEmpresa = _viewModel.EmpresaSeleccionada.Nombre;
+            SesionApp.NombreUsuario = usuario.Nombre;
+            SesionApp.TipoUsuario = usuario.Tipo;
             var main = new MainWindow();
             main.Show();
 
             this.Close();
-        /*}
+        }
         else
-            MessageBox.Show(mensaje);*/
+            MessageBox.Show(mensaje);
     }
 }

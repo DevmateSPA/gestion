@@ -104,6 +104,7 @@ public partial class App : Application
         services.AddScoped<IOrdenTrabajoService, OrdenTrabajoService>();
         services.AddScoped<IEmpresaService, EmpresaService>();
         services.AddScoped<IDetalleOTService, DetalleOTService>();
+        services.AddScoped<IUsuarioService, UsuarioService>();
 
         // Login
         services.AddTransient<LoginWindow>();
@@ -165,6 +166,9 @@ public partial class App : Application
         services.AddTransient<PendienteProduccionPage>();   
         // Maquinas Con OT pendiente
         services.AddTransient<MaquinasConOTPendientesPage>();
+        // Usuarios
+        services.AddTransient<UsuarioViewModel>();
+        services.AddTransient<UsuariosPage>();
         // Ventanas modales
         services.AddTransient<AgregarBancoWindow>();
         services.AddTransient<ClienteCartolaWindow>();

@@ -29,8 +29,8 @@
                     <TextBox x:Name="txtUsuario" Width="250" Height="25" Margin="0,5,0,0" HorizontalAlignment="Center"/>
                 </StackPanel>
                 <StackPanel Margin="0,0,0,20">
-                    <TextBlock Text="Contraseña:"/>
-                    <PasswordBox x:Name="txtContraseña" Width="250" Height="25" Margin="0,5,0,0" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Clave:"/>
+                    <PasswordBox x:Name="txtClave" Width="250" Height="25" Margin="0,5,0,0" HorizontalAlignment="Center"/>
                 </StackPanel>
                 <Button Content="Iniciar Sesión" Style="{StaticResource LoginButtonStyle}" Click="BtnIniciarSesion_Click" IsDefault="True"/>
             </StackPanel>

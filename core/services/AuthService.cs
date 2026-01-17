@@ -13,11 +13,11 @@ public class AuthService : IAuthService
         _usuarioRepository = usuarioRepository;
     }
 
-    public async Task<Usuario?> Login(string nombreUsuario, string contraseña)
+    public async Task<Usuario?> Login(string nombreUsuario, string clave)
     {
         var usuario = await _usuarioRepository.GetByNombre(nombreUsuario);
         
-        if (usuario == null || usuario.Contraseña != contraseña)
+        if (usuario == null || usuario.Clave.ToLower() != clave.ToLower())
             return null;
         
         return usuario;

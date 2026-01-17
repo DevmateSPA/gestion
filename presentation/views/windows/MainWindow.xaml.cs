@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using Gestion.core.model;
+using Gestion.core.session;
 using Gestion.presentation.viewmodel;
 using Gestion.presentation.views.pages;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,11 @@ namespace Gestion.presentation.views.windows
             InitializeComponent();
 
             DataContext = this;
+
+            if (SesionApp.TipoUsuario != "admin")
+            {
+                menuUsuarios.Visibility = Visibility.Collapsed;
+            }
 
             // Navega a la página inicial
             MainFrame.Navigate(new MainPage());
@@ -304,6 +310,17 @@ namespace Gestion.presentation.views.windows
                 string impresora = modal.ImpresoraSeleccionada;
                 MessageBox.Show("Impresora seleccionada: " + impresora);
             }
+        }
+
+        private void MenuItemUsuarios_Click(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow(this);
+            if (window != null)
+                {
+                    window.Title = "Gestión — Usuarios";
+                }
+            Page? page = App.ServiceProvider.GetRequiredService<UsuariosPage>();
+            MainFrame.Navigate(page);
         }
 
         private void BtnSalir_Click(object sender, RoutedEventArgs e)
