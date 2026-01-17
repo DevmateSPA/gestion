@@ -160,8 +160,12 @@ public static class FieldFactory
         var combo = new ComboBox
         {
             ItemsSource = ComboDataProvider.Get(comboAttr.SourceKey),
-            DisplayMemberPath = string.IsNullOrEmpty(comboAttr.Display) ? comboAttr.SourceKey : comboAttr.Display,
-            SelectedValuePath = string.IsNullOrEmpty(comboAttr.Value) ? comboAttr.SourceKey : comboAttr.Value,
+            DisplayMemberPath = string.IsNullOrEmpty(comboAttr.Display)
+            ? null
+            : comboAttr.Display,
+                SelectedValuePath = string.IsNullOrEmpty(comboAttr.Value)
+            ? null
+            : comboAttr.Value,
             Height = 30,
             Width = 300,
             Margin = new Thickness(5, 0, 5, 10),

@@ -5,7 +5,6 @@ namespace Gestion.core.model;
 
 public class Usuario : IEmpresa
 {
-    List<String> USUARIOS = ["admin","usuario"];
     public long Id { get; set; }
     [Orden(0)]
     public string Nombre { get; set; } = string.Empty;
@@ -13,7 +12,10 @@ public class Usuario : IEmpresa
     public string Clave { get; set; } = string.Empty;
     [Visible(false)]
     public long Empresa { get; set; }
+    [Visible(false)]
+    [NoSaveDb]
+    public string TipoDesc { get; set; } = string.Empty;
     [Orden(2)]
-    [ComboSource("TIPOS", Display = "Nombre", Value = "Nombre")]
-    public string Tipo { get; set; }
+    [ComboSource("TIPOS_USUARIO", Display = "Nombre", Value = "Id")]
+    public long Tipo { get; set; }
 }

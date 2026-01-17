@@ -215,3 +215,14 @@ CREATE OR REPLACE VIEW vw_maquinas_with_pending_orders AS
         m.codigo,
         m.descripcion,
         ot.empresa;
+
+CREATE OR REPLACE VIEW vw_usuario AS
+    SELECT
+        t.*,
+        u.nombre_tipo as TipoDesc,
+        e.nombre AS EmpresaNombre
+    FROM USUARIO t
+    JOIN EMPRESA e
+    ON t.empresa = e.id
+    JOIN usuario_tipo u
+    ON u.id_tipo = t.tipo;

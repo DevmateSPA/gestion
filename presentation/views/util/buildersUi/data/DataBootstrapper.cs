@@ -24,6 +24,16 @@ public static class DataBootstrapper
             operadores.Select(o => new { o.Codigo, o.Nombre }));
     }
 
+    public static async Task LoadTiposUsuarioCombos(
+        IUsuarioService usuarioService)
+    {
+        var tiposUsuario = await usuarioService.GetTipoList();
+
+        ComboDataProvider.Register(
+            "TIPOS_USUARIO",
+            tiposUsuario.Select(o => new { o.Id, o.Nombre }));
+    }
+
     public static async Task LoadClientesSearch(
         IClienteService clienteService,
         long empresaId)

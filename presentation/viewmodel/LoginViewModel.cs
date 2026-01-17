@@ -46,8 +46,8 @@ public class LoginViewModel
         }, _dialogService, "Error al cargar las empresas");
     }
 
-    public async Task<Usuario> IniciarSesion(string nombreUsuario, string clave)
+    public async Task<Usuario?> IniciarSesion(string nombreUsuario, string clave, long empresId)
     {
-        return await _authService.Login(nombreUsuario, clave);
+        return await _authService.Login(nombreUsuario, clave, empresId);
     }
 }

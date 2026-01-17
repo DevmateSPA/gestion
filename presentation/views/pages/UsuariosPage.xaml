@@ -39,20 +39,9 @@
                                     Binding="{Binding Nombre}"
                                     Width="*"/>
 
-                <DataGridTextColumn Header="Clave"
-                                    Binding="{Binding Clave}"
-                                    Width="*"/>
-
                 <DataGridComboBoxColumn Header="Tipo"
-                                        SelectedItemBinding="{Binding Tipo}"
+                                        SelectedItemBinding="{Binding TipoDesc}"
                                         Width="*">
-                    <DataGridComboBoxColumn.ItemsSource>
-                        <x:Array Type="sys:String"
-                                 xmlns:sys="clr-namespace:System;assembly=mscorlib">
-                            <sys:String>admin</sys:String>
-                            <sys:String>usuario</sys:String>
-                        </x:Array>
-                    </DataGridComboBoxColumn.ItemsSource>
                 </DataGridComboBoxColumn>
             </DataGrid.Columns>
         </DataGrid>

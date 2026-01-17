@@ -54,15 +54,15 @@ public partial class LoginWindow : Window
         string nombreUsuario = txtUsuario.Text;
         string clave = txtClave.Password;
 
-        Usuario usuario = await _viewModel.IniciarSesion(nombreUsuario, clave);
+        Usuario? usuario = await _viewModel.IniciarSesion(nombreUsuario, clave, _viewModel.EmpresaSeleccionada.Id);
         string mensaje = usuario != null ? "Bienvenido, {usuario.Nombre}!" : "Usuario o clave incorrecta" ;
 
-        if (mensaje.StartsWith("Bienvenido"))
+        if (mensaje.StartsWith("Bienvenido") && usuario != null)
         {
             SesionApp.IdEmpresa = _viewModel.EmpresaSeleccionada.Id;
             SesionApp.NombreEmpresa = _viewModel.EmpresaSeleccionada.Nombre;
             SesionApp.NombreUsuario = usuario.Nombre;
-            SesionApp.TipoUsuario = usuario.Tipo;
+            SesionApp.TipoUsuario = usuario.TipoDesc;
             var main = new MainWindow();
             main.Show();
 
