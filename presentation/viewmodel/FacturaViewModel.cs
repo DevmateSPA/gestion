@@ -27,4 +27,9 @@ public class FacturaViewModel : EntidadViewModel<Factura>
             errorMessage: _errorMessage,
             onEmpty: () => _dialogService.ShowMessage(_emptyMessage));
     }
+
+    public Task<String> GetSiguienteFolio()
+    {
+        return _facturaService.GetSiguienteFolio(SesionApp.IdEmpresa);
+    }
 }

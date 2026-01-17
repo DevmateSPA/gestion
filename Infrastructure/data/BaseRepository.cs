@@ -540,4 +540,26 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
 
         return list;
     }
+
+    public async Task<TData> GetColumnList<TData>(string columnName, string where, string limit = "", string orderby = "", params DbParameter[] parameters)
+    {
+        using var conn = await _connectionFactory.CreateConnection();
+        using var cmd = (DbCommand)conn.CreateCommand();
+
+        cmd.CommandText = $"SELECT {columnName} FROM {_viewName} WHERE {where} {orderby} {limit}";
+        foreach (var p in parameters)
+            cmd.Parameters.Add(p);
+
+        TData tdata = default(TData)!;
+        using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            var value = reader[columnName];
+            tdata = (TData?)ConvertValue(value, typeof(TData))!;
+        }
+
+        return tdata;
+    }
+
+    
 }

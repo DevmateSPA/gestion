@@ -48,4 +48,17 @@ public class FacturaService : BaseService<Factura>, IFacturaService
 
         return erroresEncontrados;
     }
+
+    public async Task<String> GetSiguienteFolio(long empresaId)
+    {
+        var ultimo = await _facturaRepository.GetSiguienteFolio(empresaId);
+        if (string.IsNullOrWhiteSpace(ultimo))
+            return "N1";
+        var numeroParte = ultimo.Substring(1);
+        if (!int.TryParse(numeroParte, out var numero))
+            throw new InvalidOperationException($"Folio inválido: {ultimo}");
+        numero++;
+        var nuevoFolio = $"N{numero.ToString().PadLeft(8, '0')}";
+        return $"{nuevoFolio}";
+    }
 }

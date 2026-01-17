@@ -12,4 +12,5 @@ public interface IOrdenTrabajoRepository : IBaseRepository<OrdenTrabajo>
     Task<long> ContarByMaquinaWhereEmpresaAndPendientes(long empresaId, string codigoMaquina);
     Task<bool> ExisteFolio(string folio, long empresaId, long? excludeId = null);
     Task<List<string>> GetFolioList(string busquedaFolio, long empresaId);
+    Task<String> GetSiguienteFolio(long empresaId);
 }

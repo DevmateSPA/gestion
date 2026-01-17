@@ -63,4 +63,22 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
             where: "empresa = @empresa AND folio LIKE @numero",
             parameters: parameters);
     }
+
+    public async Task<String> GetSiguienteFolio(long empresaId)
+    {
+        if (_viewName == null)
+            throw new InvalidOperationException("La vista no está asignada para este repositorio.");
+
+        DbParameter[] parameters =
+        [
+            new MySqlParameter("@empresa", empresaId),
+        ];
+
+        return await GetColumnList<string>(
+            columnName: "MAX(folio)",
+            where: "empresa = @empresa",
+            parameters: parameters,
+            orderby: "ORDER BY 1 DESC",
+            limit: "LIMIT 1");
+    }
 }

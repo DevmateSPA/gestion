@@ -164,4 +164,9 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
             totalCountCall: async () => await _ordenTrabajoService.ContarPendientes(SesionApp.IdEmpresa),
             allItemsCall: async () => await _ordenTrabajoService.FindAllByEmpresaAndPendiente(SesionApp.IdEmpresa));
     }
+
+    public Task<String> GetSiguienteFolio()
+    {
+        return _ordenTrabajoService.GetSiguienteFolio(SesionApp.IdEmpresa);
+    }
 }

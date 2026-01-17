@@ -57,9 +57,11 @@ public partial class FacturaPage : Page
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
+        var factura = new Factura();
+        factura.Folio = await _viewModel.GetSiguienteFolio();
         await new EditorEntidadBuilder<Factura>()
             .Owner(Window.GetWindow(this)!)
-            .Entidad(new Factura())
+            .Entidad(factura)
             .Titulo("Agregar Factura")
             .Guardar(_viewModel.Save)
             .Abrir();

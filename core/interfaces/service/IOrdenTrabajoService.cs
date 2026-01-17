@@ -10,4 +10,5 @@ public interface IOrdenTrabajoService : IBaseService<OrdenTrabajo>
     Task<long> ContarPendientes(long empresaId);
     Task<long> ContarByMaquinaWhereEmpresaAndPendientes(long empresaId, string codigoMaquina);
     Task<List<string>> GetFolioList(string busquedaFolio, long empresaId);
+    Task<String> GetSiguienteFolio(long empresaId);
 }
