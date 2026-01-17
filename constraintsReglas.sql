@@ -61,3 +61,7 @@ UNIQUE (codigo, empresa);
 ALTER TABLE proveedor
 ADD CONSTRAINT uq_proveedor_rut_empresa
 UNIQUE (rut, empresa);
+
+ALTER TABLE usuario
+ADD CONSTRAINT uk_usuario_nombre_empresa
+UNIQUE (nombre, empresa);
