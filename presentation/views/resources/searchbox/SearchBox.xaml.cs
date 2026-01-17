@@ -10,6 +10,8 @@ namespace Gestion.presentation.views.resources.searchbox;
 public partial class SearchBox : UserControl
 {
     public string? SourceKey { get; set; }
+    private bool _isAutoCompleting;
+    private bool _isDeleting;
 
     public SearchBox()
     {
@@ -46,6 +48,9 @@ public partial class SearchBox : UserControl
 
     private async void OnSearchTextChanged()
     {
+        if (_isAutoCompleting)
+            return;
+
         if (string.IsNullOrWhiteSpace(Text))
         {
             ItemsSource = null;
@@ -95,6 +100,8 @@ public partial class SearchBox : UserControl
     // ========================
     private void OnTextChanged(object sender, TextChangedEventArgs e)
     {
+         _isDeleting = e.Changes.Any(c => c.RemovedLength > 0);
+
         TryShow();
     }
 
@@ -114,17 +121,21 @@ public partial class SearchBox : UserControl
             .Cast<object>()
             .Select(x => GetItemText(x))
             .Where(s =>
-                s.StartsWith(text, StringComparison.OrdinalIgnoreCase))
+                s.Contains(text, StringComparison.OrdinalIgnoreCase))
             .Select(s => new HighlightItem(s, text))
             .ToList();
 
-        // Si ya es match exacto único → cerrar
-        if (filtered.Count == 1 &&
-            string.Equals(
-                GetItemText(filtered[0]),
-                text,
-                StringComparison.OrdinalIgnoreCase))
+        // Si hay un único resultado → autocompletar
+        if (!_isDeleting && filtered.Count == 1)
         {
+            _isAutoCompleting = true;
+
+            int caret = PART_Input.CaretIndex;
+            Text = filtered[0].Original;
+            PART_Input.CaretIndex = caret;
+
+            _isAutoCompleting = false;
+
             Hide();
             return;
         }

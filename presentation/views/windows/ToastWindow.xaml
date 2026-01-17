@@ -1,0 +1,21 @@
+<Window
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="Gestion.presentation.views.windows.ToastWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    WindowStyle="None"
+    AllowsTransparency="True"
+    Background="Transparent"
+    ShowInTaskbar="False"
+    Topmost="True"
+    SizeToContent="WidthAndHeight">
+
+    <Border
+        Background="#DD333333"
+        CornerRadius="6"
+        Padding="16">
+        <TextBlock
+            Text="{Binding Message}"
+            Foreground="White"
+            FontSize="14"/>
+    </Border>
+</Window>

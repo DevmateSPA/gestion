@@ -45,6 +45,13 @@ public class OrdenTrabajoService : BaseService<OrdenTrabajo>, IOrdenTrabajoServi
         return await _ordenTrabajoRepository.FindPageByMaquinaWhereEmpresaAndPendiente(empresaId, codigoMaquina, pageNumber, pageSize);
     }
 
+    public async Task<List<string>> GetFolioList(string input, long empresaId)
+    {
+        return await _ordenTrabajoRepository.GetFolioList(
+            input,
+            empresaId);
+    }
+
     protected override async Task<List<string>> ValidarReglasNegocio(
         OrdenTrabajo entity,
         long? excludeId = null)

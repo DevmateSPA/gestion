@@ -11,10 +11,14 @@ public class GuiaDespachoViewModel : EntidadViewModel<GuiaDespacho>, INotifyProp
     public GuiaDespachoViewModel(
         IGuiaDespachoService guiaDespachoService, 
         IDialogService dialogService,
-        IClienteService clienteService)
+        IClienteService clienteService,
+        IFacturaService facturaService,
+        IOrdenTrabajoService ordenTrabajoService)
         : base(guiaDespachoService, dialogService)
     {
         
         _ = DataBootstrapper.LoadClientesSearch(clienteService, SesionApp.IdEmpresa);
+        _ = DataBootstrapper.LoadFoliosFacturaSearch(facturaService, SesionApp.IdEmpresa);
+        _ = DataBootstrapper.LoadFoliosOTSearch(ordenTrabajoService, SesionApp.IdEmpresa);
     }
 }

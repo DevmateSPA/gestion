@@ -33,4 +33,34 @@ public static class DataBootstrapper
             async query =>
                 await clienteService.GetRutList(query, empresaId));
     }
+
+    public static async Task LoadFoliosFacturaSearch(
+        IFacturaService facturaService,
+        long empresaId)
+    {
+        SearchDataProvider.Register(
+            "FOLIO_FACTURA",
+            async query =>
+                await facturaService.GetFolioList(query, empresaId));
+    }
+
+    public static async Task LoadFoliosOTSearch(
+        IOrdenTrabajoService ordenTrabajoService,
+        long empresaId)
+    {
+        SearchDataProvider.Register(
+            "FOLIO_OT",
+            async query =>
+                await ordenTrabajoService.GetFolioList(query, empresaId));
+    }
+
+    public static async Task LoadFoliosGuiaDespachoSearch(
+        IGuiaDespachoService guiaDespachoService,
+        long empresaId)
+    {
+        SearchDataProvider.Register(
+            "FOLIO_GD",
+            async query =>
+                await guiaDespachoService.GetFolioList(query, empresaId));
+    }
 }

@@ -137,7 +137,9 @@ public partial class EntidadEditorTableWindow: Window
         if (!ok)
             return;
 
-        _dialogService.ShowMessage("Los datos se han guardado correctamente.", $"{EntidadEditada.GetType().Name} guardada");
+        _dialogService.ShowToast(this, "Los datos se han guardado correctamente.");
+
+        Window.GetWindow(this)?.Close();
     }
 
     private async void BtnImprimir_Click(object sender, RoutedEventArgs e)
@@ -156,7 +158,9 @@ public partial class EntidadEditorTableWindow: Window
 
         _imprimir((OrdenTrabajo)EntidadEditada);
 
-        _dialogService.ShowMessage("Se ha impreso correctamente.", $"{EntidadEditada.GetType().Name} impresa");
+        _dialogService.ShowToast(this, "Se ha impreso correctamente.");
+
+        Window.GetWindow(this)?.Close();
     }
 
     private void BtnCancelar_Click(object sender, RoutedEventArgs e)

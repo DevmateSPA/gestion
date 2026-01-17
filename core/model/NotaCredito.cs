@@ -21,6 +21,7 @@ public class NotaCredito : TotalBase
     [Nombre("Factura")]
     [Grupo("Datos del Documento", 1)]
     [Orden(1)]
+    [Searchable("FOLIO_FACTURA")]
     public string Factura { get; set; } = string.Empty;
 
     [Nombre("Rut")]

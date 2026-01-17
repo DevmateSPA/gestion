@@ -28,29 +28,37 @@ public static class SearchDataProvider
         string query)
     {
         if (string.IsNullOrWhiteSpace(query))
-            return Enumerable.Empty<string>();
+            return [];
 
         if (!_sources.TryGetValue(key, out var provider))
             return [];
 
-        if (_cache.TryGetValue(key, out var cache))
+    if (_cache.TryGetValue(key, out var cache))
+    {
+        if (query.Length > cache.BaseQuery.Length &&
+            query.StartsWith(cache.BaseQuery, StringComparison.OrdinalIgnoreCase))
         {
-            if (query.StartsWith(cache.BaseQuery, StringComparison.OrdinalIgnoreCase))
-            {
-                //Debug.WriteLine($"[CACHE HIT] {key} → {query}");
-                return [.. cache.Results.Where(r => r.StartsWith(query, StringComparison.OrdinalIgnoreCase))];
-            }
+            return cache.Results;
         }
 
-        //Debug.WriteLine($"[DB QUERY] {key} → {query}");
+        // borrar cache si el usuario retrocede
+        if (query.Length < cache.BaseQuery.Length)
+        {
+            _cache.Remove(key);
+        }
+    }
 
         var results = (await provider(query)).ToList();
 
-        _cache[key] = new SearchCacheEntry
+        // No cachear resultados vacíos
+        if (results.Count > 0)
         {
-            BaseQuery = query,
-            Results = results
-        };
+            _cache[key] = new SearchCacheEntry
+            {
+                BaseQuery = query,
+                Results = results
+            };
+        }
 
         return results;
     }
