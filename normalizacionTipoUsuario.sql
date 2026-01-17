@@ -10,6 +10,8 @@ ADD CONSTRAINT fk_usuario_tipo
 FOREIGN KEY (id_tipo)
 REFERENCES usuario_tipo(id_tipo);
 
+insert into tipo_usuario(nombre_tipo) values ("usuario")
+
 update usuario
     set tipo = 1
     where id = 1;
