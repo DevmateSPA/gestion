@@ -39,10 +39,10 @@
                                     Binding="{Binding Nombre}"
                                     Width="*"/>
 
-                <DataGridComboBoxColumn Header="Tipo"
-                                        SelectedItemBinding="{Binding TipoDesc}"
+                <DataGridTextColumn Header="Tipo"
+                                        Binding="{Binding TipoDesc}"
                                         Width="*">
-                </DataGridComboBoxColumn>
+                </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
 
