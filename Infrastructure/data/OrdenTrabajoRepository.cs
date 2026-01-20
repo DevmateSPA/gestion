@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Data.Common;
 using Gestion.core.interfaces.database;
 using Gestion.core.interfaces.repository;
@@ -149,20 +150,23 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
 
     public async Task<string> GetSiguienteFolio(long empresaId)
     {
-        if (_viewName == null)
-            throw new InvalidOperationException("La vista no está asignada para este repositorio.");
+        using var conn = await _connectionFactory.CreateConnection();
+        using var cmd = (DbCommand)conn.CreateCommand();
 
-        DbParameter[] parameters =
-        [
-            new MySqlParameter("@empresa", empresaId),
-        ];
+        cmd.CommandText = "get_siguiente_folio_ot";
+        cmd.CommandType = CommandType.StoredProcedure;
 
-        return await GetColumnList<string>(
-            columnName: "MAX(folio)",
-            where: "empresa = @empresa",
-            parameters: parameters,
-            orderby: "ORDER BY 1 DESC",
-            limit: "LIMIT 1");
+        var param = cmd.CreateParameter();
+        param.ParameterName = "p_empresa_id";
+        param.Value = empresaId;
+        cmd.Parameters.Add(param);
+
+        using var reader = await cmd.ExecuteReaderAsync();
+
+        if (!await reader.ReadAsync())
+            throw new InvalidOperationException("No se pudo generar el folio.");
+
+        return reader.GetString("ultimo_folio");
     }
     
 }
