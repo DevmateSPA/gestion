@@ -38,4 +38,9 @@ public class GuiaDespachoService : BaseService<GuiaDespacho>, IGuiaDespachoServi
 
         return erroresEncontrados;
     }
+
+    public async Task<string> GetSiguienteFolio(long empresaId)
+    {
+        return await _guiaDespachoRepository.GetSiguienteFolio(empresaId);
+    }
 }

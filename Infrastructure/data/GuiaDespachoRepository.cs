@@ -1,3 +1,4 @@
+using System.Data;
 using System.Data.Common;
 using Gestion.core.interfaces.database;
 using Gestion.core.interfaces.repository;
@@ -40,5 +41,26 @@ public class GuiaDespachoRepository : BaseRepository<GuiaDespacho>, IGuiaDespach
             columnName: "folio",
             where: "empresa = @empresa AND folio LIKE @busquedaFolio",
             parameters: parameters);
+    }
+
+    public async Task<string> GetSiguienteFolio(long empresaId)
+    {
+        using var conn = await _connectionFactory.CreateConnection();
+        using var cmd = (DbCommand)conn.CreateCommand();
+
+        cmd.CommandText = "get_siguiente_folio_gd";
+        cmd.CommandType = CommandType.StoredProcedure;
+
+        var param = cmd.CreateParameter();
+        param.ParameterName = "p_empresa_id";
+        param.Value = empresaId;
+        cmd.Parameters.Add(param);
+
+        using var reader = await cmd.ExecuteReaderAsync();
+
+        if (!await reader.ReadAsync())
+            throw new InvalidOperationException("No se pudo generar el folio.");
+
+        return reader.GetString("ultimo_folio");
     }
 }

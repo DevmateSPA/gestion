@@ -54,9 +54,14 @@ public partial class GuiaDespachoPage : Page
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
+        GuiaDespacho guiaDespacho = new()
+        {
+            Folio = await _viewModel.GetSiguienteFolio()
+        };
+
         await new EditorEntidadBuilder<GuiaDespacho>()
             .Owner(Window.GetWindow(this)!)
-            .Entidad(new GuiaDespacho())
+            .Entidad(guiaDespacho)
             .Titulo("Agregar Guía de Despacho")
             .Guardar(_viewModel.Save)
             .Abrir();

@@ -420,7 +420,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return await FindWhereFrom(
             tableOrView: _viewName,
             where: "empresa = @empresa",
-            orderBy: "fecha DESC",
+            orderBy: "COALESCE(fecha, '1900-01-01') DESC",
             limit: null,
             offset: null,
             parameters: parameters);
@@ -448,7 +448,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
 
         return await FindPageWhere(
             where: "empresa = @empresa",
-            orderBy: "fecha DESC",
+            orderBy: "COALESCE(fecha, '1900-01-01') DESC",
             pageNumber: pageNumber,
             pageSize: pageSize,
             parameters: parameters);

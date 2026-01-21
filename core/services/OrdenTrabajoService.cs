@@ -73,15 +73,8 @@ public class OrdenTrabajoService : BaseService<OrdenTrabajo>, IOrdenTrabajoServi
         return erroresEncontrados;
     }
 
-    public async Task<String> GetSiguienteFolio(long empresaId)
+    public async Task<string> GetSiguienteFolio(long empresaId)
     {
-        var ultimo = await _ordenTrabajoRepository.GetSiguienteFolio(empresaId);
-        if (string.IsNullOrWhiteSpace(ultimo))
-            return "1";
-        if (!int.TryParse(ultimo, out var numero))
-            throw new InvalidOperationException($"Folio inválido: {ultimo}");
-        numero++;
-        var nuevoFolio = $"{numero.ToString().PadLeft(8, '0')}";
-        return $"{nuevoFolio}";
+        return await _ordenTrabajoRepository.GetSiguienteFolio(empresaId);
     }
 }

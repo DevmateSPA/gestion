@@ -50,9 +50,14 @@ public partial class NotaCreditoPage : Page
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
+        NotaCredito notaCredito = new()
+        {
+            Folio = await _viewModel.GetSiguienteFolio()
+        };
+
         await new EditorEntidadBuilder<NotaCredito>()
             .Owner(Window.GetWindow(this)!)
-            .Entidad(new NotaCredito())
+            .Entidad(notaCredito)
             .Titulo("Agregar Nota de Crédito")
             .Guardar(_viewModel.Save)
             .Abrir();

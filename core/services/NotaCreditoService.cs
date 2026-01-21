@@ -33,4 +33,9 @@ public class NotaCreditoService : BaseService<NotaCredito>, INotaCreditoService
 
         return erroresEncontrados;
     }
+
+    public async Task<string> GetSiguienteFolio(long empresaId)
+    {
+        return await _notaCreditoRepository.GetSiguienteFolio(empresaId);
+    }
 }

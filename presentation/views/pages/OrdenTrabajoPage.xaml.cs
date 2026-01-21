@@ -63,9 +63,9 @@ public partial class OrdenTrabajoPage : Page
     {
         var ordenTrabajo = new OrdenTrabajo
         {
-            Empresa = SesionApp.IdEmpresa
+            Empresa = SesionApp.IdEmpresa,
+            Folio = await _viewModel.GetSiguienteFolio()
         };
-        ordenTrabajo.Folio = await _viewModel.GetSiguienteFolio();
 
         await new EditorEntidadBuilder<OrdenTrabajo>()
             .Owner(Window.GetWindow(this)!)

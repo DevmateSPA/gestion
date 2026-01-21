@@ -8,6 +8,7 @@ namespace Gestion.presentation.viewmodel;
 
 public class GuiaDespachoViewModel : EntidadViewModel<GuiaDespacho>, INotifyPropertyChanged
 {
+    private readonly IGuiaDespachoService _guiaDespachoService;
     public GuiaDespachoViewModel(
         IGuiaDespachoService guiaDespachoService, 
         IDialogService dialogService,
@@ -16,9 +17,15 @@ public class GuiaDespachoViewModel : EntidadViewModel<GuiaDespacho>, INotifyProp
         IOrdenTrabajoService ordenTrabajoService)
         : base(guiaDespachoService, dialogService)
     {
-        
+        _guiaDespachoService = guiaDespachoService;
+
         _ = DataBootstrapper.LoadClientesSearch(clienteService, SesionApp.IdEmpresa);
         _ = DataBootstrapper.LoadFoliosFacturaSearch(facturaService, SesionApp.IdEmpresa);
         _ = DataBootstrapper.LoadFoliosOTSearch(ordenTrabajoService, SesionApp.IdEmpresa);
+    }
+
+    public Task<string> GetSiguienteFolio()
+    {
+        return _guiaDespachoService.GetSiguienteFolio(SesionApp.IdEmpresa);
     }
 }
