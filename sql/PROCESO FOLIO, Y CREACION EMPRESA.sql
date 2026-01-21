@@ -138,6 +138,7 @@ BEGIN
 		(V_EMPRESA_ID, 'OT', 0),
 		(V_EMPRESA_ID, 'FA', 0),
 		(V_EMPRESA_ID, 'GD', 0)
+        (V_EMPRESA_ID, 'NC', 0)
 	ON DUPLICATE KEY UPDATE
 		ultimo_folio = ultimo_folio;
         
