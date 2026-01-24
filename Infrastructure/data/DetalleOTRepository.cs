@@ -13,10 +13,11 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
     public DetalleOTRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "ordentrabajodetalle", null) {}
 
-    public async Task<List<DetalleOrdenTrabajo>> FindByFolio(string folio)
+    public async Task<List<DetalleOrdenTrabajo>> FindByFolio(string folio, long empresaId)
     {
         return await CreateQueryBuilder()
             .Where("folio = @folio", new DbParam("@folio", folio))
+            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
             .ToListAsync<DetalleOrdenTrabajo>();
     }
 
@@ -58,7 +59,7 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
         return affected > 0;
     }
 
-    public async Task<bool> UpdateAll(IList<DetalleOrdenTrabajo> detalles)
+    public async Task<bool> UpdateAll(IList<DetalleOrdenTrabajo> detalles, long empresaId)
     {
         if (detalles == null || detalles.Count == 0)
             return false;
@@ -95,33 +96,42 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
         }
 
         var ids = detalles.Select(d => typeof(DetalleOrdenTrabajo).GetProperty("Id")!.GetValue(d)!).ToList();
-        sb.Append($" WHERE id IN ({string.Join(", ", ids)})");
+        sb.Append($" WHERE id IN ({string.Join(", ", ids)}) AND empresa = @empresa");
+
+        parameters.Add(new DbParam("@empresa", empresaId));
 
         int affected = await ExecuteNonQueryAsync(sb.ToString(), parameters);
 
         return affected > 0;
     }
 
-    public async Task<bool> DeleteByIds(IList<long> ids)
+    public async Task<bool> DeleteByIds(IList<long> ids, long empresaId)
     {
         if (ids == null || ids.Count == 0)
             return false;
 
         var parameters = ids.Select((id, i) => new DbParam($"@id{i}", id)).ToList();
-        string sql = $"DELETE FROM {_tableName} WHERE id IN ({string.Join(", ", parameters.Select(p => p.Name))})";
+        string sql = $"DELETE FROM {_tableName} WHERE id IN ({string.Join(", ", parameters.Select(p => p.Name))}) AND empresa = @empresa";
+
+        parameters.Add(new DbParam("@empresa", empresaId));
 
         int affected = await ExecuteNonQueryAsync(sql, parameters);
 
         return affected > 0;
     }
 
-    public async Task<bool> DeleteByFolio(string folio)
+    public async Task<bool> DeleteByFolio(string folio, long empresaId)
     {
         if (string.IsNullOrWhiteSpace(folio))
             return false;
 
         string sql = $"DELETE FROM {_tableName} WHERE folio = @folio";
-        int affected = await ExecuteNonQueryAsync(sql, [new DbParam("@folio", folio)]);
+        int affected = await ExecuteNonQueryAsync(
+            sql, 
+            [
+                new DbParam("@folio", folio),
+                new DbParam("@empresa", empresaId)
+            ]);
 
         return affected > 0;
     }

@@ -31,12 +31,12 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
         _ = DataBootstrapper.LoadClientesSearch(clienteService, SesionApp.IdEmpresa);
     }
 
-    public virtual async Task<List<DetalleOrdenTrabajo>> LoadDetailsByFolio(string folio)
+    public virtual async Task<List<DetalleOrdenTrabajo>> LoadDetailsByFolio(string folio, long empresaId)
     {
         List<DetalleOrdenTrabajo>? detalles = null;
 
         await SafeExecutor.RunAsync(
-            async () => detalles = await _detalleOTService.FindByFolio(folio),
+            async () => detalles = await _detalleOTService.FindByFolio(folio, empresaId),
             _dialogService,
             $"Error al cargar los detalles de la orden de trabajo con folio: {folio}");
             
@@ -81,7 +81,7 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
             bool detalles = false;
 
             if (ot)
-                detalles = await _detalleOTService.DeleteByFolio(ordenTrabajo.Folio);
+                detalles = await _detalleOTService.DeleteByFolio(ordenTrabajo.Folio, ordenTrabajo.Empresa);
 
             return ot; 
         },
@@ -95,13 +95,13 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
         OrdenTrabajo ordenTrabajo)
     {
         List<long> paraEliminar = originales.Any()
-            ? originales.Where(o => !editados.Any(e => e.Id == o.Id)).Select(o => o.Id).ToList()
-            : new List<long>();
+            ? [.. originales.Where(o => !editados.Any(e => e.Id == o.Id)).Select(o => o.Id)]
+            : [];
 
-        List<DetalleOrdenTrabajo> paraAgregar = editados.Where(e => e.Id == 0).ToList();
-        List<DetalleOrdenTrabajo> paraActualizar = editados.Where(e => e.Id != 0 && originales.Any(o => o.Id == e.Id)).ToList();
+        List<DetalleOrdenTrabajo> paraAgregar = [.. editados.Where(e => e.Id == 0)];
+        List<DetalleOrdenTrabajo> paraActualizar = [.. editados.Where(e => e.Id != 0 && originales.Any(o => o.Id == e.Id))];
 
-        Debug.WriteLine($"[SincronizarDetalles] OrdenTrabajo: {ordenTrabajo.Folio}");
+        Debug.WriteLine($"[SincronizarDetalles] OrdenTrabajo: {ordenTrabajo.Folio} - Empresa: {ordenTrabajo.Empresa}");
         Debug.WriteLine($" - Para eliminar: {string.Join(", ", paraEliminar)}");
         Debug.WriteLine($" - Para agregar: {string.Join(", ", paraAgregar.Select(a => a.Id))}");
         Debug.WriteLine($" - Para actualizar: {string.Join(", ", paraActualizar.Select(a => a.Id))}");
@@ -109,23 +109,25 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
         if (paraAgregar.Count != 0 || paraActualizar.Count != 0 || paraEliminar.Count != 0)
         {
             await MakeCrud(
-                AsignarInfo(ordenTrabajo.Folio, paraAgregar),
-                AsignarInfo(ordenTrabajo.Folio, paraActualizar),
-                paraEliminar);
+                AsignarInfo(ordenTrabajo.Folio, ordenTrabajo.Empresa, paraAgregar),
+                AsignarInfo(ordenTrabajo.Folio, ordenTrabajo.Empresa, paraActualizar),
+                paraEliminar,
+                ordenTrabajo.Empresa);
         }
     }
 
     private async Task MakeCrud(
         List<DetalleOrdenTrabajo> paraAgregar,
         List<DetalleOrdenTrabajo> paraActualizar,
-        List<long> paraEliminar)
+        List<long> paraEliminar,
+        long empresaId)
     {
         Debug.WriteLine("[MakeCrud] Iniciando CRUD...");
 
         if (paraEliminar.Count != 0)
         {
             Debug.WriteLine($" - Eliminando IDs: {string.Join(", ", paraEliminar)}");
-            await RunServiceAction(() => _detalleOTService.DeleteByIds(paraEliminar), null, "Error al eliminar los detalles de la orden de trabajo");
+            await RunServiceAction(() => _detalleOTService.DeleteByIds(paraEliminar, empresaId), null, "Error al eliminar los detalles de la orden de trabajo");
         }
 
         if (paraAgregar.Count != 0)
@@ -137,22 +139,26 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
         if (paraActualizar.Count != 0)
         {
             Debug.WriteLine($" - Actualizando IDs: {string.Join(", ", paraActualizar.Select(a => a.Id))}");
-            await RunServiceAction(() => _detalleOTService.UpdateAll(paraActualizar), null, "Error al actualizar los detalles de la orden de trabajo");
+            await RunServiceAction(() => _detalleOTService.UpdateAll(paraActualizar, empresaId), null, "Error al actualizar los detalles de la orden de trabajo");
         }
 
         Debug.WriteLine("[MakeCrud] Operación finalizada.");
     }
 
-    private static List<DetalleOrdenTrabajo> AsignarInfo(string folio, IList<DetalleOrdenTrabajo> detalles)
+    private static List<DetalleOrdenTrabajo> AsignarInfo(
+        string folio, 
+        long empresaId, 
+        IList<DetalleOrdenTrabajo> detalles)
     {
         var lista = detalles.ToList();
 
         if (lista.Count == 0)
             return lista;
 
-        foreach (var detalle in detalles)
+        foreach (DetalleOrdenTrabajo detalle in detalles)
         {
             detalle.Folio = folio;
+            detalle.Empresa = empresaId;
         }
 
         return lista;
