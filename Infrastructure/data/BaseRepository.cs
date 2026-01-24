@@ -516,8 +516,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         if (excludeId.HasValue)
             builder.Where("id <> @excludeId", new DbParam("@excludeId", excludeId.Value));
 
-        // Usamos Select("1") para que CountAsync haga SELECT 1 y no devuelva objetos completos
-        long count = await builder.Select("1").CountAsync();
+        long count = await builder.CountAsync();
 
         return count > 0;
     }
