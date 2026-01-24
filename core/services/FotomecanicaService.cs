@@ -24,7 +24,7 @@ public class FotomecanicaService : BaseService<Fotomecanica>, IFotomecanicaServi
                 empresaId: entity.Empresa,
                 excludeId: excludeId))
         {
-            errores.Add($"El código del banco: {entity.Codigo}, ya existe para la empresa actual.");
+            errores.Add($"El código de la fotomecánica: {entity.Codigo}, ya existe para la empresa actual.");
         }
 
         if (string.IsNullOrWhiteSpace(entity.Descripcion))

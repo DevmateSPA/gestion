@@ -1,0 +1,104 @@
+using Gestion.core.interfaces.model;
+using Gestion.Infrastructure.data;
+
+namespace Gestion.Infrastructure.data;
+public class QueryBuilder<T> where T : IModel, new()
+{
+    private readonly BaseRepository<T> _repo;
+    private readonly List<string> _whereClauses = [];
+    private readonly List<DbParam> _parameters = [];
+    private string? _orderBy = null;
+    private int? _limit = null;
+    private int? _offset = null;
+    private string? _from = null;
+    private string _selectColumns = "*";
+
+    public QueryBuilder(BaseRepository<T> repo)
+    {
+        _repo = repo;
+    }
+
+    public QueryBuilder<T> From(string tableOrView)
+    {
+        _from = tableOrView;
+        return this;
+    }
+
+    public QueryBuilder<T> Select(params string[] columns)
+    {
+        if (columns != null && columns.Length > 0)
+            _selectColumns = string.Join(", ", columns);
+        return this;
+    }
+
+    // Permite múltiples llamadas a Where y acumula las condiciones
+    public QueryBuilder<T> Where(string condition, params DbParam[] parameters)
+    {
+        if (!string.IsNullOrWhiteSpace(condition))
+            _whereClauses.Add(condition);
+
+        if (parameters != null && parameters.Length > 0)
+            _parameters.AddRange(parameters);
+
+        return this;
+    }
+
+    public QueryBuilder<T> OrderBy(string orderBy)
+    {
+        _orderBy = orderBy;
+        return this;
+    }
+
+    public QueryBuilder<T> Limit(int limit, int? offset = null)
+    {
+        _limit = limit;
+        if (offset != null)
+            _offset = offset;
+        return this;
+    }
+
+    // Combina todas las condiciones con AND
+    private string BuildWhereClause()
+    {
+        if (_whereClauses.Count == 0)
+            return "1=1";
+
+        return string.Join(" AND ", _whereClauses);
+    }
+
+    public async Task<List<TData>> ToListAsync<TData>()
+    {
+        string select = _selectColumns ?? "*";
+
+        var result = await _repo.FindWhereFrom(
+            tableOrView: _from ?? _repo._viewName ?? _repo._tableName,
+            where: BuildWhereClause(),
+            orderBy: _orderBy,
+            limit: _limit,
+            offset: _offset,
+            parameters: _parameters,
+            selectColumns: select
+        );
+
+        // Mapear solo la columna TData si es necesario
+        if (typeof(TData) != typeof(T))
+        {
+            return [.. result.Select(r => (TData?)_repo.ConvertValue(
+                r.GetType().GetProperty(_selectColumns!)!.GetValue(r),
+                typeof(TData)
+            )!)];
+        }
+
+        return [.. result.Cast<TData>()];
+    }
+
+    public async Task<long> CountAsync()
+    {
+        var table = _from ?? _repo._tableName;
+        return await _repo.CountWhere(
+            where: BuildWhereClause(),
+            tableName: table,
+            parameters: _parameters
+        );
+    }
+}

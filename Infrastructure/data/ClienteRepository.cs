@@ -2,7 +2,6 @@ using System.Data.Common;
 using Gestion.core.interfaces.database;
 using Gestion.core.interfaces.repository;
 using Gestion.core.model;
-using MySql.Data.MySqlClient;
 
 namespace Gestion.Infrastructure.data;
 
@@ -22,7 +21,9 @@ public class ClienteRepository : BaseRepository<Cliente>, IClienteRepository
             },
             excludeId);
 
-    public async Task<List<string>> GetRutList(string busquedaRut, long empresaId)
+    public async Task<List<string>> GetRutList(
+        string busquedaRut, 
+        long empresaId)
     {
         if (_viewName == null)
             throw new InvalidOperationException("La vista no está asignada para este repositorio.");
@@ -30,17 +31,11 @@ public class ClienteRepository : BaseRepository<Cliente>, IClienteRepository
         if (string.IsNullOrWhiteSpace(busquedaRut) || busquedaRut.Length < 1)
             return [];
 
-        var busquedaParam = $"{busquedaRut}%";
-
-        DbParameter[] parameters =
-        [
-            new MySqlParameter("@busquedaParam", busquedaParam),
-            new MySqlParameter("@empresa", empresaId),
-        ];
-
-        return await GetColumnList<string>(
-            columnName: "rut", 
-            where: "empresa = @empresa AND rut LIKE @busquedaParam", 
-            parameters: parameters);
+        return await CreateQueryBuilder()
+            .Select("rut")
+            .Where("empresa = @empresa AND rut LIKE @busquedaParam",
+                new DbParam("@empresa", empresaId),
+                new DbParam("@busquedaParam", $"{busquedaRut}%"))
+            .ToListAsync<string>();
     }
 }

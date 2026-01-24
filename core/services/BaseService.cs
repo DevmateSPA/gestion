@@ -2,6 +2,7 @@ using Gestion.core.exceptions;
 using Gestion.core.interfaces.model;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
+using Gestion.Infrastructure.data;
 using MySql.Data.MySqlClient;
 
 namespace Gestion.core.services;
@@ -98,27 +99,6 @@ public abstract class BaseService<T> : IBaseService<T>
             pageSize);
     }
 
-    /// <summary>
-    /// Ejecuta una consulta genérica parametrizada sobre una tabla o vista.
-    ///
-    /// Útil para casos especiales que no justifican un repositorio dedicado.
-    /// </summary>
-    /// <param name="tableOrView">Nombre de la tabla o vista.</param>
-    /// <param name="p">Parámetro SQL.</param>
-    /// <param name="where">Cláusula WHERE.</param>
-    public Task<List<T>> FindAllByParam(
-        string tableOrView,
-        MySqlParameter p,
-        string where)
-    {
-        return _baseRepository.FindWhereFrom(
-            tableOrView,
-            where,
-            null,
-            null,
-            null,
-            p);
-    }
 
     #endregion
 

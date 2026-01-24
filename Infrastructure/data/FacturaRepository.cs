@@ -3,7 +3,6 @@ using System.Data.Common;
 using Gestion.core.interfaces.database;
 using Gestion.core.interfaces.repository;
 using Gestion.core.model;
-using MySql.Data.MySqlClient;
 
 namespace Gestion.Infrastructure.data;
 
@@ -17,12 +16,12 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
         if (_viewName == null)
             throw new InvalidOperationException("La vista no está asignada para este repositorio.");
 
-        DbParameter[] parameters =
+        DbParam[] parameters =
         [
-            new MySqlParameter("@empresa", empresaId),
-            new MySqlParameter("@rutCliente", rutCliente),
-            new MySqlParameter("@fechaDesde", fechaDesde),
-            new MySqlParameter("@fechaHasta", fechaHasta),
+            new DbParam("@empresa", empresaId),
+            new DbParam("@rutCliente", rutCliente),
+            new DbParam("@fechaDesde", fechaDesde),
+            new DbParam("@fechaHasta", fechaHasta),
         ];
 
         return await FindWhereFrom(
@@ -53,16 +52,12 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
         if (string.IsNullOrWhiteSpace(numero))
             return [];
 
-        DbParameter[] parameters =
-        [
-            new MySqlParameter("@numero", $"%{numero}%"),
-            new MySqlParameter("@empresa", empresaId),
-        ];
-
-        return await GetColumnList<string>(
-            columnName: "folio",
-            where: "empresa = @empresa AND folio LIKE @numero",
-            parameters: parameters);
+        return await CreateQueryBuilder()
+            .Select("folio")
+            .Where("empresa = @empresa AND rut LIKE @busquedaParam",
+                new DbParam("@empresa", empresaId),
+                new DbParam("@numero", $"{numero}%"))
+            .ToListAsync<string>();
     }
 
     public async Task<string> GetSiguienteFolio(long empresaId)
@@ -73,10 +68,7 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
         cmd.CommandText = "get_siguiente_folio_fa";
         cmd.CommandType = CommandType.StoredProcedure;
 
-        var param = cmd.CreateParameter();
-        param.ParameterName = "p_empresa_id";
-        param.Value = empresaId;
-        cmd.Parameters.Add(param);
+        cmd.Parameters.Add(CreateParam(cmd, "p_empresa_id", empresaId));
 
         using var reader = await cmd.ExecuteReaderAsync();
 

@@ -3,7 +3,6 @@ using System.Data.Common;
 using Gestion.core.interfaces.database;
 using Gestion.core.interfaces.repository;
 using Gestion.core.model;
-using MySql.Data.MySqlClient;
 
 namespace Gestion.Infrastructure.data;
 
@@ -31,16 +30,12 @@ public class GuiaDespachoRepository : BaseRepository<GuiaDespacho>, IGuiaDespach
         if (string.IsNullOrWhiteSpace(busquedaFolio))
             return [];
 
-        DbParameter[] parameters =
-        [
-            new MySqlParameter("@busquedaFolio", $"%{busquedaFolio}%"),
-            new MySqlParameter("@empresa", empresaId),
-        ];
-
-        return await GetColumnList<string>(
-            columnName: "folio",
-            where: "empresa = @empresa AND folio LIKE @busquedaFolio",
-            parameters: parameters);
+        return await CreateQueryBuilder()
+            .Select("folio")
+            .Where("empresa = @empresa AND rut LIKE @busquedaParam",
+                new DbParam("@empresa", empresaId),
+                new DbParam("@busquedaFolio", $"{busquedaFolio}%"))
+            .ToListAsync<string>();
     }
 
     public async Task<string> GetSiguienteFolio(long empresaId)
@@ -51,10 +46,7 @@ public class GuiaDespachoRepository : BaseRepository<GuiaDespacho>, IGuiaDespach
         cmd.CommandText = "get_siguiente_folio_gd";
         cmd.CommandType = CommandType.StoredProcedure;
 
-        var param = cmd.CreateParameter();
-        param.ParameterName = "p_empresa_id";
-        param.Value = empresaId;
-        cmd.Parameters.Add(param);
+        cmd.Parameters.Add(CreateParam(cmd, "p_empresa_id", empresaId));
 
         using var reader = await cmd.ExecuteReaderAsync();
 

@@ -3,7 +3,6 @@ using Gestion.core.interfaces.database;
 using Gestion.core.interfaces.repository;
 using Gestion.core.model;
 using Gestion.core.model.DTO;
-using MySql.Data.MySqlClient;
 
 namespace Gestion.Infrastructure.data;
 
@@ -14,70 +13,22 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
 
     public override async Task<List<Usuario>> FindAllByEmpresa(long empresaId)
     {
-        using var conn = await _connectionFactory.CreateConnection();
-
-        string sql = $"""
-            SELECT 
-                *
-            FROM {_viewName}
-            WHERE empresa = @empresa
-            ORDER BY fecha DESC;
-            """;
-
-        using var cmd = new MySqlCommand(sql, (MySqlConnection)conn);
-        cmd.Parameters.Add("@empresa", MySqlDbType.Int64).Value = empresaId;
-
-        using var reader = await cmd.ExecuteReaderAsync();
-
-        var usuarios = new List<Usuario>();
-
-        while (await reader.ReadAsync())
-        {
-            usuarios.Add(new Usuario
-            {
-                Id        = reader.GetInt64(reader.GetOrdinal("id")),
-                Nombre    = reader.GetString(reader.GetOrdinal("nombre")),
-                Clave     = reader.GetString(reader.GetOrdinal("clave")),
-                Empresa   = reader.GetInt64(reader.GetOrdinal("empresa")),
-                Tipo      = reader.GetInt64(reader.GetOrdinal("tipo")),
-                TipoDesc  = reader.GetString(reader.GetOrdinal("TipoDesc"))
-            });
-        }
-
-        return usuarios;
+        return await CreateQueryBuilder()
+            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
+            .OrderBy("fecha DESC")
+            .ToListAsync<Usuario>();
     }
 
     public async Task<Usuario?> GetByNombre(string nombreUsuario, long empresaId)
     {
-        using var conn = await _connectionFactory.CreateConnection();
+        var list = await CreateQueryBuilder()
+            .Where("empresa = @empresa AND LOWER(nombre) = @nombre",
+                new DbParam("@empresa", empresaId),
+                new DbParam("@nombre", nombreUsuario.ToLower()))
+            .Limit(1)
+            .ToListAsync<Usuario>();
 
-        string sql = $"""
-            SELECT 
-                *
-            FROM {_viewName}
-            WHERE empresa = @empresa and LOWER(nombre) = @nombre;
-            """;
-
-        using var cmd = new MySqlCommand(sql, (MySqlConnection)conn);
-        cmd.Parameters.Add("@nombre", MySqlDbType.VarChar, 100).Value = nombreUsuario.ToLower();
-        cmd.Parameters.Add("@empresa", MySqlDbType.Int64).Value = empresaId;
-
-        using var reader = await cmd.ExecuteReaderAsync();
-        if (await reader.ReadAsync())
-        {
-            Usuario usuario = new()
-            {
-                Id        = reader.GetInt64(reader.GetOrdinal("id")),
-                Nombre    = reader.GetString(reader.GetOrdinal("nombre")),
-                Clave     = reader.GetString(reader.GetOrdinal("clave")),
-                Empresa   = reader.GetInt64(reader.GetOrdinal("empresa")),
-                Tipo      = reader.GetInt64(reader.GetOrdinal("tipo")),
-                TipoDesc  = reader.GetString(reader.GetOrdinal("tipodesc"))
-            };
-
-            return usuario;
-        }
-        return null;
+        return list.FirstOrDefault();
     }
 
     public async Task<List<TipoUsuarioDTO>> GetTipoList()

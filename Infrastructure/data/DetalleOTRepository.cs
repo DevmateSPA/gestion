@@ -4,9 +4,7 @@ using System.Text;
 using Gestion.core.attributes;
 using Gestion.core.interfaces.database;
 using Gestion.core.interfaces.repository;
-using Gestion.core.model;
 using Gestion.core.model.detalles;
-using MySql.Data.MySqlClient;
 
 namespace Gestion.Infrastructure.data;
 
@@ -17,113 +15,77 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
 
     public async Task<List<DetalleOrdenTrabajo>> FindByFolio(string folio)
     {
-        using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
-        cmd.CommandText = $"SELECT * FROM {_tableName} WHERE folio = @folio";
-
-        var param = cmd.CreateParameter();
-        param.ParameterName = "@folio";
-        param.Value = folio;
-        cmd.Parameters.Add(param);
-
-        using var reader = await cmd.ExecuteReaderAsync();
-        var list = new List<DetalleOrdenTrabajo>();
-        while (await reader.ReadAsync())
-            list.Add(MapEntity(reader));
-
-        return list;
+        return await CreateQueryBuilder()
+            .Where("folio = @folio", new DbParam("@folio", folio))
+            .ToListAsync<DetalleOrdenTrabajo>();
     }
 
     public async Task<bool> SaveAll(IList<DetalleOrdenTrabajo> detalles)
     {
-        var lista = detalles.ToList();
-        if (lista.Count == 0)
+        if (detalles == null || detalles.Count == 0)
             return false;
 
-        using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
-
-        // --- PROPIEDADES VÁLIDAS ---
         var props = typeof(DetalleOrdenTrabajo).GetProperties()
-            .Where(p => p.Name != "Id" 
-                && Attribute.IsDefined(p, typeof(NotMappedAttribute)) == false
-                && !Attribute.IsDefined(p, typeof(NoSaveDbAttribute)))
+            .Where(p => p.Name != "Id"
+                        && !Attribute.IsDefined(p, typeof(NotMappedAttribute))
+                        && !Attribute.IsDefined(p, typeof(NoSaveDbAttribute)))
             .ToList();
 
         string columns = string.Join(", ", props.Select(p => p.Name.ToLower()));
 
-        // --- CONSTRUCCIÓN DEL INSERT MÚLTIPLE ---
         var sb = new StringBuilder();
-        sb.Append($"INSERT INTO {_tableName} ({columns}) VALUES ");
+        var parameters = new List<DbParam>();
 
-        int index = 0;
-
-        foreach (var entity in lista)
+        for (int i = 0; i < detalles.Count; i++)
         {
             var paramNames = new List<string>();
 
             foreach (var prop in props)
             {
-                string paramName = $"@{prop.Name.ToLower()}{index}";
+                string paramName = $"@{prop.Name}_{i}";
                 paramNames.Add(paramName);
-
-                var param = cmd.CreateParameter();
-                param.ParameterName = paramName;
-                param.Value = prop.GetValue(entity) ?? DBNull.Value;
-                cmd.Parameters.Add(param);
+                parameters.Add(new DbParam(paramName, prop.GetValue(detalles[i]) ?? DBNull.Value));
             }
 
             sb.Append("(" + string.Join(", ", paramNames) + ")");
-
-            index++;
-            if (index < lista.Count)
+            if (i < detalles.Count - 1)
                 sb.Append(", ");
         }
 
-        cmd.CommandText = sb.ToString();
-
-        int affected = await cmd.ExecuteNonQueryAsync();
+        string sql = $"INSERT INTO {_tableName} ({columns}) VALUES {sb}";
+        int affected = await ExecuteNonQueryAsync(sql, parameters);
 
         return affected > 0;
     }
 
     public async Task<bool> UpdateAll(IList<DetalleOrdenTrabajo> detalles)
     {
-        var lista = detalles.ToList();
-
-        if (lista.Count == 0)
+        if (detalles == null || detalles.Count == 0)
             return false;
-
-        using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
 
         var props = typeof(DetalleOrdenTrabajo).GetProperties()
             .Where(p => p.Name != "Id"
-                && !Attribute.IsDefined(p, typeof(NotMappedAttribute))
-                && !Attribute.IsDefined(p, typeof(NoSaveDbAttribute)))
+                        && !Attribute.IsDefined(p, typeof(NotMappedAttribute))
+                        && !Attribute.IsDefined(p, typeof(NoSaveDbAttribute)))
             .ToList();
 
         var sb = new StringBuilder();
+        var parameters = new List<DbParam>();
+
         sb.Append($"UPDATE {_tableName} SET ");
 
-        // Construcción de columnas con CASE
         foreach (var prop in props)
         {
             string col = prop.Name.ToLower();
             sb.Append($"{col} = CASE id ");
 
-            foreach (var entity in lista)
+            foreach (var entity in detalles)
             {
-                // Es tipo long pero no quiero castear
                 var id = typeof(DetalleOrdenTrabajo).GetProperty("Id")!.GetValue(entity)!;
-                string paramName = $"@{col}{id}";
+                string paramName = $"@{col}_{id}";
 
                 sb.Append($"WHEN {id} THEN {paramName} ");
-
-                var param = cmd.CreateParameter();
-                param.ParameterName = paramName;
-                param.Value = prop.GetValue(entity) ?? DBNull.Value;
-                cmd.Parameters.Add(param);
+                parameters.Add(new DbParam(paramName, prop.GetValue(entity) ?? DBNull.Value));
             }
 
             sb.Append("END");
@@ -132,16 +94,10 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
                 sb.Append(", ");
         }
 
-        // WHERE id IN (...)
-        var ids = lista
-            .Select(e => typeof(DetalleOrdenTrabajo).GetProperty("Id")!.GetValue(e)!)
-            .ToList();
-
+        var ids = detalles.Select(d => typeof(DetalleOrdenTrabajo).GetProperty("Id")!.GetValue(d)!).ToList();
         sb.Append($" WHERE id IN ({string.Join(", ", ids)})");
 
-        cmd.CommandText = sb.ToString();
-
-        int affected = await cmd.ExecuteNonQueryAsync();
+        int affected = await ExecuteNonQueryAsync(sb.ToString(), parameters);
 
         return affected > 0;
     }
@@ -151,25 +107,10 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
         if (ids == null || ids.Count == 0)
             return false;
 
-        using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
+        var parameters = ids.Select((id, i) => new DbParam($"@id{i}", id)).ToList();
+        string sql = $"DELETE FROM {_tableName} WHERE id IN ({string.Join(", ", parameters.Select(p => p.Name))})";
 
-        var parameters = new List<string>();
-
-        for (int i = 0; i < ids.Count; i++)
-        {
-            string paramName = $"@id{i}";
-            parameters.Add(paramName);
-
-            var param = cmd.CreateParameter();
-            param.ParameterName = paramName;
-            param.Value = ids[i];
-            cmd.Parameters.Add(param);
-        }
-
-        cmd.CommandText = $"DELETE FROM {_tableName} WHERE id IN ({string.Join(", ", parameters)})";
-
-        int affected = await cmd.ExecuteNonQueryAsync();
+        int affected = await ExecuteNonQueryAsync(sql, parameters);
 
         return affected > 0;
     }
@@ -179,18 +120,9 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
         if (string.IsNullOrWhiteSpace(folio))
             return false;
 
-        using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
+        string sql = $"DELETE FROM {_tableName} WHERE folio = @folio";
+        int affected = await ExecuteNonQueryAsync(sql, [new DbParam("@folio", folio)]);
 
-        cmd.CommandText = $"DELETE FROM {_tableName} WHERE folio = @folio";
-
-        var p = cmd.CreateParameter();
-        p.ParameterName = "@folio";
-        p.Value = folio;
-        cmd.Parameters.Add(p);
-
-        int affected = await cmd.ExecuteNonQueryAsync();
-
-        return true;
+        return affected > 0;
     }
 }

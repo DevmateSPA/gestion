@@ -3,7 +3,6 @@ using System.Data.Common;
 using Gestion.core.interfaces.database;
 using Gestion.core.interfaces.repository;
 using Gestion.core.model;
-using MySql.Data.MySqlClient;
 
 namespace Gestion.Infrastructure.data;
 
@@ -31,10 +30,7 @@ public class NotaCreditoRepository : BaseRepository<NotaCredito>, INotaCreditoRe
         cmd.CommandText = "get_siguiente_folio_nc";
         cmd.CommandType = CommandType.StoredProcedure;
 
-        var param = cmd.CreateParameter();
-        param.ParameterName = "p_empresa_id";
-        param.Value = empresaId;
-        cmd.Parameters.Add(param);
+        cmd.Parameters.Add(CreateParam(cmd, "p_empresa_id", empresaId));
 
         using var reader = await cmd.ExecuteReaderAsync();
 

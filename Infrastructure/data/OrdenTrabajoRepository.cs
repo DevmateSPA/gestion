@@ -1,12 +1,8 @@
-using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.Common;
 using Gestion.core.interfaces.database;
 using Gestion.core.interfaces.repository;
 using Gestion.core.model;
-using Gestion.core.model.detalles;
-using Gestion.core.session;
-using MySql.Data.MySqlClient;
 
 namespace Gestion.Infrastructure.data;
 
@@ -17,9 +13,9 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
 
     public async Task<long> ContarPendientes(long empresaId)
     {
-        DbParameter[] parameters =
+        DbParam[] parameters =
         [
-            new MySqlParameter("@empresa", empresaId)
+            new DbParam("@empresa", empresaId)
         ];
 
         return await CountWhere(
@@ -29,10 +25,10 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
 
     public async Task<long> ContarByMaquinaWhereEmpresaAndPendientes(long empresaId, string codigoMaquina)
     {
-        DbParameter[] parameters =
+        DbParam[] parameters =
         [
-            new MySqlParameter("@empresa", empresaId),
-            new MySqlParameter("@codigoMaquina", codigoMaquina)
+            new DbParam("@empresa", empresaId),
+            new DbParam("@codigoMaquina", codigoMaquina)
         ];
 
         return await CountWhere(
@@ -45,9 +41,9 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
         if (_viewName == null)
             throw new InvalidOperationException("La vista no está asignada para este repositorio.");
 
-        DbParameter[] parameters =
+        DbParam[] parameters =
         [
-            new MySqlParameter("@empresa", empresaId)
+            new DbParam("@empresa", empresaId)
         ];
 
         return await FindWhereFrom(
@@ -64,10 +60,10 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
         if (_viewName == null)
             throw new InvalidOperationException("La vista no está asignada para este repositorio.");
 
-        DbParameter[] parameters =
+        DbParam[] parameters =
         [
-            new MySqlParameter("@empresa", empresaId),
-            new MySqlParameter("@codigoMaquina", codigoMaquina)
+            new DbParam("@empresa", empresaId),
+            new DbParam("@codigoMaquina", codigoMaquina)
         ];
 
         return await FindWhereFrom(
@@ -85,10 +81,10 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
         int pageNumber,
         int pageSize)
     {
-        DbParameter[] parameters =
+        DbParam[] parameters =
         [
-            new MySqlParameter("@empresa", empresaId),
-            new MySqlParameter("@codigoMaquina", codigoMaquina)
+            new DbParam("@empresa", empresaId),
+            new DbParam("@codigoMaquina", codigoMaquina)
         ];
 
         return await FindPageWhere(
@@ -104,9 +100,9 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
         int pageNumber,
         int pageSize)
     {
-        DbParameter[] parameters =
+        DbParam[] parameters =
         [
-            new MySqlParameter("@empresa", empresaId)
+            new DbParam("@empresa", empresaId)
         ];
 
         return await FindPageWhere(
@@ -136,16 +132,12 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
         if (string.IsNullOrWhiteSpace(busquedaFolio))
             return [];
 
-        DbParameter[] parameters =
-        [
-            new MySqlParameter("@busquedaFolio", $"%{busquedaFolio}%"),
-            new MySqlParameter("@empresa", empresaId),
-        ];
-
-        return await GetColumnList<string>(
-            columnName: "folio",
-            where: "empresa = @empresa AND folio LIKE @busquedaFolio",
-            parameters: parameters);
+        return await CreateQueryBuilder()
+            .Select("folio")
+            .Where("empresa = @empresa AND rut LIKE @busquedaParam",
+                new DbParam("@empresa", empresaId),
+                new DbParam("@busquedaFolio", $"{busquedaFolio}%"))
+            .ToListAsync<string>(); 
     }
 
     public async Task<string> GetSiguienteFolio(long empresaId)
@@ -156,10 +148,7 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
         cmd.CommandText = "get_siguiente_folio_ot";
         cmd.CommandType = CommandType.StoredProcedure;
 
-        var param = cmd.CreateParameter();
-        param.ParameterName = "p_empresa_id";
-        param.Value = empresaId;
-        cmd.Parameters.Add(param);
+        cmd.Parameters.Add(CreateParam(cmd, "p_empresa_id", empresaId));
 
         using var reader = await cmd.ExecuteReaderAsync();
 
