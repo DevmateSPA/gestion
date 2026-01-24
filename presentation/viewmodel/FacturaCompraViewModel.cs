@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Gestion.core.interfaces.model;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
@@ -55,40 +56,52 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
         IEnumerable<FacturaCompraProducto> editados,
         FacturaCompra factura)
     {
-        List<long> paraEliminar = originales.Any() ? 
-            [.. originales.Where(o => !editados.Any(e => e.Id == o.Id)).Select(o => o.Id)]
-            : [];
+        List<long> paraEliminar = originales.Any()
+            ? originales.Where(o => !editados.Any(e => e.Id == o.Id)).Select(o => o.Id).ToList()
+            : new List<long>();
 
-        List<FacturaCompraProducto> paraAgregar = [.. editados.Where(e => e.Id == 0)];
+        List<FacturaCompraProducto> paraAgregar = editados.Where(e => e.Id == 0).ToList();
+        List<FacturaCompraProducto> paraActualizar = editados.Where(e => e.Id != 0 && originales.Any(o => o.Id == e.Id)).ToList();
 
-        List<FacturaCompraProducto> paraActualizar = [.. editados.Where(e => e.Id != 0 && originales.Any(o => o.Id == e.Id))];
+        Debug.WriteLine($"[SincronizarDetalles] Factura: {factura.Folio}");
+        Debug.WriteLine($" - Para eliminar: {string.Join(", ", paraEliminar)}");
+        Debug.WriteLine($" - Para agregar: {string.Join(", ", paraAgregar.Select(a => a.Id))}");
+        Debug.WriteLine($" - Para actualizar: {string.Join(", ", paraActualizar.Select(a => a.Id))}");
 
         if (paraAgregar.Count != 0 || paraActualizar.Count != 0 || paraEliminar.Count != 0)
         {
-            await MakeCrud(AsignarInfo(factura.Folio, factura.Tipo, paraAgregar),
+            await MakeCrud(
+                AsignarInfo(factura.Folio, factura.Tipo, paraAgregar),
                 AsignarInfo(factura.Folio, factura.Tipo, paraActualizar),
                 paraEliminar);
         }
     }
 
-    private async Task MakeCrud(List<FacturaCompraProducto> paraAgregar, 
-        List<FacturaCompraProducto> paraActualizar, 
+    private async Task MakeCrud(
+        List<FacturaCompraProducto> paraAgregar,
+        List<FacturaCompraProducto> paraActualizar,
         List<long> paraEliminar)
     {
+        Debug.WriteLine($"[MakeCrud] Iniciando CRUD...");
         if (paraEliminar.Count != 0)
         {
+            Debug.WriteLine($" - Eliminando IDs: {string.Join(", ", paraEliminar)}");
             await RunServiceAction(() => _detalleService.DeleteByIds(paraEliminar), null, $"Error al eliminar los detalles de la factura");
         }
 
         if (paraAgregar.Count != 0)
         {
+            Debug.WriteLine($" - Agregando IDs: {string.Join(", ", paraAgregar.Select(a => a.Id))}");
             await RunServiceAction(() => _detalleService.SaveAll(paraAgregar), null, $"Error al guardar los detalles de la factura");
         }
 
         if (paraActualizar.Count != 0)
         {
+            Debug.WriteLine($" - Actualizando IDs: {string.Join(", ", paraActualizar.Select(a => a.Id))}");
             await RunServiceAction(() => _detalleService.UpdateAll(paraActualizar), null, $"Error al actualizar los detalles de la factura");
         }
+
+        Debug.WriteLine($"[MakeCrud] Operación finalizada.");
     }
 
     private static List<FacturaCompraProducto> AsignarInfo(string folio, string tipo, IList<FacturaCompraProducto> detalles)
