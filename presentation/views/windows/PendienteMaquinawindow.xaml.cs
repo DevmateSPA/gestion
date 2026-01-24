@@ -68,7 +68,7 @@ namespace Gestion.presentation.views.pages;
             return;
 
         ordenTrabajo.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(
-            await _viewModel.LoadDetailsByFolio(ordenTrabajo.Folio));
+            await _viewModel.LoadDetailsByFolio(ordenTrabajo.Folio, ordenTrabajo.Empresa));
 
         await new EditorEntidadBuilder<OrdenTrabajo>()
             .Owner(Window.GetWindow(this)!)
