@@ -136,7 +136,7 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
             .Select("folio")
             .Where("empresa = @empresa AND folio LIKE @busquedaFolio",
                 new DbParam("@empresa", empresaId),
-                new DbParam("@busquedaFolio", $"{busquedaFolio}%"))
+                new DbParam("@busquedaFolio", $"%{busquedaFolio}%"))
             .ToListAsync<string>(); 
     }
 
