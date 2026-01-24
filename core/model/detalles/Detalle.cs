@@ -13,6 +13,7 @@ public class Detalle : IDetalle
     public string Maquina { get; set; } = string.Empty;
     public string Operario { get; set; } = string.Empty;
     public DateTime Fecha { get; set; }
+    public long Empresa { get; set; } = 0;
 
     public virtual Detalle Clone()
     {
@@ -26,7 +27,8 @@ public class Detalle : IDetalle
             Salida = Salida,
             Maquina = Maquina,
             Operario = Operario,
-            Fecha = Fecha
+            Fecha = Fecha,
+            Empresa = Empresa
         };
     }
 }

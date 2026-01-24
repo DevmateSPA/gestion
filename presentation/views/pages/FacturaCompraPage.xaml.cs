@@ -87,7 +87,7 @@ public partial class FacturaCompraPage : Page
         if (factura == null)
             return;
 
-        var detallesOriginales = await _viewModel.LoadDetailsByFolio(factura.Folio);
+        var detallesOriginales = await _viewModel.LoadDetailsByFolio(factura.Folio, factura.Empresa);
 
         factura.Detalles = new ObservableCollection<FacturaCompraProducto>(
             detallesOriginales.Select(d => (FacturaCompraProducto)d.Clone()));

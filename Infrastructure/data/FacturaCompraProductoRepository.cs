@@ -13,10 +13,11 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
     public FacturaCompraProductoRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "facturacompraproducto", null) {}
 
-    public async Task<List<FacturaCompraProducto>> FindByFolio(string folio)
+    public async Task<List<FacturaCompraProducto>> FindByFolio(string folio, long empresaId)
     {
         return await CreateQueryBuilder()
             .Where("folio = @folio AND tipo = 'FA'", new DbParam("@folio", folio))
+            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
             .ToListAsync<FacturaCompraProducto>();
     }
 
@@ -59,7 +60,9 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
         return affected > 0;
     }
 
-    public async Task<bool> UpdateAll(IList<FacturaCompraProducto> detalles)
+    public async Task<bool> UpdateAll(
+        IList<FacturaCompraProducto> detalles,
+        long empresaId)
     {
         if (detalles == null || detalles.Count == 0)
             return false;
@@ -101,13 +104,16 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
             .Select(e => typeof(FacturaCompraProducto).GetProperty("Id")!.GetValue(e)!)
             .ToList();
 
-        sb.Append($" WHERE id IN ({string.Join(", ", ids)})");
+        sb.Append($" WHERE id IN ({string.Join(", ", ids)}) AND empresa = @empresa");
+        parameters.Add(new DbParam("@empresa", empresaId));
 
         int affected = await ExecuteNonQueryAsync(sb.ToString(), parameters);
         return affected > 0;
     }
 
-    public async Task<bool> DeleteByIds(IList<long> ids)
+    public async Task<bool> DeleteByIds(
+        IList<long> ids, 
+        long empresaId)
     {
         if (ids == null || ids.Count == 0)
             return false;
@@ -115,19 +121,28 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
         var parameters = ids.Select((id, i) => new DbParam($"@id{i}", id)).ToList();
         string paramList = string.Join(", ", parameters.Select(p => p.Name));
 
-        string sql = $"DELETE FROM {_tableName} WHERE id IN ({paramList})";
+        string sql = $"DELETE FROM {_tableName} WHERE id IN ({paramList}) AND empresa = @empresa";
+
+        parameters.Add(new DbParam("@empresa", empresaId));
 
         int affected = await ExecuteNonQueryAsync(sql, parameters);
         return affected > 0;
     }
 
-    public async Task<bool> DeleteByFolio(string folio)
+    public async Task<bool> DeleteByFolio(
+        string folio, 
+        long empresaId)
     {
         if (string.IsNullOrWhiteSpace(folio))
             return false;
 
-        string sql = $"DELETE FROM {_tableName} WHERE folio = @folio";
-        int affected = await ExecuteNonQueryAsync(sql, [new DbParam("@folio", folio)]);
+        string sql = $"DELETE FROM {_tableName} WHERE folio = @folio AND empresa = @empresa";
+        int affected = await ExecuteNonQueryAsync(
+            sql, 
+            [
+                new DbParam("@folio", folio), 
+                new DbParam("@empresa", empresaId)
+            ]);
 
         return affected > 0;
     }
