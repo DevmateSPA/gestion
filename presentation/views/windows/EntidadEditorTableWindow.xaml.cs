@@ -139,7 +139,10 @@ public partial class EntidadEditorTableWindow: Window
 
         _dialogService.ShowToast(this, "Los datos se han guardado correctamente.");
 
-        Window.GetWindow(this)?.Close();
+        var ventana = Window.GetWindow(this);
+        
+        if (ventana != null)
+            ventana.DialogResult = true;
     }
 
     private async void BtnImprimir_Click(object sender, RoutedEventArgs e)
@@ -160,7 +163,10 @@ public partial class EntidadEditorTableWindow: Window
 
         _dialogService.ShowToast(this, "Se ha impreso correctamente.");
 
-        Window.GetWindow(this)?.Close();
+        var ventana = Window.GetWindow(this);
+        
+        if (ventana != null)
+            ventana.DialogResult = true;
     }
 
     private void BtnCancelar_Click(object sender, RoutedEventArgs e)
