@@ -19,4 +19,22 @@ public class ProveedorRepository : BaseRepository<Proveedor>, IProveedorReposito
                 ["empresa"] = empresaId
             },
             excludeId);
+
+    public async Task<List<string>> GetRutList(
+        string busquedaRut, 
+        long empresaId)
+    {
+        if (_viewName == null)
+            throw new InvalidOperationException("La vista no está asignada para este repositorio.");
+
+        if (string.IsNullOrWhiteSpace(busquedaRut) || busquedaRut.Length < 1)
+            return [];
+
+        return await CreateQueryBuilder()
+            .Select("rut")
+            .Where("empresa = @empresa AND rut LIKE @busquedaParam",
+                new DbParam("@empresa", empresaId),
+                new DbParam("@busquedaParam", $"{busquedaRut}%"))
+            .ToListAsync<string>();
+    }
 }

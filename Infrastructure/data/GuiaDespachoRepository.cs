@@ -32,7 +32,7 @@ public class GuiaDespachoRepository : BaseRepository<GuiaDespacho>, IGuiaDespach
 
         return await CreateQueryBuilder()
             .Select("folio")
-            .Where("empresa = @empresa AND rut LIKE @busquedaParam",
+            .Where("empresa = @empresa AND folio LIKE @busquedaFolio",
                 new DbParam("@empresa", empresaId),
                 new DbParam("@busquedaFolio", $"{busquedaFolio}%"))
             .ToListAsync<string>();

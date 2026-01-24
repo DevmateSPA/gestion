@@ -1,3 +1,4 @@
+using System.Reflection;
 using Gestion.core.interfaces.model;
 using Gestion.Infrastructure.data;
 
@@ -83,15 +84,26 @@ public class QueryBuilder<T> where T : IModel, new()
         // Mapear solo la columna TData si es necesario
         if (typeof(TData) != typeof(T))
         {
-            return [.. result.Select(r => (TData?)_repo.ConvertValue(
-                r.GetType().GetProperty(_selectColumns!)!.GetValue(r),
-                typeof(TData)
-            )!)];
+            if (_selectColumns == "*" || string.IsNullOrEmpty(_selectColumns))
+                throw new InvalidOperationException("_selectColumns debe ser el nombre de una propiedad si TData != T");
+
+            var propInfo = typeof(T).GetProperty(
+                _selectColumns!,
+                BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase
+            );
+
+            if (propInfo == null)
+                throw new InvalidOperationException($"La propiedad '{_selectColumns}' no existe en {typeof(T).Name}");
+
+            return [.. result.Select(r =>
+            {
+                var value = propInfo.GetValue(r);  // puede ser null
+                return (TData?)_repo.ConvertValue(value, typeof(TData))!;
+            })];
         }
 
         return [.. result.Cast<TData>()];
     }
-
     public async Task<long> CountAsync()
     {
         var table = _from ?? _repo._tableName;

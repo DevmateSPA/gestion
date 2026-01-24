@@ -54,7 +54,7 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
 
         return await CreateQueryBuilder()
             .Select("folio")
-            .Where("empresa = @empresa AND rut LIKE @busquedaParam",
+            .Where("empresa = @empresa AND folio LIKE @numero",
                 new DbParam("@empresa", empresaId),
                 new DbParam("@numero", $"{numero}%"))
             .ToListAsync<string>();
