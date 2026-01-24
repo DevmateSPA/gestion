@@ -55,7 +55,7 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
                 sb.Append(", ");
         }
 
-        int affected = await ExecuteNonQueryAsync(sb.ToString(), parameters);
+        int affected = await ExecuteNonQueryWithLogAsync("FacturaCompraProducto_SaveAll", sb.ToString(), parameters);
         return affected > 0;
     }
 

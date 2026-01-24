@@ -141,6 +141,16 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return await cmd.ExecuteNonQueryAsync();
     }
 
+    public async Task<int> ExecuteNonQueryWithLogAsync(string operation, string sql, IEnumerable<DbParam>? parameters = null)
+    {
+        return await SqlLogger.LogAsync(
+            operation: operation,
+            sql: sql,
+            action: async () => await ExecuteNonQueryAsync(sql, parameters),
+            countSelector: result => (int)result
+        );
+    }
+
     protected QueryBuilder<T> CreateQueryBuilder()
     {
         return new QueryBuilder<T>(this);
