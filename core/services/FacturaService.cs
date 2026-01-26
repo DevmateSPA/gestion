@@ -1,6 +1,8 @@
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.core.reglas.common;
 
 namespace Gestion.core.services;
 
@@ -25,28 +27,36 @@ public class FacturaService : BaseService<Factura>, IFacturaService
             empresaId);
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(
+    protected override IEnumerable<IReglaNegocio<Factura>> DefinirReglas(
         Factura entity,
         long? excludeId = null)
     {
-        List<string> erroresEncontrados = [];
+        return
+        [
+            new RequeridoRegla<Factura>(
+                f => f.Folio,
+                "El folio de la factura es obligatorio."),
 
-        if (await _facturaRepository.ExisteFolio(
-                folio: entity.Folio,
-                empresaId: entity.Empresa,
-                excludeId: excludeId))
-            erroresEncontrados.Add($"El folio de la factura: {entity.Folio}, ya existe para la empresa actual.");
+            new RequeridoRegla<Factura>(
+                f => f.RutCliente,
+                "El rut del cliente de la factura es obligatorio."),
 
-        if (string.IsNullOrWhiteSpace(entity.Folio))
-            erroresEncontrados.Add("El folio de la factura es obligatorio.");
+            new NoAnteriorFechaRegla<Factura>(
+                f => f.FechaVencimiento,
+                f => f.Fecha,
+                "La fecha de vencimiento no puede ser anterior a la fecha de la factura."),
 
-        if (string.IsNullOrWhiteSpace(entity.RutCliente))
-            erroresEncontrados.Add("El rut del cliente de la factura es obligatorio.");
+            new UnicoRegla<Factura>(
+                existe: (f, id) =>
+                    _facturaRepository.ExisteFolio(
+                        f.Folio,
+                        f.Empresa,
+                        id),
 
-        if (entity.FechaVencimiento.Date < entity.Fecha.Date)
-            erroresEncontrados.Add("La fecha de vencimiento no puede ser anterior a la fecha de la factura.");
+                valor: f => f.Folio,
 
-        return erroresEncontrados;
+                mensaje: "El folio de la factura: {0}, ya existe para la empresa actual.")
+        ];
     }
 
     public async Task<string> GetSiguienteFolio(long empresaId)

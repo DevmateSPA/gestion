@@ -1,7 +1,9 @@
 using System.Data.Common;
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.core.reglas.common;
 using MySql.Data.MySqlClient;
 
 namespace Gestion.core.services;
@@ -52,25 +54,31 @@ public class OrdenTrabajoService : BaseService<OrdenTrabajo>, IOrdenTrabajoServi
             empresaId);
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(
+    protected override IEnumerable<IReglaNegocio<OrdenTrabajo>> DefinirReglas(
         OrdenTrabajo entity,
         long? excludeId = null)
     {
-        List<string> erroresEncontrados = [];
+        return
+        [
+            new RequeridoRegla<OrdenTrabajo>(
+                c => c.Folio,
+                "El folio de la orden de trabajo es obligatorio."),
 
-        if (await _ordenTrabajoRepository.ExisteFolio(
-                folio: entity.Folio,
-                empresaId: entity.Empresa,
-                excludeId: excludeId))
-            erroresEncontrados.Add($"El folio de la orden de trabajo: {entity.Folio}, ya existe para la empresa actual.");
+            new RequeridoRegla<OrdenTrabajo>(
+                c => c.RutCliente,
+                "El rut del cliente de la orden de trabajo es obligatorio."),
 
-        if (string.IsNullOrWhiteSpace(entity.Folio))
-            erroresEncontrados.Add("El folio de la orden de trabajo es obligatorio.");
+            new UnicoRegla<OrdenTrabajo>(
+                existe: (ot, id) =>
+                    _ordenTrabajoRepository.ExisteFolio(
+                        ot.Folio,
+                        ot.Empresa,
+                        id),
 
-        if (string.IsNullOrWhiteSpace(entity.RutCliente))
-            erroresEncontrados.Add("El rut del cliente de la orden de trabajo es obligatorio.");
+                valor: ot => ot.Folio,
 
-        return erroresEncontrados;
+                mensaje: "El folio de la orden de trabajo: {0}, ya existe para la empresa actual.")
+        ];
     }
 
     public async Task<string> GetSiguienteFolio(long empresaId)

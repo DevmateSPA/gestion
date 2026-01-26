@@ -1,6 +1,8 @@
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.core.reglas.common;
 
 namespace Gestion.core.services;
 
@@ -13,23 +15,26 @@ public class EncuadernacionService : BaseService<Encuadernacion>, IEncuadernacio
         _encuadernacionRepository = encuadernacionRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(
+    protected override IEnumerable<IReglaNegocio<Encuadernacion>> DefinirReglas(
         Encuadernacion entity,
         long? excludeId = null)
     {
-        List<string> errores = [];
+        return
+        [
+            new RequeridoRegla<Encuadernacion>(
+                e => e.Descripcion,
+                "La descripción de la encuadernación es obligatoria."),
 
-        if (await _encuadernacionRepository.ExisteCodigo(
-                codigo: entity.Codigo,
-                empresaId: entity.Empresa,
-                excludeId: excludeId))
-        {
-            errores.Add($"El código de la encuadernación: {entity.Codigo}, ya existe para la empresa actual.");
-        }
+            new UnicoRegla<Encuadernacion>(
+                existe: (e, id) =>
+                    _encuadernacionRepository.ExisteCodigo(
+                        e.Codigo,
+                        e.Empresa,
+                        id),
 
-        if (string.IsNullOrWhiteSpace(entity.Descripcion))
-            errores.Add("La descripción de la encuadernación es obligatoria.");
+                valor: e => e.Codigo,
 
-        return errores;
+                mensaje: "El código de la encuadernación: {0}, ya existe para la empresa actual.")
+        ];
     }
 }

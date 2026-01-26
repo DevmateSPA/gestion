@@ -1,9 +1,8 @@
 using Gestion.core.exceptions;
 using Gestion.core.interfaces.model;
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
-using Gestion.Infrastructure.data;
-using MySql.Data.MySqlClient;
 
 namespace Gestion.core.services;
 
@@ -127,10 +126,7 @@ public abstract class BaseService<T> : IBaseService<T>
     /// </exception>
     public async Task<bool> Update(T entity)
     {
-        List<string> errores =
-            await ValidarReglasNegocio(entity, entity.Id);
-
-        AplicarReglasNegocio(errores);
+        await ValidarYAplicarReglas(entity, entity.Id);      
 
         return await _baseRepository.Update(entity);
     }
@@ -146,10 +142,7 @@ public abstract class BaseService<T> : IBaseService<T>
     /// </exception>
     public virtual async Task<bool> Save(T entity)
     {
-        List<string> errores =
-            await ValidarReglasNegocio(entity);
-
-        AplicarReglasNegocio(errores);
+        await ValidarYAplicarReglas(entity, null);
 
         return await _baseRepository.Save(entity);
     }
@@ -171,9 +164,9 @@ public abstract class BaseService<T> : IBaseService<T>
     /// <returns>
     /// Lista de mensajes de error. Si está vacía, la entidad es válida.
     /// </returns>
-    protected abstract Task<List<string>> ValidarReglasNegocio(
+    protected abstract IEnumerable<IReglaNegocio<T>> DefinirReglas(
         T entity,
-        long? excludeId = null);
+        long? excludeId);
 
     /// <summary>
     /// Aplica el resultado de las validaciones de negocio.
@@ -189,6 +182,24 @@ public abstract class BaseService<T> : IBaseService<T>
         if (errores.Count != 0)
             throw new ReglaNegocioException(
                 string.Join("\n", errores));
+    }
+
+    private async Task ValidarYAplicarReglas(
+        T entity,
+        long? excludeId)
+    {
+        var reglas = DefinirReglas(entity, excludeId);
+
+        List<string> errores = [];
+
+        foreach (var regla in reglas)
+        {
+            var error = await regla.Validar(entity, excludeId);
+            if (error != null)
+                errores.Add(error);
+        }
+
+        AplicarReglasNegocio(errores);
     }
 
     #endregion

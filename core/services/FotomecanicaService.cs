@@ -1,6 +1,8 @@
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.core.reglas.common;
 
 namespace Gestion.core.services;
 
@@ -13,23 +15,26 @@ public class FotomecanicaService : BaseService<Fotomecanica>, IFotomecanicaServi
         _fotomecanicaRepository = fotomecanicaRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(
+    protected override IEnumerable<IReglaNegocio<Fotomecanica>> DefinirReglas(
         Fotomecanica entity,
         long? excludeId = null)
     {
-        List<string> errores = [];
+        return
+        [
+            new RequeridoRegla<Fotomecanica>(
+                f => f.Descripcion,
+                "La descripción de la fotomecánica es obligatoria."),
 
-        if (await _fotomecanicaRepository.ExisteCodigo(
-                codigo: entity.Codigo,
-                empresaId: entity.Empresa,
-                excludeId: excludeId))
-        {
-            errores.Add($"El código de la fotomecánica: {entity.Codigo}, ya existe para la empresa actual.");
-        }
+            new UnicoRegla<Fotomecanica>(
+                existe: (f, id) =>
+                    _fotomecanicaRepository.ExisteCodigo(
+                        f.Codigo,
+                        f.Empresa,
+                        id),
 
-        if (string.IsNullOrWhiteSpace(entity.Descripcion))
-            errores.Add("La descripción de la fotomecánica es obligatoria.");
+                valor: f => f.Codigo,
 
-        return errores;
+                mensaje: "El código de la fotomecánica: {0}, ya existe para la empresa actual.")
+        ];
     }
 }

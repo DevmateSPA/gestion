@@ -1,3 +1,4 @@
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
@@ -38,11 +39,10 @@ public class FacturaCompraProductoService : BaseService<FacturaCompraProducto>, 
         return await _facturaCompraProductoRepository.UpdateAll(detalles, empresaId);
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(
+    protected override IEnumerable<IReglaNegocio<FacturaCompraProducto>> DefinirReglas(
         FacturaCompraProducto entity,
         long? excludeId = null)
     {
-        List<string> erroresEncontrados = [];
-        return erroresEncontrados;
+        return [];
     }
 }

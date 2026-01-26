@@ -1,6 +1,8 @@
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.core.reglas.common;
 
 namespace Gestion.core.services;
 
@@ -13,23 +15,26 @@ public class ImpresionService : BaseService<Impresion>, IImpresionService
         _impresionRepository = impresionRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(
+    protected override IEnumerable<IReglaNegocio<Impresion>> DefinirReglas(
         Impresion entity,
         long? excludeId = null)
     {
-        List<string> errores = [];
+        return
+        [
+            new RequeridoRegla<Impresion>(
+                i => i.Descripcion,
+                "La descripción de la impresión es obligatoria."),
 
-        if (await _impresionRepository.ExisteCodigo(
-                codigo: entity.Codigo,
-                empresaId: entity.Empresa,
-                excludeId: excludeId))
-        {
-            errores.Add($"El código de la impresión: {entity.Codigo}, ya existe para la empresa actual.");
-        }
+            new UnicoRegla<Impresion>(
+                existe: (i, id) =>
+                    _impresionRepository.ExisteCodigo(
+                        i.Codigo,
+                        i.Empresa,
+                        id),
 
-        if (string.IsNullOrWhiteSpace(entity.Descripcion))
-            errores.Add("La descripción de la impresión es obligatoria.");
+                valor: i => i.Codigo,
 
-        return errores;
+                mensaje: "El código de la impresión: {0}, ya existe para la empresa actual.")
+        ];
     }
 }

@@ -1,6 +1,8 @@
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.core.reglas.common;
 using Gestion.Infrastructure.data;
 
 namespace Gestion.core.services;
@@ -29,23 +31,26 @@ public class MaquinaService : BaseService<Maquina>, IMaquinaService
         return await _maquinaRepository.FindPageMaquinaWithPendingOrders(empresaId, pageNumber, pageSize);
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(
+    protected override IEnumerable<IReglaNegocio<Maquina>> DefinirReglas(
         Maquina entity,
         long? excludeId = null)
     {
-        List<string> errores = [];
+        return
+        [
+            new RequeridoRegla<Maquina>(
+                m => m.Descripcion,
+                "La descripción de la máquina es obligatoria."),
 
-        if (await _maquinaRepository.ExisteCodigo(
-                codigo: entity.Codigo,
-                empresaId: entity.Empresa,
-                excludeId: excludeId))
-        {
-            errores.Add($"El código de la máquina: {entity.Codigo}, ya existe para la empresa actual.");
-        }
+            new UnicoRegla<Maquina>(
+                existe: (m, id) =>
+                    _maquinaRepository.ExisteCodigo(
+                        m.Codigo,
+                        m.Empresa,
+                        id),
 
-        if (string.IsNullOrWhiteSpace(entity.Descripcion))
-            errores.Add("La descripción de la máquina es obligatoria.");
+                valor: m => m.Codigo,
 
-        return errores;
+                mensaje: "El código de la máquina: {0}, ya existe para la empresa actual.")
+        ];
     }
 }
