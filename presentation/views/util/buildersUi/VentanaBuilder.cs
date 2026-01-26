@@ -38,6 +38,7 @@ public class VentanaBuilder<TEntidad>
     private Panel? _contenedorTablas;
     private Button? _btnGuardar;
     private Button? _btnImprimir;
+    private Button? _btnExtra1;
     private bool? _shouldImprimir;
     private TEntidad? _entidad;
     private ModoFormulario _modo = ModoFormulario.Edicion;
@@ -79,6 +80,13 @@ public class VentanaBuilder<TEntidad>
     public VentanaBuilder<TEntidad> SetBotonGuardar(Button btn)
     {
         _btnGuardar = btn;
+        return this;
+    }
+
+    public VentanaBuilder<TEntidad> SetBotonExtra1(Button btn, string label)
+    {
+        _btnExtra1 = btn;
+        _btnExtra1.Content = label;
         return this;
     }
 
@@ -147,6 +155,11 @@ public class VentanaBuilder<TEntidad>
                 _modo == ModoFormulario.Edicion
                     ? Visibility.Visible
                     : Visibility.Collapsed;
+        }
+
+        if (_btnExtra1 != null)
+        {
+            _btnExtra1.Visibility = Visibility.Visible;
         }
 
         if (_btnImprimir != null)

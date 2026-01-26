@@ -27,6 +27,12 @@
                     Margin="0 0 10 0"
                     Click="BtnImprimir_Click" 
                     Visibility="Collapsed" />
+            <Button Content="BotonExtra1"
+                    x:Name="btnExtra1"
+                    Width="140" Height="40"
+                    Margin="0 0 10 0"
+                    Click="BtnExtra1_Click" 
+                    Visibility="Collapsed" />
             <Button Content="Cerrar"
                     Width="140" Height="40"
                     Click="BtnCancelar_Click" />

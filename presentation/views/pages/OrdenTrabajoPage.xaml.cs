@@ -1,18 +1,15 @@
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
-using Gestion.presentation.views.windows;
 using Gestion.presentation.views.util;
-using System.ComponentModel;
-using Microsoft.Extensions.DependencyInjection;
 using Gestion.core.interfaces.service;
 using System.Collections.ObjectModel;
 using Gestion.core.model.detalles;
 using Gestion.core.session;
 using Gestion.helpers;
+using Gestion.core.services;
 
 namespace Gestion.presentation.views.pages;
 
@@ -21,12 +18,11 @@ public partial class OrdenTrabajoPage : Page
     private DataGrid _dataGrid; 
 
     private readonly OrdenTrabajoViewModel _viewModel;
-    private readonly IDetalleOTService _detalleOTService;
+    private readonly DialogService _dialogService = new();
     public OrdenTrabajoPage(OrdenTrabajoViewModel viewModel, IDetalleOTService detalleOTService)
     {
         InitializeComponent();
         _viewModel = viewModel;
-        _detalleOTService = detalleOTService;
         DataContext = _viewModel;
         Title = $"Ordenes de Trabajo";
 
@@ -59,6 +55,8 @@ public partial class OrdenTrabajoPage : Page
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
 
+    private string _tituloBotonEntregadas = "Marcar como entregada??";
+
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
         var ordenTrabajo = new OrdenTrabajo
@@ -77,6 +75,7 @@ public partial class OrdenTrabajoPage : Page
                     [],
                     facturaEditada.Detalles.Cast<DetalleOrdenTrabajo>(),
                     facturaEditada))
+            .TituloBtnExtra1(_tituloBotonEntregadas)
             .Abrir();
     }
 
@@ -116,6 +115,13 @@ public partial class OrdenTrabajoPage : Page
                     facturaEditada.Detalles.Cast<DetalleOrdenTrabajo>(),
                     facturaEditada))
             .ShouldBtnImpresion()
+            .TituloBtnExtra1(_tituloBotonEntregadas)
+            .SetBtn1Action(async win =>
+            {
+                var orden = (OrdenTrabajo)win.EntidadEditada!;
+
+                _dialogService.ShowToast(win, $"Has precionado el boton con la entidad OT =>: {orden.Folio}");
+            })
             .Abrir();
     }
 

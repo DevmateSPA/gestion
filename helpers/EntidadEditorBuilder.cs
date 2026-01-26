@@ -34,10 +34,12 @@ public class EditorEntidadBuilder<T>
     private T? _entidad;
     private string _titulo = "Editar";
     private Func<T, Task<bool>>? _guardar = _ => Task.FromResult(true);
-    private Action<OrdenTrabajo>? _imprimir;
+    private Action<OrdenTrabajo>? _imprimir = null;
+    private Func<EntidadEditorTableWindow, Task>? _btn1Action = null;
     private Func<T, Task>? _onClose;
     private ModoFormulario _modo = ModoFormulario.Edicion;
     private bool _ShouldImpresion = false;
+    private string _tituloBtnEx1 = "Boton Extra 1 (Prueba)";
 
     /// <summary>
     /// Define la ventana propietaria del editor.
@@ -69,6 +71,18 @@ public class EditorEntidadBuilder<T>
     public EditorEntidadBuilder<T> Titulo(string titulo)
     {
         _titulo = titulo;
+        return this;
+    }
+
+    public EditorEntidadBuilder<T> TituloBtnExtra1(string titulo)
+    {
+        _tituloBtnEx1 = titulo;
+        return this;
+    }
+
+    public EditorEntidadBuilder<T> SetBtn1Action(Func<EntidadEditorTableWindow, Task> action)
+    {
+        _btn1Action = action;
         return this;
     }
 
@@ -169,9 +183,11 @@ public class EditorEntidadBuilder<T>
             _entidad,
             async obj => _guardar == null || await _guardar((T)obj),
             _imprimir,
+            _btn1Action,
             _modo,
             _ShouldImpresion,
-            _titulo)
+            _titulo,
+            _tituloBtnEx1)
         {
             Owner = _owner
         };
