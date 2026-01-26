@@ -177,11 +177,11 @@ public abstract class BaseService<T> : IBaseService<T>
     /// <exception cref="ReglaNegocioException">
     /// Se lanza cuando existen reglas incumplidas.
     /// </exception>
-    private static void AplicarReglasNegocio(List<string> errores)
+    private static void AplicarReglasNegocio(
+        IReadOnlyCollection<ErrorNegocio> errores)
     {
         if (errores.Count != 0)
-            throw new ReglaNegocioException(
-                string.Join("\n", errores));
+            throw new ReglaNegocioException(errores);
     }
 
     private async Task ValidarYAplicarReglas(
@@ -190,12 +190,12 @@ public abstract class BaseService<T> : IBaseService<T>
     {
         var reglas = DefinirReglas(entity, excludeId);
 
-        List<string> errores = [];
+        List<ErrorNegocio> errores = [];
 
         foreach (var regla in reglas)
         {
             var error = await regla.Validar(entity, excludeId);
-            if (error != null)
+            if (error is not null)
                 errores.Add(error);
         }
 
