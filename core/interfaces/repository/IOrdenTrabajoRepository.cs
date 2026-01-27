@@ -10,7 +10,6 @@ public interface IOrdenTrabajoRepository : IBaseRepository<OrdenTrabajo>
     Task<List<OrdenTrabajo>> FindPageByMaquinaWhereEmpresaAndPendiente(long empresaId, string codigoMaquina, int pageNumber, int pageSize);
     Task<long> ContarPendientes(long empresaId);
     Task<long> ContarByMaquinaWhereEmpresaAndPendientes(long empresaId, string codigoMaquina);
-    Task<bool> ExisteFolio(string folio, long empresaId, long? excludeId = null);
     Task<List<string>> GetFolioList(string busquedaFolio, long empresaId);
     Task<String> GetSiguienteFolio(long empresaId);
 }

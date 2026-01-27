@@ -20,5 +20,5 @@ public class Usuario : IEmpresa
     public string TipoDesc { get; set; } = string.Empty;
     [Orden(2)]
     [ComboSource("TIPOS_USUARIO", Display = "Nombre", Value = "Id")]
-    public long Tipo { get; set; }
+    public long Tipo { get; set; } = 0;
 }

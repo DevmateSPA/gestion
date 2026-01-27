@@ -43,9 +43,11 @@ public class MaquinaService : BaseService<Maquina>, IMaquinaService
 
             new UnicoRegla<Maquina>(
                 existe: (m, id) =>
-                    _maquinaRepository.ExisteCodigo(
-                        m.Codigo,
-                        m.Empresa,
+                    _maquinaRepository.ExistsByColumns(
+                        [
+                            ("codigo", m.Codigo),
+                            ("empresa", m.Empresa)
+                        ],
                         id),
 
                 valor: m => m.Codigo,

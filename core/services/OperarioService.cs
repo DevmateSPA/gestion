@@ -27,9 +27,11 @@ public class OperarioService : BaseService<Operario>, IOperarioService
 
             new UnicoRegla<Operario>(
                 existe: (op, id) =>
-                    _operarioRepository.ExisteCodigo(
-                        op.Codigo,
-                        op.Empresa,
+                    _operarioRepository.ExistsByColumns(
+                        [
+                            ("codigo", op.Codigo),
+                            ("empresa", op.Empresa)
+                        ],
                         id),
 
                 valor: op => op.Codigo,

@@ -27,9 +27,11 @@ public class ProveedorService : BaseService<Proveedor>, IProveedorService
 
             new UnicoRegla<Proveedor>(
                 existe: (p, id) =>
-                    _proveedorRepository.ExisteRut(
-                        p.Rut,
-                        p.Empresa,
+                    _proveedorRepository.ExistsByColumns(
+                        [
+                            ("rut", p.Rut),
+                            ("empresa", p.Empresa)
+                        ],
                         id),
 
                 valor: p => p.Rut,

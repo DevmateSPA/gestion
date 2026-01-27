@@ -4,7 +4,7 @@ using Gestion.Infrastructure.data;
 
 namespace Gestion.core.interfaces.repository;
 
-public interface IBaseRepository<T> where T : IModel
+public interface IBaseRepository<T> where T : IModel, new()
 {
     Task<T?> FindById(long id);
     Task<List<T>> FindAll();
@@ -39,4 +39,12 @@ public interface IBaseRepository<T> where T : IModel
         string columnName, 
         string where, 
         IEnumerable<DbParam>? parameters = null);
+
+    Task<bool> ExistsByColumns(
+        IEnumerable<(string column, object value)> columns,
+        long? excludeId = null);
+
+    Task<bool> Exists(
+        Action<QueryBuilder<T>> build,
+        long? excludeId = null);
 }

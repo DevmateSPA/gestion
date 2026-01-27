@@ -8,15 +8,4 @@ public class DocumentoNuloRepository : BaseRepository<DocumentoNulo>, IDocumento
 {
     public DocumentoNuloRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "documentonulo", "vw_documentonulo") {}
-
-    public async Task<bool> ExisteFolio(
-        string folio,
-        long empresaId,
-        long? excludeId = null) => await ExistsByColumns(
-            new Dictionary<string, object>
-            {
-                ["folio"] = folio,
-                ["empresa"] = empresaId
-            },
-            excludeId);
 }

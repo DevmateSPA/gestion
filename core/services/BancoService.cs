@@ -26,10 +26,12 @@ public class BancoService : BaseService<Banco>, IBancoService
                 "El nombre del banco es obligatorio."),
 
             new UnicoRegla<Banco>(
-                existe: (banco, id) =>
-                    _bancoRepository.ExisteCodigo(
-                        banco.Codigo,
-                        banco.Empresa,
+                existe: (b, id) =>
+                    _bancoRepository.ExistsByColumns(
+                        [
+                            ("codigo", b.Codigo),
+                            ("empresa", b.Empresa)
+                        ],
                         id),
 
                 valor: b => b.Codigo,

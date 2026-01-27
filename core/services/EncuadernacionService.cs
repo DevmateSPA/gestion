@@ -27,9 +27,11 @@ public class EncuadernacionService : BaseService<Encuadernacion>, IEncuadernacio
 
             new UnicoRegla<Encuadernacion>(
                 existe: (e, id) =>
-                    _encuadernacionRepository.ExisteCodigo(
-                        e.Codigo,
-                        e.Empresa,
+                    _encuadernacionRepository.ExistsByColumns(
+                        [
+                            ("codigo", e.Codigo),
+                            ("empresa", e.Empresa)
+                        ],
                         id),
 
                 valor: e => e.Codigo,

@@ -27,9 +27,11 @@ public class GrupoService : BaseService<Grupo>, IGrupoService
 
             new UnicoRegla<Grupo>(
                 existe: (g, id) =>
-                    _grupoRepository.ExisteCodigo(
-                        g.Codigo,
-                        g.Empresa,
+                    _grupoRepository.ExistsByColumns(
+                        [
+                            ("codigo", g.Codigo),
+                            ("empresa", g.Empresa)
+                        ],
                         id),
 
                 valor: g => g.Codigo,

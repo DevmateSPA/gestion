@@ -40,6 +40,24 @@ public class UsuarioService : BaseService<Usuario>, IUsuarioService
             new RequeridoRegla<Usuario>(
                 c => c.Clave,
                 "La clave del usuario es obligatoria."),
+
+        new NoValorPorDefectoRegla<Usuario, long>(
+            u => u.Tipo,
+            valorInvalido: 0,
+            mensaje: "Debe seleccionar un tipo de usuario."),
+
+            new UnicoRegla<Usuario>(
+                existe: (u, id) =>
+                    _usuarioRepository.ExistsByColumns(
+                        [
+                            ("nombre", u.Nombre),
+                            ("empresa", u.Empresa)
+                        ],
+                        id),
+
+                valor: u => u.Nombre,
+
+                mensaje: "El nombre del usuario: {0}, ya existe para la empresa actual.")
         ];
     }
 }

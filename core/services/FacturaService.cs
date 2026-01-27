@@ -48,9 +48,11 @@ public class FacturaService : BaseService<Factura>, IFacturaService
 
             new UnicoRegla<Factura>(
                 existe: (f, id) =>
-                    _facturaRepository.ExisteFolio(
-                        f.Folio,
-                        f.Empresa,
+                    _facturaRepository.ExistsByColumns(
+                        [
+                            ("folio", f.Folio),
+                            ("empresa", f.Empresa)
+                        ],
                         id),
 
                 valor: f => f.Folio,

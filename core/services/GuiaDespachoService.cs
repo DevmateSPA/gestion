@@ -36,9 +36,11 @@ public class GuiaDespachoService : BaseService<GuiaDespacho>, IGuiaDespachoServi
 
             new UnicoRegla<GuiaDespacho>(
                 existe: (gd, id) =>
-                    _guiaDespachoRepository.ExisteFolio(
-                        gd.Folio,
-                        gd.Empresa,
+                    _guiaDespachoRepository.ExistsByColumns(
+                        [
+                            ("folio", gd.Folio),
+                            ("empresa", gd.Empresa)
+                        ],
                         id),
 
                 valor: gd => gd.Folio,

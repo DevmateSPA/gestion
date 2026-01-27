@@ -70,9 +70,11 @@ public class OrdenTrabajoService : BaseService<OrdenTrabajo>, IOrdenTrabajoServi
 
             new UnicoRegla<OrdenTrabajo>(
                 existe: (ot, id) =>
-                    _ordenTrabajoRepository.ExisteFolio(
-                        ot.Folio,
-                        ot.Empresa,
+                    _ordenTrabajoRepository.ExistsByColumns(
+                        [
+                            ("folio", ot.Folio),
+                            ("empresa", ot.Empresa)
+                        ],
                         id),
 
                 valor: ot => ot.Folio,

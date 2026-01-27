@@ -33,17 +33,6 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
             parameters);
     }
 
-    public async Task<bool> ExisteFolio(
-        string folio,
-        long empresaId,
-        long? excludeId = null) => await ExistsByColumns(
-            new Dictionary<string, object>
-            {
-                ["folio"] = folio,
-                ["empresa"] = empresaId
-            },
-            excludeId);
-
     public async Task<List<string>> GetFolioList(string numero, long empresaId)
     {
         if (_viewName == null)

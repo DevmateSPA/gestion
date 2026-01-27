@@ -10,17 +10,6 @@ public class ClienteRepository : BaseRepository<Cliente>, IClienteRepository
     public ClienteRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "cliente", "vw_cliente") {}
 
-    public async Task<bool> ExisteRut(
-        string rut,
-        long empresaId,
-        long? excludeId = null) => await ExistsByColumns(
-            new Dictionary<string, object>
-            {
-                ["rut"] = rut,
-                ["empresa"] = empresaId
-            },
-            excludeId);
-
     public async Task<List<string>> GetRutList(
         string busquedaRut, 
         long empresaId)

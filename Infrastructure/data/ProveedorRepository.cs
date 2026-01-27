@@ -9,17 +9,6 @@ public class ProveedorRepository : BaseRepository<Proveedor>, IProveedorReposito
     public ProveedorRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "proveedor", "vw_proveedor") {}
 
-    public async Task<bool> ExisteRut(
-        string rut,
-        long empresaId,
-        long? excludeId = null) => await ExistsByColumns(
-            new Dictionary<string, object>
-            {
-                ["rut"] = rut,
-                ["empresa"] = empresaId
-            },
-            excludeId);
-
     public async Task<List<string>> GetRutList(
         string busquedaRut, 
         long empresaId)

@@ -23,7 +23,7 @@ namespace Gestion.core.services;
 /// Debe implementar <see cref="IModel"/>.
 /// </typeparam>
 public abstract class BaseService<T> : IBaseService<T>
-    where T : IModel
+    where T : IModel, new()
 {
     /// <summary>
     /// Repositorio base asociado a la entidad.

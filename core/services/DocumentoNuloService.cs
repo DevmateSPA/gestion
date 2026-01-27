@@ -27,9 +27,11 @@ public class DocumentoNuloService : BaseService<DocumentoNulo>, IDocumentoNuloSe
 
             new UnicoRegla<DocumentoNulo>(
                 existe: (dn, id) =>
-                    _documentoNuloRepository.ExisteFolio(
-                        dn.Folio,
-                        dn.Empresa,
+                    _documentoNuloRepository.ExistsByColumns(
+                        [
+                            ("folio", dn.Folio),
+                            ("empresa", dn.Empresa)
+                        ],
                         id),
 
                 valor: dn => dn.Folio,

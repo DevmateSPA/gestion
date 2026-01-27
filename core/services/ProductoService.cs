@@ -27,9 +27,11 @@ public class ProductoService : BaseService<Producto>, IProductoService
 
             new UnicoRegla<Producto>(
                 existe: (p, id) =>
-                    _productoRepository.ExisteCodigo(
-                        p.Codigo,
-                        p.Empresa,
+                    _productoRepository.ExistsByColumns(
+                        [
+                            ("codigo", p.Codigo),
+                            ("empresa", p.Empresa)
+                        ],
                         id),
 
                 valor: p => p.Codigo,

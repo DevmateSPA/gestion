@@ -11,17 +11,6 @@ public class NotaCreditoRepository : BaseRepository<NotaCredito>, INotaCreditoRe
     public NotaCreditoRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "notacredito", "vw_notacredito") {}
 
-    public async Task<bool> ExisteFolio(
-        string folio,
-        long empresaId,
-        long? excludeId = null) => await ExistsByColumns(
-            new Dictionary<string, object>
-            {
-                ["folio"] = folio,
-                ["empresa"] = empresaId
-            },
-            excludeId);
-
     public async Task<string> GetSiguienteFolio(long empresaId)
     {
         using var conn = await _connectionFactory.CreateConnection();

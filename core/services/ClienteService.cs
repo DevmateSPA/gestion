@@ -32,9 +32,11 @@ public class ClienteService : BaseService<Cliente>, IClienteService
 
             new UnicoRegla<Cliente>(
                 existe: (cliente, id) =>
-                    _clienteRepository.ExisteRut(
-                        cliente.Rut,
-                        cliente.Empresa,
+                    _clienteRepository.ExistsByColumns(
+                        [
+                            ("rut", cliente.Rut),
+                            ("empresa", cliente.Empresa)
+                        ],
                         id),
 
                 valor: c => c.Rut,

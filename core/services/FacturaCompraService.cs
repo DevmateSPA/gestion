@@ -36,9 +36,11 @@ public class FacturaCompraService : BaseService<FacturaCompra>, IFacturaCompraSe
 
             new UnicoRegla<FacturaCompra>(
                 existe: (f, id) =>
-                    _facturaCompraRepository.ExisteFolio(
-                        f.Folio,
-                        f.Empresa,
+                    _facturaCompraRepository.ExistsByColumns(
+                        [
+                            ("folio", f.Folio),
+                            ("empresa", f.Empresa)
+                        ],
                         id),
 
                 valor: f => f.Folio,

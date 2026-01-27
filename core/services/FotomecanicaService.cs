@@ -27,9 +27,11 @@ public class FotomecanicaService : BaseService<Fotomecanica>, IFotomecanicaServi
 
             new UnicoRegla<Fotomecanica>(
                 existe: (f, id) =>
-                    _fotomecanicaRepository.ExisteCodigo(
-                        f.Codigo,
-                        f.Empresa,
+                    _fotomecanicaRepository.ExistsByColumns(
+                        [
+                            ("codigo", f.Codigo),
+                            ("empresa", f.Empresa)
+                        ],
                         id),
 
                 valor: f => f.Codigo,

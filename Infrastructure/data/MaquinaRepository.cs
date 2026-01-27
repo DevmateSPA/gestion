@@ -41,15 +41,4 @@ public class MaquinaRepository : BaseRepository<Maquina>, IMaquinaRepository
 
         return await builder.ToListAsync<Maquina>();
     }
-
-    public async Task<bool> ExisteCodigo(
-        string codigo,
-        long empresaId,
-        long? excludeId = null) => await ExistsByColumns(
-            new Dictionary<string, object>
-            {
-                ["codigo"] = codigo,
-                ["empresa"] = empresaId
-            },
-            excludeId);
 }

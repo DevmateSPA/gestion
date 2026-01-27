@@ -31,9 +31,11 @@ public class NotaCreditoService : BaseService<NotaCredito>, INotaCreditoService
 
             new UnicoRegla<NotaCredito>(
                 existe: (nc, id) =>
-                    _notaCreditoRepository.ExisteFolio(
-                        nc.Folio,
-                        nc.Empresa,
+                    _notaCreditoRepository.ExistsByColumns(
+                        [
+                            ("folio", nc.Folio),
+                            ("empresa", nc.Empresa)
+                        ],
                         id),
 
                 valor: nc => nc.Folio,

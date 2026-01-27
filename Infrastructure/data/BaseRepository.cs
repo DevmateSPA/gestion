@@ -504,21 +504,34 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
             parameters: parameters);
     }
 
-    public async Task<bool> ExistsByColumns(
-        Dictionary<string, object> columns, 
+    public async Task<bool> Exists(
+        Action<QueryBuilder<T>> build,
         long? excludeId = null)
     {
         var builder = CreateQueryBuilder();
 
-        foreach (var kv in columns)
-            builder.Where($"{kv.Key} = @{kv.Key}", new DbParam($"@{kv.Key}", kv.Value));
+        build(builder);
 
         if (excludeId.HasValue)
-            builder.Where("id <> @excludeId", new DbParam("@excludeId", excludeId.Value));
+            builder.Where("id <> @excludeId",
+                new DbParam("@excludeId", excludeId.Value));
 
-        long count = await builder.CountAsync();
+        return await builder.CountAsync() > 0;
+    }
 
-        return count > 0;
+    public async Task<bool> ExistsByColumns(
+        IEnumerable<(string column, object value)> columns,
+        long? excludeId = null)
+    {
+        return await Exists(builder =>
+        {
+            foreach (var (column, value) in columns)
+            {
+                builder.Where(
+                    $"{column} = @{column}",
+                    new DbParam($"@{column}", value));
+            }
+        }, excludeId);
     }
 
     public async Task<List<TData>> GetColumnList<TData>(string columnName, string where, IEnumerable<DbParam>? parameters = null)

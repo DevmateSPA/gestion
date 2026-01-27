@@ -27,9 +27,11 @@ public class ImpresionService : BaseService<Impresion>, IImpresionService
 
             new UnicoRegla<Impresion>(
                 existe: (i, id) =>
-                    _impresionRepository.ExisteCodigo(
-                        i.Codigo,
-                        i.Empresa,
+                    _impresionRepository.ExistsByColumns(
+                        [
+                            ("codigo", i.Codigo),
+                            ("empresa", i.Empresa)
+                        ],
                         id),
 
                 valor: i => i.Codigo,
