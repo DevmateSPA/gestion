@@ -63,11 +63,6 @@ public class Factura : TotalBase
     [Orden(7)]
     public long NotaCredito { get; set; }
 
-    [Nombre("Orden de Compra")]
-    [Grupo("Datos Internos", GRUPO_TOTALES+1)]
-    [Orden(0)]
-    public string OrdenTrabajo { get; set; } = string.Empty;
-
     [Visible(false)]
     public string Tipo { get; set; } = string.Empty;
 

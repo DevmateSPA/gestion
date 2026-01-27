@@ -68,6 +68,14 @@ public class OrdenTrabajoService : BaseService<OrdenTrabajo>, IOrdenTrabajoServi
                 c => c.RutCliente,
                 "El rut del cliente de la orden de trabajo es obligatorio."),
 
+            new RequeridoRegla<OrdenTrabajo>(
+                o => o.Maquina1,
+                "Debe seleccionar una Máquina principal."),
+
+            new RequeridoRegla<OrdenTrabajo>(
+                o => o.Operador1,
+                "Debe seleccionar un Operador principal."),
+
             new UnicoRegla<OrdenTrabajo>(
                 existe: (ot, id) =>
                     _ordenTrabajoRepository.ExistsByColumns(

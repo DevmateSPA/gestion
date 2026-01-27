@@ -41,10 +41,11 @@ public class UsuarioService : BaseService<Usuario>, IUsuarioService
                 c => c.Clave,
                 "La clave del usuario es obligatoria."),
 
-        new NoValorPorDefectoRegla<Usuario, long>(
-            u => u.Tipo,
-            valorInvalido: 0,
-            mensaje: "Debe seleccionar un tipo de usuario."),
+            new NoValorPorDefectoRegla<Usuario, long>(
+                u => u.Tipo,
+                valorInvalido: 0,
+                mensaje: "Debe seleccionar un tipo de usuario."),
+            
 
             new UnicoRegla<Usuario>(
                 existe: (u, id) =>
