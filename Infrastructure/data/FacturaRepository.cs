@@ -11,26 +11,21 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
     public FacturaRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "factura", "vw_factura") { }
 
-    public async Task<List<Factura>> FindAllByRutBetweenFecha(long empresaId, string rutCliente, DateTime fechaDesde, DateTime fechaHasta)
+    public async Task<List<Factura>> FindAllByRutBetweenFecha(
+        long empresaId,
+        string rutCliente,
+        DateTime fechaDesde,
+        DateTime fechaHasta)
     {
         if (_viewName == null)
             throw new InvalidOperationException("La vista no está asignada para este repositorio.");
 
-        DbParam[] parameters =
-        [
-            new DbParam("@empresa", empresaId),
-            new DbParam("@rutCliente", rutCliente),
-            new DbParam("@fechaDesde", fechaDesde),
-            new DbParam("@fechaHasta", fechaHasta),
-        ];
-
-        return await FindWhereFrom(
-            tableOrView: _viewName,
-            where: "empresa = @empresa AND rutcliente = @rutCliente AND fecha BETWEEN @fechaDesde AND @fechaHasta",
-            orderBy: "fecha DESC",
-            limit: null,
-            offset: null,
-            parameters);
+        return await CreateQueryBuilder()
+            .WhereEqual("empresa", empresaId)
+            .WhereEqual("rutcliente", rutCliente)
+            .WhereBetween("fecha", fechaDesde, fechaHasta)
+            .OrderBy("fecha DESC")
+            .ToListAsync<Factura>();
     }
 
     public async Task<List<string>> GetFolioList(string numero, long empresaId)
@@ -43,9 +38,8 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
 
         return await CreateQueryBuilder()
             .Select("folio")
-            .Where("empresa = @empresa AND folio LIKE @numero",
-                new DbParam("@empresa", empresaId),
-                new DbParam("@numero", $"%{numero}%"))
+            .WhereEqual("empresa", empresaId)
+            .WhereLike("folio", $"%{numero}%")
             .ToListAsync<string>();
     }
 

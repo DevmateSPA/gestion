@@ -21,9 +21,8 @@ public class ProveedorRepository : BaseRepository<Proveedor>, IProveedorReposito
 
         return await CreateQueryBuilder()
             .Select("rut")
-            .Where("empresa = @empresa AND rut LIKE @busquedaParam",
-                new DbParam("@empresa", empresaId),
-                new DbParam("@busquedaParam", $"{busquedaRut}%"))
+            .WhereEqual("empresa", empresaId)
+            .WhereLike("rut", $"{busquedaRut}%")
             .ToListAsync<string>();
     }
 }

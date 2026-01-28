@@ -21,9 +21,8 @@ public class GuiaDespachoRepository : BaseRepository<GuiaDespacho>, IGuiaDespach
 
         return await CreateQueryBuilder()
             .Select("folio")
-            .Where("empresa = @empresa AND folio LIKE @busquedaFolio",
-                new DbParam("@empresa", empresaId),
-                new DbParam("@busquedaFolio", $"%{busquedaFolio}%"))
+            .WhereEqual("empresa", empresaId)
+            .WhereLike("folio", $"%{busquedaFolio}%")
             .ToListAsync<string>();
     }
 

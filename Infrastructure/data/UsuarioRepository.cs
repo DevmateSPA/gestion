@@ -14,21 +14,19 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
     public override async Task<List<Usuario>> FindAllByEmpresa(long empresaId)
     {
         return await CreateQueryBuilder()
-            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
+            .WhereEqual("empresa", empresaId)
             .OrderBy("fecha DESC")
             .ToListAsync<Usuario>();
     }
 
     public async Task<Usuario?> GetByNombre(string nombreUsuario, long empresaId)
     {
-        var list = await CreateQueryBuilder()
-            .Where("empresa = @empresa AND LOWER(nombre) = @nombre",
-                new DbParam("@empresa", empresaId),
-                new DbParam("@nombre", nombreUsuario.ToLower()))
+        return (await CreateQueryBuilder()
+            .WhereEqual("empresa", empresaId)
+            .Where("LOWER(nombre) = @nombre", new DbParam("@nombre", nombreUsuario.ToLower()))
             .Limit(1)
-            .ToListAsync<Usuario>();
-
-        return list.FirstOrDefault();
+            .ToListAsync<Usuario>())
+            .FirstOrDefault();
     }
 
     public async Task<List<TipoUsuarioDTO>> GetTipoList()

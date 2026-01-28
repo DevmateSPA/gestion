@@ -24,12 +24,6 @@ public interface IBaseRepository<T> where T : IModel, new()
         long empresaId, 
         int pageNumber, 
         int pageSize);
-    Task<List<T>> FindPageWhere(
-        string where, 
-        string? orderBy, 
-        int pageNumber, 
-        int pageSize,
-        IEnumerable<DbParam>? parameters = null);
     Task<long> CountWhere(
         string where, 
         string? tableName, 

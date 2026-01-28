@@ -50,31 +50,12 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         = new();
 
 
-    /// <summary>
-    /// Inicializa una nueva instancia del repositorio base.
-    /// </summary>
-    /// <param name="connectionFactory">Fábrica de conexiones a la base de datos.</param>
-    /// <param name="tableName">Nombre de la tabla principal.</param>
-    /// <param name="viewName">Nombre de la vista asociada (opcional).</param>
     protected BaseRepository(IDbConnectionFactory connectionFactory, string tableName, string? viewName)
     {
         _connectionFactory = connectionFactory;
         _tableName = tableName;
         _viewName = viewName;
     }
-
-    /// <summary>
-    /// Convierte un valor proveniente de la base de datos al tipo de destino.
-    /// </summary>
-    /// <param name="value">Valor original obtenido del lector de datos.</param>
-    /// <param name="targetType">Tipo de destino.</param>
-    /// <returns>
-    /// Valor convertido al tipo correspondiente, o <c>null</c> si el valor es nulo.
-    /// </returns>
-    /// <remarks>
-    /// Incluye manejo especial para conversiones de valores booleanos
-    /// almacenados como BIT o TINYINT.
-    /// </remarks>
     public object? ConvertValue(object? value, Type targetType)
     {
         if (value == null || value == DBNull.Value)
@@ -156,14 +137,6 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return new QueryBuilder<T>(this);
     }
 
-    /// <summary>
-    /// Mapea una fila del <see cref="DbDataReader"/> a una instancia de la entidad.
-    /// </summary>
-    /// <param name="reader">Lector de datos con la fila actual.</param>
-    /// <returns>Entidad mapeada.</returns>
-    /// <remarks>
-    /// Se ignoran propiedades marcadas con <see cref="NotMappedAttribute"/>.
-    /// </remarks>
     protected virtual T MapEntity(DbDataReader reader)
     {
         var entity = new T();
@@ -193,18 +166,11 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return entity;
     }
 
-    /// <summary>
-    /// Obtiene una entidad por su identificador.
-    /// </summary>
-    /// <param name="id">Identificador de la entidad.</param>
-    /// <returns>
-    /// La entidad encontrada o <c>null</c> si no existe.
-    /// </returns>
     public virtual async Task<T?> FindById(long id)
     {
         // Usamos el builder, agregando la condición por Id
         var result = await CreateQueryBuilder()
-            .Where("id = @id", new DbParam("@id", id))
+            .WhereEqual("id", id)
             .Limit(1)
             .ToListAsync<T>();
 
@@ -212,10 +178,6 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return result.FirstOrDefault();
     }
 
-    /// <summary>
-    /// Obtiene todas las entidades de la tabla asociada.
-    /// </summary>
-    /// <returns>Lista completa de entidades.</returns>
     public virtual async Task<List<T>> FindAll()
     {
         var result = await CreateQueryBuilder()
@@ -224,38 +186,6 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return result;
     }
 
-    /// <summary>
-    /// Ejecuta una consulta SELECT dinámica sobre una tabla o vista,
-    /// aplicando una cláusula WHERE obligatoria, ordenamiento opcional
-    /// y paginación mediante LIMIT/OFFSET.
-    /// 
-    /// Este método es genérico y no contiene reglas de negocio.
-    /// Las decisiones sobre filtros, ordenamiento y paginación
-    /// deben tomarse en capas superiores (servicios/repositorios concretos).
-    /// </summary>
-    /// <param name="tableOrView">
-    /// Nombre de la tabla o vista sobre la que se ejecutará la consulta.
-    /// </param>
-    /// <param name="where">
-    /// Condición WHERE sin incluir la palabra clave WHERE.
-    /// </param>
-    /// <param name="orderBy">
-    /// Expresión ORDER BY sin incluir la palabra clave ORDER BY.
-    /// Ejemplo: "fecha DESC".
-    /// </param>
-    /// <param name="limit">
-    /// Cantidad máxima de registros a devolver. Si es null, no se aplica límite.
-    /// </param>
-    /// <param name="offset">
-    /// Cantidad de registros a omitir (usado para paginación).
-    /// Solo se aplica si <paramref name="limit"/> tiene valor.
-    /// </param>
-    /// <param name="parameters">
-    /// Parámetros utilizados en la cláusula WHERE.
-    /// </param>
-    /// <returns>
-    /// Lista de entidades mapeadas que cumplen la condición especificada.
-    /// </returns>
     public async Task<List<T>> FindWhereFrom(
         string tableOrView,
         string where,
@@ -311,13 +241,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
             countSelector: list => list.Count
         );
     }
-    /// <summary>
-    /// Elimina una entidad por su identificador.
-    /// </summary>
-    /// <param name="id">Identificador de la entidad.</param>
-    /// <returns>
-    /// <c>true</c> si la entidad fue eliminada; de lo contrario, <c>false</c>.
-    /// </returns>
+
     public async Task<bool> DeleteById(long id)
     {
         int affected = await ExecuteNonQueryAsync(
@@ -328,13 +252,6 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return affected > 0;
     }
 
-    /// <summary>
-    /// Actualiza una entidad existente en la base de datos.
-    /// </summary>
-    /// <param name="entity">Entidad a actualizar.</param>
-    /// <returns>
-    /// <c>true</c> si la actualización fue exitosa.
-    /// </returns>
     public virtual async Task<bool> Update(T entity)
     {
         var props = typeof(T).GetProperties()
@@ -368,16 +285,6 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return props.Select(p => new DbParam($"@{p.Name.ToLower()}", p.GetValue(entity) ?? DBNull.Value)).ToList();
     }
 
-    /// <summary>
-    /// Guarda una nueva entidad en la base de datos.
-    /// </summary>
-    /// <param name="entity">Entidad a persistir.</param>
-    /// <returns>
-    /// <c>true</c> si la entidad fue guardada correctamente.
-    /// </returns>
-    /// <remarks>
-    /// El identificador generado se asigna automáticamente a la entidad.
-    /// </remarks>
     public virtual async Task<bool> Save(T entity)
     {
         var parametersList = GetParametersFromEntity(entity);
@@ -406,12 +313,6 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return true;
     }
 
-    /// <summary>
-    /// Cuenta la cantidad de registros que cumplen una condición.
-    /// </summary>
-    /// <param name="where">Condición WHERE (sin la palabra WHERE).</param>
-    /// <param name="parameters">Parámetros de la consulta.</param>
-    /// <returns>Número total de registros.</returns>
     public async Task<long> CountWhere(
         string where, 
         string? tableName = null, 
@@ -429,44 +330,25 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
 
         return Convert.ToInt64(result);
     }
-
-    /// <summary>
-    /// Obtiene todas las entidades asociadas a una empresa.
-    /// </summary>
-    /// <param name="empresaId">Identificador de la empresa.</param>
-    /// <returns>Lista de entidades asociadas a la empresa.</returns>
-    /// <exception cref="InvalidOperationException">
-    /// Se lanza si no existe una vista configurada.
-    /// </exception>
     public virtual async Task<List<T>> FindAllByEmpresa(long empresaId)
     {
         if (_viewName == null)
             throw new InvalidOperationException("La vista no está asignada para este repositorio.");
 
         var builder = new QueryBuilder<T>(this)
-            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
+            .WhereEqual("empresa", empresaId)
             .OrderBy("COALESCE(fecha, '1900-01-01') DESC");
 
         return await builder.ToListAsync<T>();
     }
 
-    /// <summary>
-    /// Obtiene una página de entidades asociadas a una empresa.
-    /// </summary>
-    /// <param name="empresaId">Identificador de la empresa.</param>
-    /// <param name="pageNumber">Número de página (comenzando en 1).</param>
-    /// <param name="pageSize">Cantidad de registros por página.</param>
-    /// <returns>Lista paginada de entidades.</returns>
-    /// <exception cref="InvalidOperationException">
-    /// Se lanza si no existe una vista configurada.
-    /// </exception>
     public virtual async Task<List<T>> FindPageByEmpresa(long empresaId, int pageNumber, int pageSize)
     {
         if (_viewName == null)
             throw new InvalidOperationException("La vista no está asignada para este repositorio.");
 
         var builder = new QueryBuilder<T>(this)
-            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
+            .WhereEqual("empresa", empresaId)
             .OrderBy("COALESCE(fecha, '1900-01-01') DESC")
             .Page(pageNumber, pageSize);
 
@@ -476,33 +358,11 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
     public async Task<long> ContarPorEmpresa(long empresaId)
     {
         long total = await CreateQueryBuilder()
-            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
+            .WhereEqual("empresa", empresaId)
             .CountAsync();
 
         return total;
     }  
-
-    public virtual async Task<List<T>> FindPageWhere(
-        string where,
-        string? orderBy,
-        int pageNumber,
-        int pageSize,
-        IEnumerable<DbParam>? parameters = null)
-    {
-        if (_viewName == null)
-            throw new InvalidOperationException(
-                "La vista no está asignada para este repositorio.");
-
-        int offset = (pageNumber - 1) * pageSize;
-
-        return await FindWhereFrom(
-            tableOrView: _viewName,
-            where: where,
-            orderBy: orderBy,
-            limit: pageSize,
-            offset: offset,
-            parameters: parameters);
-    }
 
     public async Task<bool> Exists(
         Action<QueryBuilder<T>> build,

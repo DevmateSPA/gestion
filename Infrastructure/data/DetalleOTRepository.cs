@@ -15,8 +15,8 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
     public async Task<List<DetalleOrdenTrabajo>> FindByFolio(string folio, long empresaId)
     {
         return await CreateQueryBuilder()
-            .Where("folio = @folio", new DbParam("@folio", folio))
-            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
+            .WhereEqual("folio", folio)
+            .WhereEqual("empresa", empresaId)
             .ToListAsync<DetalleOrdenTrabajo>();
     }
 

@@ -14,7 +14,7 @@ public class MaquinaRepository : BaseRepository<Maquina>, IMaquinaRepository
     {
         long total = await CreateQueryBuilder()
             .From("vw_maquinas_with_pending_orders")
-            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
+            .WhereEqual("empresa", empresaId)
             .CountAsync();
 
         return total;
@@ -24,7 +24,7 @@ public class MaquinaRepository : BaseRepository<Maquina>, IMaquinaRepository
     {
         var result = await CreateQueryBuilder()
             .From("vw_maquinas_with_pending_orders")
-            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
+            .WhereEqual("empresa", empresaId)
             .ToListAsync<Maquina>();
 
         return result;
@@ -36,7 +36,7 @@ public class MaquinaRepository : BaseRepository<Maquina>, IMaquinaRepository
 
         var builder = CreateQueryBuilder()
             .From("vw_maquinas_with_pending_orders")
-            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
+            .WhereEqual("empresa", empresaId)
             .Page(pageNumber, pageSize);
 
         return await builder.ToListAsync<Maquina>();
