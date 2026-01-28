@@ -15,16 +15,20 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
     public DetalleOTRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "ordentrabajodetalle", null) {}
 
-    public async Task<List<DetalleOrdenTrabajo>> FindByFolio(string folio)
+    public async Task<List<DetalleOrdenTrabajo>> FindByFolio(string folio, long empresa)
     {
         using var conn = await _connectionFactory.CreateConnection();
         using var cmd = (DbCommand)conn.CreateCommand();
-        cmd.CommandText = $"SELECT * FROM {_tableName} WHERE folio = @folio";
+        cmd.CommandText = $"SELECT * FROM {_tableName} WHERE folio = @folio AND empresa = @empresa";
 
         var param = cmd.CreateParameter();
         param.ParameterName = "@folio";
         param.Value = folio;
         cmd.Parameters.Add(param);
+        var param2 = cmd.CreateParameter();
+        param2.ParameterName = "@empresa";
+        param2.Value = empresa;
+        cmd.Parameters.Add(param2);
 
         using var reader = await cmd.ExecuteReaderAsync();
         var list = new List<DetalleOrdenTrabajo>();
@@ -87,7 +91,7 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
         return affected > 0;
     }
 
-    public async Task<bool> UpdateAll(IList<DetalleOrdenTrabajo> detalles)
+    public async Task<bool> UpdateAll(IList<DetalleOrdenTrabajo> detalles, long empresaId)
     {
         var lista = detalles.ToList();
 
@@ -137,7 +141,12 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
             .Select(e => typeof(DetalleOrdenTrabajo).GetProperty("Id")!.GetValue(e)!)
             .ToList();
 
-        sb.Append($" WHERE id IN ({string.Join(", ", ids)})");
+        sb.Append($" WHERE id IN ({string.Join(", ", ids)}) AND empresa = @empresa");
+
+        var p2 = cmd.CreateParameter();
+        p2.ParameterName = "@empresa";
+        p2.Value = empresaId;
+        cmd.Parameters.Add(p2);
 
         cmd.CommandText = sb.ToString();
 
@@ -146,7 +155,7 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
         return affected > 0;
     }
 
-    public async Task<bool> DeleteByIds(IList<long> ids)
+    public async Task<bool> DeleteByIds(IList<long> ids, long empresaId)
     {
         if (ids == null || ids.Count == 0)
             return false;
@@ -167,14 +176,19 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
             cmd.Parameters.Add(param);
         }
 
-        cmd.CommandText = $"DELETE FROM {_tableName} WHERE id IN ({string.Join(", ", parameters)})";
+        cmd.CommandText = $"DELETE FROM {_tableName} WHERE id IN ({string.Join(", ", parameters)}) AND empresa = @empresa";
+
+        var p2 = cmd.CreateParameter();
+        p2.ParameterName = "@empresa";
+        p2.Value = empresaId;
+        cmd.Parameters.Add(p2);
 
         int affected = await cmd.ExecuteNonQueryAsync();
 
         return affected > 0;
     }
 
-    public async Task<bool> DeleteByFolio(string folio)
+    public async Task<bool> DeleteByFolio(string folio, long empresaId)
     {
         if (string.IsNullOrWhiteSpace(folio))
             return false;
@@ -182,12 +196,17 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
         using var conn = await _connectionFactory.CreateConnection();
         using var cmd = (DbCommand)conn.CreateCommand();
 
-        cmd.CommandText = $"DELETE FROM {_tableName} WHERE folio = @folio";
+        cmd.CommandText = $"DELETE FROM {_tableName} WHERE folio = @folio AND empresa = @empresa";
 
         var p = cmd.CreateParameter();
         p.ParameterName = "@folio";
         p.Value = folio;
         cmd.Parameters.Add(p);
+
+        var p2 = cmd.CreateParameter();
+        p2.ParameterName = "@empresa";
+        p2.Value = empresaId;
+        cmd.Parameters.Add(p2);
 
         int affected = await cmd.ExecuteNonQueryAsync();
 

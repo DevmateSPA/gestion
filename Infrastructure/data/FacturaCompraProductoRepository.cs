@@ -14,7 +14,7 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
     public FacturaCompraProductoRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "facturacompraproducto", "vw_facturacompraproducto") {}
 
-    public async Task<List<FacturaCompraProducto>> FindByFolio(string folio)
+    public async Task<List<FacturaCompraProducto>> FindByFolio(string folio, long empresaId)
     {
         using var conn = await _connectionFactory.CreateConnection();
         using var cmd = (DbCommand)conn.CreateCommand();
@@ -31,13 +31,18 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
             d.operario,
             d.fecha
         FROM {_tableName} d
-        WHERE folio = @folio AND tipo = 'FA';
+        WHERE folio = @folio AND tipo = 'FA' AND empresa = @empresa;
         """;
 
         var param = cmd.CreateParameter();
         param.ParameterName = "@folio";
         param.Value = folio;
         cmd.Parameters.Add(param);
+
+        var param2 = cmd.CreateParameter();
+        param2.ParameterName = "@empresa";
+        param2.Value = empresaId;
+        cmd.Parameters.Add(param2);
 
         using var reader = await cmd.ExecuteReaderAsync();
         var list = new List<FacturaCompraProducto>();
@@ -100,7 +105,7 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
         return affected > 0;
     }
 
-    public async Task<bool> UpdateAll(IList<FacturaCompraProducto> detalles)
+    public async Task<bool> UpdateAll(IList<FacturaCompraProducto> detalles, long empresaId)
     {
         var lista = detalles.ToList();
 
@@ -150,7 +155,12 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
             .Select(e => typeof(FacturaCompraProducto).GetProperty("Id")!.GetValue(e)!)
             .ToList();
 
-        sb.Append($" WHERE id IN ({string.Join(", ", ids)})");
+        sb.Append($" WHERE id IN ({string.Join(", ", ids)}) AND empresa = @empresa");
+
+        var param2 = cmd.CreateParameter();
+        param2.ParameterName = "@empresa";
+        param2.Value = empresaId;
+        cmd.Parameters.Add(param2);
 
         cmd.CommandText = sb.ToString();
 
@@ -159,7 +169,7 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
         return affected > 0;
     }
 
-    public async Task<bool> DeleteByIds(IList<long> ids)
+    public async Task<bool> DeleteByIds(IList<long> ids, long empresaId)
     {
         if (ids == null || ids.Count == 0)
             return false;
@@ -180,14 +190,19 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
             cmd.Parameters.Add(param);
         }
 
-        cmd.CommandText = $"DELETE FROM {_tableName} WHERE id IN ({string.Join(", ", parameters)})";
+        cmd.CommandText = $"DELETE FROM {_tableName} WHERE id IN ({string.Join(", ", parameters)}) AND empresa = @empresaId";
+
+        var param2 = cmd.CreateParameter();
+        param2.ParameterName = "@empresa";
+        param2.Value = empresaId;
+        cmd.Parameters.Add(param2);
 
         int affected = await cmd.ExecuteNonQueryAsync();
 
         return affected > 0;
     }
 
-    public async Task<bool> DeleteByFolio(string folio)
+    public async Task<bool> DeleteByFolio(string folio, long empresaId)
     {
         if (string.IsNullOrWhiteSpace(folio))
             return false;
@@ -195,12 +210,17 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
         using var conn = await _connectionFactory.CreateConnection();
         using var cmd = (DbCommand)conn.CreateCommand();
 
-        cmd.CommandText = $"DELETE FROM {_tableName} WHERE folio = @folio";
+        cmd.CommandText = $"DELETE FROM {_tableName} WHERE folio = @folio AND empresa = @empresa";
 
         var p = cmd.CreateParameter();
         p.ParameterName = "@folio";
         p.Value = folio;
         cmd.Parameters.Add(p);
+
+        var param2 = cmd.CreateParameter();
+        param2.ParameterName = "@empresa";
+        param2.Value = empresaId;
+        cmd.Parameters.Add(param2);
 
         int affected = await cmd.ExecuteNonQueryAsync();
 

@@ -40,6 +40,8 @@ namespace Gestion.presentation.views.pages
                 .Titulo("Agregar Usuario")
                 .Guardar(_viewModel.Save)
                 .Abrir();
+
+            await _viewModel.LoadAllByEmpresa();
         }
 
         private async Task Editar(Usuario psuario)
@@ -50,6 +52,8 @@ namespace Gestion.presentation.views.pages
                 .Titulo("Editar Usuario")
                 .Guardar(_viewModel.Update)
                 .Abrir();
+
+            await _viewModel.LoadAllByEmpresa();
         }
 
         private async Task EditarSeleccionado()

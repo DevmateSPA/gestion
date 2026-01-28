@@ -11,67 +11,20 @@ namespace Gestion.presentation.views.windows
     {
         public string Titulo { get; set; }
 
-        public DateTime? FechaDesde =>
-            DateTime.TryParseExact(txtDesde.Text, "dd/MM/yyyy", null, DateTimeStyles.None, out var d)
-                ? d
-                : null;
+        public DateTime? FechaDesde; 
 
-        public DateTime? FechaHasta =>
-            DateTime.TryParseExact(txtHasta.Text, "dd/MM/yyyy", null, DateTimeStyles.None, out var d)
-                ? d
-                : null;
-
-        public FechaModal(string titulo)
-        {
-            InitializeComponent();
-            Titulo = titulo;
-            DataContext = this;
-
-            string hoy = DateTime.Now.ToString("dd/MM/yyyy");
-            txtDesde.Text = hoy;
-            txtHasta.Text = hoy;
-        }
+        public DateTime? FechaHasta;
 
         public FechaModal()
         {
+            InitializeComponent();
+            Titulo = "Seleccione fechas";
+            DataContext = this;
+
         }
 
-        private void FechaMask(object sender, TextCompositionEventArgs e)
-        {
-            if (!char.IsDigit(e.Text[0]))
-            {
-                e.Handled = true;
-                return;
-            }
 
-            var tb = (TextBox)sender;
-
-            // Posición actual del cursor
-            int pos = tb.SelectionStart;
-
-            string text = tb.Text.Remove(tb.SelectionStart, tb.SelectionLength);
-            text = text.Insert(tb.SelectionStart, e.Text);
-
-            text = text.Replace("/", "");
-
-            if (text.Length > 8)
-            {
-                e.Handled = true;
-                return;
-            }
-
-            // reconstruimos dd/MM/yyyy
-            if (text.Length >= 2)
-                text = text.Insert(2, "/");
-
-            if (text.Length >= 5)
-                text = text.Insert(5, "/");
-
-            tb.Text = text;
-            tb.CaretIndex = tb.Text.Length;
-
-            e.Handled = true;
-        }
+        
         private void BtnSiguiente_Click(object sender, RoutedEventArgs e)
         {
             if (FechaDesde == null || FechaHasta == null)
@@ -84,27 +37,18 @@ namespace Gestion.presentation.views.windows
             Close();
         }
 
-
-    private void Window_KeyDown(object sender, KeyEventArgs e)
-    {
-        if (e.Key != Key.Enter) return;
-
-        if (txtDesde.IsKeyboardFocusWithin)
+        
+        private void FechaDesdeChanged(object sender, SelectionChangedEventArgs e)
         {
-            txtHasta.Focus();
-            txtHasta.CaretIndex = txtHasta.Text.Length;
-        }
-        else if (txtHasta.IsKeyboardFocusWithin)
-        {
-            BtnSiguiente_Click(sender, e);
-        }
-        else
-        {
-            BtnSiguiente_Click(sender, e);
+            FechaDesde = dpFechaDesde.SelectedDate;
         }
 
-        e.Handled = true;
-    }
+        private void FechaHastaChanged(object sender, SelectionChangedEventArgs e)
+        {
+            FechaHasta = dpFechaHasta.SelectedDate;
+        }
+
+
 
     }
 }

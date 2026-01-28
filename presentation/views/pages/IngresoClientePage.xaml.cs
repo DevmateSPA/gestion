@@ -8,28 +8,31 @@ using Gestion.presentation.views.util;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Gestion.presentation.views.pages;
-    public partial class CuentaCorrienteClientePage : Page
+    public partial class IngresoClientePage : Page
     {
-    private readonly ClienteViewModel _viewModel;
+    private readonly IngresoClienteViewModel _viewModel;
     
     private DataGrid _dataGrid;
     
-    public CuentaCorrienteClientePage(ClienteViewModel clienteViewModel)
+    public IngresoClientePage(IngresoClienteViewModel clienteViewModel, DateTime desde, DateTime hasta)
     {
         InitializeComponent();
         _viewModel = clienteViewModel;
         DataContext = _viewModel;
-        Title = $"Clientes";
+        Title = $"Ingresos por Cliente";
+
+        clienteViewModel.FechaDesde = desde;
+        clienteViewModel.FechaHasta = hasta;
 
         Loaded += async (_, _) =>
         {
-            await _viewModel.LoadPageByEmpresa(1);
+            await _viewModel.LoadPageByEmpresaAndFecha(1);
             paginacion.SetTotalPages(_viewModel.TotalRegistros);
         };
 
         paginacion.PageChanged += async (nuevaPagina) =>
         {
-            await _viewModel.LoadPageByEmpresa(nuevaPagina);
+            await _viewModel.LoadPageByEmpresaAndFecha(nuevaPagina);
             paginacion.SetTotalPages(_viewModel.TotalRegistros);
         };
 
@@ -38,9 +41,9 @@ namespace Gestion.presentation.views.pages;
             _viewModel.PageSize = size;
 
             if (size == 0)
-                await _viewModel.LoadAllByEmpresa(); // sin paginar
+                await _viewModel.LoadAllByEmpresaAndFecha(); // sin paginar
             else
-                await _viewModel.LoadPageByEmpresa(1); // resetear a página 1
+                await _viewModel.LoadPageByEmpresaAndFecha(1); // resetear a página 1
 
             paginacion.SetTotalPages(_viewModel.TotalRegistros);
         };

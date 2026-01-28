@@ -30,12 +30,12 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
         _ = DataBootstrapper.LoadClientesSearch(clienteService, SesionApp.IdEmpresa);
     }
 
-    public virtual async Task<List<DetalleOrdenTrabajo>> LoadDetailsByFolio(string folio)
+    public virtual async Task<List<DetalleOrdenTrabajo>> LoadDetailsByFolio(string folio, long empresaId)
     {
         List<DetalleOrdenTrabajo>? detalles = null;
 
         await SafeExecutor.RunAsync(
-            async () => detalles = await _detalleOTService.FindByFolio(folio),
+            async () => detalles = await _detalleOTService.FindByFolio(folio, empresaId),
             _dialogService,
             $"Error al cargar los detalles de la orden de trabajo con folio: {folio}");
             
@@ -80,7 +80,7 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
             bool detalles = false;
 
             if (ot)
-                detalles = await _detalleOTService.DeleteByFolio(ordenTrabajo.Folio);
+                detalles = await _detalleOTService.DeleteByFolio(ordenTrabajo.Folio, ordenTrabajo.Empresa);
 
             return ot; 
         },
@@ -103,19 +103,21 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
 
         if (paraAgregar.Count != 0 || paraActualizar.Count != 0 || paraEliminar.Count != 0)
         {
-            await MakeCrud(AsignarInfo(ordenTrabajo.Folio, paraAgregar),
-                AsignarInfo(ordenTrabajo.Folio, paraActualizar),
-                paraEliminar);
+            await MakeCrud(AsignarInfo(ordenTrabajo.Folio, ordenTrabajo.Empresa, paraAgregar),
+                AsignarInfo(ordenTrabajo.Folio, ordenTrabajo.Empresa, paraActualizar),
+                paraEliminar,
+                ordenTrabajo.Empresa);
         }
     }
 
     private async Task MakeCrud(List<DetalleOrdenTrabajo> paraAgregar, 
         List<DetalleOrdenTrabajo> paraActualizar, 
-        List<long> paraEliminar)
+        List<long> paraEliminar,
+        long empresaId)
     {
         if (paraEliminar.Count != 0)
         {
-            await RunServiceAction(() => _detalleOTService.DeleteByIds(paraEliminar), null, $"Error al eliminar los detalles de la orden de trabajo");
+            await RunServiceAction(() => _detalleOTService.DeleteByIds(paraEliminar, empresaId), null, $"Error al eliminar los detalles de la orden de trabajo");
         }
 
         if (paraAgregar.Count != 0)
@@ -125,11 +127,11 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
 
         if (paraActualizar.Count != 0)
         {
-            await RunServiceAction(() => _detalleOTService.UpdateAll(paraActualizar), null, $"Error al actualizar los detalles de la orden de trabajo");
+            await RunServiceAction(() => _detalleOTService.UpdateAll(paraActualizar, empresaId), null, $"Error al actualizar los detalles de la orden de trabajo");
         }
     }
 
-    private static List<DetalleOrdenTrabajo> AsignarInfo(string folio, IList<DetalleOrdenTrabajo> detalles)
+    private static List<DetalleOrdenTrabajo> AsignarInfo(string folio, long empresaId, IList<DetalleOrdenTrabajo> detalles)
     {
         var lista = detalles.ToList();
 
@@ -138,6 +140,7 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
 
         foreach (var detalle in detalles)
         {
+            detalle.Empresa = empresaId;
             detalle.Folio = folio;
         }
 
@@ -169,4 +172,5 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
     {
         return _ordenTrabajoService.GetSiguienteFolio(SesionApp.IdEmpresa);
     }
+
 }

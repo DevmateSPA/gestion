@@ -38,6 +38,7 @@ public class VentanaBuilder<TEntidad>
     private Panel? _contenedorTablas;
     private Button? _btnGuardar;
     private Button? _btnImprimir;
+    private Button? _btnEntregar;
     private bool? _shouldImprimir;
     private TEntidad? _entidad;
     private ModoFormulario _modo = ModoFormulario.Edicion;
@@ -95,6 +96,13 @@ public class VentanaBuilder<TEntidad>
     {
         _btnImprimir = btn;
         _shouldImprimir = shouldImprimir;
+        return this;
+    }
+
+    public VentanaBuilder<TEntidad> SetBotonEntregar(Button btn, string label)
+    {
+        _btnEntregar = btn;
+        _btnEntregar.Content = label;
         return this;
     }
 
@@ -164,6 +172,11 @@ public class VentanaBuilder<TEntidad>
             _btnImprimir.Content = guardarEImprimir
                 ? "Guardar e Imprimir"
                 : "Imprimir";
+        }
+
+        if (_btnEntregar != null)
+        {
+            _btnEntregar.Visibility = Visibility.Visible;
         }
     }
 

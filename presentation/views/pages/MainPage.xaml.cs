@@ -27,6 +27,22 @@ namespace Gestion.presentation.views.pages
             txtEmpresa.Text = $"Empresa: {SesionApp.NombreEmpresa}";
             txtUsuario.Text = $"Usuario: {SesionApp.NombreUsuario}";
             txtFecha.Text = $"Fecha: {DateTime.Now.ToString("dd/MM/yyyy")}";
+
+            CargarLogo();
+        }
+
+        private void CargarLogo()
+        {
+            string logo = SesionApp.IdEmpresa switch
+            {
+                1 => "logo1.png",
+                2 => "logo2.png",
+                _ => "logo.png"
+            };
+
+            imgLogo.Source = new BitmapImage(
+                new Uri($"/resources/{logo}", UriKind.Relative)
+            );
         }
     }
 }

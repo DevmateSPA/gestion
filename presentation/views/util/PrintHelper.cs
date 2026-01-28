@@ -8,14 +8,10 @@ namespace Gestion.presentation.views.util;
 public static class PrintHelper
 {
 
-    public async static void ImprimirOrdenTrabajo(Window owner, OrdenTrabajo orden)
+    private static string pdfPath = "";
+
+    public async static void ImprimirOrdenTrabajo(Window owner, string pdfPath)
     {
-        var errores = ValidationHelper.GetValidationErrors(owner);
-        if (errores.Count != 0)
-        {
-            DialogUtils.MostrarErroresValidacion(errores);
-            return;
-        }
 
         string impresora = LocalConfig.ObtenerImpresora();
 
@@ -27,7 +23,7 @@ public static class PrintHelper
             };
 
             if (modal.ShowDialog() != true)
-                return; // Usuario canceló
+                return; 
 
             impresora = modal.ImpresoraSeleccionada;
 
@@ -37,7 +33,6 @@ public static class PrintHelper
 
         await Task.Run(() =>
         {
-            string pdfPath = PrintUtils.GenerarOrdenTrabajoPrint(orden);
 
             string sumatra = Path.Combine(
                 AppDomain.CurrentDomain.BaseDirectory,
@@ -48,5 +43,26 @@ public static class PrintHelper
         });
 
         MessageBox.Show(owner, "Impresión completada", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+    public async static void PrevisualizarOrdenTrabajo(Window owner, OrdenTrabajo orden)
+    {
+        var errores = ValidationHelper.GetValidationErrors(owner);
+        if (errores.Count != 0)
+        {
+            DialogUtils.MostrarErroresValidacion(errores);
+            return;
+        }
+
+        string pdfPath = await Task.Run(() =>
+            PrintUtils.GenerarOrdenTrabajoPrint(orden)
+        );
+
+        var preview = new PdfPreviewWindow(pdfPath)
+        {
+            Owner = owner
+        };
+
+        preview.ShowDialog();
     }
 }

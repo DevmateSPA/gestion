@@ -68,25 +68,23 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     [Nombre("Cantidad")]
     [Grupo("Producción", ORDEN_GRUPO_PRODUCCION)]
     [Orden(0)]
-    [Width(50)]
+    //[Width(50)]
     public int Cantidad { get; set; } = 0;
 
     [Nombre("Total Impresión")]
     [Grupo("Producción", ORDEN_GRUPO_PRODUCCION)]
     [Orden(1)]
-    [Width(50)]
+    //[Width(50)]
     public int TotalImpresion { get; set; } = 0;
 
     [Nombre("Folio Inicio")]
     [Grupo("Producción", ORDEN_GRUPO_PRODUCCION)]
     [Orden(2)]
-    [Width(50)]
     public string FolioDesde { get; set; } = string.Empty;
     
     [Nombre("Folio Hasta")]
     [Grupo("Producción", ORDEN_GRUPO_PRODUCCION)]
     [Orden(3)]
-    [Width(50)]
     public string FolioHasta { get; set; } = string.Empty;
 
     [Fecha]
@@ -94,7 +92,8 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     [Grupo("Fechas", ORDEN_GRUPO_FAJADO+1)]
     [Orden(0)]
     public DateTime FechaEntrega { get; set; } = DateTime.Now;
-
+    [Visible(false)]
+    public DateTime OrdenEntregada { get; set; } = DateTime.Now;
 
     [Fecha]
     [Nombre("Fecha Término")]
@@ -231,25 +230,40 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     [Orden(1)]
     [ComboSource("MAQUINAS", Display = "Descripcion", Value = "Codigo")]
     public string Maquina2 { get; set; } = string.Empty;
-    [Nombre("Pin")]
+    [Nombre("Máquina 3")]
     [Grupo("Datos de Máquina", ORDEN_GRUPO_DATOS_MAQUINA)]
     [Orden(2)]
+    [ComboSource("MAQUINAS", Display = "Descripcion", Value = "Codigo")]
+    public string Maquina3 { get; set; } = string.Empty;
+    [Nombre("Máquina 4")]
+    [Grupo("Datos de Máquina", ORDEN_GRUPO_DATOS_MAQUINA)]
+    [Orden(3)]
+    [ComboSource("MAQUINAS", Display = "Descripcion", Value = "Codigo")]
+    public string Maquina4 { get; set; } = string.Empty;
+    [Nombre("Máquina 5")]
+    [Grupo("Datos de Máquina", ORDEN_GRUPO_DATOS_MAQUINA)]
+    [Orden(4)]
+    [ComboSource("MAQUINAS", Display = "Descripcion", Value = "Codigo")]
+    public string Maquina5 { get; set; } = string.Empty;
+    [Nombre("Pin")]
+    [Grupo("Datos de Máquina", ORDEN_GRUPO_DATOS_MAQUINA)]
+    [Orden(5)]
     public string Pin { get; set; } = string.Empty;
     [Nombre("NVA")]
     [Grupo("Datos de Máquina", ORDEN_GRUPO_DATOS_MAQUINA)]
-    [Orden(3)]
+    [Orden(6)]
     public int Nva { get; set; } = 0;
     [Nombre("US")]
     [Grupo("Datos de Máquina", ORDEN_GRUPO_DATOS_MAQUINA)]
-    [Orden(4)]
+    [Orden(7)]
     public int Us { get; set; } = 0;
     [Nombre("CTP NVA")]
     [Grupo("Datos de Máquina", ORDEN_GRUPO_DATOS_MAQUINA)]
-    [Orden(5)]
+    [Orden(8)]
     public int CtpNva { get; set; } = 0;
     [Nombre("U")]
     [Grupo("Datos de Máquina", ORDEN_GRUPO_DATOS_MAQUINA)]
-    [Orden(6)]
+    [Orden(9)]
     public int U { get; set; } = 0;
 
     // -- Grupo Sobres

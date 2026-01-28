@@ -10,6 +10,7 @@ using Gestion.core.model.detalles;
 using Gestion.helpers;
 using System.IO;
 using System.Drawing.Printing;
+using Gestion.core.services;
 
 namespace Gestion.presentation.views.pages;
     public partial class PendienteMaquinaWindow : Window
@@ -18,6 +19,8 @@ namespace Gestion.presentation.views.pages;
     private readonly Maquina _maquina;
     
     private DataGrid _dataGrid;
+    private readonly DialogService _dialogService = new(); 
+
     
     public PendienteMaquinaWindow(OrdenTrabajoViewModel ordenTrabajoViewModel, Maquina maquina)
     {
@@ -68,7 +71,7 @@ namespace Gestion.presentation.views.pages;
             return;
 
         ordenTrabajo.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(
-            await _viewModel.LoadDetailsByFolio(ordenTrabajo.Folio));
+            await _viewModel.LoadDetailsByFolio(ordenTrabajo.Folio, ordenTrabajo.Empresa));
 
         await new EditorEntidadBuilder<OrdenTrabajo>()
             .Owner(Window.GetWindow(this)!)
@@ -76,10 +79,31 @@ namespace Gestion.presentation.views.pages;
             .Titulo("Visualizar Orden de Trabajo")
             .SoloLecutra()
             .Imprimir(orden =>
-                PrintHelper.ImprimirOrdenTrabajo(
+                PrintHelper.PrevisualizarOrdenTrabajo(
                     Window.GetWindow(this)!,
                     orden))
             .ShouldBtnImpresion()
+            .Entregar(async win =>
+            {
+                var window = new EntregarOTModal();
+                window.Owner = Window.GetWindow(this)!;
+                if (window.ShowDialog() == true)
+                {
+                    DateTime? fecha = window.FechaEntrega;
+
+                    if (fecha != null)
+                    {
+                        ordenTrabajo.FechaEntrega = fecha.Value;
+                        ordenTrabajo.OrdenEntregada = fecha.Value;
+                        ordenTrabajo.FechaTermino = fecha.Value;
+                        _viewModel.Update(ordenTrabajo);
+                        _dialogService.ShowMessage("Orden marcada como entregada");
+                        window.Close();
+                        win.Close();
+                        BtnBuscar_Click(null,null);
+                    }
+                }
+            })
             .Abrir();
     }
     

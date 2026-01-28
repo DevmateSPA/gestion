@@ -130,7 +130,8 @@ namespace Gestion.presentation.views.windows
                     "ModuloGuia" => "Guías de Despacho",
                     "ModuloFactura" => "Facturas",
                     "ModuloNotaCredito" => "Notas de Crédito",
-                    "ModuloDocNulo" => "documentos Nulos",
+                    "ModuloDocNulo" => "Documentos Nulos",
+                    "ModuloVentas" => "Ventas",
                     _ => "Módulo desconocido"
                 };
 
@@ -146,6 +147,7 @@ namespace Gestion.presentation.views.windows
                     "ModuloFactura" => App.ServiceProvider.GetRequiredService<FacturaPage>(),
                     "ModuloNotaCredito" => App.ServiceProvider.GetRequiredService<NotaCreditoPage>(),
                     "ModuloDocNulo" => App.ServiceProvider.GetRequiredService<DocumentoNuloPage>(),
+                    "ModuloVentas" => App.ServiceProvider.GetRequiredService<VentaPage>(),
                     "ModuloPagoAbono" => null,
                     "ModuloCancelacion" => null,
                     _ => null
@@ -253,33 +255,35 @@ namespace Gestion.presentation.views.windows
 
             if (sender is MenuItem item)
             {
-                string tituloVentana = item.Tag switch
+                if (item.Tag as string == "ModuloIngresosCliente")
                 {
-                    "ModuloProduccion" => "O.T. Pendientes Producción",
-                    "ModuloMaquina" => "O.T. Pendientes por Maquina",
-                    _ => "Módulo desconocido"
-                };
+                    var modalFecha = new FechaModal();
+                    modalFecha.Owner = Window.GetWindow(this);
 
-                var window = Window.GetWindow(this);
-
-                if (window != null)
-                {
-                    window.Title = "Gestión — " + tituloVentana;
-                }
-
-                if (item.Tag as string == "ModuloMaquina")
-                {
-                    // Caso de Producción u otros
-                    page = item.Tag switch
+                    if (modalFecha.ShowDialog() == true)
                     {
-                        "ModuloMaquina" => App.ServiceProvider.GetRequiredService<MaquinasConOTPendientesPage>(),
-                        _ => null
-                    };
-                    
+                        var desde = modalFecha.FechaDesde;
+                        var hasta = modalFecha.FechaHasta;
+
+                        if (desde == null || hasta == null)
+                        {
+                            MessageBox.Show("Debe seleccionar ambas fechas.");
+                            return;
+                        }
+
+                        page = new IngresoClientePage(
+                            App.ServiceProvider.GetRequiredService<IngresoClienteViewModel>(),
+                            desde.Value,
+                            hasta.Value
+                        );
+                    }
+                }
+                else if (item.Tag as string == "ModuloMaquina")
+                {
+                    page = App.ServiceProvider.GetRequiredService<MaquinasConOTPendientesPage>();
                 }
                 else
                 {
-                    // Caso de Producción u otros
                     page = item.Tag switch
                     {
                         "ModuloProduccion" => App.ServiceProvider.GetRequiredService<PendienteProduccionPage>(),
@@ -288,13 +292,9 @@ namespace Gestion.presentation.views.windows
                 }
 
                 if (page != null)
-                {
                     MainFrame.Navigate(page);
-                }
                 else
-                {
-                    MessageBox.Show("Módulo no reconocido.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
+                    MessageBox.Show("Módulo no reconocido.");
             }
         }
 

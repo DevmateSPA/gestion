@@ -12,6 +12,7 @@ public class DetalleOrdenTrabajo : IModel
     public long Total { get; set; }
     public int Tamanio { get; set; }
     public int Cplie { get; set; }
+    public long Empresa { get; set; } = 0;
 
     public DetalleOrdenTrabajo Clone()
     {
@@ -24,7 +25,8 @@ public class DetalleOrdenTrabajo : IModel
             Sobr = Sobr,
             Total = Total,
             Tamanio = Tamanio,
-            Cplie = Cplie
+            Cplie = Cplie,
+            Empresa = Empresa
         };
     }
 }

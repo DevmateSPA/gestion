@@ -37,12 +37,6 @@ public partial class LoginWindow : Window
 
     private async void BtnIniciarSesion_Click(object sender, RoutedEventArgs e)
     {
-        DateTime fechaLimite = new DateTime(2026, 2, 2, 0, 0, 0);
-        if (DateTime.Now > fechaLimite)
-        {
-            Application.Current.Shutdown();
-            return; 
-        }
 
         if (_viewModel.EmpresaSeleccionada == null ||
             _viewModel.EmpresaSeleccionada.Id == 0)

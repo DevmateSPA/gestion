@@ -75,6 +75,7 @@ public partial class App : Application
         services.AddScoped<IFotomecanicaRepository, FotomecanicaRepository>();
         services.AddScoped<INotaCreditoRepository, NotaCreditoRepository>();
         services.AddScoped<IDocumentoNuloRepository, DocumentoNuloRepository>();
+        services.AddScoped<IVentaRepository, VentaRepository>();
         services.AddScoped<IFacturaRepository, FacturaRepository>();
         services.AddScoped<IFacturaCompraRepository, FacturaCompraRepository>();
         services.AddScoped<IFacturaCompraProductoRepository, FacturaCompraProductoRepository>();
@@ -82,6 +83,7 @@ public partial class App : Application
         services.AddScoped<IOrdenTrabajoRepository, OrdenTrabajoRepository>();
         services.AddScoped<IEmpresaRepository, EmpresaRepository>();
         services.AddScoped<IDetalleOTRepository, DetalleOTRepository>();
+        services.AddScoped<IIngresoClienteRepository, IngresoClienteRepository>();
 
         // Servicios
         services.AddScoped<IAuthService, AuthService>();
@@ -97,6 +99,7 @@ public partial class App : Application
         services.AddScoped<IFotomecanicaService, FotomecanicaService>();
         services.AddScoped<INotaCreditoService, NotaCreditoService>();
         services.AddScoped<IDocumentoNuloService, DocumentoNuloService>();
+        services.AddScoped<IVentaService, VentaService>();
         services.AddScoped<IFacturaService, FacturaService>();
         services.AddScoped<IFacturaCompraService, FacturaCompraService>();
         services.AddScoped<IFacturaCompraProductoService, FacturaCompraProductoService>();
@@ -105,6 +108,7 @@ public partial class App : Application
         services.AddScoped<IEmpresaService, EmpresaService>();
         services.AddScoped<IDetalleOTService, DetalleOTService>();
         services.AddScoped<IUsuarioService, UsuarioService>();
+        services.AddScoped<IIngresoClienteService, IngresoClienteService>();
 
         // Login
         services.AddTransient<LoginWindow>();
@@ -152,6 +156,9 @@ public partial class App : Application
         // DocumentoNulo
         services.AddTransient<DocumentoNuloViewModel>();
         services.AddTransient<DocumentoNuloPage>();
+        // Venta
+        services.AddTransient<VentaViewModel>();
+        services.AddTransient<VentaPage>();
         // FacturaCompra
         services.AddTransient<FacturaCompraViewModel>();
         services.AddTransient<FacturaCompraPage>();        
@@ -162,6 +169,9 @@ public partial class App : Application
         services.AddTransient<OrdenTrabajoDetallePage>();
         // CuentaCorrienteCliente
         services.AddTransient<CuentaCorrienteClientePage>();   
+        // IngresosCliente
+        services.AddTransient<IngresoClienteViewModel>();
+        services.AddTransient<IngresoClientePage>();   
         // PendientesProduccion
         services.AddTransient<PendienteProduccionPage>();   
         // Maquinas Con OT pendiente

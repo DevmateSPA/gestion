@@ -37,8 +37,8 @@ public partial class ClienteCartolaWindow : Window
         //_dataGrid.ItemContainerGenerator.StatusChanged += DgFacturas_StatusChanged;
 
         TxtCartola.Text = "Cartola de "+cliente.Razon_Social+" ("+cliente.Rut+")";
-        TxtSaldo.Text = "Saldo inicial al "+fechaDesde.ToString("dd/mm/yyyy")+": "+total;
-        TxtSaldoFinal.Text = "Saldo final al "+fechaHasta.ToString("dd/mm/yyyy")+": "+total;
+        TxtSaldo.Text = "Saldo inicial al "+fechaDesde.ToString("dd/MM/yyyy")+": "+total;
+        TxtSaldoFinal.Text = "Saldo final al "+fechaHasta.ToString("dd/MM/yyyy")+": "+total;
 
 
     }
@@ -55,7 +55,7 @@ public partial class ClienteCartolaWindow : Window
             return;
 
         var ventana = new EntidadEditorWindow(factura, null, titulo);
-
+        ventana.Owner = this;
         if (ventana.ShowDialog() != true)
         {
             var facturaCancelada = (Factura)ventana.EntidadEditada;

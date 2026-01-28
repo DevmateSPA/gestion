@@ -27,6 +27,11 @@
                     Margin="0 0 10 0"
                     Click="BtnImprimir_Click" 
                     Visibility="Collapsed" />
+            <Button Content="Entregar"
+                    x:Name="btnEntregar"
+                    Width="140" Height="40"
+                    Margin="0 0 10 0"
+                    Click="BtnEntregar_Click" />
             <Button Content="Cerrar"
                     Width="140" Height="40"
                     Click="BtnCancelar_Click" />

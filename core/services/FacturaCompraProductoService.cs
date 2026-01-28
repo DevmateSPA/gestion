@@ -13,19 +13,19 @@ public class FacturaCompraProductoService : BaseService<FacturaCompraProducto>, 
         _facturaCompraProductoRepository = facturaCompraProductoRepository;
     }
 
-    public Task<bool> DeleteByFolio(string folio)
+    public Task<bool> DeleteByFolio(string folio, long empresaId)
     {
-        return _facturaCompraProductoRepository.DeleteByFolio(folio);
+        return _facturaCompraProductoRepository.DeleteByFolio(folio, empresaId);
     }
 
-    public async Task<bool> DeleteByIds(IList<long> ids)
+    public async Task<bool> DeleteByIds(IList<long> ids, long empresaId)
     {
-        return await _facturaCompraProductoRepository.DeleteByIds(ids);
+        return await _facturaCompraProductoRepository.DeleteByIds(ids, empresaId);
     }
 
-    public async Task<List<FacturaCompraProducto>> FindByFolio(string folio)
+    public async Task<List<FacturaCompraProducto>> FindByFolio(string folio, long empresaId)
     {
-        return await _facturaCompraProductoRepository.FindByFolio(folio);
+        return await _facturaCompraProductoRepository.FindByFolio(folio, empresaId);
     }
 
     public async Task<bool> SaveAll(List<FacturaCompraProducto> detalles)
@@ -33,9 +33,9 @@ public class FacturaCompraProductoService : BaseService<FacturaCompraProducto>, 
         return await _facturaCompraProductoRepository.SaveAll(detalles);
     }
 
-    public async Task<bool> UpdateAll(IList<FacturaCompraProducto> detalles)
+    public async Task<bool> UpdateAll(IList<FacturaCompraProducto> detalles, long empresaId)
     {
-        return await _facturaCompraProductoRepository.UpdateAll(detalles);
+        return await _facturaCompraProductoRepository.UpdateAll(detalles, empresaId);
     }
 
     protected override async Task<List<string>> ValidarReglasNegocio(

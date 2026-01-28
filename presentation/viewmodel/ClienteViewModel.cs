@@ -9,5 +9,6 @@ namespace Gestion.presentation.viewmodel
         public ClienteViewModel(IClienteService clienteService, IDialogService dialogService)
             : base(clienteService, dialogService)
         {}
+
     }
 }

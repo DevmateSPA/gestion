@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using Gestion.core.model.detalles;
 using Gestion.core.session;
 using Gestion.helpers;
+using Gestion.core.services;
 
 namespace Gestion.presentation.views.pages;
 
@@ -22,6 +23,7 @@ public partial class OrdenTrabajoPage : Page
 
     private readonly OrdenTrabajoViewModel _viewModel;
     private readonly IDetalleOTService _detalleOTService;
+    private readonly DialogService _dialogService = new(); 
     public OrdenTrabajoPage(OrdenTrabajoViewModel viewModel, IDetalleOTService detalleOTService)
     {
         InitializeComponent();
@@ -97,7 +99,7 @@ public partial class OrdenTrabajoPage : Page
         if (ordenTrabajo == null)
             return;
 
-        ordenTrabajo.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(await _viewModel.LoadDetailsByFolio(ordenTrabajo.Folio));
+        ordenTrabajo.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(await _viewModel.LoadDetailsByFolio(ordenTrabajo.Folio, ordenTrabajo.Empresa));
 
         await new EditorEntidadBuilder<OrdenTrabajo>()
             .Owner(Window.GetWindow(this)!)
@@ -106,7 +108,7 @@ public partial class OrdenTrabajoPage : Page
             .Guardar(_viewModel.Update)
             .Edicion()
             .Imprimir(orden =>
-                PrintHelper.ImprimirOrdenTrabajo(
+                PrintHelper.PrevisualizarOrdenTrabajo(
                     Window.GetWindow(this)!,
                     orden))
             .OnClose(async facturaEditada =>
@@ -115,6 +117,26 @@ public partial class OrdenTrabajoPage : Page
                     facturaEditada.Detalles.Cast<DetalleOrdenTrabajo>(),
                     facturaEditada))
             .ShouldBtnImpresion()
+            .Entregar(async win =>
+            {
+                var window = new EntregarOTModal();
+                window.Owner = Window.GetWindow(this)!;
+                if (window.ShowDialog() == true)
+                {
+                    DateTime? fecha = window.FechaEntrega;
+
+                    if (fecha != null)
+                    {
+                        ordenTrabajo.FechaEntrega = fecha.Value;
+                        ordenTrabajo.OrdenEntregada = fecha.Value;
+                        ordenTrabajo.FechaTermino = fecha.Value;
+                        _viewModel.Update(ordenTrabajo);
+                        _dialogService.ShowMessage("Orden marcada como entregada");
+                        window.Close();
+                        win.Close();
+                    }
+                }
+            })
             .Abrir();
     }
 

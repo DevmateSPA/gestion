@@ -1,0 +1,35 @@
+<Window x:Class="Gestion.presentation.views.windows.EntregarOTModal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{Binding Titulo}" 
+        Height="250" Width="250"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/> 
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <TextBlock Text="Fecha entrega" 
+                                    Grid.Row="0" Grid.Column="0" 
+                                    VerticalAlignment="Center"/>
+                            
+                            <DatePicker x:Name="dpFechaEntrega"
+                                        SelectedDateChanged="FechaChanged"
+                                        Language="es-ES" 
+                                        Grid.Row="0" Grid.Column="1" 
+                                        Margin="0,0,10,5" 
+                                        VerticalAlignment="Center"/>
+
+        </StackPanel>
+
+        <Button Grid.Row="2" Content="Marcar como entregada" 
+                Margin="0 15 0 0" Width="150" Height="50"
+                HorizontalAlignment="Right"
+                Click="BtnEntregar_Click"/>
+    </Grid>
+</Window>

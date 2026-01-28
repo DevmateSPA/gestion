@@ -1,29 +1,26 @@
+using Gestion.core.model;
+using Gestion.helpers;
+using Gestion.presentation.viewmodel;
+using Gestion.presentation.views.util;
+using Gestion.presentation.views.windows;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Gestion.core.model;
-using Gestion.presentation.viewmodel;
-using Gestion.presentation.views.windows;
-using Gestion.presentation.views.util;
-using Gestion.core.interfaces.service;
-using System.Collections.ObjectModel;
-using Gestion.helpers;
 
 namespace Gestion.presentation.views.pages;
 
-public partial class FacturaCompraPage : Page
+public partial class VentaPage : Page
 {
     private DataGrid _dataGrid;
-
-    private readonly FacturaCompraViewModel _viewModel;
-    private readonly IFacturaCompraProductoService _detalleService;
-    public FacturaCompraPage(FacturaCompraViewModel viewModel, IFacturaCompraProductoService detalleService)
+    
+    private readonly VentaViewModel _viewModel;
+    public VentaPage(VentaViewModel viewModel)
     {
         InitializeComponent();
         _viewModel = viewModel;
-        _detalleService = detalleService;
         DataContext = _viewModel;
-        Title = $"Facturas de Compra";
+        Title = $"Ventas";
 
         Loaded += async (_, _) =>
         {
@@ -48,86 +45,55 @@ public partial class FacturaCompraPage : Page
 
             paginacion.SetTotalPages(_viewModel.TotalRegistros);
         };
-        _dataGrid = dgFacturasCompra;
-        _dataGrid.ItemContainerGenerator.StatusChanged += DgFacturasCompra_StatusChanged;
+        _dataGrid = dgVenta;
+        _dataGrid.ItemContainerGenerator.StatusChanged += DgVenta_StatusChanged;
 
-        txtBuscar.KeyDown += TxtBuscar_KeyDown;
+         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
 
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
-        await new EditorEntidadBuilder<FacturaCompra>()
+        await new EditorEntidadBuilder<Venta>()
             .Owner(Window.GetWindow(this)!)
-            .Entidad(new FacturaCompra())
-            .Titulo("Agregar Factura de Compra")
+            .Entidad(new Venta())
+            .Titulo("Agregar Venta")
             .Guardar(_viewModel.Save)
-            .OnClose(async facturaEditada =>
-                await _viewModel.SincronizarDetalles(
-                    [],
-                    facturaEditada.Detalles.Cast<FacturaCompraProducto>(),
-                    facturaEditada))
             .Abrir();
+    }
+
+    private async Task Editar(Venta venta)
+    {
+        await new EditorEntidadBuilder<Venta>()
+            .Owner(Window.GetWindow(this)!)
+            .Entidad(venta)
+            .Titulo("Editar Venta")
+            .Guardar(_viewModel.Update)
+            .Abrir();
+    }
+
+    private async Task EditarSeleccionado()
+    {
+        if (dgVenta.SelectedItem is Venta ventaSeleccionado)
+            await Editar(ventaSeleccionado);
     }
 
     private async void BtnEditar_Click(object sender, RoutedEventArgs e)
     {
-        if (_dataGrid.SelectedItem is FacturaCompra facturaCompraSeleccionado)
-            await Editar(facturaCompraSeleccionado);
+        await EditarSeleccionado();
     }
 
-    private async void dgFacturasCompra_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private async void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (_dataGrid.SelectedItem is FacturaCompra facturaCompraSeleccionado)
-            await Editar(facturaCompraSeleccionado);
+        await EditarSeleccionado();
     }
-
-    // Metodo Editar -------------------------------------------- |
-    private async Task Editar(FacturaCompra factura, string titulo = "Editar Factura de Compra")
-    {
-        if (factura == null)
-            return;
-
-        var detallesOriginales = await _viewModel.LoadDetailsByFolio(factura.Folio, factura.Empresa);
-
-        factura.Detalles = new ObservableCollection<FacturaCompraProducto>(
-            detallesOriginales.Select(d => (FacturaCompraProducto)d.Clone()));
-
-        await new EditorEntidadBuilder<FacturaCompra>()
-            .Owner(Window.GetWindow(this)!)
-            .Entidad(factura)
-            .Titulo(titulo)
-            .Guardar(async f =>
-            {
-                await _viewModel.Update(f);
-                return true;
-            })
-            .OnClose(async f =>
-                await _viewModel.SincronizarDetalles(
-                    detallesOriginales,
-                    f.Detalles,
-                    f))
-            .Abrir();
-    }
-
-    // ------------------------------------------------------ |
 
     private async void BtnEliminar_Click(object sender, RoutedEventArgs e)
     {
-        if (_dataGrid.SelectedItem is FacturaCompra seleccionado)
-        {
-            if (DialogUtils.Confirmar(
-                $"¿Deseas eliminar la factura \"{seleccionado.Id}\" del proveedor {seleccionado.RutCliente}?\n\n" +
-                "Ten en cuenta que esta acción también removerá todos sus datos relacionados.",
-                "Confirmación requerida"))
-            {
-                await _viewModel.Delete(seleccionado.Id);
-                DialogUtils.MostrarInfo("Factura eliminada correctamente.", "Éxito");
-            }
-        }
-        else
-        {
-            DialogUtils.MostrarAdvertencia("Selecciona una factura antes de eliminar.", "Aviso");
-        }
+        await EditorHelper.BorrarSeleccionado(
+            seleccionado: _dataGrid.SelectedItem as Venta,
+            borrarAccion: async b => await _viewModel.Delete(b.Id),
+            mensajeConfirmacion: $"¿Seguro que deseas eliminar la venta \"{((_dataGrid.SelectedItem as Venta)?.Folio)}\"?",
+            mensajeExito: "Venta eliminada correctamente.");
     }
 
     private async void BtnBuscar_Click(object sender, RoutedEventArgs e)
@@ -160,7 +126,8 @@ public partial class FacturaCompraPage : Page
         _viewModel.Buscar(filtro);
     }
 
-    private void DgFacturasCompra_StatusChanged(object? sender, EventArgs e)
+
+    private void DgVenta_StatusChanged(object? sender, EventArgs e)
     {
         GridFocus(_dataGrid);
     }
@@ -180,12 +147,12 @@ public partial class FacturaCompraPage : Page
                     firstRow.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
                 }
 
-                dataGrid.ItemContainerGenerator.StatusChanged -= DgFacturasCompra_StatusChanged;
+                dataGrid.ItemContainerGenerator.StatusChanged -= DgVenta_StatusChanged;
             }
         }
     }
 
-    private void dgFacturasCompra_PreviewKeyDown(object sender, KeyEventArgs e)
+    private void dgVenta_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         var teclas = new[] { Key.Enter, Key.Insert, Key.Delete, Key.F2, Key.F4 };
 
@@ -213,7 +180,6 @@ public partial class FacturaCompraPage : Page
                 break;
         }
     }
-
     private void TxtBuscar_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)

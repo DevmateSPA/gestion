@@ -16,12 +16,12 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
         _detalleService = detalleService;
     }
 
-    public virtual async Task<List<FacturaCompraProducto>> LoadDetailsByFolio(string folio)
+    public virtual async Task<List<FacturaCompraProducto>> LoadDetailsByFolio(string folio, long empresaId)
     {
         List<FacturaCompraProducto>? detalles = null;
 
         await SafeExecutor.RunAsync(
-            action: async () => detalles = await _detalleService.FindByFolio(folio),
+            action: async () => detalles = await _detalleService.FindByFolio(folio, empresaId),
             dialogService: _dialogService,
             mensajeError: $"Error al cargar los detalles de la factura con folio: {folio}");
             
@@ -42,7 +42,7 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
             bool detalles = false;
 
             if (eliminoFactura)
-                detalles = await _detalleService.DeleteByFolio(factura.Folio);
+                detalles = await _detalleService.DeleteByFolio(factura.Folio, factura.Empresa);
 
             return eliminoFactura;
         },
@@ -65,19 +65,21 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
 
         if (paraAgregar.Count != 0 || paraActualizar.Count != 0 || paraEliminar.Count != 0)
         {
-            await MakeCrud(AsignarInfo(factura.Folio, factura.Tipo, paraAgregar),
-                AsignarInfo(factura.Folio, factura.Tipo, paraActualizar),
-                paraEliminar);
+            await MakeCrud(AsignarInfo(factura.Folio, factura.Empresa, factura.Tipo, paraAgregar),
+                AsignarInfo(factura.Folio, factura.Empresa, factura.Tipo, paraActualizar),
+                paraEliminar,
+                factura.Empresa);
         }
     }
 
     private async Task MakeCrud(List<FacturaCompraProducto> paraAgregar, 
         List<FacturaCompraProducto> paraActualizar, 
-        List<long> paraEliminar)
+        List<long> paraEliminar,
+        long empresaId)
     {
         if (paraEliminar.Count != 0)
         {
-            await RunServiceAction(() => _detalleService.DeleteByIds(paraEliminar), null, $"Error al eliminar los detalles de la factura");
+            await RunServiceAction(() => _detalleService.DeleteByIds(paraEliminar, empresaId), null, $"Error al eliminar los detalles de la factura");
         }
 
         if (paraAgregar.Count != 0)
@@ -87,21 +89,22 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
 
         if (paraActualizar.Count != 0)
         {
-            await RunServiceAction(() => _detalleService.UpdateAll(paraActualizar), null, $"Error al actualizar los detalles de la factura");
+            await RunServiceAction(() => _detalleService.UpdateAll(paraActualizar, empresaId), null, $"Error al actualizar los detalles de la factura");
         }
     }
 
-    private static List<FacturaCompraProducto> AsignarInfo(string folio, string tipo, IList<FacturaCompraProducto> detalles)
+    private static List<FacturaCompraProducto> AsignarInfo(string folio, long empresaId, string tipo, IList<FacturaCompraProducto> detalles)
     {
         var lista = detalles.ToList();
 
         if (lista.Count == 0)
             return lista;
 
-        foreach (var detalle in detalles)
+        foreach (FacturaCompraProducto detalle in detalles)
         {
             detalle.Folio = folio;
             detalle.Tipo = tipo;
+            detalle.Empresa = empresaId;
         }
 
         return lista;

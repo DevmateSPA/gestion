@@ -30,20 +30,27 @@ public partial class EntidadEditorTableWindow: Window
 
     private readonly IDialogService _dialogService = new DialogService();
 
+    private readonly Func<EntidadEditorTableWindow, Task>? _btn1Action;
+    private readonly string _titleBtnEntregar;
+
     public EntidadEditorTableWindow(
         object entidad,
         Func<object, Task<bool>>? guardar,
         Action<OrdenTrabajo>? imprimir,
+        Func<EntidadEditorTableWindow, Task>? btn1Action,
         ModoFormulario modo,
         bool shouldImprimir,
-        string titulo = "Ventana con tabla")
+        string titulo = "Ventana con tabla",
+        string titutloBtnEntregar = "")
     {
         InitializeComponent();
         Title = titulo;
+        _titleBtnEntregar = titutloBtnEntregar;
 
         _entidadOriginal = entidad;
         _guardar = guardar;
         _imprimir = imprimir;
+        _btn1Action = btn1Action;
 
         ClonarEntidad(entidad);
 
@@ -75,7 +82,8 @@ public partial class EntidadEditorTableWindow: Window
             .SetBotonGuardar(btnGuardar)
             .SetBotonImprimir(btnImprimir, shouldImprimir)
             .SetModo(modo);
-
+        if (_btn1Action != null) 
+            builder.SetBotonEntregar(btnEntregar, _titleBtnEntregar);
         // Se genera la UI
         builder.Build();
 
@@ -102,6 +110,11 @@ public partial class EntidadEditorTableWindow: Window
             {
                 DialogResult = false;
                 Close();
+            } 
+            if (e.Key == Key.F5)
+            {
+                BtnEntregar_Click(null, null);
+                e.Handled = true;
             }
         };
     }
@@ -139,7 +152,10 @@ public partial class EntidadEditorTableWindow: Window
 
         _dialogService.ShowToast(this, "Los datos se han guardado correctamente.");
 
-        Window.GetWindow(this)?.Close();
+        var ventana = Window.GetWindow(this);
+        
+        if (ventana != null)
+            ventana.DialogResult = true;
     }
 
     private async void BtnImprimir_Click(object sender, RoutedEventArgs e)
@@ -158,9 +174,13 @@ public partial class EntidadEditorTableWindow: Window
 
         _imprimir((OrdenTrabajo)EntidadEditada);
 
-        _dialogService.ShowToast(this, "Se ha impreso correctamente.");
+        //_dialogService.ShowToast(this, "Se ha impreso correctamente.");
 
-        Window.GetWindow(this)?.Close();
+        //Window.GetWindow(this)?.Close();
+        var ventana = Window.GetWindow(this);
+        
+        //if (ventana != null)
+        //    ventana.DialogResult = true;
     }
 
     private void BtnCancelar_Click(object sender, RoutedEventArgs e)
@@ -168,4 +188,11 @@ public partial class EntidadEditorTableWindow: Window
         DialogResult = false;
         Close();
     }
+
+    private async void BtnEntregar_Click(object sender, RoutedEventArgs e)
+    {
+        if (_btn1Action != null)
+            await _btn1Action(this);
+    }
+
 }
