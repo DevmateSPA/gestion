@@ -13,8 +13,23 @@ using System.Collections.Concurrent;
 
 namespace Gestion.Infrastructure.data;
 
+/// <summary>
+/// Representa un parámetro SQL tipado utilizado en la construcción
+/// y ejecución de consultas parametrizadas.
+/// </summary>
+/// <param name="Name">
+/// Nombre del parámetro SQL (incluyendo el prefijo '@').
+/// </param>
+/// <param name="Value">
+/// Valor asociado al parámetro. Puede ser null.
+/// </param>
+/// <remarks>
+/// Este record no crea parámetros de base de datos por sí mismo.
+/// Su propósito es transportar la información necesaria para que
+/// la capa de infraestructura (BaseRepository / CreateCommand)
+/// instancie y asigne los parámetros reales al DbCommand.
+/// </remarks>
 public record DbParam(string Name, object? Value);
-
 
 /// <summary>
 /// Repositorio base genérico que proporciona operaciones CRUD y consultas comunes
@@ -56,6 +71,34 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         _tableName = tableName;
         _viewName = viewName;
     }
+
+    /// <summary>
+    /// Convierte un valor proveniente de la base de datos al tipo
+    /// de destino especificado.
+    /// </summary>
+    /// <param name="value">
+    /// Valor bruto obtenido desde <see cref="DbDataReader"/>.
+    /// </param>
+    /// <param name="targetType">
+    /// Tipo de destino al que se desea convertir el valor.
+    /// </param>
+    /// <remarks>
+    /// Este método centraliza la lógica de conversión para el mapeo
+    /// de entidades, manejando:
+    /// 
+    /// - Valores nulos y <see cref="DBNull"/>
+    /// - Conversión especial de columnas BIT/TINYINT a <see cref="bool"/>
+    ///   (común en MySQL y MariaDB)
+    /// - Conversión de valores enumerados
+    /// - Conversión genérica mediante <see cref="Convert.ChangeType"/>
+    /// 
+    /// Cualquier conversión específica de proveedor debe resolverse
+    /// en este método para mantener el mapeo consistente.
+    /// </remarks>
+    /// <returns>
+    /// Valor convertido al tipo de destino, o <c>null</c> si el valor
+    /// original es nulo.
+    /// </returns>
     public object? ConvertValue(object? value, Type targetType)
     {
         if (value == null || value == DBNull.Value)
@@ -82,6 +125,35 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return Convert.ChangeType(value, targetType);
     }
 
+    /// <summary>
+    /// Crea y configura un <see cref="DbCommand"/> a partir de una conexión,
+    /// una consulta SQL y una colección opcional de parámetros.
+    /// </summary>
+    /// <param name="conn">
+    /// Conexión abierta a la base de datos sobre la cual se creará el comando.
+    /// </param>
+    /// <param name="sql">
+    /// Consulta SQL a ejecutar. Debe utilizar parámetros nombrados
+    /// compatibles con <see cref="DbParam"/>.
+    /// </param>
+    /// <param name="parameters">
+    /// Colección opcional de parámetros lógicos (<see cref="DbParam"/>)
+    /// que serán transformados en parámetros reales del proveedor
+    /// y asociados al comando.
+    /// </param>
+    /// <remarks>
+    /// Este método actúa como punto central de materialización de comandos SQL.
+    /// 
+    /// Responsabilidades:
+    /// - Crear el <see cref="DbCommand"/> asociado a la conexión
+    /// - Asignar el texto SQL
+    /// - Traducir <see cref="DbParam"/> a parámetros reales del proveedor
+    /// 
+    /// No ejecuta el comando ni gestiona el ciclo de vida de la conexión.
+    /// </remarks>
+    /// <returns>
+    /// Un <see cref="DbCommand"/> completamente configurado y listo para ejecutar.
+    /// </returns>
     protected DbCommand CreateCommand(
         DbConnection conn,
         string sql,
@@ -99,6 +171,36 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return cmd;
     }
 
+    /// <summary>
+    /// Crea un <see cref="DbParameter"/> compatible con el proveedor
+    /// asociado al <see cref="DbCommand"/> recibido.
+    /// </summary>
+    /// <param name="cmd">
+    /// Comando al cual pertenecerá el parámetro. Se utiliza para crear
+    /// el parámetro específico del proveedor (MySQL, SQL Server, etc.).
+    /// </param>
+    /// <param name="name">
+    /// Nombre del parámetro SQL (incluyendo el prefijo '@').
+    /// </param>
+    /// <param name="value">
+    /// Valor del parámetro. Si es null, se convierte automáticamente
+    /// en <see cref="DBNull.Value"/>.
+    /// </param>
+    /// <param name="type">
+    /// Tipo de dato opcional del parámetro. Si se especifica,
+    /// se asigna explícitamente al parámetro.
+    /// </param>
+    /// <remarks>
+    /// Este método encapsula la creación de parámetros dependientes
+    /// del proveedor, garantizando:
+    /// - Correcta conversión de null a <see cref="DBNull.Value"/>
+    /// - Compatibilidad con distintos motores de base de datos
+    /// - Separación entre definición lógica y materialización física
+    /// </remarks>
+    /// <returns>
+    /// Un <see cref="DbParameter"/> completamente configurado,
+    /// listo para ser agregado al comando.
+    /// </returns>
     protected DbParameter CreateParam(
         DbCommand cmd,
         string name,
@@ -115,6 +217,29 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return p;
     }
 
+    /// <summary>
+    /// Ejecuta una sentencia SQL que no retorna resultados
+    /// (INSERT, UPDATE, DELETE, etc.).
+    /// </summary>
+    /// <param name="sql">
+    /// Consulta SQL a ejecutar. Debe utilizar parámetros nombrados
+    /// compatibles con <see cref="DbParam"/>.
+    /// </param>
+    /// <param name="parameters">
+    /// Colección opcional de parámetros lógicos que serán
+    /// materializados y asociados al comando.
+    /// </param>
+    /// <remarks>
+    /// Este método:
+    /// - Crea y gestiona la conexión a la base de datos
+    /// - Construye el comando SQL mediante <see cref="CreateCommand"/>
+    /// - Ejecuta la operación de forma asíncrona
+    /// 
+    /// No realiza logging ni manejo de transacciones.
+    /// </remarks>
+    /// <returns>
+    /// Número de filas afectadas por la operación.
+    /// </returns>
     protected async Task<int> ExecuteNonQueryAsync(string sql, IEnumerable<DbParam>? parameters = null)
     {
         using var conn = await _connectionFactory.CreateConnection();
@@ -122,21 +247,82 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return await cmd.ExecuteNonQueryAsync();
     }
 
+    /// <summary>
+    /// Ejecuta una sentencia SQL que no retorna resultados y
+    /// registra la operación mediante <see cref="SqlLogger"/>.
+    /// </summary>
+    /// <param name="operation">
+    /// Nombre lógico de la operación, utilizado para fines de logging
+    /// y trazabilidad.
+    /// </param>
+    /// <param name="sql">
+    /// Consulta SQL a ejecutar.
+    /// </param>
+    /// <param name="parameters">
+    /// Colección opcional de parámetros lógicos asociados a la consulta.
+    /// </param>
+    /// <remarks>
+    /// Este método envuelve <see cref="ExecuteNonQueryAsync"/> para
+    /// añadir observabilidad sin duplicar lógica de acceso a datos.
+    /// 
+    /// El resultado logueado corresponde al número de filas afectadas.
+    /// </remarks>
+    /// <returns>
+    /// Número de filas afectadas por la operación.
+    /// </returns>
     public async Task<int> ExecuteNonQueryWithLogAsync(string operation, string sql, IEnumerable<DbParam>? parameters = null)
     {
         return await SqlLogger.LogAsync(
             operation: operation,
             sql: sql,
             action: async () => await ExecuteNonQueryAsync(sql, parameters),
-            countSelector: result => (int)result
+            countSelector: result => result
         );
     }
 
+    /// <summary>
+    /// Crea una nueva instancia de <see cref="QueryBuilder{T}"/> asociada
+    /// a este repositorio.
+    /// </summary>
+    /// <remarks>
+    /// El <see cref="QueryBuilder{T}"/> utiliza este repositorio como
+    /// punto de acceso a la infraestructura de datos, delegando en él:
+    /// - La ejecución de la consulta
+    /// - La creación de comandos y parámetros
+    /// - El mapeo de resultados
+    /// 
+    /// Cada llamada retorna una instancia nueva, garantizando que
+    /// el estado del builder no sea compartido entre consultas.
+    /// </remarks>
     protected QueryBuilder<T> CreateQueryBuilder()
     {
         return new QueryBuilder<T>(this);
     }
 
+    /// <summary>
+    /// Mapea una fila del <see cref="DbDataReader"/> a una instancia
+    /// del tipo de entidad <typeparamref name="T"/>.
+    /// </summary>
+    /// <param name="reader">
+    /// Lector de datos posicionado en una fila válida.
+    /// </param>
+    /// <remarks>
+    /// El mapeo se realiza por convención:
+    /// - El nombre de la columna debe coincidir con el nombre de la propiedad
+    ///   (ignorando mayúsculas/minúsculas).
+    /// - Las propiedades marcadas con <see cref="NotMappedAttribute"/>
+    ///   son ignoradas.
+    /// 
+    /// Para mejorar el rendimiento, las propiedades mapeables se
+    /// almacenan en caché por tipo.
+    /// 
+    /// La conversión de tipos se delega a <see cref="ConvertValue"/>,
+    /// permitiendo manejar valores nulos y conversiones seguras.
+    /// </remarks>
+    /// <returns>
+    /// Instancia de <typeparamref name="T"/> poblada con los valores
+    /// de la fila actual.
+    /// </returns>
     protected virtual T MapEntity(DbDataReader reader)
     {
         var entity = new T();
@@ -331,6 +517,34 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return affected > 0;
     }
 
+    /// <summary>
+    /// Genera una lista de parámetros SQL a partir de las propiedades
+    /// de una entidad.
+    /// </summary>
+    /// <param name="entity">
+    /// Entidad de la cual se extraerán los valores.
+    /// </param>
+    /// <param name="includeId">
+    /// Indica si la propiedad <c>Id</c> debe incluirse en la lista
+    /// de parámetros (útil para operaciones UPDATE).
+    /// </param>
+    /// <remarks>
+    /// La generación de parámetros se realiza por convención:
+    /// 
+    /// - Cada propiedad pública y escribible se transforma en un
+    ///   <see cref="DbParam"/> con nombre <c>@{propiedad}</c>
+    /// - El nombre del parámetro se genera en minúsculas
+    /// - Las propiedades marcadas con <see cref="NotMappedAttribute"/>
+    ///   o <see cref="NoSaveDbAttribute"/> son excluidas
+    /// 
+    /// Este método es utilizado por operaciones genéricas de
+    /// inserción y actualización para evitar código repetitivo
+    /// y mantener consistencia en el acceso a datos.
+    /// </remarks>
+    /// <returns>
+    /// Lista de parámetros SQL representando el estado actual
+    /// de la entidad.
+    /// </returns>
     protected List<DbParam> GetParametersFromEntity(T entity, bool includeId = false)
     {
         var props = typeof(T).GetProperties()
@@ -370,6 +584,34 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return true;
     }
 
+    /// <summary>
+    /// Ejecuta una consulta de conteo (<c>COUNT</c>) sobre una tabla
+    /// o vista utilizando una condición personalizada.
+    /// </summary>
+    /// <param name="where">
+    /// Cláusula WHERE de la consulta, sin incluir la palabra clave
+    /// <c>WHERE</c>.
+    /// </param>
+    /// <param name="tableName">
+    /// Nombre de la tabla o vista sobre la cual se ejecutará el conteo.
+    /// Si es <c>null</c>, se utiliza la tabla asociada al repositorio.
+    /// </param>
+    /// <param name="parameters">
+    /// Colección opcional de parámetros asociados a la cláusula WHERE.
+    /// </param>
+    /// <remarks>
+    /// Este método es utilizado internamente por componentes como
+    /// <see cref="QueryBuilder{T}"/> para obtener conteos consistentes
+    /// utilizando el mismo mecanismo de parametrización y ejecución
+    /// del repositorio.
+    /// 
+    /// No aplica paginación ni ordenamiento, ya que su único propósito
+    /// es retornar la cantidad total de registros que cumplen la
+    /// condición especificada.
+    /// </remarks>
+    /// <returns>
+    /// Número total de registros que cumplen la condición.
+    /// </returns>
     public async Task<long> CountWhere(
         string where, 
         string? tableName = null, 
@@ -387,6 +629,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
 
         return Convert.ToInt64(result);
     }
+
     public virtual async Task<List<T>> FindAllByEmpresa(long empresaId)
     {
         if (_viewName == null)
@@ -421,6 +664,30 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return total;
     }  
 
+    /// <summary>
+    /// Determina si existe al menos un registro que cumpla con las
+    /// condiciones especificadas.
+    /// </summary>
+    /// <param name="build">
+    /// Acción que define dinámicamente las condiciones del
+    /// <see cref="QueryBuilder{T}"/>.
+    /// </param>
+    /// <param name="excludeId">
+    /// Identificador opcional de un registro a excluir del conteo,
+    /// comúnmente utilizado en validaciones durante actualizaciones.
+    /// </param>
+    /// <remarks>
+    /// Este método es utilizado para validar existencia de registros
+    /// sin necesidad de traer datos completos.
+    /// 
+    /// El criterio de búsqueda se define externamente mediante
+    /// el <paramref name="build"/>, permitiendo reutilización
+    /// y composición flexible de reglas.
+    /// </remarks>
+    /// <returns>
+    /// <c>true</c> si existe al menos un registro que cumpla las
+    /// condiciones; de lo contrario, <c>false</c>.
+    /// </returns>
     public async Task<bool> Exists(
         Action<QueryBuilder<T>> build,
         long? excludeId = null)
@@ -436,6 +703,28 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return await builder.CountAsync() > 0;
     }
 
+    /// <summary>
+    /// Determina si existe un registro que coincida con un conjunto
+    /// de columnas y valores.
+    /// </summary>
+    /// <param name="columns">
+    /// Colección de pares columna/valor que deben cumplirse
+    /// simultáneamente.
+    /// </param>
+    /// <param name="excludeId">
+    /// Identificador opcional de un registro a excluir del conteo.
+    /// </param>
+    /// <remarks>
+    /// Este método es un atajo para validaciones comunes de unicidad
+    /// (por ejemplo, combinaciones únicas de columnas).
+    /// 
+    /// Internamente delega en <see cref="Exists"/> para construir
+    /// dinámicamente la consulta.
+    /// </remarks>
+    /// <returns>
+    /// <c>true</c> si existe un registro que cumpla con todas las
+    /// condiciones; de lo contrario, <c>false</c>.
+    /// </returns>
     public async Task<bool> ExistsByColumns(
         IEnumerable<(string column, object value)> columns,
         long? excludeId = null)
