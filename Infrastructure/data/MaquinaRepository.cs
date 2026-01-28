@@ -37,7 +37,7 @@ public class MaquinaRepository : BaseRepository<Maquina>, IMaquinaRepository
         var builder = CreateQueryBuilder()
             .From("vw_maquinas_with_pending_orders")
             .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
-            .Limit(pageSize, offset);
+            .Page(pageNumber, pageSize);
 
         return await builder.ToListAsync<Maquina>();
     }

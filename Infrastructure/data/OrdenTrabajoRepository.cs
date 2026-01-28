@@ -13,27 +13,19 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
 
     public async Task<long> ContarPendientes(long empresaId)
     {
-        DbParam[] parameters =
-        [
-            new DbParam("@empresa", empresaId)
-        ];
-
-        return await CountWhere(
-            where: "empresa = @empresa AND ordenentregada IS NULL",
-            parameters: parameters);
+        return await CreateQueryBuilder()
+            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
+            .Where("ordenentregada IS NULL")
+            .CountAsync();
     }
 
     public async Task<long> ContarByMaquinaWhereEmpresaAndPendientes(long empresaId, string codigoMaquina)
     {
-        DbParam[] parameters =
-        [
-            new DbParam("@empresa", empresaId),
-            new DbParam("@codigoMaquina", codigoMaquina)
-        ];
-
-        return await CountWhere(
-            where: "empresa = @empresa AND maquina1 = @codigoMaquina AND ordenentregada IS NULL",
-            parameters: parameters);
+        return await CreateQueryBuilder()
+            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
+            .Where("maquina1 = @codigoMaquina", new DbParam("@empresa", empresaId))
+            .Where("ordenentregada IS NULL")
+            .CountAsync();
     }
 
     public async Task<List<OrdenTrabajo>> FindAllByEmpresaAndPendiente(long empresaId)
@@ -41,18 +33,11 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
         if (_viewName == null)
             throw new InvalidOperationException("La vista no está asignada para este repositorio.");
 
-        DbParam[] parameters =
-        [
-            new DbParam("@empresa", empresaId)
-        ];
-
-        return await FindWhereFrom(
-            tableOrView: _viewName,
-            where: "empresa = @empresa AND ordenentregada IS NULL",
-            orderBy: "fecha DESC",
-            limit: null,
-            offset: null,
-            parameters);
+        return await CreateQueryBuilder()
+            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
+            .Where("ordenentregada IS NULL")
+            .OrderBy("fecha DESC")
+            .ToListAsync<OrdenTrabajo>();
     }
 
     public async Task<List<OrdenTrabajo>> FindAllByMaquinaWhereEmpresaAndPendiente(long empresaId, string codigoMaquina)
@@ -60,19 +45,12 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
         if (_viewName == null)
             throw new InvalidOperationException("La vista no está asignada para este repositorio.");
 
-        DbParam[] parameters =
-        [
-            new DbParam("@empresa", empresaId),
-            new DbParam("@codigoMaquina", codigoMaquina)
-        ];
-
-        return await FindWhereFrom(
-            tableOrView: _viewName,
-            where: "empresa = @empresa AND maquina1 = @codigoMaquina AND ordenentregada IS NULL",
-            orderBy: "fecha DESC",
-            limit: null,
-            offset: null,
-            parameters);
+        return await CreateQueryBuilder()
+            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
+            .Where("maquina1 = @codigoMaquina", new DbParam("@codigoMaquina", codigoMaquina))
+            .Where("ordenentregada IS NULL")
+            .OrderBy("fecha DESC")
+            .ToListAsync<OrdenTrabajo>();
     }
 
     public async Task<List<OrdenTrabajo>> FindPageByMaquinaWhereEmpresaAndPendiente(
@@ -81,18 +59,13 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
         int pageNumber,
         int pageSize)
     {
-        DbParam[] parameters =
-        [
-            new DbParam("@empresa", empresaId),
-            new DbParam("@codigoMaquina", codigoMaquina)
-        ];
-
-        return await FindPageWhere(
-            where: "empresa = @empresa AND maquina1 = @codigoMaquina AND ordenentregada IS NULL",
-            orderBy: "fecha DESC",
-            pageNumber: pageNumber,
-            pageSize: pageSize,
-            parameters);
+        return await CreateQueryBuilder()
+            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
+            .Where("maquina1 = @codigoMaquina", new DbParam("@codigoMaquina", codigoMaquina))
+            .Where("ordenentregada IS NULL")
+            .Page(pageNumber, pageSize)
+            .OrderBy("fecha DESC")
+            .ToListAsync<OrdenTrabajo>();
     }
 
     public async Task<List<OrdenTrabajo>> FindPageByEmpresaAndPendiente(
@@ -100,17 +73,12 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
         int pageNumber,
         int pageSize)
     {
-        DbParam[] parameters =
-        [
-            new DbParam("@empresa", empresaId)
-        ];
-
-        return await FindPageWhere(
-            where: "empresa = @empresa AND ordenentregada IS NULL",
-            orderBy: "fecha DESC",
-            pageNumber: pageNumber,
-            pageSize: pageSize,
-            parameters);
+        return await CreateQueryBuilder()
+            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
+            .Where("ordenentregada IS NULL")
+            .Page(pageNumber, pageSize)
+            .OrderBy("fecha DESC")
+            .ToListAsync<OrdenTrabajo>();
     }
 
     public async Task<List<string>> GetFolioList(string busquedaFolio, long empresaId)

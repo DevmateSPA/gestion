@@ -50,6 +50,18 @@ public class QueryBuilder<T> where T : IModel, new()
         return this;
     }
 
+    public QueryBuilder<T> Page(int pageNumber, int pageSize)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(pageNumber);
+
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(pageSize);
+
+        _limit = pageSize;
+        _offset = (pageNumber - 1) * pageSize;
+
+        return this;
+}
+
     public QueryBuilder<T> Limit(int limit, int? offset = null)
     {
         _limit = limit;

@@ -468,7 +468,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         var builder = new QueryBuilder<T>(this)
             .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
             .OrderBy("COALESCE(fecha, '1900-01-01') DESC")
-            .Limit(pageSize, (pageNumber - 1) * pageSize);
+            .Page(pageNumber, pageSize);
 
         return await builder.ToListAsync<T>();
     }
