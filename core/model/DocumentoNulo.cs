@@ -31,7 +31,7 @@ public class DocumentoNulo : IEmpresa
     [Fecha]
     [Nombre("Fecha")]
     [Orden(3)]
-    public DateTime Fecha { get; set; }
+    public DateTime Fecha { get; set; } = DateTime.Now;
 
     [Visible(false)]
     public long Empresa { get; set; }

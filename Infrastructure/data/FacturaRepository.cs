@@ -1,8 +1,8 @@
+using System.Data;
 using System.Data.Common;
 using Gestion.core.interfaces.database;
 using Gestion.core.interfaces.repository;
 using Gestion.core.model;
-using MySql.Data.MySqlClient;
 
 namespace Gestion.Infrastructure.data;
 
@@ -16,12 +16,12 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
         if (_viewName == null)
             throw new InvalidOperationException("La vista no está asignada para este repositorio.");
 
-        DbParameter[] parameters =
+        DbParam[] parameters =
         [
-            new MySqlParameter("@empresa", empresaId),
-            new MySqlParameter("@rutCliente", rutCliente),
-            new MySqlParameter("@fechaDesde", fechaDesde),
-            new MySqlParameter("@fechaHasta", fechaHasta),
+            new DbParam("@empresa", empresaId),
+            new DbParam("@rutCliente", rutCliente),
+            new DbParam("@fechaDesde", fechaDesde),
+            new DbParam("@fechaHasta", fechaHasta),
         ];
 
         return await FindWhereFrom(
@@ -33,17 +33,6 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
             parameters);
     }
 
-    public async Task<bool> ExisteFolio(
-        string folio,
-        long empresaId,
-        long? excludeId = null) => await ExistsByColumns(
-            new Dictionary<string, object>
-            {
-                ["folio"] = folio,
-                ["empresa"] = empresaId
-            },
-            excludeId);
-
     public async Task<List<string>> GetFolioList(string numero, long empresaId)
     {
         if (_viewName == null)
@@ -52,33 +41,29 @@ public class FacturaRepository : BaseRepository<Factura>, IFacturaRepository
         if (string.IsNullOrWhiteSpace(numero))
             return [];
 
-        DbParameter[] parameters =
-        [
-            new MySqlParameter("@numero", $"%{numero}%"),
-            new MySqlParameter("@empresa", empresaId),
-        ];
-
-        return await GetColumnList<string>(
-            columnName: "folio",
-            where: "empresa = @empresa AND folio LIKE @numero",
-            parameters: parameters);
+        return await CreateQueryBuilder()
+            .Select("folio")
+            .Where("empresa = @empresa AND folio LIKE @numero",
+                new DbParam("@empresa", empresaId),
+                new DbParam("@numero", $"%{numero}%"))
+            .ToListAsync<string>();
     }
 
-    public async Task<String> GetSiguienteFolio(long empresaId)
+    public async Task<string> GetSiguienteFolio(long empresaId)
     {
-        if (_viewName == null)
-            throw new InvalidOperationException("La vista no está asignada para este repositorio.");
+        using var conn = await _connectionFactory.CreateConnection();
+        using var cmd = (DbCommand)conn.CreateCommand();
 
-        DbParameter[] parameters =
-        [
-            new MySqlParameter("@empresa", empresaId),
-        ];
+        cmd.CommandText = "get_siguiente_folio_fa";
+        cmd.CommandType = CommandType.StoredProcedure;
 
-        return await GetColumnList<string>(
-            columnName: "MAX(folio)",
-            where: "empresa = @empresa",
-            parameters: parameters,
-            orderby: "ORDER BY 1 DESC",
-            limit: "LIMIT 1");
+        cmd.Parameters.Add(CreateParam(cmd, "p_empresa_id", empresaId));
+
+        using var reader = await cmd.ExecuteReaderAsync();
+
+        if (!await reader.ReadAsync())
+            throw new InvalidOperationException("No se pudo generar el folio.");
+
+        return reader.GetString("ultimo_folio");
     }
 }

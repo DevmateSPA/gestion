@@ -9,15 +9,4 @@ public class VentaRepository : BaseRepository<Venta>, IVentaRepository
 {
     public VentaRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "venta", "vw_venta") {}
-
-    public async Task<bool> ExisteFolio(
-        string folio,
-        long empresaId,
-        long? excludeId = null) => await ExistsByColumns(
-            new Dictionary<string, object>
-            {
-                ["folio"] = folio,
-                ["empresa"] = empresaId
-            },
-            excludeId);
 }

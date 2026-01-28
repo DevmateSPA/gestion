@@ -8,7 +8,7 @@ CREATE OR REPLACE VIEW vw_factura AS
     JOIN EMPRESA e
     ON t.empresa = e.id
     JOIN CLIENTE c
-    ON t.rutcliente = c.rut;
+    ON t.rutcliente = c.rut AND c.empresa = t.empresa;
 
 -- Para Banco
 CREATE OR REPLACE VIEW vw_banco AS
@@ -64,7 +64,7 @@ CREATE OR REPLACE VIEW vw_facturacompra AS
         t.empresa AS empresa,
         e.nombre AS EmpresaNombre
     FROM facturacompra t
-    JOIN empresa e ON (t.empresa = e.id);
+    JOIN empresa e ON t.empresa = e.id;
 
 -- Para Fotomecanica
 CREATE OR REPLACE VIEW vw_fotomecanica AS
@@ -93,7 +93,7 @@ CREATE OR REPLACE VIEW vw_guiadespacho AS
     FROM GUIADESPACHO t
     JOIN EMPRESA e
     ON t.empresa = e.id
-    JOIN cliente c ON (t.rutcliente = c.rut);
+    JOIN cliente c ON t.rutcliente = c.rut AND c.empresa = t.empresa;
 
 -- Para Impresion
 CREATE OR REPLACE VIEW vw_impresion AS
@@ -122,7 +122,7 @@ CREATE OR REPLACE VIEW vw_notacredito AS
     FROM NOTACREDITO t
     JOIN EMPRESA e
     ON t.empresa = e.id
-    JOIN cliente c ON (t.rutcliente = c.rut);
+    JOIN cliente c ON t.rutcliente = c.rut AND c.empresa = t.empresa;
 
 -- Para Operario
 CREATE OR REPLACE VIEW vw_operario AS
@@ -151,54 +151,19 @@ CREATE OR REPLACE VIEW vw_proveedor AS
     JOIN EMPRESA e
     ON t.empresa = e.id;
 
-CREATE OR REPLACE VIEW  `vw_ordentrabajo` AS
+CREATE OR REPLACE VIEW  vw_ordentrabajo AS
     SELECT 
-        `t`.`id` AS `id`,
-        `t`.`folio` AS `folio`,
-        `t`.`rutcliente` AS `rutcliente`,
-        `t`.`fecha` AS `fecha`,
-        `t`.`descripcion` AS `descripcion`,
-        `t`.`cantidad` AS `cantidad`,
-        `t`.`totalimpresion` AS `totalimpresion`,
-        `t`.`foliodesde` AS `foliodesde`,
-        `t`.`foliohasta` AS `foliohasta`,
-        `t`.`cortartamanio` AS `cortartamanio`,
-        `t`.`cortartamanion` AS `cortartamanion`,
-        `t`.`cortartamaniolargo` AS `cortartamaniolargo`,
-        `t`.`montar` AS `montar`,
-        `t`.`moldetamanio` AS `moldetamanio`,
-        `t`.`tamaniofinalancho` AS `tamaniofinalancho`,
-        `t`.`tamaniofinallargo` AS `tamaniofinallargo`,
-        `t`.`clienteproporcionanada` AS `clienteproporcionanada`,
-        `t`.`clienteproporcionaoriginal` AS `clienteproporcionaoriginal`,
-        `t`.`clienteproporcionapelicula` AS `clienteproporcionapelicula`,
-        `t`.`clienteproporcionaplancha` AS `clienteproporcionaplancha`,
-        `t`.`clienteproporcionapapel` AS `clienteproporcionapapel`,
-        `t`.`tipoimpresion` AS `tipoimpresion`,
-        `t`.`maquina1` AS `maquina1`,
-        `t`.`maquina2` AS `maquina2`,
-        `t`.`pin` AS `pin`,
-        `t`.`nva` AS `nva`,
-        `t`.`us` AS `us`,
-        `t`.`ctpnva` AS `ctpnva`,
-        `t`.`u` AS `u`,
-        `t`.`sobres` AS `sobres`,
-        `t`.`sacos` AS `sacos`,
-        `t`.`tintas1` AS `tintas1`,
-        `t`.`tintas2` AS `tintas2`,
-        `t`.`tintas3` AS `tintas3`,
-        `t`.`tintas4` AS `tintas4`,
-        `t`.`fechaentrega` AS `fechaentrega`,
-        `t`.`empresa` AS `empresa`,
-        `t`.`ordenentregada` AS `ordenentregada`,
-        `e`.`nombre` AS `EmpresaNombre`,
-        `m`.`descripcion` AS `maquina1descripcion`,
-        `c`.`razon_social` AS `RazonSocial`
-    FROM
-        (((`ordentrabajo` `t`
-        LEFT JOIN `empresa` `e` ON ((`t`.`empresa` = `e`.`id`)))
-        LEFT JOIN `cliente` `c` ON ((TRIM(`t`.`rutcliente`) = TRIM(`c`.`rut`))))
-        LEFT JOIN `maquina` `m` ON ((`t`.`maquina1` = `m`.`codigo`)))
+        t.*,
+        e.nombre AS EmpresaNombre,
+        m.descripcion AS Maquina1descripcion,
+        c.razon_social AS RazonSocial
+    FROM ordentrabajo t
+        LEFT JOIN empresa e 
+        ON t.empresa = e.id
+        LEFT JOIN cliente c 
+        ON t.rutcliente = c.rut and c.empresa = t.empresa
+        LEFT JOIN maquina m 
+        ON t.maquina1 = m.codigo and m.empresa = t.empresa;
 
 -- Vista para trabajar con las Maquinas con pendientes
 CREATE OR REPLACE VIEW vw_maquinas_with_pending_orders AS
@@ -209,7 +174,7 @@ CREATE OR REPLACE VIEW vw_maquinas_with_pending_orders AS
         COUNT(ot.maquina1) AS cantidad_pendientes
     FROM maquina m
     JOIN ordentrabajo ot
-        ON m.codigo = ot.maquina1
+        ON m.codigo = ot.maquina1 AND ot.empresa = m.empresa
     WHERE ot.ordenentregada IS NULL   -- solo pendientes
     GROUP BY 
         m.codigo,

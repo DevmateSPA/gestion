@@ -52,7 +52,7 @@ public class Venta : IEmpresa
     [Nombre("Monto 1")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(1)]
-    public string Monto01 { get; set; } = string.Empty;    
+    public int Monto01 { get; set; } = 0;    
     [Nombre("Orden trabajo 1")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(2)]
@@ -66,7 +66,7 @@ public class Venta : IEmpresa
     [Nombre("Monto 2")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(4)]
-    public string Monto02 { get; set; } = string.Empty;    
+    public int Monto02 { get; set; } = 0;    
     [Nombre("Orden trabajo 2")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(5)]
@@ -80,7 +80,7 @@ public class Venta : IEmpresa
     [Nombre("Monto 3")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(7)]
-    public string Monto03 { get; set; } = string.Empty;    
+    public int Monto03 { get; set; } = 0;    
     [Nombre("Orden trabajo 3")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(8)]
@@ -94,7 +94,7 @@ public class Venta : IEmpresa
     [Nombre("Monto 4")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(10)]
-    public string Monto04 { get; set; } = string.Empty;    
+    public int Monto04 { get; set; } = 0;    
     [Nombre("Orden trabajo 4")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(11)]
@@ -108,7 +108,7 @@ public class Venta : IEmpresa
     [Nombre("Monto 5")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(13)]
-    public string Monto05 { get; set; } = string.Empty;    
+    public int Monto05 { get; set; } = 0;    
     [Nombre("Orden trabajo 5")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(14)]
@@ -122,7 +122,7 @@ public class Venta : IEmpresa
     [Nombre("Monto 6")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(16)]
-    public string Monto06 { get; set; } = string.Empty;    
+    public int Monto06 { get; set; } = 0;    
     [Nombre("Orden trabajo 6")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(17)]
@@ -136,7 +136,7 @@ public class Venta : IEmpresa
     [Nombre("Monto 7")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(19)]
-    public string Monto07 { get; set; } = string.Empty;    
+    public int Monto07 { get; set; } = 0;    
     [Nombre("Orden trabajo 7")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(20)]
@@ -150,7 +150,7 @@ public class Venta : IEmpresa
     [Nombre("Monto 8")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(22)]
-    public string Monto08 { get; set; } = string.Empty;    
+    public int Monto08 { get; set; } = 0;    
     [Nombre("Orden trabajo 8")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(23)]
@@ -164,7 +164,7 @@ public class Venta : IEmpresa
     [Nombre("Monto 9")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(25)]
-    public string Monto09 { get; set; } = string.Empty;    
+    public int Monto09 { get; set; } = 0;    
     [Nombre("Orden trabajo 9")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(26)]
@@ -177,8 +177,8 @@ public class Venta : IEmpresa
     public string Factura10 { get; set; } = string.Empty;    
     [Nombre("Monto 10")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
-    [Orden(28)]
-    public string Monto10 { get; set; } = string.Empty;    
+    [Orden(28)] 
+    public int Monto10 { get; set; } = 0;    
     [Nombre("Orden trabajo 10")]
     [Grupo("Documentos asociados", GRUPO_FACTURAS)]
     [Orden(29)]

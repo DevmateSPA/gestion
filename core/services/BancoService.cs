@@ -1,7 +1,8 @@
-using Gestion.core.exceptions;
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.core.reglas.common;
 
 namespace Gestion.core.services;
 
@@ -14,24 +15,29 @@ public class BancoService : BaseService<Banco>, IBancoService
         _bancoRepository = bancoRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(
+    protected override IEnumerable<IReglaNegocio<Banco>> DefinirReglas(
         Banco entity,
         long? excludeId = null)
     {
-        List<string> errores = [];
+        return
+        [
+            new RequeridoRegla<Banco>(
+                b => b.Nombre,
+                "El nombre del banco es obligatorio."),
 
-        if (await _bancoRepository.ExisteCodigo(
-                codigo: entity.Codigo,
-                empresaId: entity.Empresa,
-                excludeId: excludeId))
-        {
-            errores.Add($"El código del banco: {entity.Codigo}, ya existe para la empresa actual.");
-        }
+            new UnicoRegla<Banco>(
+                existe: (b, id) =>
+                    _bancoRepository.ExistsByColumns(
+                        [
+                            ("codigo", b.Codigo),
+                            ("empresa", b.Empresa)
+                        ],
+                        id),
 
-        if (string.IsNullOrWhiteSpace(entity.Nombre))
-            errores.Add("El nombre del banco es obligatorio.");
+                valor: b => b.Codigo,
 
-        return errores;
+                mensaje: "El código del banco: {0}, ya existe para la empresa actual.")
+        ];
     }
 
 }

@@ -1,6 +1,8 @@
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.core.reglas.common;
 
 namespace Gestion.core.services;
 
@@ -13,24 +15,37 @@ public class NotaCreditoService : BaseService<NotaCredito>, INotaCreditoService
         _notaCreditoRepository = notaCreditoRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(
+    protected override IEnumerable<IReglaNegocio<NotaCredito>> DefinirReglas(
         NotaCredito entity,
         long? excludeId = null)
     {
-        List<string> erroresEncontrados = [];
+        return
+        [
+            new RequeridoRegla<NotaCredito>(
+                c => c.Folio,
+                "El folio de la nota de crédito es obligatorio."),
 
-        if (await _notaCreditoRepository.ExisteFolio(
-                folio: entity.Folio,
-                empresaId: entity.Empresa,
-                excludeId: excludeId))
-            erroresEncontrados.Add($"El folio de la nota de crédito: {entity.Folio}, ya existe para la empresa actual.");
+            new RequeridoRegla<NotaCredito>(
+                c => c.RutCliente,
+                "El rut del cliente de la nota de crédito es obligatorio."),
 
-        if (string.IsNullOrWhiteSpace(entity.Folio))
-            erroresEncontrados.Add("El folio de la nota de crédito es obligatorio.");
+            new UnicoRegla<NotaCredito>(
+                existe: (nc, id) =>
+                    _notaCreditoRepository.ExistsByColumns(
+                        [
+                            ("folio", nc.Folio),
+                            ("empresa", nc.Empresa)
+                        ],
+                        id),
 
-        if (string.IsNullOrWhiteSpace(entity.RutCliente))
-            erroresEncontrados.Add("El rut del cliente de la nota de crédito es obligatorio.");
+                valor: nc => nc.Folio,
 
-        return erroresEncontrados;
+                mensaje: "El folio de la nota de crédito: {0}, ya existe para la empresa actual.")
+        ];
+    }
+
+    public async Task<string> GetSiguienteFolio(long empresaId)
+    {
+        return await _notaCreditoRepository.GetSiguienteFolio(empresaId);
     }
 }

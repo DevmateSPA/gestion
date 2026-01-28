@@ -31,7 +31,8 @@
                     x:Name="btnEntregar"
                     Width="140" Height="40"
                     Margin="0 0 10 0"
-                    Click="BtnEntregar_Click" />
+                    Click="BtnEntregar_Click"
+                    Visibility="Collapsed" />
             <Button Content="Cerrar"
                     Width="140" Height="40"
                     Click="BtnCancelar_Click" />

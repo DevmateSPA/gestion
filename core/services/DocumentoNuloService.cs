@@ -1,6 +1,8 @@
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.core.reglas.common;
 
 namespace Gestion.core.services;
 
@@ -13,21 +15,28 @@ public class DocumentoNuloService : BaseService<DocumentoNulo>, IDocumentoNuloSe
         _documentoNuloRepository = documentoNuloRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(
+    protected override IEnumerable<IReglaNegocio<DocumentoNulo>> DefinirReglas(
         DocumentoNulo entity,
         long? excludeId = null)
     {
-        List<string> erroresEncontrados = [];
+        return
+        [
+            new RequeridoRegla<DocumentoNulo>(
+                d => d.Folio,
+                "El folio del documento es obligatorio."),
 
-        if (await _documentoNuloRepository.ExisteFolio(
-                folio: entity.Folio,
-                empresaId: entity.Empresa,
-                excludeId: excludeId))
-            erroresEncontrados.Add($"El folio del documento: {entity.Folio}, ya existe para la empresa actual.");
+            new UnicoRegla<DocumentoNulo>(
+                existe: (dn, id) =>
+                    _documentoNuloRepository.ExistsByColumns(
+                        [
+                            ("folio", dn.Folio),
+                            ("empresa", dn.Empresa)
+                        ],
+                        id),
 
-        if (string.IsNullOrWhiteSpace(entity.Folio))
-            erroresEncontrados.Add("El folio del documento es obligatorio.");
+                valor: dn => dn.Folio,
 
-        return erroresEncontrados;
+                mensaje: "El folio del documento: {0}, ya existe para la empresa actual.")
+        ];
     }
 }

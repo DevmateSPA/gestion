@@ -1,7 +1,7 @@
 using Gestion.core.interfaces.database;
 using Gestion.core.interfaces.service;
 using MySql.Data.MySqlClient;
-using System.Data;
+using System.Data.Common;
 
 namespace Gestion.Infrastructure.Services;
 
@@ -26,7 +26,7 @@ public class MySqlConnectionFactory : IDbConnectionFactory
         }
     }
 
-    public async Task<IDbConnection> CreateConnection()
+    public async Task<DbConnection> CreateConnection()
     {
         if (string.IsNullOrEmpty(_connectionString))
             throw new InvalidOperationException("La cadena de conexión no está configurada correctamente.");

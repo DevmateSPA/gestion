@@ -1,6 +1,6 @@
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
-using Gestion.core.model;
 using Gestion.core.model.detalles;
 
 namespace Gestion.core.services;
@@ -39,11 +39,10 @@ public class DetalleOTService : BaseService<DetalleOrdenTrabajo>, IDetalleOTServ
         return await _detalleOTRepository.UpdateAll(detalles, empresaId);
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(
+    protected override IEnumerable<IReglaNegocio<DetalleOrdenTrabajo>> DefinirReglas(
         DetalleOrdenTrabajo entity,
         long? excludeId = null)
     {
-        List<string> erroresEncontrados = [];
-        return erroresEncontrados;
+        return [];
     }
 }

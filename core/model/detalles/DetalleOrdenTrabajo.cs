@@ -12,7 +12,7 @@ public class DetalleOrdenTrabajo : IModel
     public long Total { get; set; }
     public int Tamanio { get; set; }
     public int Cplie { get; set; }
-    public long Empresa { get; set; } = 0;
+    public long Empresa { get; set;}
 
     public DetalleOrdenTrabajo Clone()
     {

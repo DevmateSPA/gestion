@@ -5,7 +5,7 @@ namespace Gestion.core.interfaces.repository;
 
 public interface IDetalleOTRepository : IBaseRepository<DetalleOrdenTrabajo>
 {
-    Task<List<DetalleOrdenTrabajo>> FindByFolio(string folio, long empresa);
+    Task<List<DetalleOrdenTrabajo>> FindByFolio(string folio, long empresaId);
     Task<bool> SaveAll(IList<DetalleOrdenTrabajo> detalles);
     Task<bool> UpdateAll(IList<DetalleOrdenTrabajo> detalles, long empresaId);
     Task<bool> DeleteByIds(IList<long> ids, long empresaId);

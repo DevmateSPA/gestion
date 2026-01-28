@@ -5,14 +5,13 @@ using Gestion.core.attributes;
 using Gestion.core.interfaces.database;
 using Gestion.core.interfaces.repository;
 using Gestion.core.model;
-using MySql.Data.MySqlClient;
 
 namespace Gestion.Infrastructure.data;
 
 public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProducto>, IFacturaCompraProductoRepository
 {
     public FacturaCompraProductoRepository(IDbConnectionFactory connectionFactory)
-        : base(connectionFactory, "facturacompraproducto", "vw_facturacompraproducto") {}
+        : base(connectionFactory, "facturacompraproducto", null) {}
 
     public async Task<List<FacturaCompraProducto>> FindByFolio(string folio, long empresaId)
     {
@@ -54,94 +53,72 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
 
     public async Task<bool> SaveAll(IList<FacturaCompraProducto> detalles)
     {
-        var lista = detalles.ToList();
-        if (lista.Count == 0)
+        if (detalles == null || detalles.Count == 0)
             return false;
 
-        using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
-
-        // --- PROPIEDADES VÁLIDAS ---
+        // Propiedades válidas
         var props = typeof(FacturaCompraProducto).GetProperties()
-            .Where(p => p.Name != "Id" 
-                && Attribute.IsDefined(p, typeof(NotMappedAttribute)) == false
-                && !Attribute.IsDefined(p, typeof(NoSaveDbAttribute)))
+            .Where(p => p.Name != "Id"
+                        && !Attribute.IsDefined(p, typeof(NotMappedAttribute))
+                        && !Attribute.IsDefined(p, typeof(NoSaveDbAttribute)))
             .ToList();
 
         string columns = string.Join(", ", props.Select(p => p.Name.ToLower()));
 
-        // --- CONSTRUCCIÓN DEL INSERT MÚLTIPLE ---
+        // Construcción del INSERT múltiple
         var sb = new StringBuilder();
         sb.Append($"INSERT INTO {_tableName} ({columns}) VALUES ");
 
-        int index = 0;
+        var parameters = new List<DbParam>();
 
-        foreach (var entity in lista)
+        for (int i = 0; i < detalles.Count; i++)
         {
             var paramNames = new List<string>();
-
             foreach (var prop in props)
             {
-                string paramName = $"@{prop.Name.ToLower()}{index}";
+                string paramName = $"@{prop.Name}_{i}";
                 paramNames.Add(paramName);
-
-                var param = cmd.CreateParameter();
-                param.ParameterName = paramName;
-                param.Value = prop.GetValue(entity) ?? DBNull.Value;
-                cmd.Parameters.Add(param);
+                parameters.Add(new DbParam(paramName, prop.GetValue(detalles[i]) ?? DBNull.Value));
             }
 
             sb.Append("(" + string.Join(", ", paramNames) + ")");
-
-            index++;
-            if (index < lista.Count)
+            if (i < detalles.Count - 1)
                 sb.Append(", ");
         }
 
-        cmd.CommandText = sb.ToString();
-
-        int affected = await cmd.ExecuteNonQueryAsync();
-
+        int affected = await ExecuteNonQueryWithLogAsync("FacturaCompraProducto_SaveAll", sb.ToString(), parameters);
         return affected > 0;
     }
 
     public async Task<bool> UpdateAll(IList<FacturaCompraProducto> detalles, long empresaId)
     {
-        var lista = detalles.ToList();
-
-        if (lista.Count == 0)
+        if (detalles == null || detalles.Count == 0)
             return false;
-
-        using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
 
         var props = typeof(FacturaCompraProducto).GetProperties()
             .Where(p => p.Name != "Id"
-                && !Attribute.IsDefined(p, typeof(NotMappedAttribute))
-                && !Attribute.IsDefined(p, typeof(NoSaveDbAttribute)))
+                        && !Attribute.IsDefined(p, typeof(NotMappedAttribute))
+                        && !Attribute.IsDefined(p, typeof(NoSaveDbAttribute)))
             .ToList();
 
+        // Construcción del UPDATE con CASE
         var sb = new StringBuilder();
         sb.Append($"UPDATE {_tableName} SET ");
 
-        // Construcción de columnas con CASE
+        var parameters = new List<DbParam>();
+
         foreach (var prop in props)
         {
             string col = prop.Name.ToLower();
             sb.Append($"{col} = CASE id ");
 
-            foreach (var entity in lista)
+            foreach (var entity in detalles)
             {
-                // Es tipo long pero no quiero castear
                 var id = typeof(FacturaCompraProducto).GetProperty("Id")!.GetValue(entity)!;
-                string paramName = $"@{col}{id}";
-
+                string paramName = $"@{col}_{id}";
                 sb.Append($"WHEN {id} THEN {paramName} ");
 
-                var param = cmd.CreateParameter();
-                param.ParameterName = paramName;
-                param.Value = prop.GetValue(entity) ?? DBNull.Value;
-                cmd.Parameters.Add(param);
+                parameters.Add(new DbParam(paramName, prop.GetValue(entity) ?? DBNull.Value));
             }
 
             sb.Append("END");
@@ -151,21 +128,15 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
         }
 
         // WHERE id IN (...)
-        var ids = lista
+        var ids = detalles
             .Select(e => typeof(FacturaCompraProducto).GetProperty("Id")!.GetValue(e)!)
             .ToList();
 
         sb.Append($" WHERE id IN ({string.Join(", ", ids)}) AND empresa = @empresa");
 
-        var param2 = cmd.CreateParameter();
-        param2.ParameterName = "@empresa";
-        param2.Value = empresaId;
-        cmd.Parameters.Add(param2);
+        parameters.Add(new DbParam("@empresa", empresaId));
 
-        cmd.CommandText = sb.ToString();
-
-        int affected = await cmd.ExecuteNonQueryAsync();
-
+        int affected = await ExecuteNonQueryAsync(sb.ToString(), parameters);
         return affected > 0;
     }
 
@@ -174,31 +145,14 @@ public class FacturaCompraProductoRepository : BaseRepository<FacturaCompraProdu
         if (ids == null || ids.Count == 0)
             return false;
 
-        using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
+        var parameters = ids.Select((id, i) => new DbParam($"@id{i}", id)).ToList();
+        string paramList = string.Join(", ", parameters.Select(p => p.Name));
 
-        var parameters = new List<string>();
+        string sql = $"DELETE FROM {_tableName} WHERE id IN ({paramList}) AND empresa = @empresa";
 
-        for (int i = 0; i < ids.Count; i++)
-        {
-            string paramName = $"@id{i}";
-            parameters.Add(paramName);
+        parameters.Add(new DbParam("@empresa", empresaId));
 
-            var param = cmd.CreateParameter();
-            param.ParameterName = paramName;
-            param.Value = ids[i];
-            cmd.Parameters.Add(param);
-        }
-
-        cmd.CommandText = $"DELETE FROM {_tableName} WHERE id IN ({string.Join(", ", parameters)}) AND empresa = @empresaId";
-
-        var param2 = cmd.CreateParameter();
-        param2.ParameterName = "@empresa";
-        param2.Value = empresaId;
-        cmd.Parameters.Add(param2);
-
-        int affected = await cmd.ExecuteNonQueryAsync();
-
+        int affected = await ExecuteNonQueryAsync(sql, parameters);
         return affected > 0;
     }
 

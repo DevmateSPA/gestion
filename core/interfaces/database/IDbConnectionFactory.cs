@@ -1,8 +1,9 @@
-using System.Data;
+
+using System.Data.Common;
 
 namespace Gestion.core.interfaces.database;
 
 public interface IDbConnectionFactory
 {
-    Task<IDbConnection> CreateConnection();
+    Task<DbConnection> CreateConnection();
 }

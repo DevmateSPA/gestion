@@ -34,12 +34,13 @@ public class EditorEntidadBuilder<T>
     private T? _entidad;
     private string _titulo = "Editar";
     private Func<T, Task<bool>>? _guardar = _ => Task.FromResult(true);
-    private Action<OrdenTrabajo>? _imprimir;
+    private Action<OrdenTrabajo>? _imprimir = null;
+    private Func<EntidadEditorTableWindow, Task>? _btn1Action = null;
     private Func<T, Task>? _onClose;
     private ModoFormulario _modo = ModoFormulario.Edicion;
     private bool _ShouldImpresion = false;
-    private Func<EntidadEditorTableWindow, Task>? _btn1Action = null;
 	private string _tituloBtnEntregar = "Entregar (F5)";
+
 
     /// <summary>
     /// Define la ventana propietaria del editor.
@@ -71,6 +72,18 @@ public class EditorEntidadBuilder<T>
     public EditorEntidadBuilder<T> Titulo(string titulo)
     {
         _titulo = titulo;
+        return this;
+    }
+
+    public EditorEntidadBuilder<T> TituloBtnExtra1(string titulo)
+    {
+        _tituloBtnEntregar = titulo;
+        return this;
+    }
+
+    public EditorEntidadBuilder<T> SetBtn1Action(Func<EntidadEditorTableWindow, Task> action)
+    {
+        _btn1Action = action;
         return this;
     }
 
@@ -189,6 +202,7 @@ public class EditorEntidadBuilder<T>
             _ShouldImpresion,
             _titulo,
             _tituloBtnEntregar)
+
         {
             Owner = _owner
         };

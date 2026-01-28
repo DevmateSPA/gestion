@@ -7,10 +7,13 @@ using Gestion.core.interfaces.database;
 using System.ComponentModel.DataAnnotations.Schema;
 using Gestion.core.attributes;
 using System.Text;
-using MySql.Data.MySqlClient;
 using Gestion.Infrastructure.Logging;
+using System.Data;
+using System.Collections.Concurrent;
 
 namespace Gestion.Infrastructure.data;
+
+public record DbParam(string Name, object? Value);
 
 
 /// <summary>
@@ -35,12 +38,17 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
     /// <summary>
     /// Nombre de la tabla asociada a la entidad.
     /// </summary>
-    protected readonly string _tableName;
+    public readonly string _tableName;
 
     /// <summary>
     /// Nombre de la vista asociada a la entidad, si aplica.
     /// </summary>
-    protected readonly string? _viewName;
+    public readonly string? _viewName;
+
+    // Cache estático para todas las entidades
+    private static readonly ConcurrentDictionary<Type, PropertyInfo[]> _propertyCache
+        = new();
+
 
     /// <summary>
     /// Inicializa una nueva instancia del repositorio base.
@@ -67,7 +75,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
     /// Incluye manejo especial para conversiones de valores booleanos
     /// almacenados como BIT o TINYINT.
     /// </remarks>
-    protected object? ConvertValue(object? value, Type targetType)
+    public object? ConvertValue(object? value, Type targetType)
     {
         if (value == null || value == DBNull.Value)
             return null;
@@ -93,6 +101,61 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return Convert.ChangeType(value, targetType);
     }
 
+    protected DbCommand CreateCommand(
+        DbConnection conn,
+        string sql,
+        IEnumerable<DbParam>? parameters = null)
+    {
+        var cmd = conn.CreateCommand();
+        cmd.CommandText = sql;
+
+        if (parameters != null)
+        {
+            foreach (var p in parameters)
+                cmd.Parameters.Add(CreateParam(cmd, p.Name, p.Value));
+        }
+
+        return cmd;
+    }
+
+    protected DbParameter CreateParam(
+        DbCommand cmd,
+        string name,
+        object? value,
+        DbType? type = null)
+    {
+        var p = cmd.CreateParameter();
+        p.ParameterName = name;
+        p.Value = value ?? DBNull.Value;
+
+        if (type.HasValue)
+            p.DbType = type.Value;
+
+        return p;
+    }
+
+    protected async Task<int> ExecuteNonQueryAsync(string sql, IEnumerable<DbParam>? parameters = null)
+    {
+        using var conn = await _connectionFactory.CreateConnection();
+        using var cmd = CreateCommand(conn, sql, parameters);
+        return await cmd.ExecuteNonQueryAsync();
+    }
+
+    public async Task<int> ExecuteNonQueryWithLogAsync(string operation, string sql, IEnumerable<DbParam>? parameters = null)
+    {
+        return await SqlLogger.LogAsync(
+            operation: operation,
+            sql: sql,
+            action: async () => await ExecuteNonQueryAsync(sql, parameters),
+            countSelector: result => (int)result
+        );
+    }
+
+    protected QueryBuilder<T> CreateQueryBuilder()
+    {
+        return new QueryBuilder<T>(this);
+    }
+
     /// <summary>
     /// Mapea una fila del <see cref="DbDataReader"/> a una instancia de la entidad.
     /// </summary>
@@ -105,14 +168,17 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
     {
         var entity = new T();
 
-        foreach (PropertyInfo prop in typeof(T).GetProperties())
+        // Cache de propiedades por tipo
+        var type = typeof(T);
+        if (!_propertyCache.TryGetValue(type, out var props))
         {
-            if (!prop.CanWrite)
-                continue;
+            props = [.. type.GetProperties().Where(p => p.CanWrite && !Attribute.IsDefined(p, typeof(NotMappedAttribute)))];
 
-            if (Attribute.IsDefined(prop, typeof(NotMappedAttribute)))
-                continue;
+            _propertyCache[type] = props;
+        }
 
+        foreach (var prop in props)
+        {
             string col = prop.Name.ToLower();
 
             if (!reader.HasColumn(col))
@@ -136,20 +202,14 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
     /// </returns>
     public virtual async Task<T?> FindById(long id)
     {
-        using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
-        cmd.CommandText = $"SELECT * FROM {_tableName} WHERE id = @id";
+        // Usamos el builder, agregando la condición por Id
+        var result = await CreateQueryBuilder()
+            .Where("id = @id", new DbParam("@id", id))
+            .Limit(1)
+            .ToListAsync<T>();
 
-        var param = cmd.CreateParameter();
-        param.ParameterName = "@id";
-        param.Value = id;
-        cmd.Parameters.Add(param);
-
-        using var reader = await cmd.ExecuteReaderAsync();
-        if (await reader.ReadAsync())
-            return MapEntity(reader: reader);
-
-        return default;
+        // Retornamos el primer elemento si existe
+        return result.FirstOrDefault();
     }
 
     /// <summary>
@@ -158,19 +218,10 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
     /// <returns>Lista completa de entidades.</returns>
     public virtual async Task<List<T>> FindAll()
     {
-        using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
-        cmd.CommandText = $"SELECT * FROM {_tableName}";
+        var result = await CreateQueryBuilder()
+            .ToListAsync<T>();
 
-        using var reader = await cmd.ExecuteReaderAsync();
-
-        var entities = new List<T>();
-        while (await reader.ReadAsync())
-        {
-            entities.Add(MapEntity(reader: reader));
-        }
-
-        return entities;
+        return result;
     }
 
     /// <summary>
@@ -211,12 +262,13 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         string? orderBy = null,
         int? limit = null,
         int? offset = null,
-        params DbParameter[] parameters)
+        IEnumerable<DbParam>? parameters = null,
+        string selectColumns = "*")
     {
         using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
 
-        var sql = new StringBuilder($"SELECT * FROM {tableOrView} WHERE {where}");
+        // Construimos la consulta
+        var sql = new StringBuilder($"SELECT {selectColumns} FROM {tableOrView} WHERE {where}");
 
         if (!string.IsNullOrWhiteSpace(orderBy))
             sql.Append($" ORDER BY {orderBy}");
@@ -224,27 +276,26 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         if (limit.HasValue)
         {
             sql.Append(" LIMIT @limit");
-
-            var limitParam = cmd.CreateParameter();
-            limitParam.ParameterName = "@limit";
-            limitParam.Value = limit.Value;
-            cmd.Parameters.Add(limitParam);
-
             if (offset.HasValue)
-            {
                 sql.Append(" OFFSET @offset");
-
-                var offsetParam = cmd.CreateParameter();
-                offsetParam.ParameterName = "@offset";
-                offsetParam.Value = offset.Value;
-                cmd.Parameters.Add(offsetParam);
-            }
         }
 
-        cmd.CommandText = sql.ToString();
+        // Creamos los parámetros, empezando por limit y offset
+        var dbParams = new List<DbParam>();
+        if (limit.HasValue)
+            dbParams.Add(new DbParam("@limit", limit.Value));
+        if (offset.HasValue)
+            dbParams.Add(new DbParam("@offset", offset.Value));
 
-        foreach (var p in parameters)
-            cmd.Parameters.Add(p);
+        if (parameters != null)
+            dbParams.AddRange(parameters);
+
+        // Creamos el comando usando CreateCommand
+        using var cmd = CreateCommand(
+            conn,
+            sql.ToString(),
+            dbParams
+        );
 
         return await SqlLogger.LogAsync(
             operation: typeof(T).Name,
@@ -253,10 +304,8 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
             {
                 using var reader = await cmd.ExecuteReaderAsync();
                 var list = new List<T>();
-
                 while (await reader.ReadAsync())
                     list.Add(MapEntity(reader));
-
                 return list;
             },
             countSelector: list => list.Count
@@ -271,16 +320,11 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
     /// </returns>
     public async Task<bool> DeleteById(long id)
     {
-        using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
-        cmd.CommandText = $"DELETE FROM {_tableName} WHERE id = @id";
+        int affected = await ExecuteNonQueryAsync(
+            $"DELETE FROM {_tableName} WHERE id = @id",
+            [new DbParam("@id", id)]
+        );
 
-        var param = cmd.CreateParameter();
-        param.ParameterName = "@id";
-        param.Value = id;
-        cmd.Parameters.Add(param);
-
-        int affected = await cmd.ExecuteNonQueryAsync();
         return affected > 0;
     }
 
@@ -293,34 +337,35 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
     /// </returns>
     public virtual async Task<bool> Update(T entity)
     {
-        using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
-
         var props = typeof(T).GetProperties()
             .Where(p => p.Name != "Id" 
-            && Attribute.IsDefined(p, typeof(NotMappedAttribute)) == false
-            && !Attribute.IsDefined(p, typeof(NoSaveDbAttribute)))
+                && Attribute.IsDefined(p, typeof(NotMappedAttribute)) == false
+                && !Attribute.IsDefined(p, typeof(NoSaveDbAttribute)))
             .ToList();
 
         var setClause = string.Join(", ", props.Select(p => $"{p.Name.ToLower()} = @{p.Name.ToLower()}"));
 
-        cmd.CommandText = $"UPDATE {_tableName} SET {setClause} WHERE id = @id";
+        var parameters = props.Select(p => 
+            new DbParam($"@{p.Name.ToLower()}", p.GetValue(entity) ?? DBNull.Value)).ToList();
 
-        foreach (var prop in props)
-        {
-            var param = cmd.CreateParameter();
-            param.ParameterName = $"@{prop.Name.ToLower()}";
-            param.Value = prop.GetValue(entity) ?? DBNull.Value;
-            cmd.Parameters.Add(param);
-        }
+        parameters.Add(new DbParam("@id", typeof(T).GetProperty("Id")?.GetValue(entity)));
 
-        var idParam = cmd.CreateParameter();
-        idParam.ParameterName = "@id";
-        idParam.Value = typeof(T).GetProperty("Id")?.GetValue(entity) ?? DBNull.Value;
-        cmd.Parameters.Add(idParam);
+        int affected = await ExecuteNonQueryAsync(
+            $"UPDATE {_tableName} SET {setClause} WHERE id = @id", 
+            parameters);
 
-        int affected = await cmd.ExecuteNonQueryAsync();
         return affected > 0;
+    }
+
+    protected List<DbParam> GetParametersFromEntity(T entity, bool includeId = false)
+    {
+        var props = typeof(T).GetProperties()
+            .Where(p => (includeId || p.Name != "Id") 
+                        && !Attribute.IsDefined(p, typeof(NotMappedAttribute))
+                        && !Attribute.IsDefined(p, typeof(NoSaveDbAttribute)))
+            .ToList();
+
+        return props.Select(p => new DbParam($"@{p.Name.ToLower()}", p.GetValue(entity) ?? DBNull.Value)).ToList();
     }
 
     /// <summary>
@@ -335,39 +380,25 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
     /// </remarks>
     public virtual async Task<bool> Save(T entity)
     {
+        var parametersList = GetParametersFromEntity(entity);
+
+        var columns = string.Join(", ", parametersList.Select(p => p.Name.Substring(1))); // quitar @
+        var paramNames = string.Join(", ", parametersList.Select(p => p.Name));
+
         using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
-
-        var props = typeof(T).GetProperties()
-            .Where(p => p.Name != "Id"
-            && Attribute.IsDefined(p, typeof(NotMappedAttribute)) == false
-            && !Attribute.IsDefined(p, typeof(NoSaveDbAttribute)))
-            .ToList();
-
-        var columns = string.Join(", ", props.Select(p => p.Name.ToLower()));
-        var parameters = string.Join(", ", props.Select(p => $"@{p.Name.ToLower()}"));
-
-        cmd.CommandText = $@"
-            INSERT INTO {_tableName} ({columns}) VALUES ({parameters});
-            SELECT LAST_INSERT_ID();
-        ";
-
-        foreach (var prop in props)
-        {
-            var param = cmd.CreateParameter();
-            param.ParameterName = $"@{prop.Name.ToLower()}";
-            param.Value = prop.GetValue(entity) ?? DBNull.Value;
-            cmd.Parameters.Add(param);
-        }
+        using var cmd = CreateCommand(
+            conn,
+            $@"
+            INSERT INTO {_tableName} ({columns}) VALUES ({paramNames});
+            SELECT LAST_INSERT_ID();",
+            parametersList
+        );
 
         var result = await cmd.ExecuteScalarAsync();
-
         if (result == null || result == DBNull.Value)
             return false;
 
-        // Asignar el ID al objeto
         long id = Convert.ToInt64(result);
-
         var propId = typeof(T).GetProperty("Id");
         if (propId != null && propId.CanWrite)
             propId.SetValue(entity, id);
@@ -381,18 +412,18 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
     /// <param name="where">Condición WHERE (sin la palabra WHERE).</param>
     /// <param name="parameters">Parámetros de la consulta.</param>
     /// <returns>Número total de registros.</returns>
-    public async Task<long> CountWhere(string where, string? tableName = null, params DbParameter[] parameters)
+    public async Task<long> CountWhere(
+        string where, 
+        string? tableName = null, 
+        IEnumerable<DbParam>? parameters = null)
     {
         using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
-
-        if (tableName == null)
-            tableName = _tableName;
-
-        cmd.CommandText = $"SELECT COUNT(1) FROM {tableName} WHERE {where}";
-
-        foreach (var p in parameters)
-            cmd.Parameters.Add(p);
+        tableName ??= _tableName;
+        using var cmd = CreateCommand(
+            conn,
+            $"SELECT COUNT(1) FROM {tableName} WHERE {where}",
+            parameters
+        );
 
         var result = await cmd.ExecuteScalarAsync();
 
@@ -412,18 +443,11 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         if (_viewName == null)
             throw new InvalidOperationException("La vista no está asignada para este repositorio.");
 
-        DbParameter[] parameters =
-        [
-            new MySqlParameter("@empresa", empresaId)
-        ];
+        var builder = new QueryBuilder<T>(this)
+            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
+            .OrderBy("COALESCE(fecha, '1900-01-01') DESC");
 
-        return await FindWhereFrom(
-            tableOrView: _viewName,
-            where: "empresa = @empresa",
-            orderBy: "fecha DESC",
-            limit: null,
-            offset: null,
-            parameters: parameters);
+        return await builder.ToListAsync<T>();
     }
 
     /// <summary>
@@ -441,36 +465,29 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         if (_viewName == null)
             throw new InvalidOperationException("La vista no está asignada para este repositorio.");
 
-        DbParameter[] parameters =
-        [
-            new MySqlParameter("@empresa", empresaId)
-        ];
+        var builder = new QueryBuilder<T>(this)
+            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
+            .OrderBy("COALESCE(fecha, '1900-01-01') DESC")
+            .Limit(pageSize, (pageNumber - 1) * pageSize);
 
-        return await FindPageWhere(
-            where: "empresa = @empresa",
-            orderBy: "fecha DESC",
-            pageNumber: pageNumber,
-            pageSize: pageSize,
-            parameters: parameters);
+        return await builder.ToListAsync<T>();
     }
 
-    public virtual async Task<long> ContarPorEmpresa(long empresaId)
+    public async Task<long> ContarPorEmpresa(long empresaId)
     {
-        DbParameter[] parameters =
-        [
-            new MySqlParameter("@empresa", empresaId)
-        ];
+        long total = await CreateQueryBuilder()
+            .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
+            .CountAsync();
 
-        return await CountWhere(where: "empresa = @empresa",
-        parameters: parameters);
-    }
+        return total;
+    }  
 
     public virtual async Task<List<T>> FindPageWhere(
         string where,
         string? orderBy,
         int pageNumber,
         int pageSize,
-        params DbParameter[] parameters)
+        IEnumerable<DbParam>? parameters = null)
     {
         if (_viewName == null)
             throw new InvalidOperationException(
@@ -487,79 +504,42 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
             parameters: parameters);
     }
 
-    protected async Task<bool> ExistsByColumns(
-        Dictionary<string, object> columns,
+    public async Task<bool> Exists(
+        Action<QueryBuilder<T>> build,
         long? excludeId = null)
     {
-        using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
+        var builder = CreateQueryBuilder();
 
-        var where = new StringBuilder();
-
-        int i = 0;
-        foreach (var kv in columns)
-        {
-            if (i++ > 0)
-                where.Append(" AND ");
-
-            where.Append($"{kv.Key} = @{kv.Key}");
-            cmd.Parameters.Add(new MySqlParameter($"@{kv.Key}", kv.Value));
-        }
+        build(builder);
 
         if (excludeId.HasValue)
-        {
-            where.Append(" AND id <> @excludeId");
-            cmd.Parameters.Add(new MySqlParameter("@excludeId", excludeId.Value));
-        }
+            builder.Where("id <> @excludeId",
+                new DbParam("@excludeId", excludeId.Value));
 
-        cmd.CommandText = $@"
-            SELECT 1
-            FROM {_tableName}
-            WHERE {where}
-            LIMIT 1";
-
-        return await cmd.ExecuteScalarAsync() != null;
+        return await builder.CountAsync() > 0;
     }
 
-    public async Task<List<TData>> GetColumnList<TData>(string columnName, string where, params DbParameter[] parameters)
+    public async Task<bool> ExistsByColumns(
+        IEnumerable<(string column, object value)> columns,
+        long? excludeId = null)
     {
-        using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
-
-        cmd.CommandText = $"SELECT {columnName} FROM {_viewName} WHERE {where}";
-        foreach (var p in parameters)
-            cmd.Parameters.Add(p);
-
-        var list = new List<TData>();
-        using var reader = await cmd.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
+        return await Exists(builder =>
         {
-            var value = reader[columnName];
-            list.Add((TData?)ConvertValue(value, typeof(TData))!);
-        }
-
-        return list;
+            foreach (var (column, value) in columns)
+            {
+                builder.Where(
+                    $"{column} = @{column}",
+                    new DbParam($"@{column}", value));
+            }
+        }, excludeId);
     }
 
-    public async Task<TData> GetColumnList<TData>(string columnName, string where, string limit = "", string orderby = "", params DbParameter[] parameters)
+    public async Task<List<TData>> GetColumnList<TData>(string columnName, string where, IEnumerable<DbParam>? parameters = null)
     {
-        using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
+        var builder = CreateQueryBuilder()
+            .Select(columnName)
+            .Where(where, parameters?.ToArray() ?? []);
 
-        cmd.CommandText = $"SELECT {columnName} FROM {_viewName} WHERE {where} {orderby} {limit}";
-        foreach (var p in parameters)
-            cmd.Parameters.Add(p);
-
-        TData tdata = default(TData)!;
-        using var reader = await cmd.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
-        {
-            var value = reader[columnName];
-            tdata = (TData?)ConvertValue(value, typeof(TData))!;
-        }
-
-        return tdata;
+        return await builder.ToListAsync<TData>();
     }
-
-    
 }

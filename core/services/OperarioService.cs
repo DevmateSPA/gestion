@@ -1,6 +1,8 @@
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.core.reglas.common;
 
 namespace Gestion.core.services;
 
@@ -13,23 +15,28 @@ public class OperarioService : BaseService<Operario>, IOperarioService
         _operarioRepository = operarioRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(
+    protected override IEnumerable<IReglaNegocio<Operario>> DefinirReglas(
         Operario entity,
         long? excludeId = null)
     {
-        List<string> errores = [];
+        return
+        [
+            new RequeridoRegla<Operario>(
+                o => o.Nombre,
+                "El nombre del operario es obligatorio."),
 
-        if (await _operarioRepository.ExisteCodigo(
-                codigo: entity.Codigo,
-                empresaId: entity.Empresa,
-                excludeId: excludeId))
-        {
-            errores.Add($"El código del operario: {entity.Codigo}, ya existe para la empresa actual.");
-        }
+            new UnicoRegla<Operario>(
+                existe: (op, id) =>
+                    _operarioRepository.ExistsByColumns(
+                        [
+                            ("codigo", op.Codigo),
+                            ("empresa", op.Empresa)
+                        ],
+                        id),
 
-        if (string.IsNullOrWhiteSpace(entity.Nombre))
-            errores.Add("El nombre del operario es obligatorio.");
+                valor: op => op.Codigo,
 
-        return errores;
+                mensaje: "El código del operario: {0}, ya existe para la empresa actual.")
+        ];
     }
 }

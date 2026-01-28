@@ -1,6 +1,8 @@
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.core.reglas.common;
 
 namespace Gestion.core.services;
 
@@ -13,21 +15,28 @@ public class ProveedorService : BaseService<Proveedor>, IProveedorService
         _proveedorRepository = proveedorRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(
+    protected override IEnumerable<IReglaNegocio<Proveedor>> DefinirReglas(
         Proveedor entity,
         long? excludeId = null)
     {
-        List<string> erroresEncontrados = [];
+        return
+        [
+            new RequeridoRegla<Proveedor>(
+                c => c.Rut,
+                "El rut del proveedor es obligatorio."),
 
-        if (await _proveedorRepository.ExisteRut(
-                rut: entity.Rut,
-                empresaId: entity.Empresa,
-                excludeId: excludeId))
-            erroresEncontrados.Add($"El rut del proveedor: {entity.Rut}, ya existe para la empresa actual.");
+            new UnicoRegla<Proveedor>(
+                existe: (p, id) =>
+                    _proveedorRepository.ExistsByColumns(
+                        [
+                            ("rut", p.Rut),
+                            ("empresa", p.Empresa)
+                        ],
+                        id),
 
-        if (string.IsNullOrWhiteSpace(entity.Rut))
-            erroresEncontrados.Add("El rut del proveedor es obligatorio.");
+                valor: p => p.Rut,
 
-        return erroresEncontrados;
+                mensaje: "El rut del proveedor: {0}, ya existe para la empresa actual.")
+        ];
     }
 }

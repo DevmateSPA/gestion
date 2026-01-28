@@ -1,12 +1,8 @@
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using Gestion.core.interfaces.service;
 using Gestion.core.model;
 using Gestion.core.services;
-using Gestion.helpers;
 using Gestion.presentation.enums;
 using Gestion.presentation.views.util;
 using Gestion.presentation.views.util.buildersUi;
@@ -15,20 +11,11 @@ namespace Gestion.presentation.views.windows;
 
 public partial class EntidadEditorTableWindow: Window
 {
-    // Builder de formularios
-    private readonly FormularioBuilder _formularioBuilder = new();
-    private readonly DataGridBuilder<FacturaCompraProducto> _dataGridBuilder = new();
-    private readonly object _entidadOriginal;
     private Dictionary<PropertyInfo, FrameworkElement> _controles = [];
-
-    private DataGrid? dgDetalles;
-
     public object? EntidadEditada { get; private set; }
-
     private readonly Func<object, Task<bool>>? _guardar;
     private readonly Action<OrdenTrabajo>? _imprimir;
-
-    private readonly IDialogService _dialogService = new DialogService();
+    private readonly DialogService _dialogService = new();
 
     private readonly Func<EntidadEditorTableWindow, Task>? _btn1Action;
     private readonly string _titleBtnEntregar;
@@ -47,7 +34,6 @@ public partial class EntidadEditorTableWindow: Window
         Title = titulo;
         _titleBtnEntregar = titutloBtnEntregar;
 
-        _entidadOriginal = entidad;
         _guardar = guardar;
         _imprimir = imprimir;
         _btn1Action = btn1Action;
@@ -97,11 +83,6 @@ public partial class EntidadEditorTableWindow: Window
         _controles.Values.FirstOrDefault()?.Focus();
     }
 
-    private void EnfocarPrimerControl()
-    {
-        _controles.Values.FirstOrDefault()?.Focus();
-    }
-
     private void InicializarEventos()
     {
         PreviewKeyDown += (_, e) =>
@@ -118,10 +99,6 @@ public partial class EntidadEditorTableWindow: Window
             }
         };
     }
-
-    // -----------------------------
-    //   DATA GRID DE DETALLES
-    // -----------------------------
 
     private bool Validar()
     {

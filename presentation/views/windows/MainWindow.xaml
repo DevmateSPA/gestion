@@ -97,7 +97,7 @@
                 <MenuItem Header="O.T. Impagas por Cliente (Pel)"/>
                 <MenuItem Header="Correlativos O.T."/>
                 <MenuItem Header="Correlativos O.T. (Pel)"/>-->
-                <!--<MenuItem Header="Ingresos por cliente" Click="MenuItemReportes_Click" Tag="ModuloIngresosCliente"/>-->
+                <MenuItem Header="Ingresos por cliente" Click="MenuItemReportes_Click" Tag="ModuloIngresosCliente"/>
                 <MenuItem Header="Pendientes de Producción" Click="MenuItemReportes_Click" Tag="ModuloProduccion"/>
                 <MenuItem Header="Pendientes por Maquina" Click="MenuItemReportes_Click" Tag="ModuloMaquina"/>
             </MenuItem>

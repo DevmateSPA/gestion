@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using Gestion.core.attributes;
 using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
@@ -28,7 +27,7 @@ public class IngresoCliente : IEmpresa
     [Nombre("Saldo")]
     [Grupo("Saldos", 4)]
     [Orden(4)]
-    public long Monto { get; set; }
+    public long Monto_Total { get; set; }
 
 
     // ===============================
@@ -37,4 +36,6 @@ public class IngresoCliente : IEmpresa
 
     [Visible(false)]
     public long Empresa { get; set; }
+    [Visible(false)]
+    public string EmpresaNombre { get; set; } = string.Empty;
 }

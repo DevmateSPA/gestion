@@ -1,8 +1,10 @@
 using Gestion.core.exceptions;
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
 using Gestion.core.model.DTO;
+using Gestion.core.reglas.common;
 
 namespace Gestion.core.services;
 
@@ -25,16 +27,38 @@ public class UsuarioService : BaseService<Usuario>, IUsuarioService
         return await _usuarioRepository.GetTipoList();
     }
 
-    protected override Task<List<string>> ValidarReglasNegocio(Usuario entity, long? excludeId = null)
+    protected override IEnumerable<IReglaNegocio<Usuario>> DefinirReglas(
+        Usuario entity, 
+        long? excludeId = null)
     {
-        List<string> erroresEncontrados = [];
+        return
+        [
+            new RequeridoRegla<Usuario>(
+                c => c.Nombre,
+                "El nombre del usuario es obligatorio."),
 
-        if (string.IsNullOrWhiteSpace(entity.Nombre) ||
-            string.IsNullOrWhiteSpace(entity.Clave))
-        {
-            erroresEncontrados.Add("Ingrese todos los campos necesarios");
-        }
+            new RequeridoRegla<Usuario>(
+                c => c.Clave,
+                "La clave del usuario es obligatoria."),
 
-        return Task.FromResult(erroresEncontrados);
+            new NoValorPorDefectoRegla<Usuario, long>(
+                u => u.Tipo,
+                valorInvalido: 0,
+                mensaje: "Debe seleccionar un tipo de usuario."),
+            
+
+            new UnicoRegla<Usuario>(
+                existe: (u, id) =>
+                    _usuarioRepository.ExistsByColumns(
+                        [
+                            ("nombre", u.Nombre),
+                            ("empresa", u.Empresa)
+                        ],
+                        id),
+
+                valor: u => u.Nombre,
+
+                mensaje: "El nombre del usuario: {0}, ya existe para la empresa actual.")
+        ];
     }
 }

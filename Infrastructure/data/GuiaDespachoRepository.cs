@@ -1,8 +1,8 @@
+using System.Data;
 using System.Data.Common;
 using Gestion.core.interfaces.database;
 using Gestion.core.interfaces.repository;
 using Gestion.core.model;
-using MySql.Data.MySqlClient;
 
 namespace Gestion.Infrastructure.data;
 
@@ -10,17 +10,6 @@ public class GuiaDespachoRepository : BaseRepository<GuiaDespacho>, IGuiaDespach
 {
     public GuiaDespachoRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "guiadespacho", "vw_guiadespacho") {}
-
-    public async Task<bool> ExisteFolio(
-        string folio,
-        long empresaId,
-        long? excludeId = null) => await ExistsByColumns(
-            new Dictionary<string, object>
-            {
-                ["folio"] = folio,
-                ["empresa"] = empresaId
-            },
-            excludeId);
 
     public async Task<List<string>> GetFolioList(string busquedaFolio, long empresaId)
     {
@@ -30,15 +19,29 @@ public class GuiaDespachoRepository : BaseRepository<GuiaDespacho>, IGuiaDespach
         if (string.IsNullOrWhiteSpace(busquedaFolio))
             return [];
 
-        DbParameter[] parameters =
-        [
-            new MySqlParameter("@busquedaFolio", $"%{busquedaFolio}%"),
-            new MySqlParameter("@empresa", empresaId),
-        ];
+        return await CreateQueryBuilder()
+            .Select("folio")
+            .Where("empresa = @empresa AND folio LIKE @busquedaFolio",
+                new DbParam("@empresa", empresaId),
+                new DbParam("@busquedaFolio", $"%{busquedaFolio}%"))
+            .ToListAsync<string>();
+    }
 
-        return await GetColumnList<string>(
-            columnName: "folio",
-            where: "empresa = @empresa AND folio LIKE @busquedaFolio",
-            parameters: parameters);
+    public async Task<string> GetSiguienteFolio(long empresaId)
+    {
+        using var conn = await _connectionFactory.CreateConnection();
+        using var cmd = (DbCommand)conn.CreateCommand();
+
+        cmd.CommandText = "get_siguiente_folio_gd";
+        cmd.CommandType = CommandType.StoredProcedure;
+
+        cmd.Parameters.Add(CreateParam(cmd, "p_empresa_id", empresaId));
+
+        using var reader = await cmd.ExecuteReaderAsync();
+
+        if (!await reader.ReadAsync())
+            throw new InvalidOperationException("No se pudo generar el folio.");
+
+        return reader.GetString("ultimo_folio");
     }
 }

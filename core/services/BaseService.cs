@@ -1,8 +1,8 @@
 using Gestion.core.exceptions;
 using Gestion.core.interfaces.model;
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
-using MySql.Data.MySqlClient;
 
 namespace Gestion.core.services;
 
@@ -23,7 +23,7 @@ namespace Gestion.core.services;
 /// Debe implementar <see cref="IModel"/>.
 /// </typeparam>
 public abstract class BaseService<T> : IBaseService<T>
-    where T : IModel
+    where T : IModel, new()
 {
     /// <summary>
     /// Repositorio base asociado a la entidad.
@@ -98,27 +98,6 @@ public abstract class BaseService<T> : IBaseService<T>
             pageSize);
     }
 
-    /// <summary>
-    /// Ejecuta una consulta genérica parametrizada sobre una tabla o vista.
-    ///
-    /// Útil para casos especiales que no justifican un repositorio dedicado.
-    /// </summary>
-    /// <param name="tableOrView">Nombre de la tabla o vista.</param>
-    /// <param name="p">Parámetro SQL.</param>
-    /// <param name="where">Cláusula WHERE.</param>
-    public Task<List<T>> FindAllByParam(
-        string tableOrView,
-        MySqlParameter p,
-        string where)
-    {
-        return _baseRepository.FindWhereFrom(
-            tableOrView,
-            where,
-            null,
-            null,
-            null,
-            p);
-    }
 
     #endregion
 
@@ -147,10 +126,7 @@ public abstract class BaseService<T> : IBaseService<T>
     /// </exception>
     public async Task<bool> Update(T entity)
     {
-        List<string> errores =
-            await ValidarReglasNegocio(entity, entity.Id);
-
-        AplicarReglasNegocio(errores);
+        await ValidarYAplicarReglas(entity, entity.Id);      
 
         return await _baseRepository.Update(entity);
     }
@@ -166,10 +142,7 @@ public abstract class BaseService<T> : IBaseService<T>
     /// </exception>
     public virtual async Task<bool> Save(T entity)
     {
-        List<string> errores =
-            await ValidarReglasNegocio(entity);
-
-        AplicarReglasNegocio(errores);
+        await ValidarYAplicarReglas(entity, null);
 
         return await _baseRepository.Save(entity);
     }
@@ -191,9 +164,9 @@ public abstract class BaseService<T> : IBaseService<T>
     /// <returns>
     /// Lista de mensajes de error. Si está vacía, la entidad es válida.
     /// </returns>
-    protected abstract Task<List<string>> ValidarReglasNegocio(
+    protected abstract IEnumerable<IReglaNegocio<T>> DefinirReglas(
         T entity,
-        long? excludeId = null);
+        long? excludeId);
 
     /// <summary>
     /// Aplica el resultado de las validaciones de negocio.
@@ -204,11 +177,29 @@ public abstract class BaseService<T> : IBaseService<T>
     /// <exception cref="ReglaNegocioException">
     /// Se lanza cuando existen reglas incumplidas.
     /// </exception>
-    private static void AplicarReglasNegocio(List<string> errores)
+    private static void AplicarReglasNegocio(
+        IReadOnlyCollection<ErrorNegocio> errores)
     {
         if (errores.Count != 0)
-            throw new ReglaNegocioException(
-                string.Join("\n", errores));
+            throw new ReglaNegocioException(errores);
+    }
+
+    private async Task ValidarYAplicarReglas(
+        T entity,
+        long? excludeId)
+    {
+        var reglas = DefinirReglas(entity, excludeId);
+
+        List<ErrorNegocio> errores = [];
+
+        foreach (var regla in reglas)
+        {
+            var error = await regla.Validar(entity, excludeId);
+            if (error is not null)
+                errores.Add(error);
+        }
+
+        AplicarReglasNegocio(errores);
     }
 
     #endregion

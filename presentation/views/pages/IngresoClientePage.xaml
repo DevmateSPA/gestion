@@ -43,7 +43,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Rut Cliente" Binding="{Binding Rut}" Width="*" />
                     <DataGridTextColumn Header="Razón Social" Binding="{Binding Razon_Social}" Width="*" />
-                    <DataGridTextColumn Header="Monto" Binding="{Binding Monto}" Width="*" />
+                    <DataGridTextColumn Header="Monto" Binding="{Binding Monto_final}" Width="*" />
                 </DataGrid.Columns>
                 </DataGrid>
 

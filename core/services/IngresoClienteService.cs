@@ -1,3 +1,4 @@
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
@@ -13,11 +14,6 @@ public class IngresoClienteService : BaseService<IngresoCliente>, IIngresoClient
         _ingresoClienteRepository = ingresoClienteRepository;
     }
 
-    protected override Task<List<string>> ValidarReglasNegocio(IngresoCliente entity, long? excludeId = null)
-    {
-        throw new NotImplementedException();
-    }
-
     public Task<List<IngresoCliente>> LoadPageByEmpresaAndFecha(long empresaId, DateTime desde, DateTime hasta, int pageNumber, int pageSize)
     {
         return _ingresoClienteRepository.FindPageByEmpresaAndFecha(empresaId, desde, hasta, pageNumber, pageSize);
@@ -26,5 +22,10 @@ public class IngresoClienteService : BaseService<IngresoCliente>, IIngresoClient
     public Task<List<IngresoCliente>> LoadAllByEmpresaAndFecha(long empresaId, DateTime desde, DateTime hasta)
     {
         return _ingresoClienteRepository.FindAllByEmpresaAndFecha(empresaId,desde,hasta);
+    }
+
+    protected override IEnumerable<IReglaNegocio<IngresoCliente>> DefinirReglas(IngresoCliente entity, long? excludeId)
+    {
+        throw new NotImplementedException();
     }
 }

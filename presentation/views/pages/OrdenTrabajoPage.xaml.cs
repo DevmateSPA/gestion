@@ -1,19 +1,16 @@
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Gestion.core.model;
 using Gestion.presentation.viewmodel;
-using Gestion.presentation.views.windows;
 using Gestion.presentation.views.util;
-using System.ComponentModel;
-using Microsoft.Extensions.DependencyInjection;
 using Gestion.core.interfaces.service;
 using System.Collections.ObjectModel;
 using Gestion.core.model.detalles;
 using Gestion.core.session;
 using Gestion.helpers;
 using Gestion.core.services;
+using Gestion.presentation.views.windows;
 
 namespace Gestion.presentation.views.pages;
 
@@ -23,12 +20,11 @@ public partial class OrdenTrabajoPage : Page
 
     private readonly OrdenTrabajoViewModel _viewModel;
     private readonly IDetalleOTService _detalleOTService;
-    private readonly DialogService _dialogService = new(); 
+    private readonly DialogService _dialogService = new();
     public OrdenTrabajoPage(OrdenTrabajoViewModel viewModel, IDetalleOTService detalleOTService)
     {
         InitializeComponent();
         _viewModel = viewModel;
-        _detalleOTService = detalleOTService;
         DataContext = _viewModel;
         Title = $"Ordenes de Trabajo";
 
@@ -61,13 +57,15 @@ public partial class OrdenTrabajoPage : Page
         txtBuscar.KeyDown += TxtBuscar_KeyDown;
     }
 
+    private string _tituloBotonEntregadas = "Marcar como entregada??";
+
     private async void BtnAgregar_Click(object sender, RoutedEventArgs e)
     {
         var ordenTrabajo = new OrdenTrabajo
         {
-            Empresa = SesionApp.IdEmpresa
+            Empresa = SesionApp.IdEmpresa,
+            Folio = await _viewModel.GetSiguienteFolio()
         };
-        ordenTrabajo.Folio = await _viewModel.GetSiguienteFolio();
 
         await new EditorEntidadBuilder<OrdenTrabajo>()
             .Owner(Window.GetWindow(this)!)
@@ -79,6 +77,7 @@ public partial class OrdenTrabajoPage : Page
                     [],
                     facturaEditada.Detalles.Cast<DetalleOrdenTrabajo>(),
                     facturaEditada))
+            .TituloBtnExtra1(_tituloBotonEntregadas)
             .Abrir();
     }
 

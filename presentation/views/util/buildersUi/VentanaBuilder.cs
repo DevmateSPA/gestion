@@ -83,6 +83,13 @@ public class VentanaBuilder<TEntidad>
         return this;
     }
 
+    public VentanaBuilder<TEntidad> SetBotonExtra1(Button btn, string label)
+    {
+        _btnEntregar = btn;
+        _btnEntregar.Content = label;
+        return this;
+    }
+
     /// <summary>
     /// Asocia el botón de impresión y define si debe mostrarse
     /// en la ventana.
@@ -155,6 +162,11 @@ public class VentanaBuilder<TEntidad>
                 _modo == ModoFormulario.Edicion
                     ? Visibility.Visible
                     : Visibility.Collapsed;
+        }
+
+        if (_btnEntregar != null)
+        {
+            _btnEntregar.Visibility = Visibility.Visible;
         }
 
         if (_btnImprimir != null)

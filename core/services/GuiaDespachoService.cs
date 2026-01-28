@@ -1,6 +1,8 @@
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.core.reglas.common;
 
 namespace Gestion.core.services;
 
@@ -18,24 +20,37 @@ public class GuiaDespachoService : BaseService<GuiaDespacho>, IGuiaDespachoServi
         return await _guiaDespachoRepository.GetFolioList(busquedaFolio, empresaId);
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(
+    protected override IEnumerable<IReglaNegocio<GuiaDespacho>> DefinirReglas(
         GuiaDespacho entity,
         long? excludeId = null)
     {
-        List<string> erroresEncontrados = [];
+        return
+        [
+            new RequeridoRegla<GuiaDespacho>(
+                gd => gd.Folio,
+                "El folio de la guia de despacho es obligatorio."),
 
-        if (await _guiaDespachoRepository.ExisteFolio(
-                folio: entity.Folio,
-                empresaId: entity.Empresa,
-                excludeId: excludeId))
-            erroresEncontrados.Add($"El folio de la guia de despacho: {entity.Folio}, ya existe para la empresa actual.");
+            new RequeridoRegla<GuiaDespacho>(
+                gd => gd.RutCliente,
+                "El rut del cliente de la guia de despacho es obligatorio."),
 
-        if (string.IsNullOrWhiteSpace(entity.Folio))
-            erroresEncontrados.Add("El folio de la guia de despacho es obligatorio.");
+            new UnicoRegla<GuiaDespacho>(
+                existe: (gd, id) =>
+                    _guiaDespachoRepository.ExistsByColumns(
+                        [
+                            ("folio", gd.Folio),
+                            ("empresa", gd.Empresa)
+                        ],
+                        id),
 
-        if (string.IsNullOrWhiteSpace(entity.RutCliente))
-            erroresEncontrados.Add("El rut del cliente de la guia de despacho es obligatorio.");
+                valor: gd => gd.Folio,
 
-        return erroresEncontrados;
+                mensaje: "El folio de la guia de despacho: {0}, ya existe para la empresa actual.")
+        ];
+    }
+
+    public async Task<string> GetSiguienteFolio(long empresaId)
+    {
+        return await _guiaDespachoRepository.GetSiguienteFolio(empresaId);
     }
 }

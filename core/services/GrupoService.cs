@@ -1,6 +1,8 @@
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.core.reglas.common;
 
 namespace Gestion.core.services;
 
@@ -13,23 +15,28 @@ public class GrupoService : BaseService<Grupo>, IGrupoService
         _grupoRepository = grupoRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(
+    protected override IEnumerable<IReglaNegocio<Grupo>> DefinirReglas(
         Grupo entity,
         long? excludeId = null)
     {
-        List<string> errores = [];
+        return
+        [
+            new RequeridoRegla<Grupo>(
+                c => c.Descripcion,
+                "La descripción del grupo es obligatorio."),
 
-        if (await _grupoRepository.ExisteCodigo(
-                codigo: entity.Codigo,
-                empresaId: entity.Empresa,
-                excludeId: excludeId))
-        {
-            errores.Add($"El código del grupo: {entity.Codigo}, ya existe para la empresa actual.");
-        }
+            new UnicoRegla<Grupo>(
+                existe: (g, id) =>
+                    _grupoRepository.ExistsByColumns(
+                        [
+                            ("codigo", g.Codigo),
+                            ("empresa", g.Empresa)
+                        ],
+                        id),
 
-        if (string.IsNullOrWhiteSpace(entity.Descripcion))
-            errores.Add("La descripción del grupo es obligatorio.");
+                valor: g => g.Codigo,
 
-        return errores;
+                mensaje: "El código del grupo: {0}, ya existe para la empresa actual.")
+        ];
     }
 }

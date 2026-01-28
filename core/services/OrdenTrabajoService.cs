@@ -1,7 +1,9 @@
 using System.Data.Common;
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.core.reglas.common;
 using MySql.Data.MySqlClient;
 
 namespace Gestion.core.services;
@@ -52,36 +54,45 @@ public class OrdenTrabajoService : BaseService<OrdenTrabajo>, IOrdenTrabajoServi
             empresaId);
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(
+    protected override IEnumerable<IReglaNegocio<OrdenTrabajo>> DefinirReglas(
         OrdenTrabajo entity,
         long? excludeId = null)
     {
-        List<string> erroresEncontrados = [];
+        return
+        [
+            new RequeridoRegla<OrdenTrabajo>(
+                c => c.Folio,
+                "El folio de la orden de trabajo es obligatorio."),
 
-        if (await _ordenTrabajoRepository.ExisteFolio(
-                folio: entity.Folio,
-                empresaId: entity.Empresa,
-                excludeId: excludeId))
-            erroresEncontrados.Add($"El folio de la orden de trabajo: {entity.Folio}, ya existe para la empresa actual.");
+            new RequeridoRegla<OrdenTrabajo>(
+                c => c.RutCliente,
+                "El rut del cliente de la orden de trabajo es obligatorio."),
 
-        if (string.IsNullOrWhiteSpace(entity.Folio))
-            erroresEncontrados.Add("El folio de la orden de trabajo es obligatorio.");
+            new RequeridoRegla<OrdenTrabajo>(
+                o => o.Maquina1,
+                "Debe seleccionar una Máquina principal."),
 
-        if (string.IsNullOrWhiteSpace(entity.RutCliente))
-            erroresEncontrados.Add("El rut del cliente de la orden de trabajo es obligatorio.");
+            new RequeridoRegla<OrdenTrabajo>(
+                o => o.Operador1,
+                "Debe seleccionar un Operador principal."),
 
-        return erroresEncontrados;
+            new UnicoRegla<OrdenTrabajo>(
+                existe: (ot, id) =>
+                    _ordenTrabajoRepository.ExistsByColumns(
+                        [
+                            ("folio", ot.Folio),
+                            ("empresa", ot.Empresa)
+                        ],
+                        id),
+
+                valor: ot => ot.Folio,
+
+                mensaje: "El folio de la orden de trabajo: {0}, ya existe para la empresa actual.")
+        ];
     }
 
-    public async Task<String> GetSiguienteFolio(long empresaId)
+    public async Task<string> GetSiguienteFolio(long empresaId)
     {
-        var ultimo = await _ordenTrabajoRepository.GetSiguienteFolio(empresaId);
-        if (string.IsNullOrWhiteSpace(ultimo))
-            return "1";
-        if (!int.TryParse(ultimo, out var numero))
-            throw new InvalidOperationException($"Folio inválido: {ultimo}");
-        numero++;
-        var nuevoFolio = $"{numero.ToString().PadLeft(8, '0')}";
-        return $"{nuevoFolio}";
+        return await _ordenTrabajoRepository.GetSiguienteFolio(empresaId);
     }
 }

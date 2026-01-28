@@ -1,6 +1,8 @@
+using Gestion.core.interfaces.reglas;
 using Gestion.core.interfaces.repository;
 using Gestion.core.interfaces.service;
 using Gestion.core.model;
+using Gestion.core.reglas.common;
 
 namespace Gestion.core.services;
 
@@ -13,23 +15,28 @@ public class ProductoService : BaseService<Producto>, IProductoService
         _productoRepository = productoRepository;
     }
 
-    protected override async Task<List<string>> ValidarReglasNegocio(
+    protected override IEnumerable<IReglaNegocio<Producto>> DefinirReglas(
         Producto entity,
         long? excludeId = null)
     {
-        List<string> errores = [];
+        return
+        [
+            new RequeridoRegla<Producto>(
+                c => c.Descripcion,
+                "La descripción del producto es obligatoria."),
 
-        if (await _productoRepository.ExisteCodigo(
-                codigo: entity.Codigo,
-                empresaId: entity.Empresa,
-                excludeId: excludeId))
-        {
-            errores.Add($"El código del producto: {entity.Codigo}, ya existe para la empresa actual.");
-        }
+            new UnicoRegla<Producto>(
+                existe: (p, id) =>
+                    _productoRepository.ExistsByColumns(
+                        [
+                            ("codigo", p.Codigo),
+                            ("empresa", p.Empresa)
+                        ],
+                        id),
 
-        if (string.IsNullOrWhiteSpace(entity.Descripcion))
-            errores.Add("La descripción del producto es obligatoria.");
+                valor: p => p.Codigo,
 
-        return errores;
+                mensaje: "El código del producto: {0}, ya existe para la empresa actual.")
+        ];
     }
 }
