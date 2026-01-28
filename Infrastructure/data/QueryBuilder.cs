@@ -44,6 +44,40 @@ public class QueryBuilder<T> where T : IModel, new()
         return this;
     }
 
+    public QueryBuilder<T> WhereEqual(string column, object value)
+    {
+        string paramName = $"@p{_parameters.Count}";
+        _whereClauses.Add($"{column} = {paramName}");
+        _parameters.Add(new DbParam(paramName, value));
+        return this;
+    }
+
+    public QueryBuilder<T> WhereBetween(string column, object from, object to)
+    {
+        string pFrom = $"@p{_parameters.Count}";
+        string pTo   = $"@p{_parameters.Count + 1}";
+
+        _whereClauses.Add($"{column} BETWEEN {pFrom} AND {pTo}");
+        _parameters.Add(new DbParam(pFrom, from));
+        _parameters.Add(new DbParam(pTo, to));
+
+        return this;
+    }
+
+    public QueryBuilder<T> WhereIsNull(string column)
+    {
+        _whereClauses.Add($"{column} IS NULL");
+        return this;
+    }
+
+    public QueryBuilder<T> WhereLike(string column, string value)
+    {
+        string paramName = $"@p{_parameters.Count}";
+        _whereClauses.Add($"{column} LIKE {paramName}");
+        _parameters.Add(new DbParam(paramName, value));
+        return this;
+    }
+
     public QueryBuilder<T> OrderBy(string orderBy)
     {
         _orderBy = orderBy;
