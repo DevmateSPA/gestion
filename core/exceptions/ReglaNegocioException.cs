@@ -2,6 +2,19 @@ using System.Text;
 
 namespace Gestion.core.exceptions;
 
+/// <summary>
+/// Excepción lanzada cuando una o más reglas de negocio
+/// del dominio no se cumplen.
+/// </summary>
+/// <remarks>
+/// Esta excepción agrupa uno o más <see cref="ErrorNegocio"/> producidos
+/// durante la validación de una entidad.
+/// 
+/// No representa errores técnicos ni fallos del sistema,
+/// sino condiciones válidas del dominio que impiden completar
+/// una operación (por ejemplo, violaciones de unicidad,
+/// estados inválidos, etc.).
+/// </remarks>
 public sealed class ReglaNegocioException : Exception
 {
     public IReadOnlyCollection<ErrorNegocio> Errores { get; }

@@ -6,87 +6,36 @@ using Gestion.core.interfaces.service;
 
 namespace Gestion.core.services;
 
-/// <summary>
-/// Servicio base genérico para entidades del dominio.
-///
-/// Actúa como capa intermedia entre los repositorios y la capa de presentación,
-/// centralizando:
-/// - Acceso a datos
-/// - Validación de reglas de negocio
-/// - Flujo consistente de operaciones CRUD
-///
-/// Está pensado para ser heredado por servicios concretos
-/// (Ej: ClienteService, FacturaService, ProductoService, etc.).
-/// </summary>
-/// <typeparam name="T">
-/// Tipo de entidad manejada por el servicio.
-/// Debe implementar <see cref="IModel"/>.
-/// </typeparam>
 public abstract class BaseService<T> : IBaseService<T>
     where T : IModel, new()
 {
-    /// <summary>
-    /// Repositorio base asociado a la entidad.
-    /// </summary>
     private readonly IBaseRepository<T> _baseRepository;
 
-    /// <summary>
-    /// Inicializa el servicio base con su repositorio correspondiente.
-    /// </summary>
-    /// <param name="baseRepository">
-    /// Repositorio que maneja el acceso a datos de la entidad.
-    /// </param>
     protected BaseService(IBaseRepository<T> baseRepository)
     {
         _baseRepository = baseRepository;
     }
 
-    #region Métodos de consulta
-
-    /// <summary>
-    /// Obtiene una entidad por su identificador.
-    /// </summary>
-    /// <param name="id">Identificador de la entidad.</param>
-    /// <returns>
-    /// La entidad encontrada o <c>null</c> si no existe.
-    /// </returns>
     public async Task<T?> FindById(long id)
     {
         return await _baseRepository.FindById(id);
     }
 
-    /// <summary>
-    /// Obtiene todas las entidades disponibles.
-    /// </summary>
     public async Task<List<T>> FindAll()
     {
         return await _baseRepository.FindAll();
     }
 
-    /// <summary>
-    /// Obtiene todas las entidades asociadas a una empresa.
-    /// </summary>
-    /// <param name="empresaid">Identificador de la empresa.</param>
     public async Task<List<T>> FindAllByEmpresa(long empresaid)
     {
         return await _baseRepository.FindAllByEmpresa(empresaid);
     }
 
-    /// <summary>
-    /// Obtiene el total de registros asociados a una empresa.
-    /// </summary>
-    /// <param name="empresaId">Identificador de la empresa.</param>
     public async Task<long> ContarPorEmpresa(long empresaId)
     {
         return await _baseRepository.ContarPorEmpresa(empresaId);
     }
 
-    /// <summary>
-    /// Obtiene una página de resultados asociados a una empresa.
-    /// </summary>
-    /// <param name="empresaId">Identificador de la empresa.</param>
-    /// <param name="pageNumber">Número de página (1-based).</param>
-    /// <param name="pageSize">Cantidad de registros por página.</param>
     public virtual async Task<List<T>> FindPageByEmpresa(
         long empresaId,
         int pageNumber,
@@ -98,32 +47,11 @@ public abstract class BaseService<T> : IBaseService<T>
             pageSize);
     }
 
-
-    #endregion
-
-    #region Operaciones CRUD
-
-    /// <summary>
-    /// Elimina una entidad por su identificador.
-    /// </summary>
-    /// <param name="id">Identificador de la entidad.</param>
-    /// <returns>
-    /// <c>true</c> si la eliminación fue exitosa.
-    /// </returns>
     public async Task<bool> DeleteById(long id)
     {
         return await _baseRepository.DeleteById(id);
     }
 
-    /// <summary>
-    /// Actualiza una entidad existente.
-    ///
-    /// Antes de persistir los cambios, se validan las reglas de negocio.
-    /// </summary>
-    /// <param name="entity">Entidad a actualizar.</param>
-    /// <exception cref="ReglaNegocioException">
-    /// Se lanza si alguna regla de negocio no se cumple.
-    /// </exception>
     public async Task<bool> Update(T entity)
     {
         await ValidarYAplicarReglas(entity, entity.Id);      
@@ -131,15 +59,6 @@ public abstract class BaseService<T> : IBaseService<T>
         return await _baseRepository.Update(entity);
     }
 
-    /// <summary>
-    /// Guarda una nueva entidad.
-    ///
-    /// Aplica validaciones de reglas de negocio antes de persistir.
-    /// </summary>
-    /// <param name="entity">Entidad a guardar.</param>
-    /// <exception cref="ReglaNegocioException">
-    /// Se lanza si alguna regla de negocio no se cumple.
-    /// </exception>
     public virtual async Task<bool> Save(T entity)
     {
         await ValidarYAplicarReglas(entity, null);
@@ -147,43 +66,71 @@ public abstract class BaseService<T> : IBaseService<T>
         return await _baseRepository.Save(entity);
     }
 
-    #endregion
-
-    #region Reglas de negocio
-
     /// <summary>
-    /// Valida las reglas de negocio específicas de la entidad.
-    ///
-    /// Debe ser implementado por los servicios concretos.
+    /// Define el conjunto de reglas de negocio que deben validarse
+    /// para una entidad antes de persistirla.
     /// </summary>
-    /// <param name="entity">Entidad a validar.</param>
-    /// <param name="excludeId">
-    /// Identificador a excluir en validaciones de unicidad
-    /// (usado normalmente en actualizaciones).
+    /// <param name="entity">
+    /// Entidad a validar.
     /// </param>
+    /// <param name="excludeId">
+    /// Identificador opcional a excluir durante la validación,
+    /// utilizado principalmente en operaciones de actualización.
+    /// </param>
+    /// <remarks>
+    /// Cada implementación concreta del servicio debe retornar
+    /// las reglas de negocio aplicables al contexto de la entidad.
+    /// 
+    /// Las reglas se evalúan de forma asíncrona y centralizada
+    /// mediante el mecanismo de validación del servicio base.
+    /// </remarks>
     /// <returns>
-    /// Lista de mensajes de error. Si está vacía, la entidad es válida.
+    /// Colección de reglas de negocio a evaluar.
     /// </returns>
     protected abstract IEnumerable<IReglaNegocio<T>> DefinirReglas(
         T entity,
         long? excludeId);
 
     /// <summary>
-    /// Aplica el resultado de las validaciones de negocio.
-    ///
-    /// Si existen errores, lanza una excepción de dominio.
+    /// Aplica el resultado de la validación de reglas de negocio,
+    /// lanzando una excepción si existen errores.
     /// </summary>
-    /// <param name="errores">Lista de errores de validación.</param>
-    /// <exception cref="ReglaNegocioException">
-    /// Se lanza cuando existen reglas incumplidas.
-    /// </exception>
+    /// <param name="errores">
+    /// Lista de errores de negocio detectados durante la validación.
+    /// </param>
+    /// <remarks>
+    /// Este método centraliza la decisión de corte ante errores
+    /// de negocio, evitando que las capas superiores deban
+    /// interpretar resultados parciales.
+    /// </remarks>
     private static void AplicarReglasNegocio(
-        IReadOnlyCollection<ErrorNegocio> errores)
+        List<ErrorNegocio> errores)
     {
         if (errores.Count != 0)
             throw new ReglaNegocioException(errores);
     }
 
+    /// <summary>
+    /// Valida una entidad contra sus reglas de negocio y
+    /// aplica el resultado de la validación.
+    /// </summary>
+    /// <param name="entity">
+    /// Entidad a validar.
+    /// </param>
+    /// <param name="excludeId">
+    /// Identificador opcional a excluir durante la validación.
+    /// </param>
+    /// <remarks>
+    /// El flujo de validación es:
+    /// 
+    /// 1. Se obtienen las reglas mediante <see cref="DefinirReglas"/>
+    /// 2. Se evalúan todas las reglas de forma asíncrona
+    /// 3. Se recopilan los errores de negocio
+    /// 4. Se aplica el resultado mediante <see cref="AplicarReglasNegocio"/>
+    /// 
+    /// Si existe al menos un error, se lanza una
+    /// <see cref="ReglaNegocioException"/>.
+    /// </remarks>
     private async Task ValidarYAplicarReglas(
         T entity,
         long? excludeId)
@@ -201,6 +148,4 @@ public abstract class BaseService<T> : IBaseService<T>
 
         AplicarReglasNegocio(errores);
     }
-
-    #endregion
 }
