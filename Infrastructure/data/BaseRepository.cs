@@ -186,6 +186,63 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : IModel, n
         return result;
     }
 
+
+    /// <summary>
+    /// Ejecuta una consulta SELECT genérica sobre una tabla o vista específica,
+    /// permitiendo definir dinámicamente:
+    /// - La fuente de datos (tabla o vista)
+    /// - La cláusula WHERE
+    /// - Ordenamiento
+    /// - Paginación (LIMIT / OFFSET)
+    /// - Columnas seleccionadas
+    ///
+    /// Este método actúa como el núcleo de las consultas de lectura del repositorio,
+    /// siendo utilizado por QueryBuilder y por consultas personalizadas que no
+    /// requieren una entidad completa o un repositorio dedicado.
+    /// </summary>
+    /// <typeparam name="T">
+    /// Tipo de entidad o DTO a mapear desde el DbDataReader.
+    /// Debe ser compatible con el método MapEntity.
+    /// </typeparam>
+    /// <param name="tableOrView">
+    /// Nombre de la tabla o vista desde la cual se realizará la consulta.
+    /// Se asume que el nombre es seguro y controlado por la capa de infraestructura.
+    /// </param>
+    /// <param name="where">
+    /// Cláusula WHERE de la consulta, sin incluir la palabra clave WHERE.
+    /// Debe usar parámetros para evitar inyección SQL.
+    /// </param>
+    /// <param name="orderBy">
+    /// Cláusula ORDER BY opcional, sin incluir la palabra clave ORDER BY.
+    /// </param>
+    /// <param name="limit">
+    /// Cantidad máxima de registros a retornar (LIMIT).
+    /// </param>
+    /// <param name="offset">
+    /// Cantidad de registros a omitir antes de comenzar a retornar resultados (OFFSET).
+    /// Solo se aplica si limit tiene valor.
+    /// </param>
+    /// <param name="parameters">
+    /// Colección de parámetros SQL utilizados en la cláusula WHERE.
+    /// Los parámetros de paginación (LIMIT / OFFSET) se agregan automáticamente.
+    /// </param>
+    /// <param name="selectColumns">
+    /// Columnas a seleccionar en la consulta.
+    /// Por defecto selecciona todas las columnas (*).
+    /// </param>
+    /// <returns>
+    /// Lista de entidades o DTOs mapeados desde el resultado de la consulta.
+    /// </returns>
+    /// <remarks>
+    /// Seguridad:
+    /// - tableOrView, where, orderBy y selectColumns NO deben contener input del usuario.
+    /// - Este método asume que dichos valores son definidos exclusivamente por código.
+    ///
+    /// Diseño:
+    /// - Centraliza la ejecución de consultas SELECT.
+    /// - Evita duplicación de lógica de acceso a datos.
+    /// - Mantiene el control del SQL en la capa de infraestructura.
+    /// </remarks>
     public async Task<List<T>> FindWhereFrom(
         string tableOrView,
         string where,
