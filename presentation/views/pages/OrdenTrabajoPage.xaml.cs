@@ -98,7 +98,19 @@ public partial class OrdenTrabajoPage : Page
         if (ordenTrabajo == null)
             return;
 
-        ordenTrabajo.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(await _viewModel.LoadDetailsByFolio(ordenTrabajo.Folio, ordenTrabajo.Empresa));
+        // Cargar desde BD
+        var detallesDesdeBd = await _viewModel
+            .LoadDetailsByFolio(ordenTrabajo.Folio, ordenTrabajo.Empresa);
+
+        // Snapshot INMUTABLE (estado original)
+        var detallesOriginales = detallesDesdeBd
+            .Select(d => d.Clone())
+            .ToList();
+
+        // Working copy (lo que se edita en la UI)
+        ordenTrabajo.Detalles = new ObservableCollection<DetalleOrdenTrabajo>(
+            detallesDesdeBd.Select(d => d.Clone())
+        );
 
         await new EditorEntidadBuilder<OrdenTrabajo>()
             .Owner(Window.GetWindow(this)!)
@@ -112,14 +124,17 @@ public partial class OrdenTrabajoPage : Page
                     orden))
             .OnClose(async facturaEditada =>
                 await _viewModel.SincronizarDetalles(
-                    ordenTrabajo.Detalles,
-                    facturaEditada.Detalles.Cast<DetalleOrdenTrabajo>(),
+                    detallesOriginales, // estado real original
+                    facturaEditada.Detalles.Cast<DetalleOrdenTrabajo>(), // estado editado
                     facturaEditada))
             .ShouldBtnImpresion()
             .Entregar(async win =>
             {
-                var window = new EntregarOTModal();
-                window.Owner = Window.GetWindow(this)!;
+                var window = new EntregarOTModal
+                {
+                    Owner = Window.GetWindow(this)!
+                };
+
                 if (window.ShowDialog() == true)
                 {
                     DateTime? fecha = window.FechaEntrega;
@@ -129,8 +144,10 @@ public partial class OrdenTrabajoPage : Page
                         ordenTrabajo.FechaEntrega = fecha.Value;
                         ordenTrabajo.OrdenEntregada = fecha.Value;
                         ordenTrabajo.FechaTermino = fecha.Value;
-                        _viewModel.Update(ordenTrabajo);
+
+                        await _viewModel.Update(ordenTrabajo);
                         _dialogService.ShowMessage("Orden marcada como entregada");
+
                         window.Close();
                         win.Close();
                     }

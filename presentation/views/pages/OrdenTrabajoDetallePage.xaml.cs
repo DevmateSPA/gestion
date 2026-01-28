@@ -8,7 +8,6 @@ using System.Windows.Media;
 using Gestion.core.model;
 using Gestion.core.model.detalles;
 using Gestion.core.services;
-using Gestion.core.session;
 using Gestion.helpers;
 using Gestion.presentation.views.util;
 using Gestion.presentation.views.windows;

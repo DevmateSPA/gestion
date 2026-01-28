@@ -93,25 +93,62 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
         IEnumerable<DetalleOrdenTrabajo> editados,
         OrdenTrabajo ordenTrabajo)
     {
+        Debug.WriteLine("======================================");
+        Debug.WriteLine("[SincronizarDetalles] INICIO");
+        Debug.WriteLine($"OT: {ordenTrabajo.Folio} | Empresa: {ordenTrabajo.Empresa}");
+
+        Debug.WriteLine("Originales:");
+        foreach (var o in originales)
+            Debug.WriteLine($"  O -> Id={o.Id}");
+
+        Debug.WriteLine("Editados:");
+        foreach (var e in editados)
+            Debug.WriteLine($"  E -> Id={e.Id}");
+
         List<long> paraEliminar = originales.Any()
-            ? [.. originales.Where(o => !editados.Any(e => e.Id == o.Id)).Select(o => o.Id)]
+            ? [.. originales
+                .Where(o => !editados.Any(e => e.Id == o.Id))
+                .Select(o => o.Id)]
             : [];
 
-        List<DetalleOrdenTrabajo> paraAgregar = [.. editados.Where(e => e.Id == 0)];
-        List<DetalleOrdenTrabajo> paraActualizar = [.. editados.Where(e => e.Id != 0 && originales.Any(o => o.Id == e.Id))];
+        List<DetalleOrdenTrabajo> paraAgregar =
+            [.. editados.Where(e => e.Id == 0)];
 
-        Debug.WriteLine($"[SincronizarDetalles] OrdenTrabajo: {ordenTrabajo.Folio} - Empresa: {ordenTrabajo.Empresa}");
-        Debug.WriteLine($" - Para eliminar: {string.Join(", ", paraEliminar)}");
-        Debug.WriteLine($" - Para agregar: {string.Join(", ", paraAgregar.Select(a => a.Id))}");
-        Debug.WriteLine($" - Para actualizar: {string.Join(", ", paraActualizar.Select(a => a.Id))}");
+        List<DetalleOrdenTrabajo> paraActualizar =
+        [
+            .. editados.Where(e =>
+            {
+                var original = originales.FirstOrDefault(o => o.Id == e.Id);
+                return original != null && !original.Equals(e);
+            })
+        ];
 
-        if (paraAgregar.Count != 0 || paraActualizar.Count != 0 || paraEliminar.Count != 0)
+        Debug.WriteLine("Resultado sincronización:");
+        Debug.WriteLine($" - Para eliminar: {(paraEliminar.Count != 0 ? string.Join(", ", paraEliminar) : "(ninguno)")}");
+        Debug.WriteLine($" - Para agregar: {(paraAgregar.Count != 0 ? string.Join(", ", paraAgregar.Select(a => a.Id)) : "(ninguno)")}");
+        Debug.WriteLine($" - Para actualizar: {(paraActualizar.Count != 0 ? string.Join(", ", paraActualizar.Select(a => a.Id)) : "(ninguno)")}");
+
+        if (paraEliminar.Count == 0 && paraAgregar.Count == 0 && paraActualizar.Count == 0)
         {
-            await MakeCrud(AsignarInfo(ordenTrabajo.Folio, ordenTrabajo.Empresa, paraAgregar),
-                AsignarInfo(ordenTrabajo.Folio, ordenTrabajo.Empresa, paraActualizar),
-                paraEliminar,
-                ordenTrabajo.Empresa);
+            Debug.WriteLine(
+                $"[SincronizarDetalles] No hay cambios: {originales.Count()} detalles comparados, 0 diferencias detectadas"
+            );
+            Debug.WriteLine("[SincronizarDetalles] FIN");
+            Debug.WriteLine("======================================");
+            return;
         }
+
+        Debug.WriteLine("[SincronizarDetalles] Ejecutando CRUD...");
+
+        await MakeCrud(
+            AsignarInfo(ordenTrabajo.Folio, ordenTrabajo.Empresa, paraAgregar),
+            AsignarInfo(ordenTrabajo.Folio, ordenTrabajo.Empresa, paraActualizar),
+            paraEliminar,
+            ordenTrabajo.Empresa
+        );
+
+        Debug.WriteLine("[SincronizarDetalles] FIN");
+        Debug.WriteLine("======================================");
     }
 
     private async Task MakeCrud(List<DetalleOrdenTrabajo> paraAgregar, 

@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Common;
 using System.Text;
 using Gestion.core.attributes;
 using Gestion.core.interfaces.database;
@@ -12,7 +11,6 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
 {
     public DetalleOTRepository(IDbConnectionFactory connectionFactory)
         : base(connectionFactory, "ordentrabajodetalle", null) {}
-
 
     public async Task<List<DetalleOrdenTrabajo>> FindByFolio(string folio, long empresaId)
     {
@@ -55,7 +53,12 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
         }
 
         string sql = $"INSERT INTO {_tableName} ({columns}) VALUES {sb}";
-        int affected = await ExecuteNonQueryAsync(sql, parameters);
+
+        int affected = await ExecuteNonQueryWithLogAsync(
+            operation: "[DetalleOT_SaveAll]",
+            sql: sql,
+            parameters: parameters
+        );
 
         return affected > 0;
     }
@@ -66,7 +69,9 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
             return false;
 
         var props = typeof(DetalleOrdenTrabajo).GetProperties()
-            .Where(p => p.Name != "Id"
+            .Where(p => 
+                        p.Name != "Id"
+                        && p.Name != "Empresa"
                         && !Attribute.IsDefined(p, typeof(NotMappedAttribute))
                         && !Attribute.IsDefined(p, typeof(NoSaveDbAttribute)))
             .ToList();
@@ -102,7 +107,11 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
 
         parameters.Add(new DbParam("@empresa", empresaId));
 
-        int affected = await ExecuteNonQueryAsync(sb.ToString(), parameters);
+        int affected = await ExecuteNonQueryWithLogAsync(
+            operation: "[DetalleOT_UpdateAll]",
+            sql: sb.ToString(),
+            parameters: parameters
+        );
 
         return affected > 0;
     }
@@ -113,12 +122,17 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
             return false;
 
         var parameters = ids.Select((id, i) => new DbParam($"@id{i}", id)).ToList();
-        string sql = $"DELETE FROM {_tableName} WHERE id IN ({string.Join(", ", parameters.Select(p => p.Name))}) AND empresa = @empresa";
-
+        string sql = $@"DELETE FROM {_tableName} 
+            WHERE id IN ({string.Join(", ", parameters.Select(p => p.Name))}) 
+            AND empresa = @empresa";
 
         parameters.Add(new DbParam("@empresa", empresaId));
 
-        int affected = await ExecuteNonQueryAsync(sql, parameters);
+        int affected = await ExecuteNonQueryWithLogAsync(
+            operation: "[DetalleOT_DeleteByIds]",
+            sql: sql,
+            parameters: parameters
+        );
 
         return affected > 0;
     }
@@ -128,23 +142,16 @@ public class DetalleOTRepository : BaseRepository<DetalleOrdenTrabajo>, IDetalle
         if (string.IsNullOrWhiteSpace(folio))
             return false;
 
-        using var conn = await _connectionFactory.CreateConnection();
-        using var cmd = (DbCommand)conn.CreateCommand();
+        int affected = await ExecuteNonQueryWithLogAsync(
+            operation: "[DetalleOT_DeleteByFolio]",
+            sql: $"DELETE FROM {_tableName} WHERE folio = @folio AND empresa = @empresa",
+            parameters:
+            [
+                new DbParam("@folio", folio),
+                new DbParam("@empresa", empresaId)
+            ]
+        );
 
-        cmd.CommandText = $"DELETE FROM {_tableName} WHERE folio = @folio AND empresa = @empresa";
-
-        var p = cmd.CreateParameter();
-        p.ParameterName = "@folio";
-        p.Value = folio;
-        cmd.Parameters.Add(p);
-
-        var p2 = cmd.CreateParameter();
-        p2.ParameterName = "@empresa";
-        p2.Value = empresaId;
-        cmd.Parameters.Add(p2);
-
-        int affected = await cmd.ExecuteNonQueryAsync();
-
-        return true;
+        return affected > 0;
     }
 }
