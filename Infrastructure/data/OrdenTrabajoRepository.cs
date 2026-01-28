@@ -23,7 +23,7 @@ public class OrdenTrabajoRepository : BaseRepository<OrdenTrabajo>, IOrdenTrabaj
     {
         return await CreateQueryBuilder()
             .Where("empresa = @empresa", new DbParam("@empresa", empresaId))
-            .Where("maquina1 = @codigoMaquina", new DbParam("@empresa", empresaId))
+            .Where("maquina1 = @codigoMaquina", new DbParam("@codigoMaquina", codigoMaquina))
             .Where("ordenentregada IS NULL")
             .CountAsync();
     }
