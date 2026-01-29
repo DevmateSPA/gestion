@@ -36,7 +36,7 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged
     protected void Log(string message)
     {
         if (DebugEnabled)
-            Debug.WriteLine(message);
+            Debug.WriteLine($"[VM:{GetType().Name}] {message}");
     }
     #region Servicios y mensajes
 
