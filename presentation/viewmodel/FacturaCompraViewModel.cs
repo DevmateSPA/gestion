@@ -56,17 +56,17 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
         IEnumerable<FacturaCompraProducto> editados,
         FacturaCompra facturaCompra)
     {
-        Debug.WriteLine("======================================");
-        Debug.WriteLine("[SincronizarDetalles] INICIO");
-        Debug.WriteLine($"FC: {facturaCompra.Folio} | Empresa: {facturaCompra.Empresa}");
+        Log("======================================");
+        Log("[SincronizarDetalles] INICIO");
+        Log($"FC: {facturaCompra.Folio} | Empresa: {facturaCompra.Empresa}");
 
-        Debug.WriteLine("Originales:");
+        Log("Originales:");
         foreach (var o in originales)
-            Debug.WriteLine($"  O -> Id={o.Id}");
+            Log($"  O -> Id={o.Id}");
 
-        Debug.WriteLine("Editados:");
+        Log("Editados:");
         foreach (var e in editados)
-            Debug.WriteLine($"  E -> Id={e.Id}");
+            Log($"  E -> Id={e.Id}");
 
         List<long> paraEliminar = originales.Any()
             ? [.. originales
@@ -86,22 +86,22 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
             })
         ];
 
-        Debug.WriteLine("Resultado sincronización:");
-        Debug.WriteLine($" - Para eliminar: {(paraEliminar.Count != 0 ? string.Join(", ", paraEliminar) : "(ninguno)")}");
-        Debug.WriteLine($" - Para agregar: {(paraAgregar.Count != 0 ? string.Join(", ", paraAgregar.Select(a => a.Id)) : "(ninguno)")}");
-        Debug.WriteLine($" - Para actualizar: {(paraActualizar.Count != 0 ? string.Join(", ", paraActualizar.Select(a => a.Id)) : "(ninguno)")}");
+        Log("Resultado sincronización:");
+        Log($" - Para eliminar: {(paraEliminar.Count != 0 ? string.Join(", ", paraEliminar) : "(ninguno)")}");
+        Log($" - Para agregar: {(paraAgregar.Count != 0 ? string.Join(", ", paraAgregar.Select(a => a.Id)) : "(ninguno)")}");
+        Log($" - Para actualizar: {(paraActualizar.Count != 0 ? string.Join(", ", paraActualizar.Select(a => a.Id)) : "(ninguno)")}");
 
         if (paraEliminar.Count == 0 && paraAgregar.Count == 0 && paraActualizar.Count == 0)
         {
-            Debug.WriteLine(
+            Log(
                 $"[SincronizarDetalles] No hay cambios: {originales.Count()} detalles comparados, 0 diferencias detectadas"
             );
-            Debug.WriteLine("[SincronizarDetalles] FIN");
-            Debug.WriteLine("======================================");
+            Log("[SincronizarDetalles] FIN");
+            Log("======================================");
             return;
         }
 
-        Debug.WriteLine("[SincronizarDetalles] Ejecutando CRUD...");
+        Log("[SincronizarDetalles] Ejecutando CRUD...");
 
         await MakeCrud(
             AsignarInfo(facturaCompra.Folio, facturaCompra.Empresa, facturaCompra.Tipo, paraAgregar),
@@ -110,8 +110,8 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
             facturaCompra.Empresa
         );
 
-        Debug.WriteLine("[SincronizarDetalles] FIN");
-        Debug.WriteLine("======================================");
+        Log("[SincronizarDetalles] FIN");
+        Log("======================================");
     }
 
     private async Task MakeCrud(List<FacturaCompraProducto> paraAgregar, 
@@ -119,26 +119,26 @@ public class FacturaCompraViewModel : EntidadViewModel<FacturaCompra>
         List<long> paraEliminar,
         long empresaId)
     {
-        Debug.WriteLine($"[MakeCrud] Iniciando CRUD...");
+        Log($"[MakeCrud] Iniciando CRUD...");
         if (paraEliminar.Count != 0)
         {
-            Debug.WriteLine($" - Eliminando IDs: {string.Join(", ", paraEliminar)}");
+            Log($" - Eliminando IDs: {string.Join(", ", paraEliminar)}");
             await RunServiceAction(() => _detalleService.DeleteByIds(paraEliminar, empresaId), null, $"Error al eliminar los detalles de la factura");
         }
 
         if (paraAgregar.Count != 0)
         {
-            Debug.WriteLine($" - Agregando IDs: {string.Join(", ", paraAgregar.Select(a => a.Id))}");
+            Log($" - Agregando IDs: {string.Join(", ", paraAgregar.Select(a => a.Id))}");
             await RunServiceAction(() => _detalleService.SaveAll(paraAgregar), null, $"Error al guardar los detalles de la factura");
         }
 
         if (paraActualizar.Count != 0)
         {
-            Debug.WriteLine($" - Actualizando IDs: {string.Join(", ", paraActualizar.Select(a => a.Id))}");
+            Log($" - Actualizando IDs: {string.Join(", ", paraActualizar.Select(a => a.Id))}");
             await RunServiceAction(() => _detalleService.UpdateAll(paraActualizar, empresaId), null, $"Error al actualizar los detalles de la factura");
         }
 
-        Debug.WriteLine($"[MakeCrud] Operación finalizada.");
+        Log($"[MakeCrud] Operación finalizada.");
     }
 
     private static List<FacturaCompraProducto> AsignarInfo(

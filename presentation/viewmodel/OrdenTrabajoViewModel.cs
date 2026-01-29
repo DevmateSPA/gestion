@@ -93,17 +93,17 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
         IEnumerable<DetalleOrdenTrabajo> editados,
         OrdenTrabajo ordenTrabajo)
     {
-        Debug.WriteLine("======================================");
-        Debug.WriteLine("[SincronizarDetalles] INICIO");
-        Debug.WriteLine($"OT: {ordenTrabajo.Folio} | Empresa: {ordenTrabajo.Empresa}");
+        Log("======================================");
+        Log("[SincronizarDetalles] INICIO");
+        Log($"OT: {ordenTrabajo.Folio} | Empresa: {ordenTrabajo.Empresa}");
 
-        Debug.WriteLine("Originales:");
+        Log("Originales:");
         foreach (var o in originales)
-            Debug.WriteLine($"  O -> Id={o.Id}");
+            Log($"  O -> Id={o.Id}");
 
-        Debug.WriteLine("Editados:");
+        Log("Editados:");
         foreach (var e in editados)
-            Debug.WriteLine($"  E -> Id={e.Id}");
+            Log($"  E -> Id={e.Id}");
 
         List<long> paraEliminar = originales.Any()
             ? [.. originales
@@ -123,22 +123,22 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
             })
         ];
 
-        Debug.WriteLine("Resultado sincronización:");
-        Debug.WriteLine($" - Para eliminar: {(paraEliminar.Count != 0 ? string.Join(", ", paraEliminar) : "(ninguno)")}");
-        Debug.WriteLine($" - Para agregar: {(paraAgregar.Count != 0 ? string.Join(", ", paraAgregar.Select(a => a.Id)) : "(ninguno)")}");
-        Debug.WriteLine($" - Para actualizar: {(paraActualizar.Count != 0 ? string.Join(", ", paraActualizar.Select(a => a.Id)) : "(ninguno)")}");
+        Log("Resultado sincronización:");
+        Log($" - Para eliminar: {(paraEliminar.Count != 0 ? string.Join(", ", paraEliminar) : "(ninguno)")}");
+        Log($" - Para agregar: {(paraAgregar.Count != 0 ? string.Join(", ", paraAgregar.Select(a => a.Id)) : "(ninguno)")}");
+        Log($" - Para actualizar: {(paraActualizar.Count != 0 ? string.Join(", ", paraActualizar.Select(a => a.Id)) : "(ninguno)")}");
 
         if (paraEliminar.Count == 0 && paraAgregar.Count == 0 && paraActualizar.Count == 0)
         {
-            Debug.WriteLine(
+            Log(
                 $"[SincronizarDetalles] No hay cambios: {originales.Count()} detalles comparados, 0 diferencias detectadas"
             );
-            Debug.WriteLine("[SincronizarDetalles] FIN");
-            Debug.WriteLine("======================================");
+            Log("[SincronizarDetalles] FIN");
+            Log("======================================");
             return;
         }
 
-        Debug.WriteLine("[SincronizarDetalles] Ejecutando CRUD...");
+        Log("[SincronizarDetalles] Ejecutando CRUD...");
 
         await MakeCrud(
             AsignarInfo(ordenTrabajo.Folio, ordenTrabajo.Empresa, paraAgregar),
@@ -147,8 +147,8 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
             ordenTrabajo.Empresa
         );
 
-        Debug.WriteLine("[SincronizarDetalles] FIN");
-        Debug.WriteLine("======================================");
+        Log("[SincronizarDetalles] FIN");
+        Log("======================================");
     }
 
     private async Task MakeCrud(List<DetalleOrdenTrabajo> paraAgregar, 
@@ -156,7 +156,7 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
         List<long> paraEliminar,
         long empresaId)
     {
-        Debug.WriteLine("[MakeCrud] Iniciando CRUD...");
+        Log("[MakeCrud] Iniciando CRUD...");
 
         if (paraEliminar.Count != 0)
         {
@@ -165,7 +165,7 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
 
         if (paraAgregar.Count != 0)
         {
-            Debug.WriteLine($" - Agregando IDs: {string.Join(", ", paraAgregar.Select(a => a.Id))}");
+            Log($" - Agregando IDs: {string.Join(", ", paraAgregar.Select(a => a.Id))}");
             await RunServiceAction(() => _detalleOTService.SaveAll(paraAgregar), null, "Error al guardar los detalles de la orden de trabajo");
         }
 
@@ -174,7 +174,7 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
             await RunServiceAction(() => _detalleOTService.UpdateAll(paraActualizar, empresaId), null, $"Error al actualizar los detalles de la orden de trabajo");
         }
 
-        Debug.WriteLine("[MakeCrud] Operación finalizada.");
+        Log("[MakeCrud] Operación finalizada.");
     }
 
     private static List<DetalleOrdenTrabajo> AsignarInfo(string folio, long empresaId, IList<DetalleOrdenTrabajo> detalles)

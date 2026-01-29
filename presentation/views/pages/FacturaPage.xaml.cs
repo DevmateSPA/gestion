@@ -1,11 +1,6 @@
 using Gestion.core.model;
-using Gestion.core.session;
 using Gestion.helpers;
 using Gestion.presentation.viewmodel;
-using Gestion.presentation.views.util;
-using Gestion.presentation.views.windows;
-using System.Printing;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;

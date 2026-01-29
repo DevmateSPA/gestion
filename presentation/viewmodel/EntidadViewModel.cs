@@ -7,6 +7,7 @@ using Gestion.core.session;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
+using System.Diagnostics;
 
 namespace Gestion.presentation.viewmodel;
 
@@ -29,6 +30,14 @@ namespace Gestion.presentation.viewmodel;
 public abstract class EntidadViewModel<T> : INotifyPropertyChanged
     where T : IEmpresa
 {
+    protected bool DebugEnabled = false;
+
+    [Conditional("DEBUG")]
+    protected void Log(string message)
+    {
+        if (DebugEnabled)
+            Debug.WriteLine(message);
+    }
     #region Servicios y mensajes
 
     /// <summary>
@@ -247,8 +256,10 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged
     /// </summary>
     public virtual void Buscar(string filtro)
     {
+        Log($"Buscar → '{filtro}'");
         if (string.IsNullOrWhiteSpace(filtro))
         {
+            Log("Buscar → filtro vacío, limpiando");
             EntidadesView.Filter = null;
             return;
         }
@@ -318,14 +329,22 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged
     {
         IsLoading = true;
         var token = RenewLoadToken();
+        Log("RunWithLoading → inicio");
 
         try
         {
+            Log("RunWithLoading → ejecutando action");
             var lista = await SafeExecutor.RunAsyncList(
                 async () =>
                 {
                     token.ThrowIfCancellationRequested();
+
+                    Log("RunWithLoading → action START");
+
                     var result = await action();
+
+                    Log($"RunWithLoading → action END ({result.Count} registros)");
+
                     token.ThrowIfCancellationRequested();
                     return result;
                 },
@@ -333,22 +352,44 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged
                 errorMessage);
 
             if (token.IsCancellationRequested)
+            {
+                Log("RunWithLoading → cancelado después de action");
                 return;
+            }
 
             if (lista.Count == 0)
+            {
+                Log("RunWithLoading → lista vacía");
                 onEmpty?.Invoke();
+            }
+            else
+            {
+                Log("RunWithLoading → cargando entidades en colección");
+            }
 
             await LoadEntitiesIntoCollection(lista);
+
+            Log("RunWithLoading → LoadEntitiesIntoCollection OK");
+
             onSuccess?.Invoke();
+            Log("RunWithLoading → onSuccess ejecutado");
         }
         catch (OperationCanceledException)
         {
+            Log("RunWithLoading → OperationCanceledException");
             // Cancelación silenciosa
         }
         finally
         {
             if (!token.IsCancellationRequested)
+            {
                 IsLoading = false;
+                Log("RunWithLoading → fin (IsLoading=false)");
+            }
+            else
+            {
+                Log("RunWithLoading → fin cancelado");
+            }
         }
     }
 
@@ -396,19 +437,32 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged
     /// <param name="lista">Lista de entidades obtenidas del servicio.</param>
     protected async Task LoadEntitiesIntoCollection(List<T> lista)
     {
+        Log($"LoadEntitiesIntoCollection → inicio ({lista.Count} items)");
+
         var procesadas = await Task.Run(() =>
         {
             var dateProp = GetDateProperty(typeof(T));
 
             if (dateProp != null)
+            {
+                Log("LoadEntitiesIntoCollection → ordenando por Fecha");
                 lista = [.. lista.OrderByDescending(x => dateProp.GetValue(x))];
+            }
+            else
+            {
+                Log("LoadEntitiesIntoCollection → sin propiedad Fecha");
+            }
 
             var cache = new Dictionary<T, string>();
             foreach (var entidad in lista)
                 cache[entidad] = BuildSearchText(entidad);
+            
+            Log($"LoadEntitiesIntoCollection → cache construido ({cache.Count})");
 
             return (lista, cache);
         });
+
+        Log("LoadEntitiesIntoCollection → aplicando cambios a la UI");
 
         Entidades.Clear();
         _searchCache.Clear();
@@ -417,6 +471,8 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged
             _searchCache[kv.Key] = kv.Value;
 
         Entidades = new ObservableCollection<T>(procesadas.lista);
+
+        Log("LoadEntitiesIntoCollection → fin");
     }
 
     #endregion
@@ -447,8 +503,10 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged
         Func<Task<long>>? totalCountCall = null,
         Func<Task<List<T>>>? allItemsCall = null)
     {
+        Log($"LoadPagedEntities → solicitado page={page}, PageSize={PageSize}");
         if (PageSize == 0)
         {
+            Log("LoadPagedEntities → PageSize=0, cargando todo");
             await RunWithLoading(
                 async () =>
                     allItemsCall != null
@@ -459,18 +517,25 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged
 
             PageNumber = 1;
             TotalRegistros = 1;
+
+            Log("LoadPagedEntities → sin paginación (1 página)");
             return;
         }
 
         PageNumber = Math.Max(1, page);
+        Log($"LoadPagedEntities → PageNumber ajustado a {PageNumber}");
 
         long total = totalCountCall != null
             ? await totalCountCall()
             : await _service.ContarPorEmpresa(SesionApp.IdEmpresa);
 
+        Log($"LoadPagedEntities → total registros={total}");
+
         TotalRegistros = Math.Max(
             1,
             (int)Math.Ceiling(total / (double)PageSize));
+
+        Log($"LoadPagedEntities → TotalRegistros={TotalRegistros}");
 
         await RunWithLoading(
             () => serviceCall(PageNumber),
@@ -507,14 +572,25 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged
         Action? onSuccess,
         string mensajeError)
     {
+        Log("RunServiceAction → inicio");
+
         return await SafeExecutor.RunAsyncValue(
             async () =>
             {
-                if (await serviceAction())
+                Log("RunServiceAction → ejecutando serviceAction");
+
+                var result = await serviceAction();
+
+                Log($"RunServiceAction → resultado = {result}");
+
+                if (result)
                 {
+                    Log("RunServiceAction → ejecutando onSuccess");
                     onSuccess?.Invoke();
                     return true;
                 }
+
+                Log("RunServiceAction → operación fallida");
                 return false;
             },
             _dialogService,
