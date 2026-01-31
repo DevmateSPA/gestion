@@ -20,10 +20,30 @@ public class ClienteRepository : BaseRepository<Cliente>, IClienteRepository
         if (string.IsNullOrWhiteSpace(busquedaRut) || busquedaRut.Length < 1)
             return [];
 
+        var rutNormalizado = busquedaRut
+            .Replace(".", "")
+            .Replace("-", "")
+            .Trim();
+
         return await CreateQueryBuilder()
             .Select("rut")
             .WhereEqual("empresa", empresaId)
-            .WhereLike("rut", $"{busquedaRut}%")
+            .Where(
+                "REPLACE(REPLACE(TRIM(rut), '-', ''), '.', '') LIKE @rut",
+                 new DbParam("@rut", $"{rutNormalizado}%"))
             .ToListAsync<string>();
+    }
+
+    public async Task<Cliente?> FindByRut(
+        string rut,
+        long empresaId)
+    {
+        var result = await CreateQueryBuilder()
+            .WhereEqual("rut", rut)
+            .WhereEqual("empresa", empresaId)
+            .Limit(1)
+            .ToListAsync<Cliente>();
+
+        return result.FirstOrDefault();
     }
 }

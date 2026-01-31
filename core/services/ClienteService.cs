@@ -15,6 +15,11 @@ public class ClienteService : BaseService<Cliente>, IClienteService
         _clienteRepository = clienteRepository;
     }
 
+    public async Task<Cliente?> FindByRut(string rut, long empresaId)
+    {
+        return await _clienteRepository.FindByRut(rut, empresaId);
+    }
+
     public async Task<List<string>> GetRutList(string busquedaRut, long empresaId)
     {
         return await _clienteRepository.GetRutList(busquedaRut, empresaId);

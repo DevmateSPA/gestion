@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Gestion.core.attributes;
 using Gestion.core.attributes.validation;
+using Gestion.core.interfaces.service;
 
 namespace Gestion.core.model;
 
@@ -33,7 +34,25 @@ public class Factura : TotalBase
     [Rut]
     [Grupo("Cliente", GRUPO_CLIENTE)]
     [Orden(0)]
-    public string RutCliente { get; set; } = string.Empty;
+    [Lookup(
+        typeof(IClienteService),
+        nameof(IClienteService.FindByRut),
+        "Razon_Social:NombreCliente"
+    )]
+    //[Searchable("RUT_CLIENTE")]
+    public string RutCliente
+    {
+        get => _rutCliente;
+        set
+        {
+            if (_rutCliente == value) return;
+            _rutCliente = value;
+            OnPropertyChanged(nameof(RutCliente));
+        }
+    }
+
+    private string _rutCliente = string.Empty;
+    private string _nombreCliente = "Sin asignar";
 
     [Nombre("Nombre")]
     [Grupo("Cliente", GRUPO_CLIENTE)]
@@ -41,7 +60,16 @@ public class Factura : TotalBase
     [NoSaveDb]
     [OnlyRead]
     [TextArea]
-    public string NombreCliente { get; set; } = "Sin asignar";
+    public string NombreCliente
+    {
+        get => _nombreCliente;
+        set
+        {
+            if (_nombreCliente == value) return;
+            _nombreCliente = value;
+            OnPropertyChanged(nameof(NombreCliente));
+        }
+    }
 
     [Nombre("Crédito")]
     [Grupo("Totales", GRUPO_TOTALES)]

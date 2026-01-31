@@ -12,6 +12,8 @@ using Gestion.core.interfaces.database;
 using Gestion.presentation.views.util;
 using Gestion.presentation.config;
 using Serilog;
+using Gestion.core.interfaces.lookup;
+using Gestion.core.lookup;
 
 namespace Gestion;
 
@@ -184,6 +186,8 @@ public partial class App : Application
         services.AddTransient<ClienteCartolaWindow>();
         services.AddTransient<ClienteOTWindow>();
         services.AddTransient<PendienteMaquinaWindow>();      
+
+        services.AddSingleton<ILookupResolver, LookupResolver>();
        
         ServiceProvider = services.BuildServiceProvider();
 

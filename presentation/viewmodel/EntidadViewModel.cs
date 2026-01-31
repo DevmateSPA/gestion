@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using System.Diagnostics;
+using Gestion.core.interfaces.lookup;
 
 namespace Gestion.presentation.viewmodel;
 
@@ -31,6 +32,9 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged
     where T : IEmpresa
 {
     protected bool DebugEnabled = false;
+
+        protected T? Entidad;
+    private readonly ILookupResolver _lookupResolver;
 
     [Conditional("DEBUG")]
     protected void Log(string message)
@@ -620,4 +624,23 @@ public abstract class EntidadViewModel<T> : INotifyPropertyChanged
     }
 
     #endregion
+
+    protected void SetEntidad(T entidad)
+    {
+        if (Entidad is INotifyPropertyChanged old)
+            old.PropertyChanged -= OnEntidadChanged;
+
+        Entidad = entidad;
+
+        if (Entidad is INotifyPropertyChanged current)
+            current.PropertyChanged += OnEntidadChanged;
+    }
+
+    private async void OnEntidadChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (sender == null || string.IsNullOrWhiteSpace(e.PropertyName))
+            return;
+
+        await _lookupResolver.ResolveAsync(sender, e.PropertyName);
+    }
 }

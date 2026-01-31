@@ -1,3 +1,4 @@
+using Gestion.core.interfaces.lookup;
 using Gestion.core.model;
 using Gestion.helpers;
 using Gestion.presentation.viewmodel;
@@ -13,10 +14,14 @@ public partial class FacturaPage : Page
     private DataGrid _dataGrid;
 
     private readonly FacturaViewModel _viewModel;
-    public FacturaPage(FacturaViewModel viewModel)
+    private readonly ILookupResolver _lookupResolver;
+    public FacturaPage(
+        FacturaViewModel viewModel,
+        ILookupResolver lookupResolver)
     {
         InitializeComponent();
         _viewModel = viewModel;
+        _lookupResolver = lookupResolver;
         DataContext = _viewModel;
         Title = $"Facturas";
 
@@ -56,6 +61,7 @@ public partial class FacturaPage : Page
         factura.Folio = await _viewModel.GetSiguienteFolio();
         await new EditorEntidadBuilder<Factura>()
             .Owner(Window.GetWindow(this)!)
+            .LookupResolver(_lookupResolver)
             .Entidad(factura)
             .Titulo("Agregar Factura")
             .Guardar(_viewModel.Save)
@@ -66,6 +72,7 @@ public partial class FacturaPage : Page
     {
         await new EditorEntidadBuilder<Factura>()
             .Owner(Window.GetWindow(this)!)
+            .LookupResolver(_lookupResolver)
             .Entidad(factura)
             .Titulo("Editar Factura")
             .Guardar(_viewModel.Update)

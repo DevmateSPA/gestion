@@ -11,11 +11,13 @@ public class FacturaViewModel : EntidadViewModel<Factura>
         IFacturaService facturaService, 
         IDialogService dialogService,
         IOrdenTrabajoService ordenTrabajoService,
-        IGuiaDespachoService guiaDespachoService)
+        IGuiaDespachoService guiaDespachoService,
+        IClienteService clienteService)
         : base(facturaService, dialogService)
     {
         _facturaService = facturaService;
 
+        _ = DataBootstrapper.LoadClientesSearch(clienteService, SesionApp.IdEmpresa);
         _ = DataBootstrapper.LoadFoliosOTSearch(ordenTrabajoService, SesionApp.IdEmpresa);
         _ = DataBootstrapper.LoadFoliosGuiaDespachoSearch(guiaDespachoService, SesionApp.IdEmpresa);
     }

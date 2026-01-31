@@ -1,6 +1,9 @@
 using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using Gestion.core.attributes;
+using Gestion.core.interfaces.lookup;
 using Gestion.core.model;
 using Gestion.core.services;
 using Gestion.presentation.enums;
@@ -19,8 +22,10 @@ public partial class EntidadEditorTableWindow: Window
 
     private readonly Func<EntidadEditorTableWindow, Task>? _btn1Action;
     private readonly string _titleBtnEntregar;
+    private readonly ILookupResolver _lookupResolver;
 
     public EntidadEditorTableWindow(
+        ILookupResolver lookupResolver,
         object entidad,
         Func<object, Task<bool>>? guardar,
         Action<OrdenTrabajo>? imprimir,
@@ -37,6 +42,8 @@ public partial class EntidadEditorTableWindow: Window
         _guardar = guardar;
         _imprimir = imprimir;
         _btn1Action = btn1Action;
+
+        _lookupResolver = lookupResolver;
 
         ClonarEntidad(entidad);
 
@@ -76,6 +83,8 @@ public partial class EntidadEditorTableWindow: Window
         // Recuperamos los controles
         _controles = builder.GetControles();
 
+        InicializarLookups();
+
         // Validamos los campos inicialmente
         FormularioValidator.ForzarValidacionInicial(_controles);
 
@@ -98,6 +107,41 @@ public partial class EntidadEditorTableWindow: Window
                 e.Handled = true;
             }
         };
+    }
+
+    private void HookLookup(
+        PropertyInfo prop,
+        FrameworkElement control)
+    {
+        if (control is TextBox tb)
+        {
+            tb.LostFocus += async (_, __) =>
+            {
+                if (EntidadEditada == null)
+                    return;
+
+                await _lookupResolver.ResolveAsync(
+                    EntidadEditada,
+                    prop.Name
+                );
+
+                // 🔧 PARCHE AQUÍ
+                tb.GetBindingExpression(TextBox.TextProperty)
+                ?.UpdateTarget();
+            };
+        }
+    }
+
+    private void InicializarLookups()
+    {
+        foreach (var (prop, control) in _controles)
+        {
+            var lookup = prop.GetCustomAttribute<LookupAttribute>();
+            if (lookup == null)
+                continue;
+
+            HookLookup(prop, control);
+        }
     }
 
     private bool Validar()

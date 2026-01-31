@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using System.Windows;
+using Gestion.core.interfaces.lookup;
 using Gestion.core.model;
 using Gestion.presentation.enums;
 using Gestion.presentation.views.windows;
@@ -40,6 +41,7 @@ public class EditorEntidadBuilder<T>
     private ModoFormulario _modo = ModoFormulario.Edicion;
     private bool _ShouldImpresion = false;
 	private string _tituloBtnEntregar = "Entregar (F5)";
+    private ILookupResolver _lookupResolver;
 
 
     /// <summary>
@@ -47,9 +49,17 @@ public class EditorEntidadBuilder<T>
     /// </summary>
     /// <param name="owner">Ventana que será la dueña del editor.</param>
     /// <returns>La instancia del builder para encadenamiento.</returns>
-    public EditorEntidadBuilder<T> Owner(Window owner)
+    public EditorEntidadBuilder<T> Owner(
+        Window owner)
     {
         _owner = owner;
+        return this;
+    }
+
+    public EditorEntidadBuilder<T> LookupResolver(
+        ILookupResolver lookupResolver)
+    {
+        _lookupResolver = lookupResolver;
         return this;
     }
 
@@ -194,6 +204,7 @@ public class EditorEntidadBuilder<T>
             throw new InvalidOperationException("Entidad no definida");
 
         var ventana = new EntidadEditorTableWindow(
+            _lookupResolver,
             _entidad,
             async obj => _guardar == null || await _guardar((T)obj),
             _imprimir,
