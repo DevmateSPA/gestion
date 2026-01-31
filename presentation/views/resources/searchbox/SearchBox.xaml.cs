@@ -7,11 +7,17 @@ using Gestion.presentation.views.util.buildersUi.data;
 
 namespace Gestion.presentation.views.resources.searchbox;
 
-public partial class SearchBox : UserControl
+public interface IValueCommitControl
+{
+    event EventHandler<string> ValueCommitted;
+}
+
+public partial class SearchBox : UserControl, IValueCommitControl
 {
     public string? SourceKey { get; set; }
     private bool _isAutoCompleting;
     private bool _isDeleting;
+    public event EventHandler<string>? ValueCommitted;
 
     public SearchBox()
     {
@@ -128,15 +134,7 @@ public partial class SearchBox : UserControl
         // Si hay un único resultado → autocompletar
         if (!_isDeleting && filtered.Count == 1)
         {
-            _isAutoCompleting = true;
-
-            int caret = PART_Input.CaretIndex;
-            Text = filtered[0].Original;
-            PART_Input.CaretIndex = caret;
-
-            _isAutoCompleting = false;
-
-            Hide();
+            Commit(filtered[0].Original);
             return;
         }
 
@@ -196,7 +194,7 @@ public partial class SearchBox : UserControl
         if (PART_Popup.IsKeyboardFocusWithin)
             return;
 
-        Hide();
+        Commit(Text);
     }
 
     // ========================
@@ -204,16 +202,8 @@ public partial class SearchBox : UserControl
     // ========================
     private void CommitSelection()
     {
-        if (PART_List.SelectedItem == null)
-            return;
-
         if (PART_List.SelectedItem is HighlightItem item)
-        {
-            Text = item.Original;
-        }
-
-        Hide();
-        PART_Input.CaretIndex = Text.Length;
+            Commit(item.Original);
     }
 
     private string GetItemText(object item)
@@ -245,5 +235,16 @@ public partial class SearchBox : UserControl
     private void Hide()
     {
         PART_Popup.IsOpen = false;
+    }
+
+    private void Commit(string value)
+    {
+        Text = value;
+
+        GetBindingExpression(TextProperty)
+            ?.UpdateSource();   // 👈 CLAVE
+
+        ValueCommitted?.Invoke(this, value);
+        Hide();
     }
 }

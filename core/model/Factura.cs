@@ -39,7 +39,7 @@ public class Factura : TotalBase
         nameof(IClienteService.FindByRut),
         "Razon_Social:NombreCliente"
     )]
-    //[Searchable("RUT_CLIENTE")]
+    [Searchable("RUT_CLIENTE")]
     public string RutCliente
     {
         get => _rutCliente;

@@ -7,6 +7,7 @@ using Gestion.core.interfaces.lookup;
 using Gestion.core.model;
 using Gestion.core.services;
 using Gestion.presentation.enums;
+using Gestion.presentation.views.resources.searchbox;
 using Gestion.presentation.views.util;
 using Gestion.presentation.views.util.buildersUi;
 
@@ -109,10 +110,24 @@ public partial class EntidadEditorTableWindow: Window
         };
     }
 
-    private void HookLookup(
-        PropertyInfo prop,
-        FrameworkElement control)
+    private void HookLookup(PropertyInfo prop, FrameworkElement control)
     {
+        if (control is IValueCommitControl commitControl)
+        {
+            commitControl.ValueCommitted += async (_, __) =>
+            {
+                if (EntidadEditada == null)
+                    return;
+
+                await _lookupResolver.ResolveAsync(
+                    EntidadEditada,
+                    prop.Name
+                );
+            };
+
+            return;
+        }
+
         if (control is TextBox tb)
         {
             tb.LostFocus += async (_, __) =>
@@ -124,13 +139,10 @@ public partial class EntidadEditorTableWindow: Window
                     EntidadEditada,
                     prop.Name
                 );
-
-                // 🔧 PARCHE AQUÍ
-                tb.GetBindingExpression(TextBox.TextProperty)
-                ?.UpdateTarget();
             };
         }
     }
+
 
     private void InicializarLookups()
     {
