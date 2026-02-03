@@ -26,7 +26,6 @@ public class OrdenTrabajoViewModel : EntidadViewModel<OrdenTrabajo>, INotifyProp
         _detalleOTService = detalleOTService;
 
         _ = DataBootstrapper.LoadOrdenTrabajoCombos(maquinaService, operarioService, SesionApp.IdEmpresa);
-
         _ = DataBootstrapper.LoadClientesSearch(clienteService, SesionApp.IdEmpresa);
     }
 

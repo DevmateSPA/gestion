@@ -11,6 +11,7 @@ using Gestion.core.session;
 using Gestion.helpers;
 using Gestion.core.services;
 using Gestion.presentation.views.windows;
+using Gestion.core.interfaces.lookup;
 
 namespace Gestion.presentation.views.pages;
 
@@ -19,12 +20,15 @@ public partial class OrdenTrabajoPage : Page
     private DataGrid _dataGrid; 
 
     private readonly OrdenTrabajoViewModel _viewModel;
-    private readonly IDetalleOTService _detalleOTService;
+    private readonly ILookupResolver _lookupResolver;
     private readonly DialogService _dialogService = new();
-    public OrdenTrabajoPage(OrdenTrabajoViewModel viewModel, IDetalleOTService detalleOTService)
+    public OrdenTrabajoPage(
+        OrdenTrabajoViewModel viewModel,
+        ILookupResolver lookupResolver)
     {
         InitializeComponent();
         _viewModel = viewModel;
+        _lookupResolver = lookupResolver;
         DataContext = _viewModel;
         Title = $"Ordenes de Trabajo";
 
@@ -78,6 +82,7 @@ public partial class OrdenTrabajoPage : Page
                     facturaEditada.Detalles.Cast<DetalleOrdenTrabajo>(),
                     facturaEditada))
             .TituloBtnExtra1(_tituloBotonEntregadas)
+            .LookupResolver(_lookupResolver)
             .Abrir();
     }
 
@@ -153,6 +158,7 @@ public partial class OrdenTrabajoPage : Page
                     }
                 }
             })
+            .LookupResolver(_lookupResolver)
             .Abrir();
     }
 

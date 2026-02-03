@@ -46,7 +46,7 @@ public class Factura : TotalBase
         set
         {
             if (_rutCliente == value) return;
-            _rutCliente = value;
+            _rutCliente = value; 
             OnPropertyChanged(nameof(RutCliente));
         }
     }

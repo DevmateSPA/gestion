@@ -112,6 +112,9 @@ public partial class EntidadEditorTableWindow: Window
 
     private void HookLookup(PropertyInfo prop, FrameworkElement control)
     {
+        if (_lookupResolver == null)
+            throw new InvalidOperationException("No se ha inyectado ningún LookUp resolver, revisa el constructor de la ventana!");
+            
         if (control is IValueCommitControl commitControl)
         {
             commitControl.ValueCommitted += async (_, __) =>

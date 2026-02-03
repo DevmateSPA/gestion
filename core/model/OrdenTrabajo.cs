@@ -1,7 +1,9 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Gestion.core.attributes;
 using Gestion.core.attributes.validation;
 using Gestion.core.interfaces.model;
+using Gestion.core.interfaces.service;
 using Gestion.core.model.detalles;
 
 namespace Gestion.core.model;
@@ -44,15 +46,41 @@ public class OrdenTrabajo : ConDetalles<DetalleOrdenTrabajo>, IEmpresa
     [Nombre("Rut")]
     [Grupo("Cliente", ORDEN_GRUPO_CLIENTE)]
     [Orden(0)]
-    //[Searchable("RUT_CLIENTE")]
-    public string RutCliente { get; set; } = string.Empty;
+    [Lookup(
+        typeof(IClienteService),
+        nameof(IClienteService.FindByRut),
+        "Razon_Social:RazonSocial"
+    )]
+    [Searchable("RUT_CLIENTE")]
+    public string RutCliente
+    {
+        get => _rutCliente;
+        set
+        {
+            if (_rutCliente == value) return;
+            _rutCliente = value; 
+            OnPropertyChanged(nameof(RutCliente));
+        }
+    }
+
+    private string _rutCliente = string.Empty;
+    private string _razonSocial = "Sin asignar";
     [NoSaveDb]
     [OnlyRead]
     [Nombre("Razón Social")]
     [Grupo("Cliente", ORDEN_GRUPO_CLIENTE)]
     [Orden(1)]
     [TextArea]
-    public string RazonSocial { get; set; } = "Sin asignar";
+    public string RazonSocial
+    {
+        get => _razonSocial;
+        set
+        {
+            if (_razonSocial == value) return;
+            _razonSocial = value;
+            OnPropertyChanged(nameof(RazonSocial));
+        }
+    }
 
     // -- Grupo Trabajo
 
